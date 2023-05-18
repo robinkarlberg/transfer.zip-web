@@ -93,7 +93,7 @@ const rtcCall = async (sessionId, recipientId) => {
 	console.log("rtcCall")
 	const peerConnection = new RTCPeerConnection(RTC_CONF);
 
-	const ws = new WebSocket("ws://localhost:8001");
+	const ws = new WebSocket("ws://" + window.location.hostname + ":8001");
 	ws.addEventListener("open", async e => {
 		console.log("Signalling open")
 
