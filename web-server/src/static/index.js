@@ -22,12 +22,13 @@
 // 	signalingChannel.send({"offer": offer});
 // }
 const RTC_CONF = { iceServers: [{ urls: "stun:stun.services.mozilla.com" }] }
+const WS_URL = "wss://" + window.location.hostname + "/ws"
 
 const rtcRecv = (sessionId) => {
 	console.log("rtcRecv")
 	const peerConnection = new RTCPeerConnection(RTC_CONF);
 
-	const ws = new WebSocket("ws://" + window.location.hostname + ":8001");
+	const ws = new WebSocket(WS_URL);
 	ws.addEventListener("open", e => {
 		console.log("Signalling open")
 
@@ -93,7 +94,7 @@ const rtcCall = async (sessionId, recipientId) => {
 	console.log("rtcCall")
 	const peerConnection = new RTCPeerConnection(RTC_CONF);
 
-	const ws = new WebSocket("ws://" + window.location.hostname + ":8001");
+	const ws = new WebSocket(WS_URL);
 	ws.addEventListener("open", async e => {
 		console.log("Signalling open")
 
