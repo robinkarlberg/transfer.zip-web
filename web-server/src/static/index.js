@@ -49,7 +49,7 @@ const rtcRecv = (sessionId, cbReady) => {
 		console.log(data)
 		if (data.type == 11 && data.offer) {
 			console.log("Got offer:", data.offer)
-			peerConnection.setRemoteDescription(data.offer);
+			peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
 			const answer = await peerConnection.createAnswer();
 			await peerConnection.setLocalDescription(answer);
 			console.log("Sending answer:", answer)
@@ -108,7 +108,7 @@ const rtcCall = async (sessionId, recipientId, cbReady) => {
 		if (data.type == 12 && data.answer) {
 			console.log("Got answer:", data.answer)
 			const remoteDesc = data.answer;
-			await peerConnection.setRemoteDescription(remoteDesc);
+			await peerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc));
 		}
 		else if (data.type == 13 && data.candidate) {
 			console.log("Got candidate:", data.candidate)
