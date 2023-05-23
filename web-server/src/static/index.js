@@ -50,6 +50,7 @@ const WS_URL = window.location.hostname == "localhost"
 	: "wss://" + window.location.hostname + "/ws"
 
 const FILE_CHUNK_SIZE = 16384
+const CRYPT_IV = new Uint8Array([88, 219, 207, 213, 251, 152, 221, 143, 192, 166, 233, 213])
 
 const rtcRecv = (sessionId, cbReady) => {
 	console.log("rtcRecv")
@@ -176,17 +177,38 @@ const rtcCall = async (sessionId, recipientId, cbReady) => {
 
 const file_upload = document.getElementById("file-upload")
 
-const sendFile = () => {
+const sendFile = async () => {
 	const file = file_upload.files[0]
-	console.log(file)
 
-	rtcRecv("B".repeat(64), channel => {
+	const sessionId = crypto.randomUUID()
+	const key = await window.crypto.subtle.generateKey(
+		{
+			name: "AES-GCM",
+			length: 256,
+		},
+		true,
+		["encrypt", "decrypt"]
+	);
+
+	const jwk = await crypto.subtle.exportKey("jwk", key)
+	console.log(jwk)
+	const hash = "#" + jwk.k + "," + sessionId
+	const downloadLink = window.location.origin + window.location.pathname + hash
+	console.log(downloadLink)
+	navigator.clipboard.writeText(downloadLink)
+
+	rtcRecv(sessionId, channel => {
 		let offset = 0
 		let fr = new FileReader()
-		fr.onload = e => {
-			channel.send(fr.result)
-			offset += fr.result.byteLength;
-			console.log(offset + "/" + fr.result.byteLength)
+		fr.onload = async e => {
+			const data = fr.result
+			const encrypted = await crypto.subtle.encrypt({
+				"name": "AES-GCM","iv": CRYPT_IV
+			}, key, data);
+			
+			channel.send(encrypted)
+			offset += data.byteLength;
+			console.log(offset + "/" + data.byteLength)
 			if (offset < file.size) {
 				readSlice(offset);
 			}
@@ -216,12 +238,14 @@ const sendFile = () => {
 	})
 }
 
-const recvFile = () => {
-	rtcCall("A".repeat(64), "B".repeat(64), channel => {
+const recvFile = (recipientId, key) => {
+	let sessionId = crypto.randomUUID()
+
+	rtcCall(sessionId, recipientId, channel => {
 		let fileBuffer
 		let offset = 0
 		let fileData
-		channel.addEventListener("message", e => {
+		channel.addEventListener("message", async e => {
 			const data = e.data
 			if (!fileBuffer) {
 				const textDec = new TextDecoder()
@@ -232,11 +256,15 @@ const recvFile = () => {
 				fileBuffer = new Uint8Array(fileData.size)
 			}
 			else {
-				fileBuffer.set(new Uint8Array(data), offset)
-				offset += data.byteLength
+				const decrypted = await crypto.subtle.decrypt({
+					"name": "AES-GCM","iv": CRYPT_IV
+				}, key, data);
+
+				fileBuffer.set(new Uint8Array(decrypted), offset)
+				offset += decrypted.byteLength
 
 				if (offset == fileData.size) {
-					console.log("File has been received!", fileBuffer)
+					console.log("File has been received!")
 					const blob = new Blob([fileBuffer], { type: fileData.type })
 
 					const elem = window.document.createElement("a")
@@ -250,6 +278,23 @@ const recvFile = () => {
 		})
 	})
 }
+
+(async () => {
+	if (window.location.hash) {
+		const [key_b, recipientId] = window.location.hash.slice(1).split(",")
+		const k = key_b
+		
+		const key = await crypto.subtle.importKey("jwk", {
+			alg: "A256GCM",
+			ext: true,
+			k,
+			kty: "oct",
+			key_ops: ["encrypt", "decrypt"]
+		},{ name: "AES-GCM" }, false, ["encrypt", "decrypt"])
+		recvFile(recipientId, key)
+	}
+})()
+
 
 // rtcRecv("B".repeat(64))
 // rtcCall("A".repeat(64), "B".repeat(64))

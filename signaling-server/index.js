@@ -24,7 +24,7 @@ wss.on("connection", conn => {
 			conn._session = {}
 
 			if(!data.id) return conn.close()							// retard
-			if(data.id.length != 64) return conn.close()	// invalid id length
+			if(data.id.length != 36) return conn.close()	// invalid id length
 			if(sessions[data.id]) return conn.close()			// session id already exists
 
 			sessions[data.id] = conn
