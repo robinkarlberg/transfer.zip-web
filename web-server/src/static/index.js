@@ -21,7 +21,7 @@
 // 	await peerConnection.setLocalDescription(offer);
 // 	signalingChannel.send({"offer": offer});
 // }
-const RTC_CONF = { iceServers: [{ urls: "stun:stun.services.mozilla.com" }] }
+const RTC_CONF = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] }
 const WS_URL = window.location.hostname == "localhost"
 	? "ws://localhost:8001"
 	: "wss://" + window.location.hostname + "/ws"
@@ -62,6 +62,10 @@ const rtcRecv = (sessionId, cbReady) => {
 			console.log("Got candidate:", data.candidate)
 			await peerConnection.addIceCandidate(data.candidate)
 		}
+	})
+
+	peerConnection.addEventListener("iceconnectionstatechange", e => {
+		console.log("RECV iceconnectionstatechange", e)
 	})
 
 	peerConnection.addEventListener("icecandidate", e => {
@@ -114,6 +118,10 @@ const rtcCall = async (sessionId, recipientId, cbReady) => {
 			console.log("Got candidate:", data.candidate)
 			await peerConnection.addIceCandidate(data.candidate)
 		}
+	})
+
+	peerConnection.addEventListener("iceconnectionstatechange", e => {
+		console.log("CALL iceconnectionstatechange", e)
 	})
 
 	peerConnection.addEventListener("icecandidate", e => {
