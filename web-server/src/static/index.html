@@ -1,23 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>transfer.zip</title>
+	<title>transfer.zip</title>
 
-    <script defer src="index.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+
+	<script defer src="index.js"></script>
 </head>
+
 <body>
-    <div>
-        <h2>Send</h2>
-        <input id="file-upload" type="file">
-        <button onclick="sendFile()">send file</button>
-    </div>
-    <!-- <div>
-        <h2>Recv</h2>
-        <button onclick="recvFile()">recv file</button>
-    </div> -->
+	<main>
+		<div class="container pt-5">
+			<h1 class="title mb-0">transfer<small>.zip</small></h1>
+			<p class="lead">Free, Fast, Encrypted</p>
+		</div>
+
+		<div class="container py-5">
+			<form>
+				<fieldset id="file-form-fieldset">
+					<div class="row g-1">
+						<div class="col-md-6">
+							<input id="file-upload" class="form-control" type="file">
+						</div>
+						<div class="col-12">
+							<input disabled id="send-btn" class="btn btn-primary" type="submit" value="Send"></button>
+						</div>
+					</div>
+				</fieldset>
+			</form>
+		</div>
+
+		<div id="progress-collapse" class="collapse">
+			<div id="progress-div" class="container">
+				<p>Transfering file...</p>
+				<div class="progress">
+					<div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+						aria-valuemin="0" aria-valuemax="100"></div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+		crossorigin="anonymous"></script>
 </body>
+
 </html>

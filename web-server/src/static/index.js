@@ -52,7 +52,7 @@ const WS_URL = window.location.hostname == "localhost"
 const FILE_CHUNK_SIZE = 16384
 const CRYPT_IV = new Uint8Array([88, 219, 207, 213, 251, 152, 221, 143, 192, 166, 233, 213])
 
-const rtcRecv = (sessionId, cbReady) => {
+const rtcRecv = async (sessionId) => {
 	console.log("rtcRecv")
 	const peerConnection = new RTCPeerConnection(RTC_CONF);
 
@@ -102,14 +102,16 @@ const rtcRecv = (sessionId, cbReady) => {
 		}
 	})
 
-	peerConnection.addEventListener("datachannel", e => {
-		const channel = e.channel
-		console.log("Got datachannel!", channel)
-		cbReady(channel)
+	return new Promise((resolve, reject) => {
+		peerConnection.addEventListener("datachannel", e => {
+			const channel = e.channel
+			console.log("Got datachannel!", channel)
+			resolve(channel)
+		})
 	})
 }
 
-const rtcCall = async (sessionId, recipientId, cbReady) => {
+const rtcCall = async (sessionId, recipientId) => {
 	console.log("rtcCall")
 	const peerConnection = new RTCPeerConnection(RTC_CONF);
 
@@ -161,25 +163,25 @@ const rtcCall = async (sessionId, recipientId, cbReady) => {
 	let sendChannel = peerConnection.createDataChannel("sendDataChannel")
 	sendChannel.binaryType = "arraybuffer"
 
-	sendChannel.addEventListener("open", e => {
-		console.log("datachannel open", e)
-		cbReady(sendChannel)
-	})
+	return new Promise((resolve, reject) => {
+		sendChannel.addEventListener("open", e => {
+			console.log("datachannel open", e)
+			resolve(sendChannel)
+		})
 
-	sendChannel.addEventListener("close", e => {
-		console.log("datachannel close", e)
-	})
+		sendChannel.addEventListener("close", e => {
+			console.log("datachannel close", e)
+			reject(new Error("Data channel closed"))
+		})
 
-	sendChannel.addEventListener("error", e => {
-		console.log("datachannel error", e)
+		sendChannel.addEventListener("error", e => {
+			console.log("datachannel error", e)
+			reject(e)
+		})
 	})
 }
 
-const file_upload = document.getElementById("file-upload")
-
-const sendFile = async () => {
-	const file = file_upload.files[0]
-
+const sendFile = async (file, cbProgress) => {
 	const sessionId = crypto.randomUUID()
 	const key = await window.crypto.subtle.generateKey(
 		{
@@ -197,89 +199,104 @@ const sendFile = async () => {
 	console.log(downloadLink)
 	navigator.clipboard.writeText(downloadLink)
 
-	rtcRecv(sessionId, channel => {
-		let offset = 0
-		let fr = new FileReader()
-		fr.onload = async e => {
-			const data = fr.result
-			const encrypted = await crypto.subtle.encrypt({
-				"name": "AES-GCM","iv": CRYPT_IV
-			}, key, data);
-			
-			channel.send(encrypted)
-			offset += data.byteLength;
-			console.log(offset + "/" + data.byteLength)
-			if (offset < file.size) {
-				readSlice(offset);
-			}
+	const channel = await rtcRecv(sessionId)
+
+	let offset = 0
+	let fr = new FileReader()
+	fr.onload = async e => {
+		const data = fr.result
+		const encrypted = await crypto.subtle.encrypt({
+			"name": "AES-GCM","iv": CRYPT_IV
+		}, key, data);
+		
+		channel.send(encrypted)
+		offset += data.byteLength;
+		cbProgress({ now: offset, max: file.size })
+		console.log(offset + "/" + file.size)
+		if (offset < file.size) {
+			readSlice(offset);
 		}
-		fr.onerror = e => {
-			console.error("File reader error", e)
-		}
-		fr.onabort = e => {
-			console.log("File reader abort", e)
-		}
-		const readSlice = o => {
-			console.log("readSlice", o)
-			const slice = file.slice(offset, o + FILE_CHUNK_SIZE);
-			fr.readAsArrayBuffer(slice);
-		};
-		const fileData = {
-			name: file.name,
-			size: file.size,
-			type: file.type
-		}
-		const fileDataStr = JSON.stringify(fileData)
-		const textEnc = new TextEncoder()
-		const fileDataEnc = textEnc.encode(fileDataStr)
-		console.log("Sending file data:", fileDataStr, fileDataEnc)
-		channel.send(fileDataEnc)
-		readSlice(0)
-	})
+	}
+	fr.onerror = e => {
+		console.error("File reader error", e)
+	}
+	fr.onabort = e => {
+		console.log("File reader abort", e)
+	}
+	const readSlice = o => {
+		console.log("readSlice", o)
+		const slice = file.slice(offset, o + FILE_CHUNK_SIZE);
+		fr.readAsArrayBuffer(slice);
+	};
+	const fileData = {
+		name: file.name,
+		size: file.size,
+		type: file.type
+	}
+	const fileDataStr = JSON.stringify(fileData)
+	const textEnc = new TextEncoder()
+	const fileDataEnc = textEnc.encode(fileDataStr)
+	console.log("Sending file data:", fileDataStr, fileDataEnc)
+	channel.send(fileDataEnc)
+	readSlice(0)
 }
 
-const recvFile = (recipientId, key) => {
+const recvFile = async (recipientId, key, cbProgress) => {
 	let sessionId = crypto.randomUUID()
 
-	rtcCall(sessionId, recipientId, channel => {
-		let fileBuffer
-		let offset = 0
-		let fileData
-		channel.addEventListener("message", async e => {
-			const data = e.data
-			if (!fileBuffer) {
-				const textDec = new TextDecoder()
-				const fileDataStr = textDec.decode(data)
-				const _fileData = JSON.parse(fileDataStr)
-				fileData = _fileData
-				console.log("Got file data:", fileData)
-				fileBuffer = new Uint8Array(fileData.size)
+	const channel = await rtcCall(sessionId, recipientId)
+
+	let fileBuffer
+	let offset = 0
+	let fileData
+	channel.addEventListener("message", async e => {
+		const data = e.data
+		if (!fileBuffer) {
+			const textDec = new TextDecoder()
+			const fileDataStr = textDec.decode(data)
+			const _fileData = JSON.parse(fileDataStr)
+			fileData = _fileData
+			console.log("Got file data:", fileData)
+			fileBuffer = new Uint8Array(fileData.size)
+		}
+		else {
+			const decrypted = await crypto.subtle.decrypt({
+				"name": "AES-GCM","iv": CRYPT_IV
+			}, key, data);
+
+			fileBuffer.set(new Uint8Array(decrypted), offset)
+			offset += decrypted.byteLength
+
+			cbProgress({ now: offset, max: fileData.size })
+
+			if (offset == fileData.size) {
+				console.log("File has been received!")
+				const blob = new Blob([fileBuffer], { type: fileData.type })
+
+				const elem = window.document.createElement("a")
+				elem.href = window.URL.createObjectURL(blob)
+				elem.download = fileData.name
+				document.body.appendChild(elem)
+				elem.click()
+				document.body.removeChild(elem)
 			}
-			else {
-				const decrypted = await crypto.subtle.decrypt({
-					"name": "AES-GCM","iv": CRYPT_IV
-				}, key, data);
-
-				fileBuffer.set(new Uint8Array(decrypted), offset)
-				offset += decrypted.byteLength
-
-				if (offset == fileData.size) {
-					console.log("File has been received!")
-					const blob = new Blob([fileBuffer], { type: fileData.type })
-
-					const elem = window.document.createElement("a")
-					elem.href = window.URL.createObjectURL(blob)
-					elem.download = fileData.name
-					document.body.appendChild(elem)
-					elem.click()
-					document.body.removeChild(elem)
-				}
-			}
-		})
+		}
 	})
 }
 
 (async () => {
+	const file_form_fieldset = document.getElementById("file-form-fieldset")
+	const file_upload = document.getElementById("file-upload")
+	const send_file_btn = document.getElementById("send-btn")
+
+	const progress_collapse = document.getElementById("progress-collapse")
+	const bs_progress_collapse = new bootstrap.Collapse(progress_collapse, { toggle: false })
+	const progress_bar = document.getElementById("progress-bar")
+
+	const setProgressBar = (val) => {
+		progress_bar.style.width = val + "%"
+	}
+
 	if (window.location.hash) {
 		const [key_b, recipientId] = window.location.hash.slice(1).split(",")
 		const k = key_b
@@ -291,10 +308,38 @@ const recvFile = (recipientId, key) => {
 			kty: "oct",
 			key_ops: ["encrypt", "decrypt"]
 		},{ name: "AES-GCM" }, false, ["encrypt", "decrypt"])
-		recvFile(recipientId, key)
+
+		file_form_fieldset.setAttribute("disabled", true)
+		bs_progress_collapse.show()
+
+		recvFile(recipientId, key, progress => {
+			const { now, max } = progress
+			setProgressBar(now / max * 100)
+		}).catch(err => {
+			console.log(err.message)
+		})
+	}
+	else {
+		let sendingFile = false
+
+		file_upload.onchange = e => {
+			if(sendingFile) return
+			send_file_btn.toggleAttribute("disabled", file_upload.files.length < 1)
+		}
+
+		send_file_btn.onclick = e => {
+			sendingFile = true
+			e.preventDefault()
+			file_form_fieldset.toggleAttribute("disabled", true)
+
+			bs_progress_collapse.show()
+
+			sendFile(file_upload.files[0], progress => {
+				const { now, max } = progress
+				setProgressBar(now / max * 100)
+			}).catch(err => {
+				console.log(err.message)
+			})
+		}
 	}
 })()
-
-
-// rtcRecv("B".repeat(64))
-// rtcCall("A".repeat(64), "B".repeat(64))
