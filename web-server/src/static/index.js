@@ -181,7 +181,7 @@ const rtcCall = async (sessionId, recipientId) => {
 	})
 }
 
-const sendFile = async (file, cbProgress) => {
+const sendFile = async (file, cbLink, cbProgress) => {
 	const sessionId = crypto.randomUUID()
 	const key = await window.crypto.subtle.generateKey(
 		{
@@ -196,8 +196,7 @@ const sendFile = async (file, cbProgress) => {
 	console.log(jwk)
 	const hash = "#" + jwk.k + "," + sessionId
 	const downloadLink = window.location.origin + window.location.pathname + hash
-	console.log(downloadLink)
-	navigator.clipboard.writeText(downloadLink)
+	cbLink(downloadLink)
 
 	const channel = await rtcRecv(sessionId)
 
@@ -293,6 +292,8 @@ const recvFile = async (recipientId, key, cbProgress) => {
 	const bs_progress_collapse = new bootstrap.Collapse(progress_collapse, { toggle: false })
 	const progress_bar = document.getElementById("progress-bar")
 
+	const qr_div = document.getElementById("qrcode")
+
 	const setProgressBar = (val) => {
 		progress_bar.style.width = val + "%"
 	}
@@ -334,7 +335,11 @@ const recvFile = async (recipientId, key, cbProgress) => {
 
 			bs_progress_collapse.show()
 
-			sendFile(file_upload.files[0], progress => {
+			sendFile(file_upload.files[0], link => {
+				console.log(link)
+				navigator.clipboard.writeText(link)
+				new QRCode(qr_div, link);
+			}, progress => {
 				const { now, max } = progress
 				setProgressBar(now / max * 100)
 			}).catch(err => {
