@@ -52,6 +52,12 @@ const WS_URL = window.location.hostname == "localhost"
 const FILE_CHUNK_SIZE = 16384
 const CRYPT_IV = new Uint8Array([88, 219, 207, 213, 251, 152, 221, 143, 192, 166, 233, 213])
 
+const PACKET_ID = {
+	fileInfo: 0,
+	fileData: 1,
+	error: 9
+}
+
 const rtcRecv = async (sessionId) => {
 	console.log("rtcRecv")
 	const peerConnection = new RTCPeerConnection(RTC_CONF);
@@ -162,7 +168,7 @@ const rtcCall = async (sessionId, recipientId) => {
 
 	let sendChannel = peerConnection.createDataChannel("sendDataChannel")
 	sendChannel.binaryType = "arraybuffer"
-
+	
 	return new Promise((resolve, reject) => {
 		sendChannel.addEventListener("open", e => {
 			console.log("datachannel open", e)
@@ -193,7 +199,6 @@ const sendFile = async (file, cbLink, cbProgress) => {
 	);
 
 	const jwk = await crypto.subtle.exportKey("jwk", key)
-	console.log(jwk)
 	const hash = "#" + jwk.k + "," + sessionId
 	const downloadLink = window.location.origin + window.location.pathname + hash
 	cbLink(downloadLink)
@@ -203,15 +208,22 @@ const sendFile = async (file, cbLink, cbProgress) => {
 	let offset = 0
 	let fr = new FileReader()
 	fr.onload = async e => {
-		const data = fr.result
+		const __data = fr.result
+
+		const packet = new Uint8Array(1 + 8 + __data.byteLength)
+		const packetDataView = new DataView(packet.buffer)
+		packetDataView.setInt8(0, PACKET_ID.fileData)
+		packetDataView.setBigUint64(1, BigInt(offset))
+		packet.set(__data, 1 + 8)
+
 		const encrypted = await crypto.subtle.encrypt({
 			"name": "AES-GCM","iv": CRYPT_IV
-		}, key, data);
+		}, key, packet);
 		
 		channel.send(encrypted)
-		offset += data.byteLength;
+		offset += __data.byteLength;
 		cbProgress({ now: offset, max: file.size })
-		console.log(offset + "/" + file.size)
+		// console.log(offset + "/" + file.size)
 		if (offset < file.size) {
 			readSlice(offset);
 		}
@@ -223,20 +235,30 @@ const sendFile = async (file, cbLink, cbProgress) => {
 		console.log("File reader abort", e)
 	}
 	const readSlice = o => {
-		console.log("readSlice", o)
+		// console.log("readSlice", o)
 		const slice = file.slice(offset, o + FILE_CHUNK_SIZE);
 		fr.readAsArrayBuffer(slice);
 	};
-	const fileData = {
+	const fileInfo = {
 		name: file.name,
 		size: file.size,
 		type: file.type
 	}
-	const fileDataStr = JSON.stringify(fileData)
+	const fileInfoStr = JSON.stringify(fileInfo)
 	const textEnc = new TextEncoder()
-	const fileDataEnc = textEnc.encode(fileDataStr)
-	console.log("Sending file data:", fileDataStr, fileDataEnc)
-	channel.send(fileDataEnc)
+	const fileInfoEnc = textEnc.encode(fileInfoStr)
+	console.log("Sending file info:", fileInfoStr, fileInfoEnc)
+
+	const packet = new Uint8Array(1 + fileInfoEnc.byteLength)
+	const packetDataView = new DataView(packet.buffer)
+	packetDataView.setInt8(0, PACKET_ID.fileInfo)
+	packet.set(fileInfoEnc, 1)
+
+	const encrypted = await crypto.subtle.encrypt({
+		"name": "AES-GCM","iv": CRYPT_IV
+	}, key, packet);
+
+	channel.send(encrypted)
 	readSlice(0)
 }
 
@@ -244,37 +266,48 @@ const recvFile = async (recipientId, key, cbProgress) => {
 	let sessionId = crypto.randomUUID()
 
 	const channel = await rtcCall(sessionId, recipientId)
-
+	
 	let fileBuffer
-	let offset = 0
-	let fileData
+	let bytesRecieved = 0
+	let fileInfo
 	channel.addEventListener("message", async e => {
-		const data = e.data
-		if (!fileBuffer) {
+		const __data = e.data
+		const packet = new Uint8Array(await crypto.subtle.decrypt({
+			"name": "AES-GCM","iv": CRYPT_IV
+		}, key, __data));
+
+		const packetDataView = new DataView(packet.buffer)
+		const packetId = packetDataView.getInt8(0)
+
+		if (packetId == PACKET_ID.fileInfo) {
+			const data = packet.slice(1)
+
 			const textDec = new TextDecoder()
-			const fileDataStr = textDec.decode(data)
-			const _fileData = JSON.parse(fileDataStr)
-			fileData = _fileData
-			console.log("Got file data:", fileData)
-			fileBuffer = new Uint8Array(fileData.size)
+			const fileInfoStr = textDec.decode(data)
+			const _fileInfo = JSON.parse(fileInfoStr)
+			fileInfo = _fileInfo
+			console.log("Got file info:", fileInfo)
+			fileBuffer = new Uint8Array(fileInfo.size)
 		}
-		else {
-			const decrypted = await crypto.subtle.decrypt({
-				"name": "AES-GCM","iv": CRYPT_IV
-			}, key, data);
+		else if(packetId == PACKET_ID.fileData) {
+			const offset = Number(packetDataView.getBigUint64(1))
+			const data = packet.slice(1 + 8)
+			
+			if(fileBuffer == undefined) {
+				throw "FileBuffer has not been allocated! (yet)"
+			}
+			fileBuffer.set(data, offset)
+			bytesRecieved += data.byteLength
 
-			fileBuffer.set(new Uint8Array(decrypted), offset)
-			offset += decrypted.byteLength
-
-			cbProgress({ now: offset, max: fileData.size })
-
-			if (offset == fileData.size) {
+			cbProgress({ now: offset, max: fileInfo.size })
+			console.log(bytesRecieved, fileInfo.size)
+			if (bytesRecieved == fileInfo.size) {
 				console.log("File has been received!")
-				const blob = new Blob([fileBuffer], { type: fileData.type })
+				const blob = new Blob([fileBuffer], { type: fileInfo.type })
 
 				const elem = window.document.createElement("a")
 				elem.href = window.URL.createObjectURL(blob)
-				elem.download = fileData.name
+				elem.download = fileInfo.name
 				document.body.appendChild(elem)
 				elem.click()
 				document.body.removeChild(elem)
