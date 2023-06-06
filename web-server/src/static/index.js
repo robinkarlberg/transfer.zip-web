@@ -214,7 +214,7 @@ const sendFile = async (file, cbLink, cbProgress) => {
 		const packetDataView = new DataView(packet.buffer)
 		packetDataView.setInt8(0, PACKET_ID.fileData)
 		packetDataView.setBigUint64(1, BigInt(offset))
-		packet.set(__data, 1 + 8)
+		packet.set(new Uint8Array(__data), 1 + 8)
 
 		const encrypted = await crypto.subtle.encrypt({
 			"name": "AES-GCM","iv": CRYPT_IV
@@ -276,8 +276,10 @@ const recvFile = async (recipientId, key, cbProgress) => {
 			"name": "AES-GCM","iv": CRYPT_IV
 		}, key, __data));
 
+		console.log(packet)
 		const packetDataView = new DataView(packet.buffer)
 		const packetId = packetDataView.getInt8(0)
+
 
 		if (packetId == PACKET_ID.fileInfo) {
 			const data = packet.slice(1)
