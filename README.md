@@ -6,7 +6,7 @@ data is also encrypted using AES-GCM with a client-side generated key, and never
 sent to the server in any way. 
 
 ## signaling-server
-A simple signaling server implementation using WebSockets.
+A simple signaling server implementation using WebSockets, to let peers discover each other.
 
 ## web-server
-Docker container hosting the web part of the application.
+Docker container for hosting the web part of the application.
