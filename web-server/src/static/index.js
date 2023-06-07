@@ -373,7 +373,11 @@ const recvFile = async (recipientId, key, cbProgress) => {
 			sendFile(file_upload.files[0], link => {
 				console.log(link)
 				navigator.clipboard.writeText(link)
-				new QRCode(qr_div, link);
+				new QRCode(qr_div, {
+					text: link,
+					width: 256 * 2,
+					height: 256 * 2
+				});
 			}, progress => {
 				const { now, max } = progress
 				setProgressBar(now / max * 100)
