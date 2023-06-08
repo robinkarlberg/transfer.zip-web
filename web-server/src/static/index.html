@@ -15,49 +15,97 @@
 	<script defer src="index.js"></script>
 
 	<style>
-		#qrcode > img {
+		#heading-container {
+			margin-top: 1rem;
+		}
+
+		@media (min-width: 576px) {
+			#heading-container {
+				margin-top: 5vw;
+			}
+		}
+
+		#qrcode>img,
+		canvas {
 			border: 5mm solid white;
 			width: 100%;
 			max-width: 256px;
+		}
+
+		body {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		body>div {
+			display: flex;
+			flex-direction: column;
+			height: 100vh;
+
+			max-width: 900px;
+		}
+
+		body>div>main {
+			flex-grow: 1;
+			max-height: 900px;
+		}
+
+		form {
+			max-width: 450px;
 		}
 	</style>
 </head>
 
 <body>
-	<main>
-		<div class="container pt-5">
-			<h1 class="title mb-0">transfer<small>.zip</small></h1>
-			<p class="lead">Free, Fast, Encrypted</p>
-		</div>
+	<div>
+		<main>
+			<div id="heading-container" class="container pb-4">
+				<h1 class="display-5 fw-medium mb-0">transfer<small>.zip</small></h1>
+				<p>Free, Fast, Encrypted</p>
+			</div>
 
-		<div class="container py-5">
-			<form>
-				<fieldset id="file-form-fieldset">
-					<div class="row g-1">
-						<div class="col-md-6">
-							<input id="file-upload" class="form-control" type="file">
+			<div class="container py-2">
+				<form>
+					<fieldset id="file-form-fieldset">
+						<div class="row g-1">
+							<div class="col-md-10 col-12">
+								<input id="file-upload" class="form-control" type="file">
+							</div>
+							<div class="col-md-2">
+								<input disabled id="send-btn" class="btn btn-primary" type="submit"
+									value="Send"></button>
+							</div>
 						</div>
-						<div class="col-12">
-							<input disabled id="send-btn" class="btn btn-primary" type="submit" value="Send"></button>
-						</div>
+					</fieldset>
+				</form>
+			</div>
+
+			<div id="progress-collapse" class="collapse">
+				<div id="progress-div" class="container">
+					<div class="container py-4">
+						<div id="qrcode"></div>
 					</div>
-				</fieldset>
-			</form>
-		</div>
-
-		<div id="progress-collapse" class="collapse">
-			<div id="progress-div" class="container">
-				<div class="container pb-3">
-					<div id="qrcode"></div>
-				</div>
-				<p>Transfering file...</p>
-				<div class="progress">
-					<div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-						aria-valuemin="0" aria-valuemax="100"></div>
+					<p>Transfering file...</p>
+					<div class="progress">
+						<div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"
+							role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+					</div>
 				</div>
 			</div>
+		</main>
+
+		<div id="footer-container" class="container fs-6">
+			<footer>
+				<div class="row mt-4">
+					<p>Data sent with this service is encrypted and is transfered directly between browsers. No file
+						data,
+						plaintext or encrypted, ever touches the server. <a
+							href="https://github.com/robinkarlberg/transfer.zip-web">View on GitHub</a>
+				</div>
+			</footer>
 		</div>
-	</main>
+	</div>
 
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
