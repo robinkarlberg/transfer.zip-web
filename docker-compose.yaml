@@ -1,0 +1,8 @@
+services:
+  web-server:
+    build: web-server
+    ports: 127.0.0.1:9001:80
+
+  signaling-server:
+    build: signaling-server
+    ports: 127.0.0.1:8001:8001
