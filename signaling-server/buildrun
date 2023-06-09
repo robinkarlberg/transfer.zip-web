@@ -1,0 +1,4 @@
+#!/bin/sh
+
+docker build . -t transfer.zip-signaling-server
+docker run --rm -p 127.0.0.1:8001:8001 transfer.zip-signaling-server

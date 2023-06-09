@@ -4,9 +4,10 @@
   "description": "Signaling server for transfer.zip",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ."
   },
   "author": "Robin K",
+  "type": "module",
   "license": "ISC",
   "dependencies": {
     "ws": "^8.13.0"
