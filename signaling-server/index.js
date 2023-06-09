@@ -1,117 +1,118 @@
-const WebSocketServer = require("ws").Server
+import { Server as WebSocketServer } from "ws";
 
 const wss = new WebSocketServer({
-	host: "127.0.0.1",
-	port: 8001
-})
+    host: "127.0.0.1",
+    port: 8001,
+});
 
-const sessions = {}
+const sessions = {};
 
 wss.on("connection", conn => {
-	console.log("conn")
+    console.log("conn");
 
-	conn.on("message", message => {
-		try {
-			let data;
-			try {
-				data = JSON.parse(message)
-			} catch (e) {
-				console.error("Invalid json: ", message)
-				return conn.close()
-			}
-			console.log(data)
+    conn.on("message", message => {
+        try {
+            handleMessage(conn, message)
+        } catch (err) {
+            console.error(err);
+        }
+    });
 
-			if (data.type == 0) {	// login
-				conn._session = {}
+    conn.on("close", () => {
+        if (conn._session?.id) {
+            delete sessions[conn._session.id];
+        }
+    });
+});
 
-				if (!data.id) return conn.close()							// retard
-				if (data.id.length != 36) return conn.close()	// invalid id length
-				if (sessions[data.id]) return conn.close()			// session id already exists
+/**
+ * @param {WebSocket} conn
+ */
+function handleMessage(conn, message) {
+    let data;
+    try {
+        data = JSON.parse(message);
+    } catch (e) {
+        console.error("Invalid json: ", message);
+        return conn.close();
+    }
+    console.log(data);
 
-				sessions[data.id] = conn
-				conn._session.id = data.id
+    if (data.type == 0) { // login
+        conn._session = {};
 
-				return conn.send(JSON.stringify({ success: true, type: data.type }))
-			}
+        if (!data.id) return conn.close();
+        if (data.id.length != 36) return conn.close();
+        if (sessions[data.id]) return conn.close();
 
-			if (!conn._session) return conn.close()					// client has to send type 0 first >:(
+        sessions[data.id] = conn;
+        conn._session.id = data.id;
 
-			if (data.type == 1) {	// offer
-				console.log("offer", conn._session.id + " -> " + data.recipientId, data)
-				if (!data.offer) return conn.close();
+        return conn.send(JSON.stringify({ success: true, type: data.type }));
+    }
 
-				let recipientConn;
-				if ((recipientConn = sessions[data.recipientId])) {
-					recipientConn.send(JSON.stringify({
-						type: 11,	// offer type
-						callerId: conn._session.id,
-						offer: data.offer
-					}))
-					return conn.send(JSON.stringify({
-						success: true, type: data.type
-					}))
-				}
-				else {
-					console.log("Recipient did not exist!")
-					return conn.send(JSON.stringify({
-						success: false, type: data.type,
-						msg: "recipient does not exist"
-					}))
-				}
-			}
-			else if (data.type == 2) {	// answer
-				console.log("answer", conn._session.id + " -> " + data.recipientId, data)
-				if (!data.answer) return conn.close();
+    if (!conn._session) return conn.close(); // client has to send type 0 first >:(
 
-				let recipientConn;
-				if ((recipientConn = sessions[data.recipientId])) {
-					recipientConn.send(JSON.stringify({
-						type: 12,	// answer type
-						answer: data.answer
-					}))
-					return conn.send(JSON.stringify({
-						success: true, type: data.type
-					}))
-				}
-				else {
-					console.log("Recipient did not exist!")
-					return conn.send(JSON.stringify({
-						success: false, type: data.type,
-						msg: "recipient does not exist"
-					}))
-				}
-			}
-			else if (data.type == 3) {	// candidate
-				console.log("candidate", conn._session.id + " -> " + data.recipientId, data)
-				if (!data.candidate) return conn.close();
+    if (data.type == 1) { // offer
+        console.log("offer", conn._session.id + " -> " + data.recipientId, data);
+        if (!data.offer) return conn.close();
 
-				let recipientConn;
-				if ((recipientConn = sessions[data.recipientId])) {
-					recipientConn.send(JSON.stringify({
-						type: 13,	// answer type
-						candidate: data.candidate
-					}))
-					return conn.send(JSON.stringify({
-						success: true, type: data.type
-					}))
-				}
-				else {
-					console.log("Recipient did not exist!")
-					return conn.send(JSON.stringify({
-						success: false, type: data.type,
-						msg: "recipient does not exist"
-					}))
-				}
-			}
-		}
-		catch (e) {
-			console.error(e)
-		}
-	})
+        let recipientConn;
+        if ((recipientConn = sessions[data.recipientId])) {
+            recipientConn.send(JSON.stringify({
+                type: 11, // offer type
+                callerId: conn._session.id,
+                offer: data.offer,
+            }));
+            return conn.send(JSON.stringify({
+                success: true, type: data.type,
+            }));
+        } else {
+            console.log("Recipient did not exist!")
+            return conn.send(JSON.stringify({
+                success: false, type: data.type,
+                msg: "recipient does not exist",
+            }));
+        }
+    } else if (data.type == 2) { // answer
+        console.log("answer", conn._session.id + " -> " + data.recipientId, data);
+        if (!data.answer) return conn.close();
 
-	conn.on("close", () => {
-		if (conn._session?.id) {
-			delete sessions[conn._session.id]
-		}
-	})
-})
+        let recipientConn;
+        if ((recipientConn = sessions[data.recipientId])) {
+            recipientConn.send(JSON.stringify({
+                type: 12, // answer type
+                answer: data.answer,
+            }));
+            return conn.send(JSON.stringify({
+                success: true, type: data.type,
+            }));
+        } else {
+            console.log("Recipient did not exist!")
+            return conn.send(JSON.stringify({
+                success: false, type: data.type,
+                msg: "recipient does not exist",
+            }));
+        }
+    } else if (data.type == 3) { // candidate
+        console.log("candidate", conn._session.id + " -> " + data.recipientId, data);
+        if (!data.candidate) return conn.close();
+
+        let recipientConn;
+        if ((recipientConn = sessions[data.recipientId])) {
+            recipientConn.send(JSON.stringify({
+                type: 13, // answer type
+                candidate: data.candidate,
+            }));
+            return conn.send(JSON.stringify({
+                success: true, type: data.type,
+            }));
+        } else {
+            console.log("Recipient did not exist!")
+            return conn.send(JSON.stringify({
+                success: false, type: data.type,
+                msg: "recipient does not exist",
+            }));
+        }
+    }
+}
