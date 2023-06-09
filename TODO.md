@@ -5,9 +5,9 @@
 - [ ] Challenge-response to verify receiving peer has the right key
 - [ ] Sync progress bars
 - [ ] Smaller user ids, to shorten the link
-- [ ] Dockerize signaling-server
+- [x] Dockerize signaling-server
 - [ ] Self-hosted stun-server
-- [ ] docker-compose
+- [x] docker-compose
 - [ ] Add file transfer options:
   - [ ] Multiple peers / single peer
     - [ ] Enable file transfer to multiple peers
