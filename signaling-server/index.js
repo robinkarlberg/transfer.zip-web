@@ -1,11 +1,11 @@
-import { Server as WebSocketServer } from "ws";
+import { WebSocketServer } from "ws";
 
 const wss = new WebSocketServer({
     host: "127.0.0.1",
     port: 8001,
 });
 
-const sessions = {};
+const sessions = new Map();
 
 wss.on("connection", conn => {
     console.log("conn");
@@ -15,12 +15,13 @@ wss.on("connection", conn => {
             handleMessage(conn, message)
         } catch (err) {
             console.error(err);
+            conn.close();
         }
     });
 
     conn.on("close", () => {
         if (conn._session?.id) {
-            delete sessions[conn._session.id];
+            sessions.delete(conn._session.id);
         }
     });
 });
@@ -43,9 +44,9 @@ function handleMessage(conn, message) {
 
         if (!data.id) return conn.close();
         if (data.id.length != 36) return conn.close();
-        if (sessions[data.id]) return conn.close();
+        if (sessions.has(data.id)) return conn.close();
 
-        sessions[data.id] = conn;
+        sessions.set(data.id, conn);
         conn._session.id = data.id;
 
         return conn.send(JSON.stringify({ success: true, type: data.type }));
@@ -58,7 +59,7 @@ function handleMessage(conn, message) {
         if (!data.offer) return conn.close();
 
         let recipientConn;
-        if ((recipientConn = sessions[data.recipientId])) {
+        if ((recipientConn = sessions.get(data.recipientId))) {
             recipientConn.send(JSON.stringify({
                 type: 11, // offer type
                 callerId: conn._session.id,
@@ -79,7 +80,7 @@ function handleMessage(conn, message) {
         if (!data.answer) return conn.close();
 
         let recipientConn;
-        if ((recipientConn = sessions[data.recipientId])) {
+        if ((recipientConn = sessions.get(data.recipientId))) {
             recipientConn.send(JSON.stringify({
                 type: 12, // answer type
                 answer: data.answer,
@@ -99,7 +100,7 @@ function handleMessage(conn, message) {
         if (!data.candidate) return conn.close();
 
         let recipientConn;
-        if ((recipientConn = sessions[data.recipientId])) {
+        if ((recipientConn = sessions.get(data.recipientId))) {
             recipientConn.send(JSON.stringify({
                 type: 13, // answer type
                 candidate: data.candidate,
