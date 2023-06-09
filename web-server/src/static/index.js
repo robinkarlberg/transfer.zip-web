@@ -50,7 +50,6 @@ const WS_URL = window.location.hostname == "localhost"
 	: "wss://" + window.location.hostname + "/ws"
 
 const FILE_CHUNK_SIZE = 16384
-const CRYPT_IV = new Uint8Array([88, 219, 207, 213, 251, 152, 221, 143, 192, 166, 233, 213])
 
 const PACKET_ID = {
 	fileInfo: 0,
@@ -187,6 +186,30 @@ const rtcCall = async (sessionId, recipientId) => {
 	})
 }
 
+const genIV = (i) => {
+	const iv = new Uint8Array(12)
+	const dataview = new DataView(iv.buffer)
+	dataview.setBigUint64(0, BigInt(i + 1))
+	return iv
+}
+
+let packetIndex = 0
+
+const sendAndEncrypt = async (channel, packet, key) => {
+	const iv = genIV(packetIndex++)
+
+	const encryptedPacket = await crypto.subtle.encrypt({
+		"name": "AES-GCM", "iv": iv
+	}, key, packet);
+
+	const encryptedPacketAndIV = new Uint8Array(encryptedPacket.byteLength + 12)
+	encryptedPacketAndIV.set(iv)
+	encryptedPacketAndIV.set(new Uint8Array(encryptedPacket), 12)
+	console.log(encryptedPacketAndIV)
+	console.log(encryptedPacket)
+	channel.send(encryptedPacketAndIV)
+}
+
 const sendFile = async (file, cbLink, cbProgress) => {
 	const sessionId = crypto.randomUUID()
 	const key = await window.crypto.subtle.generateKey(
@@ -216,11 +239,7 @@ const sendFile = async (file, cbLink, cbProgress) => {
 		packetDataView.setBigUint64(1, BigInt(offset))
 		packet.set(new Uint8Array(__data), 1 + 8)
 
-		const encrypted = await crypto.subtle.encrypt({
-			"name": "AES-GCM","iv": CRYPT_IV
-		}, key, packet);
-		
-		channel.send(encrypted)
+		await sendAndEncrypt(channel, packet, key)
 		offset += __data.byteLength;
 		cbProgress({ now: offset, max: file.size })
 		// console.log(offset + "/" + file.size)
@@ -246,19 +265,15 @@ const sendFile = async (file, cbLink, cbProgress) => {
 	}
 	const fileInfoStr = JSON.stringify(fileInfo)
 	const textEnc = new TextEncoder()
-	const fileInfoEnc = textEnc.encode(fileInfoStr)
-	console.log("Sending file info:", fileInfoStr, fileInfoEnc)
+	const fileInfoBytes = textEnc.encode(fileInfoStr)
+	console.log("Sending file info:", fileInfoStr, fileInfoBytes)
 
-	const packet = new Uint8Array(1 + fileInfoEnc.byteLength)
+	const packet = new Uint8Array(1 + fileInfoBytes.byteLength)
 	const packetDataView = new DataView(packet.buffer)
 	packetDataView.setInt8(0, PACKET_ID.fileInfo)
-	packet.set(fileInfoEnc, 1)
+	packet.set(fileInfoBytes, 1)
 
-	const encrypted = await crypto.subtle.encrypt({
-		"name": "AES-GCM","iv": CRYPT_IV
-	}, key, packet);
-
-	channel.send(encrypted)
+	await sendAndEncrypt(channel, packet, key)
 	readSlice(0)
 }
 
@@ -272,14 +287,16 @@ const recvFile = async (recipientId, key, cbProgress) => {
 	let fileInfo
 	channel.addEventListener("message", async e => {
 		const __data = e.data
+		const iv = new Uint8Array(__data.slice(0, 12))
+		const encryptedPacket = __data.slice(12)
+		console.log(__data)
+		console.log(encryptedPacket)
 		const packet = new Uint8Array(await crypto.subtle.decrypt({
-			"name": "AES-GCM","iv": CRYPT_IV
-		}, key, __data));
+			"name": "AES-GCM", "iv": iv
+		}, key, encryptedPacket));
 
-		console.log(packet)
 		const packetDataView = new DataView(packet.buffer)
 		const packetId = packetDataView.getInt8(0)
-
 
 		if (packetId == PACKET_ID.fileInfo) {
 			const data = packet.slice(1)
@@ -382,7 +399,7 @@ const recvFile = async (recipientId, key, cbProgress) => {
 				const { now, max } = progress
 				setProgressBar(now / max * 100)
 			}).catch(err => {
-				console.log(err.message)
+				console.error(err)
 			})
 		}
 	}
