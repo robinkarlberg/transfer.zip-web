@@ -275,7 +275,7 @@ const sendFile = async (file, cbLink, cbProgress) => {
 const doDownloadRequest = () => {
 	const elem = window.document.createElement("a")
 	elem.href = "/download"
-	elem.target = "_blank"
+	elem.toggleAttribute("download")
 	document.body.appendChild(elem)
 	elem.click()
 	document.body.removeChild(elem)
