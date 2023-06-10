@@ -1,26 +1,20 @@
-// // Set up an asynchronous communication channel that will be
-// // used during the peer connection setup
-// const signalingChannel = new SignalingChannel(remoteClientId);
-// signalingChannel.addEventListener("message", message => {
-//     // New message from remote client received
-// });
+let downloadServiceWorker
 
-// // Send an asynchronous message to the remote client
-// signalingChannel.send("Hello!");
+if ("serviceWorker" in navigator) {
+	navigator.serviceWorker.register("/sw.js", { scope: "/download" }).then(
+		(registration) => {
+			downloadServiceWorker = registration.active
+			console.log("Service worker registration succeeded:", registration);
+			downloadServiceWorker.postMessage({ type: 2 })
+		},
+		(error) => {
+			console.error(`Service worker registration failed: ${error}`);
+		}
+	);
+} else {
+	console.error("Service workers are not supported.");
+}
 
-// async function makeCall() {
-// 	const configuration = { iceServers: [{ urls: "stun:stun.services.mozilla.com" }] }
-// 	const peerConnection = new RTCPeerConnection(configuration)
-// 	signalingChannel.addEventListener("message", async message => {
-// 			if (message.answer) {
-// 					const remoteDesc = new RTCSessionDescription(message.answer);
-// 					await peerConnection.setRemoteDescription(remoteDesc);
-// 			}
-// 	});
-// 	const offer = await peerConnection.createOffer();
-// 	await peerConnection.setLocalDescription(offer);
-// 	signalingChannel.send({"offer": offer});
-// }
 const RTC_CONF = {
 	iceServers: [
 		{ urls: "stun:stun.l.google.com:19302" },
@@ -50,6 +44,7 @@ const WS_URL = window.location.hostname == "localhost"
 	: "wss://" + window.location.hostname + "/ws"
 
 const FILE_CHUNK_SIZE = 16384
+const FILE_STREAM_SIZE = 32
 
 const PACKET_ID = {
 	fileInfo: 0,
@@ -167,7 +162,7 @@ const rtcCall = async (sessionId, recipientId) => {
 
 	let sendChannel = peerConnection.createDataChannel("sendDataChannel")
 	sendChannel.binaryType = "arraybuffer"
-	
+
 	return new Promise((resolve, reject) => {
 		sendChannel.addEventListener("open", e => {
 			console.log("datachannel open", e)
@@ -205,8 +200,8 @@ const sendAndEncrypt = async (channel, packet, key) => {
 	const encryptedPacketAndIV = new Uint8Array(encryptedPacket.byteLength + 12)
 	encryptedPacketAndIV.set(iv)
 	encryptedPacketAndIV.set(new Uint8Array(encryptedPacket), 12)
-	console.log(encryptedPacketAndIV)
-	console.log(encryptedPacket)
+	// console.log(encryptedPacketAndIV)
+	// console.log(encryptedPacket)
 	channel.send(encryptedPacketAndIV)
 }
 
@@ -277,20 +272,27 @@ const sendFile = async (file, cbLink, cbProgress) => {
 	readSlice(0)
 }
 
+const doDownloadRequest = () => {
+	const elem = window.document.createElement("a")
+	elem.href = "/download"
+	document.body.appendChild(elem)
+	elem.click()
+	document.body.removeChild(elem)
+}
+
 const recvFile = async (recipientId, key, cbProgress) => {
 	let sessionId = crypto.randomUUID()
 
 	const channel = await rtcCall(sessionId, recipientId)
-	
-	let fileBuffer
+
+	let dataBuffer = []
 	let bytesRecieved = 0
 	let fileInfo
 	channel.addEventListener("message", async e => {
 		const __data = e.data
 		const iv = new Uint8Array(__data.slice(0, 12))
 		const encryptedPacket = __data.slice(12)
-		console.log(__data)
-		console.log(encryptedPacket)
+
 		const packet = new Uint8Array(await crypto.subtle.decrypt({
 			"name": "AES-GCM", "iv": iv
 		}, key, encryptedPacket));
@@ -306,31 +308,29 @@ const recvFile = async (recipientId, key, cbProgress) => {
 			const _fileInfo = JSON.parse(fileInfoStr)
 			fileInfo = _fileInfo
 			console.log("Got file info:", fileInfo)
-			fileBuffer = new Uint8Array(fileInfo.size)
+			// fileBuffer = new Uint8Array(fileInfo.size)
+
+			downloadServiceWorker.postMessage({ type: 0, fileInfo })
+			doDownloadRequest()
 		}
-		else if(packetId == PACKET_ID.fileData) {
+		else if (packetId == PACKET_ID.fileData) {
+			//TODO: maybe do packet parsing in service worker for better performance?
 			const offset = Number(packetDataView.getBigUint64(1))
 			const data = packet.slice(1 + 8)
-			
-			if(fileBuffer == undefined) {
-				throw "FileBuffer has not been allocated! (yet)"
-			}
-			fileBuffer.set(data, offset)
-			bytesRecieved += data.byteLength
 
-			cbProgress({ now: offset, max: fileInfo.size })
-			console.log(bytesRecieved, fileInfo.size)
+			bytesRecieved += data.byteLength
+			dataBuffer.push([offset, data])
+
 			if (bytesRecieved == fileInfo.size) {
 				console.log("File has been received!")
-				const blob = new Blob([fileBuffer], { type: fileInfo.type })
-
-				const elem = window.document.createElement("a")
-				elem.href = window.URL.createObjectURL(blob)
-				elem.download = fileInfo.name
-				document.body.appendChild(elem)
-				elem.click()
-				document.body.removeChild(elem)
 			}
+
+			if(bytesRecieved == fileInfo.size || dataBuffer.length == FILE_STREAM_SIZE) {
+				downloadServiceWorker.postMessage({ type: 1, dataBuffer })
+				dataBuffer = []
+			}
+
+			cbProgress({ now: bytesRecieved, max: fileInfo.size })
 		}
 	})
 }
@@ -353,14 +353,14 @@ const recvFile = async (recipientId, key, cbProgress) => {
 	if (window.location.hash) {
 		const [key_b, recipientId] = window.location.hash.slice(1).split(",")
 		const k = key_b
-		
+
 		const key = await crypto.subtle.importKey("jwk", {
 			alg: "A256GCM",
 			ext: true,
 			k,
 			kty: "oct",
 			key_ops: ["encrypt", "decrypt"]
-		},{ name: "AES-GCM" }, false, ["encrypt", "decrypt"])
+		}, { name: "AES-GCM" }, false, ["encrypt", "decrypt"])
 
 		file_form_fieldset.setAttribute("disabled", true)
 		bs_progress_collapse.show()
@@ -376,7 +376,7 @@ const recvFile = async (recipientId, key, cbProgress) => {
 		let sendingFile = false
 
 		file_upload.onchange = e => {
-			if(sendingFile) return
+			if (sendingFile) return
 			send_file_btn.toggleAttribute("disabled", file_upload.files.length < 1)
 		}
 
