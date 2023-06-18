@@ -1,3 +1,5 @@
+streamSaver.mitm = "./mitm.html"
+
 const RTC_CONF = {
 	iceServers: [
 		{ urls: "stun:stun.l.google.com:19302" },
