@@ -200,7 +200,7 @@ const genIV = (i) => {
 
 let packetIndex = 0
 
-const sendAndEncrypt = async (channel, packet, key) => {
+const sendAndEncryptPacket = async (channel, packet, key) => {
 	const iv = genIV(packetIndex++)
 
 	const encryptedPacket = await crypto.subtle.encrypt({
@@ -233,6 +233,16 @@ const sendFile = async (file, cbLink, cbProgress) => {
 
 	const channel = await rtcRecv(sessionId)
 
+	channel.addEventListener("message", async e => {
+		const data = JSON.parse(e.data)
+		if(data.type == "progress") {
+			cbProgress({ now: data.now, max: file.size })
+		}
+		else if(data.type == "error") {
+			throw data.message
+		}
+	})
+
 	let offset = 0
 	let fr = new FileReader()
 	fr.onload = async e => {
@@ -244,9 +254,9 @@ const sendFile = async (file, cbLink, cbProgress) => {
 		packetDataView.setBigUint64(1, BigInt(offset))
 		packet.set(new Uint8Array(__data), 1 + 8)
 
-		await sendAndEncrypt(channel, packet, key)
+		await sendAndEncryptPacket(channel, packet, key)
 		offset += __data.byteLength;
-		cbProgress({ now: offset, max: file.size })
+		// cbProgress({ now: offset, max: file.size })
 		// console.log(offset + "/" + file.size)
 		if (offset < file.size) {
 			readSlice(offset);
@@ -278,7 +288,7 @@ const sendFile = async (file, cbLink, cbProgress) => {
 	packetDataView.setInt8(0, PACKET_ID.fileInfo)
 	packet.set(fileInfoBytes, 1)
 
-	await sendAndEncrypt(channel, packet, key)
+	await sendAndEncryptPacket(channel, packet, key)
 	readSlice(0)
 }
 
@@ -362,6 +372,9 @@ const recvFile = async (recipientId, key, cbProgress) => {
 				console.log("File has been received!")
 			}
 
+			if(index % 50 == 49 || fileReceived) {
+				channel.send(JSON.stringify({ type: "progress", now: bytesRecieved }))
+			}
 			cbProgress({ now: bytesRecieved, max: fileInfo.size })
 		}
 	})
