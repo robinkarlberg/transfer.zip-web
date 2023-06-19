@@ -24,9 +24,14 @@ const RTC_CONF = {
 	]
 }
 
-const WS_URL = window.location.hostname == "localhost"
-	? "ws://localhost:8001"
-	: "wss://" + window.location.hostname + "/ws"
+const WS_URLS = {
+	"local": "ws://localhost:8001",
+	"gitpod": "wss://" + window.location.hostname.replace("9001", "8001"),
+	"prod": "wss://" + window.location.hostname + "/ws"
+}
+const ENVIRONMENT = window.location.hostname == "localhost" ? "local" : (window.location.hostname.indexOf("gitpod.io") != -1 ? "gitpod" : "prod")
+
+const WS_URL = WS_URLS[ENVIRONMENT]
 
 const FILE_CHUNK_SIZE = 16384
 const FILE_STREAM_SIZE = 32
@@ -73,8 +78,18 @@ const rtcRecv = async (sessionId) => {
 		}
 	})
 
-	peerConnection.addEventListener("iceconnectionstatechange", e => {
+	ws.addEventListener("error", async e => {
+		throw "WebSocket error: could not connect to server"
+	})
+
+	peerConnection.addEventListener("iceconnectionstatechange", async e => {
 		console.log("RECV iceconnectionstatechange", e)
+		if(e.target.connectionState == "disconnected") {
+			throw "Remote peer disconnected"
+		}
+		else if(e.target.connectionState == "failed") {
+			throw "Could not connect to remote peer, check your firewall settings or try connecting to another network"
+		}
 	})
 
 	peerConnection.addEventListener("icecandidate", e => {
@@ -131,8 +146,18 @@ const rtcCall = async (sessionId, recipientId) => {
 		}
 	})
 
-	peerConnection.addEventListener("iceconnectionstatechange", e => {
+	ws.addEventListener("error", async e => {
+		throw "WebSocket error: could not connect to server"
+	})
+
+	peerConnection.addEventListener("iceconnectionstatechange", async e => {
 		console.log("CALL iceconnectionstatechange", e)
+		if(e.target.connectionState == "disconnected") {
+			throw "Remote peer disconnected"
+		}
+		else if(e.target.connectionState == "failed") {
+			throw "Could not connect to remote peer, check your firewall settings or try connecting to another network"
+		}
 	})
 
 	peerConnection.addEventListener("icecandidate", e => {
@@ -273,6 +298,11 @@ const recvFile = async (recipientId, key, cbProgress) => {
 			console.error("writer undefined")
 			return
 		}
+		if (writer.desiredSize == null) {
+			console.error("user canceled download")
+			channel.close()
+			return
+		}
 		if (!fileInfo) {
 			console.error("fileInfo undefined")
 			return
@@ -347,9 +377,26 @@ const recvFile = async (recipientId, key, cbProgress) => {
 	const progress_bar = document.getElementById("progress-bar")
 
 	const qr_div = document.getElementById("qrcode")
+	const bs_alert_modal = new bootstrap.Modal(document.getElementById("alert-modal"), {})
+	const alert_modal_title = document.getElementById("alert-modal-title")
+	const alert_modal_desc = document.getElementById("alert-modal-desc")
 
 	const setProgressBar = (val) => {
 		progress_bar.style.width = val + "%"
+	}
+	
+	const showAlert = (title, description) => {
+		alert_modal_title.innerText = title
+		alert_modal_desc.innerText = description
+		bs_alert_modal.show()
+	}
+
+	window.onunhandledrejection = e => {
+		showAlert("Error", e.reason)
+	}
+
+	window.onerror = e => {
+		showAlert("Error", e)
 	}
 
 	if (window.location.hash) {
@@ -372,6 +419,7 @@ const recvFile = async (recipientId, key, cbProgress) => {
 			setProgressBar(now / max * 100)
 		}).catch(err => {
 			console.log(err.message)
+			showAlert("Send error", err)
 		})
 	}
 	else {
@@ -402,6 +450,7 @@ const recvFile = async (recipientId, key, cbProgress) => {
 				setProgressBar(now / max * 100)
 			}).catch(err => {
 				console.error(err)
+				showAlert("Receive error", err)
 			})
 		}
 	}

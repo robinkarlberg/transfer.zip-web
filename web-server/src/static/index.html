@@ -8,7 +8,8 @@
 
 	<title>transfer.zip</title>
 
-	<meta name="description" content="Free, fast and encrypted peer2peer file transfer between browsers using WebRTC.">
+	<meta name="description"
+		content="Free, fast and encrypted peer2peer file transfer between browsers using WebRTC. Unlimited file size.">
 
 	<link href="lib/bootstrap.min.css" rel="stylesheet">
 
@@ -36,13 +37,13 @@
 			max-width: 256px;
 		}
 
-		body {
+		#page {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 		}
 
-		body>div {
+		#page>div {
 			display: flex;
 			flex-direction: column;
 			height: 100vh;
@@ -50,7 +51,7 @@
 			max-width: 900px;
 		}
 
-		body>div>main {
+		#page>div>main {
 			flex-grow: 1;
 			max-height: 900px;
 		}
@@ -62,52 +63,71 @@
 </head>
 
 <body>
-	<div>
-		<main>
-			<div id="heading-container" class="container pb-4">
-				<h1 class="display-5 fw-medium mb-0">transfer<small>.zip</small></h1>
-				<p>Free, Fast, Encrypted</p>
+	<div id="alert-modal" class="modal" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 id="alert-modal-title" class="modal-title">Error</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p id="alert-modal-desc">User cancelled the download.</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ok</button>
+				</div>
 			</div>
+		</div>
+	</div>
+	<div id="page">
+		<div>
+			<main>
+				<div id="heading-container" class="container pb-4">
+					<h1 class="display-5 fw-medium mb-0">transfer<small>.zip</small></h1>
+					<p>Free, Fast, Encrypted</p>
+				</div>
 
-			<div class="container py-2">
-				<form>
-					<fieldset id="file-form-fieldset">
-						<div class="row g-1">
-							<div class="col-md-10 col-12">
-								<input id="file-upload" class="form-control" type="file" aria-label="File upload">
+				<div class="container py-2">
+					<form>
+						<fieldset id="file-form-fieldset">
+							<div class="row g-1">
+								<div class="col-md-10 col-12">
+									<input id="file-upload" class="form-control" type="file" aria-label="File upload">
+								</div>
+								<div class="col-md-2">
+									<input disabled id="send-btn" class="btn btn-primary" type="submit"
+										value="Send"></button>
+								</div>
 							</div>
-							<div class="col-md-2">
-								<input disabled id="send-btn" class="btn btn-primary" type="submit"
-									value="Send"></button>
-							</div>
+						</fieldset>
+					</form>
+				</div>
+
+				<div id="progress-collapse" class="collapse">
+					<div id="progress-div" class="container">
+						<div class="container py-4">
+							<div id="qrcode"></div>
 						</div>
-					</fieldset>
-				</form>
-			</div>
-
-			<div id="progress-collapse" class="collapse">
-				<div id="progress-div" class="container">
-					<div class="container py-4">
-						<div id="qrcode"></div>
-					</div>
-					<p>Transfering file...</p>
-					<div class="progress">
-						<div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"
-							role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+						<p>Transfering file...</p>
+						<div class="progress">
+							<div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"
+								role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+						</div>
 					</div>
 				</div>
-			</div>
-		</main>
+			</main>
 
-		<div id="footer-container" class="container fs-6">
-			<footer>
-				<div class="row mt-4">
-					<p>Data sent with this service is encrypted and transfered directly between browsers. No file
-						data,
-						plaintext or encrypted, ever touches the server. <a
-							href="https://github.com/robinkarlberg/transfer.zip-web">View on GitHub</a>
-				</div>
-			</footer>
+			<div id="footer-container" class="container fs-6">
+				<footer>
+					<div class="row mt-4">
+						<p>Data sent with this service is encrypted and transfered directly between browsers. No file
+							data,
+							plaintext or encrypted, ever touches the server. Thus, one can send files of unlimited size.
+							<a href="https://github.com/robinkarlberg/transfer.zip-web">View
+								on GitHub</a>
+					</div>
+				</footer>
+			</div>
 		</div>
 	</div>
 
