@@ -429,6 +429,8 @@ const recvFile = async (recipientId, key, cbProgress) => {
 	}
 
 	if (window.location.hash) {
+		copy_link_btn.style.display = "none"	// Hide "copy link" button
+
 		const [key_b, recipientId] = window.location.hash.slice(1).split(",")
 		const k = key_b
 
