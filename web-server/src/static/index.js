@@ -381,6 +381,9 @@ const recvFile = async (recipientId, key, cbProgress) => {
 	const alert_modal_title = document.getElementById("alert-modal-title")
 	const alert_modal_desc = document.getElementById("alert-modal-desc")
 
+	const copy_link_btn = document.getElementById("copy-link-btn")
+	const bs_copy_link_popover = new bootstrap.Popover(copy_link_btn)
+
 	const setProgressBar = (val) => {
 		progress_bar.style.width = val + "%"
 	}
@@ -389,6 +392,19 @@ const recvFile = async (recipientId, key, cbProgress) => {
 		alert_modal_title.innerText = title
 		alert_modal_desc.innerText = description
 		bs_alert_modal.show()
+	}
+
+	let hideTimeoutId
+	const copyLink = link => {
+		console.log(link)
+		navigator.clipboard.writeText(link)
+		bs_copy_link_popover.show()
+		if(hideTimeoutId) {
+			clearTimeout(hideTimeoutId)
+		}
+		hideTimeoutId = setTimeout(() => {
+			bs_copy_link_popover.hide()
+		}, 2000)
 	}
 
 	window.onunhandledrejection = e => {
@@ -438,8 +454,12 @@ const recvFile = async (recipientId, key, cbProgress) => {
 			bs_progress_collapse.show()
 
 			sendFile(file_upload.files[0], link => {
-				console.log(link)
-				navigator.clipboard.writeText(link)
+				setTimeout(_ => copyLink(link), 500)
+
+				copy_link_btn.onclick = e => {
+					e.preventDefault()
+					copyLink(link)
+				}
 				new QRCode(qr_div, {
 					text: link,
 					width: 256 * 2,

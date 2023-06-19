@@ -108,7 +108,12 @@
 						<div class="container py-4">
 							<div id="qrcode"></div>
 						</div>
-						<p>Transfering file...</p>
+						<div class="d-flex flex-row align-self-start mb-3">
+							<p class="me-1 mb-0">Transfering file...</p>
+							<a id="copy-link-btn" href="#" role="button" data-bs-container="body"
+								data-bs-trigger="manual" data-bs-placement="right"
+								data-bs-content="Link copied to clipboard">Share by link</a>
+						</div>
 						<div class="progress">
 							<div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"
 								role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
