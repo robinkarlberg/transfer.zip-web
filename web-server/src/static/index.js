@@ -134,7 +134,7 @@ const rtcCall = async (sessionId, recipientId) => {
 
 	ws.addEventListener("message", async e => {
 		const data = JSON.parse(e.data)
-		console.log(data)
+
 		if (data.type == 12 && data.answer) {
 			console.log("Got answer:", data.answer)
 			const remoteDesc = data.answer;
@@ -143,6 +143,11 @@ const rtcCall = async (sessionId, recipientId) => {
 		else if (data.type == 13 && data.candidate) {
 			console.log("Got candidate:", data.candidate)
 			await peerConnection.addIceCandidate(data.candidate)
+		}
+		else {
+			if(!data.success) {
+				throw data.msg
+			}
 		}
 	})
 
@@ -215,7 +220,7 @@ const sendAndEncryptPacket = async (channel, packet, key) => {
 	channel.send(encryptedPacketAndIV)
 }
 
-const sendFile = async (file, cbLink, cbProgress) => {
+const sendFile = async (file, cbLink, cbConnected, cbProgress, cbFinished) => {
 	const sessionId = crypto.randomUUID()
 	const key = await window.crypto.subtle.generateKey(
 		{
@@ -233,10 +238,15 @@ const sendFile = async (file, cbLink, cbProgress) => {
 
 	const channel = await rtcRecv(sessionId)
 
+	cbConnected()
+
 	channel.addEventListener("message", async e => {
 		const data = JSON.parse(e.data)
 		if(data.type == "progress") {
 			cbProgress({ now: data.now, max: file.size })
+			if(data.now == file.size) {
+				cbFinished()
+			}
 		}
 		else if(data.type == "error") {
 			throw data.message
@@ -292,10 +302,12 @@ const sendFile = async (file, cbLink, cbProgress) => {
 	readSlice(0)
 }
 
-const recvFile = async (recipientId, key, cbProgress) => {
+const recvFile = async (recipientId, key, cbConnected, cbProgress, cbFinished) => {
 	let sessionId = crypto.randomUUID()
 
 	const channel = await rtcCall(sessionId, recipientId)
+
+	cbConnected()
 
 	let chunkMap = new Map()
 	let chunkIndex = -1
@@ -368,14 +380,16 @@ const recvFile = async (recipientId, key, cbProgress) => {
 
 			let fileReceived = bytesRecieved == fileInfo.size
 
-			if (fileReceived) {
-				console.log("File has been received!")
-			}
-
 			if(index % 50 == 49 || fileReceived) {
 				channel.send(JSON.stringify({ type: "progress", now: bytesRecieved }))
 			}
+
 			cbProgress({ now: bytesRecieved, max: fileInfo.size })
+
+			if (fileReceived) {
+				console.log("File has been received!")
+				cbFinished()
+			}
 		}
 	})
 }
@@ -397,8 +411,14 @@ const recvFile = async (recipientId, key, cbProgress) => {
 	const copy_link_btn = document.getElementById("copy-link-btn")
 	const bs_copy_link_popover = new bootstrap.Popover(copy_link_btn)
 
+	const status_text = document.getElementById("status-text")
+
 	const setProgressBar = (val) => {
 		progress_bar.style.width = val + "%"
+	}
+
+	const setProgressBarAnimation = (enabled) => {
+		progress_bar.classList.toggle("progress-bar-animated", enabled)
 	}
 	
 	const showAlert = (title, description) => {
@@ -420,16 +440,28 @@ const recvFile = async (recipientId, key, cbProgress) => {
 		}, 2000)
 	}
 
+	const hideCopyLinkBtn = () => {
+		copy_link_btn.style.display = "none"	// Hide "copy link" button
+	}
+
+	const setStatusText = status => {
+		status_text.innerText = status
+	}
+
 	window.onunhandledrejection = e => {
 		showAlert("Error", e.reason)
+		setProgressBarAnimation(false)
+		setStatusText("Error!")
 	}
 
 	window.onerror = e => {
 		showAlert("Error", e)
+		setProgressBarAnimation(false)
+		setStatusText("Error!")
 	}
 
 	if (window.location.hash) {
-		copy_link_btn.style.display = "none"	// Hide "copy link" button
+		hideCopyLinkBtn()
 
 		const [key_b, recipientId] = window.location.hash.slice(1).split(",")
 		const k = key_b
@@ -445,10 +477,16 @@ const recvFile = async (recipientId, key, cbProgress) => {
 		file_form_fieldset.setAttribute("disabled", true)
 		bs_progress_collapse.show()
 
-		recvFile(recipientId, key, progress => {
+		recvFile(recipientId, key, _ => {
+			setStatusText("Transferring file...")
+		}, progress => {
 			const { now, max } = progress
 			setProgressBar(now / max * 100)
+		}, _ => {
+			setProgressBarAnimation(false)
+			setStatusText("Done!")
 		}).catch(err => {
+			setProgressBarAnimation(false)
 			console.log(err.message)
 			showAlert("Send error", err)
 		})
@@ -480,12 +518,20 @@ const recvFile = async (recipientId, key, cbProgress) => {
 					width: 256 * 2,
 					height: 256 * 2
 				});
+			}, _ => {
+				setStatusText("Transferring file...")
+				hideCopyLinkBtn()
 			}, progress => {
 				const { now, max } = progress
 				setProgressBar(now / max * 100)
+			}, _ => {
+				setProgressBarAnimation(false)
+				setStatusText("Done!")
 			}).catch(err => {
 				console.error(err)
+				setProgressBarAnimation(false)
 				showAlert("Receive error", err)
+				setStatusText("Receive error!")
 			})
 		}
 	}
