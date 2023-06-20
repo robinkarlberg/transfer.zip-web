@@ -7,7 +7,7 @@ The easiest way to transfer a file is to scan the QR code containing the file li
 
 ## Known Problems
 
-Because of how peer-to-peer works, some network firewalls may not allow direct connections between devices. The only solution for this is to use a [TURN server](https://webrtc.org/getting-started/turn-server), effectively relaying all file data, although encrypted, through a third party server. That is however against the whole purpose of this service, which is to be as secure as possible.
+Because of how peer-to-peer works, some network firewalls may not allow direct connections between devices. A solution for this is to use a [TURN server](https://webrtc.org/getting-started/turn-server), effectively relaying all file data, although encrypted, through a third party server. That is however against the whole purpose of this service, which is to be as secure as possible.
 
 ## Local Development
 
