@@ -1,14 +1,18 @@
-# Transfer.zip
-Transfer files securely between browsers using WebRTC peer2peer.
+# transfer.zip
+[transfer.zip](https://transfer.zip/) is a web application that allows you to easily transfer files between two devices. At the moment, transfer.zip is the easiest and most secure way to share files on the web.  There is no signup, no wait and no bullshit, and the files can be as large as you want. 
 
-Data sent using this service is transfered directly between browsers using WebRTC. The 
-data is also encrypted using AES-GCM with a client-side 256 bit generated key. The file
-data and the key never touches the server.
+It uses [WebRTC](http://www.webrtc.org/) for peer-to-peer data transfer, meaning the files are streamed directly between peers and not stored anywhere in the process, not even on transfer.zip servers. In addition, the file data is end-to-end encrypted using [AES-GCM](https://en.wikipedia.org/wiki/Galois/Counter_Mode) with a client-side 256 bit generated key, meaning if someone could impersonate a peer or capture the traffic, they would not be able to decrypt the file without knowing the key. Because the file is streamed directly between peers, there are **no file size or bandwidth limitations**. To let peers initially discover each other, a signaling server is implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through.
 
-## signaling-server
-A simple signaling server implementation using WebSockets, to let peers initially discover each other.
+The easiest way to transfer a file is to scan the QR code containing the file link and encryption key. It is also possible to copy the link and share it to the receiving end over what medium you prefer the most. 
 
-## web-server
-Docker container for hosting the web part of the application.
+## Known Problems
 
-## stun-server (todo)
+Because of how peer-to-peer works, some network firewalls may not allow direct connections between devices. The only solution for this is to use a [TURN server](https://webrtc.org/getting-started/turn-server), effectively relaying all file data, although encrypted, through a third party server. That is however against the whole purpose of this service, which is to be as secure as possible.
+
+## Local Development
+
+The project uses docker containers for the different services.
+```
+docker-compose up
+```
+This will start the web server on `localhost:9001` and the signaling server server at `localhost:8001`.
