@@ -1,0 +1,39 @@
+#heading-container {
+    margin-top: 1rem;
+}
+
+@media (min-width: 576px) {
+    #heading-container {
+        margin-top: 5vw;
+    }
+}
+
+#qrcode>img,
+canvas {
+    border: 5mm solid white;
+    width: 100%;
+    max-width: 256px;
+}
+
+#page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#page>div {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+
+    max-width: 900px;
+}
+
+#page>div>main {
+    flex-grow: 1;
+    /* max-height: 900px; */
+}
+
+form {
+    max-width: 450px;
+}

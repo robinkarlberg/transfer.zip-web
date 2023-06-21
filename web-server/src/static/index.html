@@ -6,60 +6,20 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>transfer.zip | Send unlimited file size free</title>
+	<title>transfer.zip | peer-to-peer file transfer in the browser</title>
 
 	<meta name="description"
 		content="Free, fast and encrypted realtime file transfer between browsers using peer2peer. Send unlimited files with any size for free!">
 
-	<link href="lib/bootstrap.min.css" rel="stylesheet">
+	<link href="/lib/bootstrap.min.css" rel="stylesheet">
 
-	<script src="lib/ponyfill.min.js"></script>
-	<script src="lib/StreamSaver.min.js"></script>
+	<script src="/lib/ponyfill.min.js"></script>
+	<script src="/lib/StreamSaver.min.js"></script>
 
-	<script src="lib/qrcode.min.js"></script>
-	<script defer src="index.js"></script>
+	<script src="/lib/qrcode.min.js"></script>
+	<script defer src="/index.js"></script>
 
-	<style>
-		#heading-container {
-			margin-top: 1rem;
-		}
-
-		@media (min-width: 576px) {
-			#heading-container {
-				margin-top: 5vw;
-			}
-		}
-
-		#qrcode>img,
-		canvas {
-			border: 5mm solid white;
-			width: 100%;
-			max-width: 256px;
-		}
-
-		#page {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-		}
-
-		#page>div {
-			display: flex;
-			flex-direction: column;
-			height: 100vh;
-
-			max-width: 900px;
-		}
-
-		#page>div>main {
-			flex-grow: 1;
-			max-height: 900px;
-		}
-
-		form {
-			max-width: 450px;
-		}
-	</style>
+	<link rel="stylesheet" href="/index.css">
 </head>
 
 <body>
@@ -125,17 +85,21 @@
 			<div id="footer-container" class="container fs-6">
 				<footer>
 					<div class="row mt-4">
-						<p>Data sent with this service is end-to-end encrypted and transferred directly between browsers.
-							No file data, plaintext or encrypted, ever touches the server. There is no file size or
-							bandwidth limit.
-							<a href="https://github.com/robinkarlberg/transfer.zip-web">View on GitHub</a>
+						<p class="mb-2">Data sent with this service is end-to-end encrypted and transferred directly between browsers.
+							No file data, plaintext or encrypted, ever touches the server. </p>
+					</div>
+					<div class="d-flex flex-row justify-content-center mb-3">
+						<a class="mx-1" href="/">Home</a>
+						<a class="mx-1" href="/about">About</a>
+						<a class="mx-1" href="/privacy-policy">Privacy Policy</a>
+						<a class="mx-1" href="https://github.com/robinkarlberg/transfer.zip-web">View on GitHub</a>
 					</div>
 				</footer>
 			</div>
 		</div>
 	</div>
 
-	<script src="lib/bootstrap.bundle.min.js"></script>
+	<script src="/lib/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

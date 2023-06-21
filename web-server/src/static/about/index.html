@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>transfer.zip | peer-to-peer file transfer in the browser</title>
+
+	<meta name="description"
+		content="Free, fast and encrypted realtime file transfer between browsers using peer2peer. Send unlimited files with any size for free!">
+
+	<link href="/lib/bootstrap.min.css" rel="stylesheet">
+
+	<script src="/lib/ponyfill.min.js"></script>
+	<script src="/lib/StreamSaver.min.js"></script>
+
+	<script src="/lib/qrcode.min.js"></script>
+
+	<link rel="stylesheet" href="/index.css">
+</head>
+
+<body>
+	<div id="page">
+		<div>
+			<main>
+				<div id="heading-container" class="container pb-4">
+					<h1 class="display-5 fw-medium mb-0">About</h1>
+				</div>
+
+				<div class="container py-2">
+					<p>
+						<a href="https://transfer.zip">transfer.zip</a> is a web application that allows you to easily
+						transfer files between two devices. At the moment, transfer.zip is the easiest and most secure
+						way to share files on the web. There is no signup, no wait and no bullshit, and the files can be
+						as large as you want.
+					</p>
+					<p>
+						It uses <a href="http://www.webrtc.org/">WebRTC</a> for peer-to-peer data transfer, meaning the
+						files are streamed directly between peers and not stored anywhere in the process, not even on
+						transfer.zip servers. To let peers initially discover each other, a signaling server is
+						implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through. In
+						addition, the file data is end-to-end encrypted using <a
+							href="https://en.wikipedia.org/wiki/Galois/Counter_Mode">AES-GCM</a> with a client-side 256
+						bit generated key, meaning if someone could impersonate a peer or capture the traffic, they
+						would not be able to decrypt the file without knowing the key. Because the file is streamed
+						directly between peers, there are <b>no file size or bandwidth limitations</b>.
+					</p>
+					<p>
+						The easiest way to transfer a file is to scan the QR code containing the file link and
+						encryption key. It is also possible to copy the link and share it to the receiving end over what
+						medium you prefer the most.
+					</p>
+					<h2>Known Problems</h2>
+					<p>
+						Because of how peer-to-peer works, some network firewalls may not allow direct connections
+						between devices. A solution for this is to use a <a
+							href="https://webrtc.org/getting-started/turn-server">TURN server</a>, effectively relaying
+						all file data, although encrypted, through a third party server. That is however against the
+						whole purpose of this service, which is to be as secure as possible.
+					</p>
+				</div>
+			</main>
+			<div id="footer-container" class="container fs-6">
+				<footer>
+					<div class="d-flex flex-row justify-content-center mb-3">
+						<a class="mx-1" href="/">Home</a>
+						<a class="mx-1" href="/about">About</a>
+						<a class="mx-1" href="/privacy-policy">Privacy Policy</a>
+						<a class="mx-1" href="https://github.com/robinkarlberg/transfer.zip-web">View on GitHub</a>
+					</div>
+				</footer>
+			</div>
+		</div>
+	</div>
+
+	<script src="/lib/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
