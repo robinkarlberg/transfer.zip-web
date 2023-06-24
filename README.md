@@ -9,6 +9,8 @@ The easiest way to transfer a file is to scan the QR code containing the file li
 
 Because of how peer-to-peer works, some network firewalls may not allow direct connections between devices. A solution for this is to use a [TURN server](https://webrtc.org/getting-started/turn-server), effectively relaying all file data, although encrypted, through a third party server. That is however against the whole purpose of this service, which is to be as secure as possible.
 
+On some Safari browsers, the file download will not work because of bugs on Apple's part.
+
 ## Local Development
 
 The project uses docker containers for the different services.
