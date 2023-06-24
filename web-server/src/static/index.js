@@ -413,6 +413,8 @@ const recvFile = async (recipientId, key, cbConnected, cbProgress, cbFinished) =
 
 	const status_text = document.getElementById("status-text")
 
+	let isFileTransferDone = false
+
 	const setProgressBar = (val) => {
 		progress_bar.style.width = val + "%"
 	}
@@ -449,12 +451,20 @@ const recvFile = async (recipientId, key, cbConnected, cbProgress, cbFinished) =
 	}
 
 	window.onunhandledrejection = e => {
+		if(isFileTransferDone) {
+			console.log("Got unhandledrejection, but transfer was already finished:", e)
+			return
+		}
 		showAlert("Error", e.reason)
 		setProgressBarAnimation(false)
 		setStatusText("Error!")
 	}
 
 	window.onerror = e => {
+		if(isFileTransferDone) {
+			console.log("Got error, but transfer was already finished:", e)
+			return
+		}
 		showAlert("Error", e)
 		setProgressBarAnimation(false)
 		setStatusText("Error!")
@@ -483,6 +493,7 @@ const recvFile = async (recipientId, key, cbConnected, cbProgress, cbFinished) =
 			const { now, max } = progress
 			setProgressBar(now / max * 100)
 		}, _ => {
+			isFileTransferDone = true
 			setProgressBarAnimation(false)
 			setStatusText("Done!")
 		}).catch(err => {
@@ -525,6 +536,7 @@ const recvFile = async (recipientId, key, cbConnected, cbProgress, cbFinished) =
 				const { now, max } = progress
 				setProgressBar(now / max * 100)
 			}, _ => {
+				isFileTransferDone = true
 				setProgressBarAnimation(false)
 				setStatusText("Done!")
 			}).catch(err => {
