@@ -82,9 +82,13 @@ const rtcRecv = async (sessionId) => {
 		throw "WebSocket error: could not connect to server"
 	})
 
-	peerConnection.addEventListener("iceconnectionstatechange", async e => {
+	let iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
 		console.log("RECV iceconnectionstatechange", e)
-		if(e.target.connectionState == "disconnected") {
+		if(e.target.connectionState == "connected") {
+			peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
+			return
+		}
+		else if(e.target.connectionState == "disconnected") {
 			throw "Remote peer disconnected"
 		}
 		else if(e.target.connectionState == "failed") {
@@ -155,7 +159,7 @@ const rtcCall = async (sessionId, recipientId) => {
 		throw "WebSocket error: could not connect to server"
 	})
 
-	iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
+	let iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
 		console.log("CALL iceconnectionstatechange", e)
 		if(e.target.connectionState == "connected") {
 			peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
