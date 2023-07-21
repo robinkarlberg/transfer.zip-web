@@ -155,9 +155,13 @@ const rtcCall = async (sessionId, recipientId) => {
 		throw "WebSocket error: could not connect to server"
 	})
 
-	peerConnection.addEventListener("iceconnectionstatechange", async e => {
+	iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
 		console.log("CALL iceconnectionstatechange", e)
-		if(e.target.connectionState == "disconnected") {
+		if(e.target.connectionState == "connected") {
+			peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
+			return
+		}
+		else if(e.target.connectionState == "disconnected") {
 			throw "Remote peer disconnected"
 		}
 		else if(e.target.connectionState == "failed") {
@@ -280,6 +284,13 @@ const sendFile = async (file, cbLink, cbConnected, cbProgress, cbFinished) => {
 	}
 	const readSlice = o => {
 		// console.log("readSlice", o)
+
+		if(channel.bufferedAmount > 1024 * 32) {
+			console.log("WAIT", channel.bufferedAmount)
+			return setTimeout(() => { readSlice(o) }, 1)
+		}
+		console.log("READ", channel.bufferedAmount)
+
 		const slice = file.slice(offset, o + FILE_CHUNK_SIZE);
 		fr.readAsArrayBuffer(slice);
 	};
@@ -414,6 +425,7 @@ const recvFile = async (recipientId, key, cbConnected, cbProgress, cbFinished) =
 	const status_text = document.getElementById("status-text")
 
 	let isFileTransferDone = false
+	let isFileTransferring = false
 
 	const setProgressBar = (val) => {
 		progress_bar.style.width = val + "%"
@@ -432,7 +444,13 @@ const recvFile = async (recipientId, key, cbConnected, cbProgress, cbFinished) =
 	let hideTimeoutId
 	const copyLink = link => {
 		console.log(link)
-		navigator.clipboard.writeText(link)
+		try {
+			navigator.clipboard.writeText(link)
+		}
+		catch(e) {
+			console.error("Could not copy link", e)
+			return
+		}
 		bs_copy_link_popover.show()
 		if(hideTimeoutId) {
 			clearTimeout(hideTimeoutId)
@@ -488,6 +506,7 @@ const recvFile = async (recipientId, key, cbConnected, cbProgress, cbFinished) =
 		bs_progress_collapse.show()
 
 		recvFile(recipientId, key, _ => {
+			isFileTransferring = true
 			setStatusText("Transferring file...")
 		}, progress => {
 			const { now, max } = progress
@@ -530,6 +549,7 @@ const recvFile = async (recipientId, key, cbConnected, cbProgress, cbFinished) =
 					height: 256 * 2
 				});
 			}, _ => {
+				isFileTransferring = true
 				setStatusText("Transferring file...")
 				hideCopyLinkBtn()
 			}, progress => {
