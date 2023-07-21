@@ -290,10 +290,10 @@ const sendFile = async (file, cbLink, cbConnected, cbProgress, cbFinished) => {
 		// console.log("readSlice", o)
 
 		if(channel.bufferedAmount > 5000000) {
-			console.log("WAIT", channel.bufferedAmount)
+			//console.log("WAIT", channel.bufferedAmount)
 			return setTimeout(() => { readSlice(o) }, 1)
 		}
-		console.log("READ", channel.bufferedAmount)
+		//console.log("READ", channel.bufferedAmount)
 
 		const slice = file.slice(offset, o + FILE_CHUNK_SIZE);
 		fr.readAsArrayBuffer(slice);
