@@ -13,8 +13,11 @@ On some Safari browsers, the file download will not work because of bugs on Appl
 
 ## Local Development
 
-The project uses docker containers for the different services.
+The project uses docker containers for the different services. 
+
+> **Note**
+> This project is tested with Docker Compose V2. Docker Compose V1 can fail to build.
 ```
-docker-compose up
+docker compose up
 ```
-This will start the web server on `localhost:9001` and the signaling server server at `localhost:8001`.
+This will start the web server on `localhost:9001`. The signaling server will be proxied through the web-server on the `/ws` endpoint.
