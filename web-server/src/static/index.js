@@ -24,14 +24,7 @@ const RTC_CONF = {
 	]
 }
 
-const WS_URLS = {
-	"local": "ws://localhost:8001",
-	"gitpod": "wss://" + window.location.hostname.replace("9001", "8001"),
-	"prod": "wss://" + window.location.hostname + "/ws"
-}
-const ENVIRONMENT = window.location.hostname == "localhost" ? "local" : (window.location.hostname.indexOf("gitpod.io") != -1 ? "gitpod" : "prod")
-
-const WS_URL = WS_URLS[ENVIRONMENT]
+const WS_URL = (window.location.protocol.includes("s") ? "wss://" : "ws://") + window.location.host + "/ws"
 
 const FILE_CHUNK_SIZE = 16384
 const FILE_STREAM_SIZE = 32
