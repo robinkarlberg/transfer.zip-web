@@ -2,7 +2,7 @@ services:
   web-server:
     build: web-server
     ports:
-      - 127.0.0.1:1337:80
+      - 127.0.0.1:9001:80
 
   signaling-server:
     build: signaling-server
