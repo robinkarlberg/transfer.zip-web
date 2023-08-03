@@ -13,11 +13,11 @@ On some Safari browsers, the file download will not work because of bugs on Appl
 
 ## Local Development
 
+> **Note**
+> This project is tested with Docker Compose V2. Docker Compose V1 will most likely fail to build.
+
 To build and run transfer.zip locally, use docker compose.
 ```
 docker compose up
 ```
-
 This will start the web server on `localhost:9001`. The signaling server will be proxied through the web-server on the `/ws` endpoint.
-> **Note**
-> This project is tested with Docker Compose V2. Docker Compose V1 will most likely fail to build.
