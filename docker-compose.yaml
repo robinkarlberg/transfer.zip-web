@@ -3,6 +3,8 @@ services:
     build: web-server
     ports:
       - 127.0.0.1:9001:80
+    restart: unless-stopped
 
   signaling-server:
     build: signaling-server
+    restart: unless-stopped
