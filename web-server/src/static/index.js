@@ -568,6 +568,10 @@ const recvFile = async (recipientId, key, cbConnected, cbProgress, cbFinished) =
 	})
 }
 
+window.onhashchange = () => {
+	window.location.reload()
+}
+
 (async () => {
 	const file_form_fieldset = document.getElementById("file-form-fieldset")
 	const file_upload = document.getElementById("file-upload")
@@ -730,10 +734,16 @@ const recvFile = async (recipientId, key, cbConnected, cbProgress, cbFinished) =
 
 	if (window.location.hash) {
 		hideCopyLinkBtn()
+		receive_file_btn.toggleAttribute("disabled", true)
 
 		let file = undefined
 
-		const [key_b, recipientId, directionChar] = window.location.hash.slice(1).split(",")
+		const hashList = window.location.hash.slice(1).split(",")
+		if(hashList.length != 3) {
+			throw "The URL parameters are malformed. Did you copy the URL correctly?"
+		}
+
+		const [key_b, recipientId, directionChar] = hashList
 		const k = key_b
 
 		const key = await crypto.subtle.importKey("jwk", {
@@ -751,8 +761,8 @@ const recvFile = async (recipientId, key, cbConnected, cbProgress, cbFinished) =
 				sendingFile = true
 				e.preventDefault()
 				file_form_fieldset.toggleAttribute("disabled", true)
-				receive_file_btn.toggleAttribute("disabled", true)
-				hideCopyLinkBtn()
+				// receive_file_btn.toggleAttribute("disabled", true)
+				
 				bs_progress_collapse.show()
 
 				const channel = await rtcRecv(sessionId)
