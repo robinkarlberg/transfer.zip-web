@@ -221,6 +221,172 @@ const sendAndEncryptPacket = async (channel, packet, key) => {
 	channel.send(encryptedPacketAndIV)
 }
 
+const setupRTCChannel = async (sessionId, recipientId = undefined) => {
+	if(recipientId) {
+		return await rtcCall(sessionId, recipientId)
+	}
+	else {
+		return await rtcRecv(sessionId)
+	}
+}
+
+const sendFile_new = async (file, key, channel, cbProgress, cbFinished) => {
+	channel.addEventListener("message", async e => {
+		const data = JSON.parse(e.data)
+		if(data.type == "progress") {
+			cbProgress({ now: data.now, max: file.size })
+			if(data.now == file.size) {
+				cbFinished()
+			}
+		}
+		else if(data.type == "error") {
+			throw data.message
+		}
+	})
+
+	let offset = 0
+	let fr = new FileReader()
+	fr.onload = async e => {
+		const __data = fr.result
+
+		const packet = new Uint8Array(1 + 8 + __data.byteLength)
+		const packetDataView = new DataView(packet.buffer)
+		packetDataView.setInt8(0, PACKET_ID.fileData)
+		packetDataView.setBigUint64(1, BigInt(offset))
+		packet.set(new Uint8Array(__data), 1 + 8)
+
+		await sendAndEncryptPacket(channel, packet, key)
+		offset += __data.byteLength;
+		// cbProgress({ now: offset, max: file.size })
+		// console.log(offset + "/" + file.size)
+		if (offset < file.size) {
+			readSlice(offset);
+		}
+	}
+	fr.onerror = e => {
+		console.error("File reader error", e)
+	}
+	fr.onabort = e => {
+		console.log("File reader abort", e)
+	}
+	const readSlice = o => {
+		// console.log("readSlice", o)
+
+		if(channel.bufferedAmount > 5000000) {
+			//console.log("WAIT", channel.bufferedAmount)
+			return setTimeout(() => { readSlice(o) }, 1)
+		}
+		//console.log("READ", channel.bufferedAmount)
+
+		const slice = file.slice(offset, o + FILE_CHUNK_SIZE);
+		fr.readAsArrayBuffer(slice);
+	};
+	const fileInfo = {
+		name: file.name,
+		size: file.size,
+		type: file.type
+	}
+	const fileInfoStr = JSON.stringify(fileInfo)
+	const textEnc = new TextEncoder()
+	const fileInfoBytes = textEnc.encode(fileInfoStr)
+	console.log("Sending file info:", fileInfoStr, fileInfoBytes)
+
+	const packet = new Uint8Array(1 + fileInfoBytes.byteLength)
+	const packetDataView = new DataView(packet.buffer)
+	packetDataView.setInt8(0, PACKET_ID.fileInfo)
+	packet.set(fileInfoBytes, 1)
+
+	await sendAndEncryptPacket(channel, packet, key)
+	readSlice(0)
+}
+
+const recvFile_new = async (key, channel, cbProgress, cbFinished) => {
+	let chunkMap = new Map()
+	let chunkIndex = -1
+	let writer = undefined
+	let bytesRecieved = 0
+	let fileInfo = undefined
+
+	const handleChunkMap = () => {
+		if (!writer) {
+			console.error("writer undefined")
+			return
+		}
+		if (writer.desiredSize == null) {
+			console.error("user canceled download")
+			channel.close()
+			return
+		}
+		if (!fileInfo) {
+			console.error("fileInfo undefined")
+			return
+		}
+		while (true) {
+			const data = chunkMap.get(chunkIndex + 1)
+			if (!data) break
+			chunkMap.delete(chunkIndex + 1)
+			chunkIndex++
+			writer.write(data)
+		}
+		if (bytesRecieved == fileInfo.size) {
+			console.log("Close writer")
+			writer.close()
+		}
+	}
+	channel.addEventListener("message", async e => {
+		const __data = e.data
+		const iv = new Uint8Array(__data.slice(0, 12))
+		const encryptedPacket = __data.slice(12)
+
+		const packet = new Uint8Array(await crypto.subtle.decrypt({
+			"name": "AES-GCM", "iv": iv
+		}, key, encryptedPacket));
+
+		const packetDataView = new DataView(packet.buffer)
+		const packetId = packetDataView.getInt8(0)
+
+		if (packetId == PACKET_ID.fileInfo) {
+			const data = packet.slice(1)
+
+			const textDec = new TextDecoder()
+			const fileInfoStr = textDec.decode(data)
+			const _fileInfo = JSON.parse(fileInfoStr)
+			fileInfo = _fileInfo
+			console.log("Got file info:", fileInfo)
+
+			const fileStream = streamSaver.createWriteStream(fileInfo.name, {
+				size: fileInfo.size
+			})
+			writer = fileStream.getWriter()
+			handleChunkMap()	// if packet is received after all file data for some reason
+		}
+		else if (packetId == PACKET_ID.fileData) {
+			const offset = Number(packetDataView.getBigUint64(1))
+			const data = packet.slice(1 + 8)
+
+			const index = offset / FILE_CHUNK_SIZE
+			chunkMap.set(index, data)
+
+			bytesRecieved += data.byteLength
+			handleChunkMap()
+
+			let fileReceived = bytesRecieved == fileInfo.size
+
+			// TODO: This could be improved by taking into account the file size
+			if(index % 50 == 49 || fileReceived) {
+				channel.send(JSON.stringify({ type: "progress", now: bytesRecieved }))
+			}
+
+			cbProgress({ now: bytesRecieved, max: fileInfo.size })
+
+			if (fileReceived) {
+				console.log("File has been received!")
+				cbFinished()
+			}
+		}
+	})
+}
+
 const sendFile = async (file, cbLink, cbConnected, cbProgress, cbFinished) => {
 	const sessionId = crypto.randomUUID()
 	const key = await window.crypto.subtle.generateKey(
@@ -406,6 +572,7 @@ const recvFile = async (recipientId, key, cbConnected, cbProgress, cbFinished) =
 	const file_form_fieldset = document.getElementById("file-form-fieldset")
 	const file_upload = document.getElementById("file-upload")
 	const send_file_btn = document.getElementById("send-btn")
+	const receive_file_btn = document.getElementById("receive-btn")
 
 	const progress_collapse = document.getElementById("progress-collapse")
 	const bs_progress_collapse = new bootstrap.Collapse(progress_collapse, { toggle: false })
@@ -485,26 +652,61 @@ const recvFile = async (recipientId, key, cbConnected, cbProgress, cbFinished) =
 		setStatusText("Error!")
 	}
 
-	if (window.location.hash) {
-		hideCopyLinkBtn()
+	const generateConnectionInfo = async (action) => {
+		let sessionId = crypto.randomUUID()
 
-		const [key_b, recipientId] = window.location.hash.slice(1).split(",")
-		const k = key_b
+		const key = await window.crypto.subtle.generateKey(
+			{
+				name: "AES-GCM",
+				length: 256,
+			},
+			true,
+			["encrypt", "decrypt"]
+		);
 
-		const key = await crypto.subtle.importKey("jwk", {
-			alg: "A256GCM",
-			ext: true,
-			k,
-			kty: "oct",
-			key_ops: ["encrypt", "decrypt"]
-		}, { name: "AES-GCM" }, false, ["encrypt", "decrypt"])
+		const directionChar = { "send": "S", "recv": "R" }[action]
 
-		file_form_fieldset.setAttribute("disabled", true)
-		bs_progress_collapse.show()
+		const jwk = await crypto.subtle.exportKey("jwk", key)
+		const hash = "#" + jwk.k + "," + sessionId + "," + directionChar
+		const link = window.location.origin + window.location.pathname + hash
+		
+		return { sessionId, key, link }
+	}
 
-		recvFile(recipientId, key, _ => {
-			isFileTransferring = true
-			setStatusText("Transferring file...")
+	const displayAndCopyLink = (link) => {
+		// Link created (cbLink)
+		setTimeout(_ => copyLink(link), 500)
+
+		copy_link_btn.onclick = e => {
+			e.preventDefault()
+			copyLink(link)
+		}
+		
+		new QRCode(qr_div, {
+			text: link,
+			width: 256 * 2,
+			height: 256 * 2
+		});
+	}
+
+	const handleSendFile = async (file, key, channel) => {
+		sendFile_new(file, key, channel, progress => {
+			const { now, max } = progress
+			setProgressBar(now / max * 100)
+		}, _ => {
+			isFileTransferDone = true
+			setProgressBarAnimation(false)
+			setStatusText("Done!")
+		}).catch(err => {
+			console.error(err)
+			setProgressBarAnimation(false)
+			showAlert("Receive error", err)
+			setStatusText("Receive error!")
+		})
+	}
+
+	const handleRecvFile = async (key, channel) => {
+		recvFile_new(key, channel, _ => {
 		}, progress => {
 			const { now, max } = progress
 			setProgressBar(now / max * 100)
@@ -518,50 +720,102 @@ const recvFile = async (recipientId, key, cbConnected, cbProgress, cbFinished) =
 			showAlert("Send error", err)
 		})
 	}
-	else {
-		let sendingFile = false
 
-		file_upload.onchange = e => {
-			if (sendingFile) return
-			send_file_btn.toggleAttribute("disabled", file_upload.files.length < 1)
+	let sendingFile = false
+
+	file_upload.onchange = e => {
+		if (sendingFile) return
+		send_file_btn.toggleAttribute("disabled", file_upload.files.length < 1)
+	}
+
+	if (window.location.hash) {
+		hideCopyLinkBtn()
+
+		let file = undefined
+
+		const [key_b, recipientId, directionChar] = window.location.hash.slice(1).split(",")
+		const k = key_b
+
+		const key = await crypto.subtle.importKey("jwk", {
+			alg: "A256GCM",
+			ext: true,
+			k,
+			kty: "oct",
+			key_ops: ["encrypt", "decrypt"]
+		}, { name: "AES-GCM" }, false, ["encrypt", "decrypt"])
+
+		let sessionId = crypto.randomUUID()
+
+		if(directionChar == "S") {
+			send_file_btn.onclick = async e => {
+				sendingFile = true
+				e.preventDefault()
+				file_form_fieldset.toggleAttribute("disabled", true)
+				receive_file_btn.toggleAttribute("disabled", true)
+				hideCopyLinkBtn()
+				bs_progress_collapse.show()
+
+				const channel = await rtcRecv(sessionId)
+
+				// Connection established (cbConnected)
+				isFileTransferring = true
+				setStatusText("Transferring file...")
+
+				await handleSendFile(file_upload.files[0], key, channel)
+			}
 		}
+		else {
+			file_form_fieldset.setAttribute("disabled", true)
+			bs_progress_collapse.show()
 
-		send_file_btn.onclick = e => {
+			const channel = await rtcCall(sessionId, recipientId)
+
+			// Connection established (cbConnected)
+			isFileTransferring = true
+			setStatusText("Transferring file...")
+
+			await handleRecvFile(key, channel)
+		}
+	}
+	else {
+
+		send_file_btn.onclick = async e => {
 			sendingFile = true
 			e.preventDefault()
 			file_form_fieldset.toggleAttribute("disabled", true)
-
+			receive_file_btn.toggleAttribute("disabled", true)
 			bs_progress_collapse.show()
 
-			sendFile(file_upload.files[0], link => {
-				setTimeout(_ => copyLink(link), 500)
+			const connectionInfo = await generateConnectionInfo("recv")
+			displayAndCopyLink(connectionInfo.link)
 
-				copy_link_btn.onclick = e => {
-					e.preventDefault()
-					copyLink(link)
-				}
-				new QRCode(qr_div, {
-					text: link,
-					width: 256 * 2,
-					height: 256 * 2
-				});
-			}, _ => {
-				isFileTransferring = true
-				setStatusText("Transferring file...")
-				hideCopyLinkBtn()
-			}, progress => {
-				const { now, max } = progress
-				setProgressBar(now / max * 100)
-			}, _ => {
-				isFileTransferDone = true
-				setProgressBarAnimation(false)
-				setStatusText("Done!")
-			}).catch(err => {
-				console.error(err)
-				setProgressBarAnimation(false)
-				showAlert("Receive error", err)
-				setStatusText("Receive error!")
-			})
+			const channel = await rtcRecv(connectionInfo.sessionId)
+
+			// Connection established (cbConnected)
+			isFileTransferring = true
+			setStatusText("Transferring file...")
+			hideCopyLinkBtn()
+
+			await handleSendFile(file_upload.files[0], connectionInfo.key, channel)
+		}
+
+		receive_file_btn.onclick = async e => {
+			e.preventDefault()
+			file_form_fieldset.toggleAttribute("disabled", true)
+			receive_file_btn.toggleAttribute("disabled", true)
+			bs_progress_collapse.show()
+
+			const connectionInfo = await generateConnectionInfo("send")
+			displayAndCopyLink(connectionInfo.link)
+
+			const channel = await rtcRecv(connectionInfo.sessionId)
+
+			// Connection established (cbConnected)
+			isFileTransferring = true
+			setStatusText("Transferring file...")
+			hideCopyLinkBtn()
+
+			await handleRecvFile(connectionInfo.key, channel)
 		}
 	}
 })()
