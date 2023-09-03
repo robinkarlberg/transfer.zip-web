@@ -103,6 +103,7 @@ const rtcRecv = async (sessionId) => {
 		peerConnection.addEventListener("datachannel", e => {
 			const channel = e.channel
 			console.log("Got datachannel!", channel)
+			channel.binaryType = "arraybuffer"
 			resolve(channel)
 		})
 	})
@@ -219,15 +220,6 @@ const sendAndEncryptPacket = async (channel, packet, key) => {
 	// console.log(encryptedPacketAndIV)
 	// console.log(encryptedPacket)
 	channel.send(encryptedPacketAndIV)
-}
-
-const setupRTCChannel = async (sessionId, recipientId = undefined) => {
-	if(recipientId) {
-		return await rtcCall(sessionId, recipientId)
-	}
-	else {
-		return await rtcRecv(sessionId)
-	}
 }
 
 const sendFile_new = async (file, key, channel, cbProgress, cbFinished) => {
@@ -710,8 +702,7 @@ window.onhashchange = () => {
 	}
 
 	const handleRecvFile = async (key, channel) => {
-		recvFile_new(key, channel, _ => {
-		}, progress => {
+		recvFile_new(key, channel, progress => {
 			const { now, max } = progress
 			setProgressBar(now / max * 100)
 		}, _ => {
@@ -765,7 +756,7 @@ window.onhashchange = () => {
 				
 				bs_progress_collapse.show()
 
-				const channel = await rtcRecv(sessionId)
+				const channel = await rtcCall(sessionId, recipientId)
 
 				// Connection established (cbConnected)
 				isFileTransferring = true
