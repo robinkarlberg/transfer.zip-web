@@ -70,12 +70,28 @@ function createStream (port) {
   })
 }
 
-self.onfetch = event => {
+self.onfetch = async event => {
   const url = event.request.url
 
   // this only works for Firefox
   if (url.endsWith('/ping')) {
     return event.respondWith(new Response('pong'))
+  }
+
+  // PWA handler for collecting file data when sharing files through phone's built-in sharing menu
+  if(url.endsWith("/share-file-collector")) {
+    const formData = event.request.formData()
+    const file = formData.get("file")
+
+    const cache = await caches.open("file-cache")
+    cache.put("file", new Response(file, {
+      headers: {
+        "content-length": file.size,
+        "content-type": file.type
+      }
+    }))
+
+    return event.respondWith(Response.redirect("/?pwa:s", ))
   }
 
   const hijacke = map.get(url)

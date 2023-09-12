@@ -1,0 +1,31 @@
+{
+    "short_name": "Transfer",
+    "name": "transfer.zip | Send files in realtime",
+    "icons": [
+        {
+            "src": "/images/icon.svg",
+            "type": "image/svg+xml",
+            "sizes": "512x512"
+        }
+    ],
+    "id": "/?pwa",
+    "start_url": "/?pwa",
+    "background_color": "#212529",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#0d6efd",
+    "description": "Install transfer.zip on your phone, enabling shortcuts to easily send files using the \"share\" menu on your phone.",
+    "share_target": {
+        "action": "/share-file-collector",
+        "method": "POST",
+        "enctype": "multipart/form-data",
+        "params": {
+            "files": [
+                {
+                    "name": "file",
+                    "accept": "*"
+                }
+            ]
+        }
+    }
+}

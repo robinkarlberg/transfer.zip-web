@@ -723,6 +723,8 @@ window.onhashchange = () => {
 		send_file_btn.toggleAttribute("disabled", file_upload.files.length < 1)
 	}
 
+	let isPWA = window.location.search.startsWith("?pwa")
+
 	if (window.location.hash) {
 		hideCopyLinkBtn()
 		receive_file_btn.toggleAttribute("disabled", true)
@@ -779,15 +781,12 @@ window.onhashchange = () => {
 		}
 	}
 	else {
-
-		send_file_btn.onclick = async e => {
-			sendingFile = true
-			e.preventDefault()
+		const genConnectionInfoAndChannelAndUpdateUI = async (e, direction) => {
 			file_form_fieldset.toggleAttribute("disabled", true)
 			receive_file_btn.toggleAttribute("disabled", true)
 			bs_progress_collapse.show()
 
-			const connectionInfo = await generateConnectionInfo("recv")
+			const connectionInfo = await generateConnectionInfo(direction)
 			displayAndCopyLink(connectionInfo.link)
 
 			const channel = await rtcRecv(connectionInfo.sessionId)
@@ -797,26 +796,42 @@ window.onhashchange = () => {
 			setStatusText("Transferring file...")
 			hideCopyLinkBtn()
 
-			await handleSendFile(file_upload.files[0], connectionInfo.key, channel)
+			return {connectionInfo, channel}
 		}
 
-		receive_file_btn.onclick = async e => {
-			e.preventDefault()
-			file_form_fieldset.toggleAttribute("disabled", true)
-			receive_file_btn.toggleAttribute("disabled", true)
-			bs_progress_collapse.show()
+		if(window.location.search.startsWith("?pwa:s")) {
+			const cache = await caches.open("file-cache")
+			const response = await cache.match("file")
 
-			const connectionInfo = await generateConnectionInfo("send")
-			displayAndCopyLink(connectionInfo.link)
+			if(!response) {
+				throw "Something went wrong when trying to send a file that was shared from the phone."
+			}
 
-			const channel = await rtcRecv(connectionInfo.sessionId)
+			sendingFile = true
 
-			// Connection established (cbConnected)
-			isFileTransferring = true
-			setStatusText("Transferring file...")
-			hideCopyLinkBtn()
+			const {connectionInfo, channel} = genConnectionInfoAndChannelAndUpdateUI("recv")
 
-			await handleRecvFile(connectionInfo.key, channel)
+			console.log(response.headers)
+			const file = new File(response.blob(), )
+
+			await handleSendFile(file, connectionInfo.key, channel)
+		}
+		else {
+
+			send_file_btn.onclick = async e => {
+				sendingFile = true
+				e.preventDefault()
+				const {connectionInfo, channel} = genConnectionInfoAndChannelAndUpdateUI("recv")
+	
+				await handleSendFile(file_upload.files[0], connectionInfo.key, channel)
+			}
+	
+			receive_file_btn.onclick = async e => {
+				e.preventDefault()
+				const {connectionInfo, channel} = genConnectionInfoAndChannelAndUpdateUI("send")
+	
+				await handleRecvFile(connectionInfo.key, channel)
+			}
 		}
 	}
 })()
