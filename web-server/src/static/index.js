@@ -652,7 +652,7 @@ window.onhashchange = () => {
 		setStatusText("Error!")
 	}
 
-	const generateConnectionInfo = async (action) => {
+	const generateConnectionInfo = async (direction) => {
 		let sessionId = crypto.randomUUID()
 
 		const key = await window.crypto.subtle.generateKey(
@@ -664,7 +664,7 @@ window.onhashchange = () => {
 			["encrypt", "decrypt"]
 		);
 
-		const directionChar = { "send": "S", "recv": "R" }[action]
+		const directionChar = { "send": "S", "recv": "R" }[direction]
 
 		const jwk = await crypto.subtle.exportKey("jwk", key)
 		const hash = "#" + jwk.k + "," + sessionId + "," + directionChar
@@ -785,7 +785,7 @@ window.onhashchange = () => {
 		}
 	}
 	else {
-		const genConnectionInfoAndChannelAndUpdateUI = async (e, direction) => {
+		const genConnectionInfoAndChannelAndUpdateUI = async (direction) => {
 			file_form_fieldset.toggleAttribute("disabled", true)
 			receive_file_btn.toggleAttribute("disabled", true)
 			bs_progress_collapse.show()
@@ -813,7 +813,7 @@ window.onhashchange = () => {
 
 			sendingFile = true
 
-			const {connectionInfo, channel} = genConnectionInfoAndChannelAndUpdateUI("recv")
+			const {connectionInfo, channel} = await genConnectionInfoAndChannelAndUpdateUI("recv")
 
 			console.log(response.headers)
 			const file = new File(response.blob(), )
@@ -825,14 +825,14 @@ window.onhashchange = () => {
 			send_file_btn.onclick = async e => {
 				sendingFile = true
 				e.preventDefault()
-				const {connectionInfo, channel} = genConnectionInfoAndChannelAndUpdateUI("recv")
+				const {connectionInfo, channel} = await genConnectionInfoAndChannelAndUpdateUI("recv")
 	
 				await handleSendFile(file_upload.files[0], connectionInfo.key, channel)
 			}
 	
 			receive_file_btn.onclick = async e => {
 				e.preventDefault()
-				const {connectionInfo, channel} = genConnectionInfoAndChannelAndUpdateUI("send")
+				const {connectionInfo, channel} = await genConnectionInfoAndChannelAndUpdateUI("send")
 	
 				await handleRecvFile(connectionInfo.key, channel)
 			}
