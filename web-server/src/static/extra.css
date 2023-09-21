@@ -1,3 +1,7 @@
+.adsbygoogle {
+    background-color: var(--bs-dark);
+}
+
 @media screen and (min-width: 800px) {
     .mobile-banner-ad {
         display: none !important;
@@ -44,7 +48,6 @@
 
 @media screen and (min-width: 800px) {
     .outer-ad-right {
-        min-width: 150px;
         max-width: 200px;
     }
 }
@@ -58,14 +61,12 @@
 
 @media screen and (min-width: 1300px) {
     .outer-ad {
-        min-width: 150px;
         max-width: 200px;
     }
 }
 
 @media screen and (min-width: 1500px) {
     .outer-ad {
-        min-width: 200px;
         max-width: 300px;
     }
 }
