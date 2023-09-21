@@ -638,9 +638,13 @@ window.onhashchange = () => {
 		setStatusText("Error!")
 	}
 
-	window.onerror = e => {
+	window.onerror = (e, source, lineno, colno, err) => {
 		if(isFileTransferDone) {
 			console.log("Got error, but transfer was already finished:", e)
+			return
+		}
+		if(err.name == "TagError") {
+			console.log("Ignored TagError", e)
 			return
 		}
 		showAlert("Error", e)

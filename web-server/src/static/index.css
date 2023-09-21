@@ -1,18 +1,5 @@
-#heading-container {
-    margin-top: 1rem;
-}
-
-@media (min-width: 576px) {
-    #heading-container {
-        margin-top: 5vw;
-    }
-}
-
-#qrcode>img,
-canvas {
-    border: 5mm solid white;
-    width: 100%;
-    max-width: 256px;
+body {
+    overflow-x: hidden;
 }
 
 #page {
@@ -32,6 +19,23 @@ canvas {
 #page>div>main {
     flex-grow: 1;
     /* max-height: 900px; */
+}
+
+#heading-container {
+    margin-top: 1rem;
+}
+
+@media (min-width: 576px) {
+    #heading-container {
+        margin-top: 5vw;
+    }
+}
+
+#qrcode>img,
+canvas {
+    border: 5mm solid white;
+    width: 100%;
+    max-width: 256px;
 }
 
 form {
