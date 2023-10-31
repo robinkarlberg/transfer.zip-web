@@ -20,6 +20,9 @@
 	<script defer src="/index.js"></script>
 
 	<link rel="stylesheet" href="/index.css">
+	<link rel="stylesheet" href="/extra.css">
+
+	<link rel="manifest" href="/manifest.json">
 </head>
 
 <body>
@@ -39,65 +42,85 @@
 			</div>
 		</div>
 	</div>
-	<div id="page">
-		<div>
-			<main>
-				<div id="heading-container" class="container pb-4">
-					<h1 class="display-5 fw-medium mb-0">transfer<small>.zip</small></h1>
-					<p>Free, Fast, Encrypted</p>
-				</div>
 
-				<div class="container py-2">
-					<form>
-						<fieldset id="file-form-fieldset">
-							<div class="row g-1">
-								<div class="col-md-10 col-12">
-									<input id="file-upload" class="form-control" type="file" aria-label="File upload">
+	{{ 1.html }}
+
+	<div id="page-outer">
+		<div class="outer">
+			{{ 2.html }}
+		</div>
+		<div id="page">
+			<div>
+				<main>
+					<div id="heading-container" class="container pb-4">
+						<h1 class="display-5 fw-medium mb-0">transfer<small>.zip</small></h1>
+						<p>Free, Fast, Encrypted</p>
+					</div>
+	
+					<div class="container py-2">
+						<form>
+							<fieldset id="file-form-fieldset">
+								<div class="d-flex flex-wrap">
+									<div class="col-md-10 col-12 mb-1 me-1">
+										<input id="file-upload" class="form-control" type="file" aria-label="File upload">
+									</div>
+									<div class="">
+										<input disabled id="send-btn" class="btn btn-primary" type="submit"
+											value="Send"></button>
+									</div>
+									<div class="my-auto px-2">
+										or
+									</div>
+									<div class="">
+										<input id="receive-btn" class="btn btn-primary" type="submit"
+											value="Receive"></button>
+									</div>
 								</div>
-								<div class="col-md-2">
-									<input disabled id="send-btn" class="btn btn-primary" type="submit"
-										value="Send"></button>
-								</div>
+								<!-- <div class="row g-1">
+								</div> -->
+							</fieldset>
+						</form>
+					</div>
+	
+					<div id="progress-collapse" class="collapse">
+						<div id="progress-div" class="container">
+							<div class="container py-4">
+								<div id="qrcode"></div>
 							</div>
-						</fieldset>
-					</form>
+							<div class="d-flex flex-row align-self-start mb-3">
+								<p id="status-text" class="me-1 mb-0">Waiting for peer...</p>
+								<a id="copy-link-btn" href="#" role="button" data-bs-container="body"
+									data-bs-trigger="manual" data-bs-placement="right"
+									data-bs-content="Link copied to clipboard">Share by link</a>
+							</div>
+							<div class="progress">
+								<div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"
+									role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
+							</div>
+						</div>
+					</div>
+				</main>
+	
+				<div id="footer-container" class="container fs-6">
+					<footer>
+						<div class="row mt-4">
+							<p class="mb-2">
+								Data sent with this service is end-to-end encrypted and transferred in realtime between
+								browsers. No file data, plaintext or encrypted, ever touches the server.
+							</p>
+						</div>
+						<div class="d-flex flex-row justify-content-center mb-3">
+							<a class="mx-1" href="/">Home</a>
+							<a class="mx-1" href="/about">About</a>
+							<a class="mx-1" href="/privacy-policy">Privacy Policy</a>
+							<a class="mx-1" href="https://github.com/robinkarlberg/transfer.zip-web">View on GitHub</a>
+						</div>
+					</footer>
 				</div>
-
-				<div id="progress-collapse" class="collapse">
-					<div id="progress-div" class="container">
-						<div class="container py-4">
-							<div id="qrcode"></div>
-						</div>
-						<div class="d-flex flex-row align-self-start mb-3">
-							<p id="status-text" class="me-1 mb-0">Waiting for peer...</p>
-							<a id="copy-link-btn" href="#" role="button" data-bs-container="body"
-								data-bs-trigger="manual" data-bs-placement="right"
-								data-bs-content="Link copied to clipboard">Share by link</a>
-						</div>
-						<div class="progress">
-							<div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"
-								role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
-						</div>
-					</div>
-				</div>
-			</main>
-
-			<div id="footer-container" class="container fs-6">
-				<footer>
-					<div class="row mt-4">
-						<p class="mb-2">
-							Data sent with this service is end-to-end encrypted and transferred in realtime between
-							browsers. No file data, plaintext or encrypted, ever touches the server.
-						</p>
-					</div>
-					<div class="d-flex flex-row justify-content-center mb-3">
-						<a class="mx-1" href="/">Home</a>
-						<a class="mx-1" href="/about">About</a>
-						<a class="mx-1" href="/privacy-policy">Privacy Policy</a>
-						<a class="mx-1" href="https://github.com/robinkarlberg/transfer.zip-web">View on GitHub</a>
-					</div>
-				</footer>
 			</div>
+		</div>
+		<div class="outer">
+			{{ 3.html }}
 		</div>
 	</div>
 
