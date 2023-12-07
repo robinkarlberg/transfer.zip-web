@@ -22,6 +22,10 @@ wss.on("connection", conn => {
     conn.on("close", () => {
         if (conn._session?.id) {
             sessions.delete(conn._session.id);
+            console.log("Connection closed, deleted session ", conn._session.id)
+        }
+        else {
+            console.log("Connection closed, but no session id was found to delete")
         }
     });
 });
@@ -46,11 +50,13 @@ function handleMessage(conn, message) {
     if (data.type == 0) { // login
         conn._session = {};
 
+        console.log("Login requested with session ", data.id)
         if (!data.id) return conn.close();
         if (data.id.length != 36) return conn.close();
         if (sessions.has(data.id)) return conn.close();
 
         sessions.set(data.id, conn);
+        console.log("Session added ", data.id)
         conn._session.id = data.id;
 
         return conn.send(JSON.stringify({ success: true, type: data.type }));
@@ -59,7 +65,7 @@ function handleMessage(conn, message) {
     if (!conn._session) return conn.close(); // client has to send type 0 first >:(
 
     if (data.type == 1) { // offer
-        //console.log("offer", conn._session.id + " -> " + data.recipientId, data);
+        console.log("offer", conn._session.id + " -> " + data.recipientId, data);
         if (!data.offer) return conn.close();
 
         let recipientConn;
@@ -80,7 +86,7 @@ function handleMessage(conn, message) {
             }));
         }
     } else if (data.type == 2) { // answer
-        //console.log("answer", conn._session.id + " -> " + data.recipientId, data);
+        console.log("answer", conn._session.id + " -> " + data.recipientId, data);
         if (!data.answer) return conn.close();
 
         let recipientConn;
@@ -100,7 +106,7 @@ function handleMessage(conn, message) {
             }));
         }
     } else if (data.type == 3) { // candidate
-        //console.log("candidate", conn._session.id + " -> " + data.recipientId, data);
+        console.log("candidate", conn._session.id + " -> " + data.recipientId, data);
         if (!data.candidate) return conn.close();
 
         let recipientConn;
