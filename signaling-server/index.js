@@ -38,6 +38,8 @@ wss.on("error", e => {
  * @param {WebSocket} conn
  */
 function handleMessage(conn, message) {
+    if(message == ".") return   // Keepalive
+    
     let data;
     try {
         data = JSON.parse(message);
@@ -65,7 +67,7 @@ function handleMessage(conn, message) {
     if (!conn._session) return conn.close(); // client has to send type 0 first >:(
 
     if (data.type == 1) { // offer
-        console.log("offer", conn._session.id + " -> " + data.recipientId, data);
+        // console.log("offer", conn._session.id + " -> " + data.recipientId, data);
         if (!data.offer) return conn.close();
 
         let recipientConn;
@@ -86,7 +88,7 @@ function handleMessage(conn, message) {
             }));
         }
     } else if (data.type == 2) { // answer
-        console.log("answer", conn._session.id + " -> " + data.recipientId, data);
+        // console.log("answer", conn._session.id + " -> " + data.recipientId, data);
         if (!data.answer) return conn.close();
 
         let recipientConn;
@@ -106,7 +108,7 @@ function handleMessage(conn, message) {
             }));
         }
     } else if (data.type == 3) { // candidate
-        console.log("candidate", conn._session.id + " -> " + data.recipientId, data);
+        // console.log("candidate", conn._session.id + " -> " + data.recipientId, data);
         if (!data.candidate) return conn.close();
 
         let recipientConn;

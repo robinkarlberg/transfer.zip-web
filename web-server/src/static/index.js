@@ -49,6 +49,10 @@ const rtcRecv = async (sessionId) => {
 		}))
 	})
 
+	const keepAliveIntervalId = setInterval(() => {
+		ws.send(".")
+	}, 30000)
+
 	let recipientId;
 
 	ws.addEventListener("message", async e => {
@@ -72,7 +76,13 @@ const rtcRecv = async (sessionId) => {
 	})
 
 	ws.addEventListener("error", async e => {
+		clearInterval(keepAliveIntervalId)
 		throw "WebSocket error: could not connect to server"
+	})
+
+	ws.addEventListener("close", async e => {
+		clearInterval(keepAliveIntervalId)
+		throw "WebSocket error: websocket closed"
 	})
 
 	let iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
