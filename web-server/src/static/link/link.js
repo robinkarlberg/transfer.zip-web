@@ -17,7 +17,7 @@ const accept_request = async () => {
         // TODO: validate UUIDs
         // TODO: compute localId from remoteId or something
 
-        createContact(localId, remoteId, key)
+        createContact(remoteId, localId, remoteId, key)
         window.location.href = "/"
     }
 }

@@ -552,7 +552,9 @@ window.onhashchange = () => {
 
 		for(let contact of contactList) {
 			rtcRecv(contact.localSessionId).then(channel => {
-				
+				genConnectionInfoAndChannelAndUpdateUI("send").then(async ({ connectionInfo, channel }) => {
+					await handleRecvFile(connectionInfo.key, channel)
+				})
 			})
 		}
 
