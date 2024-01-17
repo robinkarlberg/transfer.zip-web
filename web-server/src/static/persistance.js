@@ -25,8 +25,8 @@ const saveContactList = () => {
     window.localStorage.setItem("contacts", JSON.stringify(contactList))
 }
 
-const createContact = (name, localSessionId, remoteSessionId, key) => {
-    contactList.push({ name, localSessionId, remoteSessionId, key })
+const createContact = (name, localSessionId, remoteSessionId, k) => {
+    contactList.push({ name, localSessionId, remoteSessionId, k })
     saveContactList()
 }
 

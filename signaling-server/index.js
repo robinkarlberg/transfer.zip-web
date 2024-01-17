@@ -22,7 +22,7 @@ wss.on("connection", conn => {
     conn.on("close", () => {
         if (conn._session?.ids) {
             for (let id of conn._session.ids) {
-                sessions.delete(conn._session.ids);
+                sessions.delete(id);
                 console.log("Connection closed, deleted session ", id)
             }
         }
@@ -35,6 +35,11 @@ wss.on("connection", conn => {
 wss.on("error", e => {
     console.err(e)
 })
+
+const closeConnWithReason = (conn, reason) => {
+    console.log("Closing conn: " + reason)
+    conn.close()
+}
 
 /**
  * @param {WebSocket} conn
@@ -54,9 +59,9 @@ function handleMessage(conn, message) {
     if (data.type == 0) { // login
 
         console.log("Login requested with session ", data.id)
-        if (!data.id) return conn.close();
-        if (typeof data.id !== "string" && data.id.length != 36) return conn.close();
-        if (sessions.has(data.id)) return conn.close();
+        if (!data.id) return closeConnWithReason(conn, "[login] Didn't specify id");
+        if (typeof data.id !== "string" && data.id.length != 36) return closeConnWithReason(conn, "[login] Invalid ID " + data.id);
+        if (sessions.has(data.id)) return closeConnWithReason(conn, "[login] Session ID already taken " + data.id)
 
         if (conn._session === undefined) {
             conn._session = {}
@@ -77,9 +82,9 @@ function handleMessage(conn, message) {
 
     if (data.type == 1) { // offer
         // console.log("offer", conn._session.id + " -> " + data.recipientId, data);
-        if (!data.offer) return conn.close();
-        if (!data.callerId) return conn.close();
-        if (!sessions.get(data.callerId)) return conn.close()
+        if (!data.offer) return closeConnWithReason(conn, "[offer] Didn't specify offer");
+        if (!data.callerId) return closeConnWithReason(conn, "[offer] Didn't specify callerId");
+        if (!sessions.get(data.callerId)) return closeConnWithReason(conn, "[offer] Specified callerId does not exist")
 
         let recipientConn;
         if ((recipientConn = sessions.get(data.recipientId))) {
@@ -100,7 +105,7 @@ function handleMessage(conn, message) {
         }
     } else if (data.type == 2) { // answer
         // console.log("answer", conn._session.id + " -> " + data.recipientId, data);
-        if (!data.answer) return conn.close();
+        if (!data.answer) return closeConnWithReason(conn, "[answer] Didn't specify answer");
 
         let recipientConn;
         if ((recipientConn = sessions.get(data.recipientId))) {
@@ -120,7 +125,7 @@ function handleMessage(conn, message) {
         }
     } else if (data.type == 3) { // candidate
         // console.log("candidate", conn._session.id + " -> " + data.recipientId, data);
-        if (!data.candidate) return conn.close();
+        if (!data.candidate) return closeConnWithReason(conn, "[candidate] Didn't specify candidate");
 
         let recipientConn;
         if ((recipientConn = sessions.get(data.recipientId))) {

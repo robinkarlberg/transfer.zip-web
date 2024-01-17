@@ -24,11 +24,14 @@ const RTC_CONF = {
 
 const WS_URL = (window.location.protocol.includes("s") ? "wss://" : "ws://") + window.location.host + "/ws"
 
-const rtcRecv = async (sessionId) => {
+const rtcRecv = async (sessionId, cbWebSocket = undefined) => {
 	console.log("rtcRecv")
 	const peerConnection = new RTCPeerConnection(RTC_CONF);
 
 	const ws = new WebSocket(WS_URL);
+
+	if(cbWebSocket) cbWebSocket(ws);	// For being able to close it from index.js
+
 	ws.addEventListener("open", e => {
 		console.log("Signalling open")
 
@@ -69,10 +72,10 @@ const rtcRecv = async (sessionId) => {
 		throw "WebSocket error: could not connect to server"
 	})
 
-	ws.addEventListener("close", async e => {
-		clearInterval(keepAliveIntervalId)
-		throw "WebSocket error: websocket closed"
-	})
+	// ws.addEventListener("close", async e => {
+	// 	clearInterval(keepAliveIntervalId)
+	// 	throw "WebSocket error: websocket closed"
+	// })
 
 	let iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
 		console.log("RECV iceconnectionstatechange", e)

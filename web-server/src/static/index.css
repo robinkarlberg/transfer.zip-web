@@ -31,7 +31,7 @@ body {
     }
 }
 
-#qrcode>img,
+.qrcode>img,
 canvas {
     border: 5mm solid white;
     width: 100%;

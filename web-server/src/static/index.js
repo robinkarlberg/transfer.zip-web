@@ -214,6 +214,7 @@ window.onhashchange = () => {
 	const add_contact_btn = document.getElementById("add-contact-btn")
 	const bs_add_contact_modal = new bootstrap.Modal(document.getElementById("add-contact-modal"))
 	const add_contact_qr_div = document.getElementById("add-contact-qrcode")
+	const add_contact_copy_link_btn = document.getElementById("add-contact-copy-link-btn")
 
 	const bs_alert_modal = new bootstrap.Modal(document.getElementById("alert-modal"), {})
 	const alert_modal_title = document.getElementById("alert-modal-title")
@@ -229,6 +230,11 @@ window.onhashchange = () => {
 	let isFileTransferDone = false
 	let isFileTransferring = false
 	let sendingFile = false
+
+	/**
+	 * For being able to close websockets before doing rtcCall with the same sessionId
+	 */
+	const activeRecvWebSockets = new Map()
 
 	const setProgressBar = (val) => {
 		progress_bar.style.width = val + "%"
@@ -316,7 +322,7 @@ window.onhashchange = () => {
 		return { sessionId, key, link }
 	}
 
-	const displayAndCopyLink = (link) => {
+	const copyLinkWithButton = (link, btn) => {
 		// Link created (cbLink)
 		setTimeout(_ => copyLink(link), 500)
 
@@ -324,6 +330,10 @@ window.onhashchange = () => {
 			e.preventDefault()
 			copyLink(link)
 		}
+	}
+
+	const displayAndCopyLink = (link) => {
+		copyLinkWithButton(link, copy_link_btn)
 		
 		new QRCode(qr_div, {
 			text: link,
@@ -362,13 +372,28 @@ window.onhashchange = () => {
 			showAlert("Send error", err)
 		})
 	}
-	
-	const genConnectionInfoAndChannelAndUpdateUI = async (direction) => {
+
+	const getJwkFromK = async (k) => {
+		const key = await crypto.subtle.importKey("jwk", {
+			alg: "A256GCM",
+			ext: true,
+			k,
+			kty: "oct",
+			key_ops: ["encrypt", "decrypt"]
+		}, { name: "AES-GCM" }, false, ["encrypt", "decrypt"])
+		return key
+	}
+
+	const updateUIForTransferringFile = () => {
 		file_form_fieldset.toggleAttribute("disabled", true)
 		receive_file_btn.toggleAttribute("disabled", true)
 		bs_progress_collapse.show()
 		bs_contacts_collapse.hide()
 		bs_upload_modal.hide()
+	}
+	
+	const genConnectionInfoAndChannelAndUpdateUI = async (direction) => {
+		updateUIForTransferringFile()
 
 		const connectionInfo = await generateConnectionInfo(direction)
 		displayAndCopyLink(connectionInfo.link)
@@ -410,28 +435,21 @@ window.onhashchange = () => {
 					sendingFile = true
 					bs_upload_modal.hide()
 
-					const key = await crypto.subtle.importKey("jwk", {
-						alg: "A256GCM",
-						ext: true,
-						k: contact.k,
-						kty: "oct",
-						key_ops: ["encrypt", "decrypt"]
-					}, { name: "AES-GCM" }, false, ["encrypt", "decrypt"])
-	
-					const connectionInfo = {
-						sessionId: contact.localSessionId,
-						key,
-						link: null
+					const key = getJwkFromK(contact.k)
+					
+					const activeRecvWebSocket = activeRecvWebSockets.get(contact.localSessionId)
+					if(activeRecvWebSocket) {
+						activeRecvWebSocket.close()
+						activeRecvWebSockets.delete(contact.localSessionId)
 					}
-	
-					const channel = await rtcRecv(connectionInfo.sessionId)
+					const channel = await rtcCall(contact.localSessionId, contact.remoteSessionId)
 	
 					// Connection established (cbConnected)
 					isFileTransferring = true
 					setStatusText("Transferring file...")
 					hideCopyLinkBtn()
 	
-					await handleSendFile(file_upload.files[0], connectionInfo.key, channel)
+					await handleSendFile(file_upload.files[0], key, channel)
 				}
 			}
 
@@ -472,6 +490,8 @@ window.onhashchange = () => {
 		const hash = "#" + jwk.k + "," + localSessionId + "," + remoteSessionId
 		const link = window.location.origin + "/link" + hash
 
+		copyLinkWithButton(link, add_contact_copy_link_btn)
+
 		if(add_contact_qr_code) {
 			add_contact_qr_code.clear()
 			add_contact_qr_code.makeCode(link)
@@ -483,7 +503,6 @@ window.onhashchange = () => {
 				height: 256 * 2
 			});
 		}
-
 		createContact(remoteSessionId, localSessionId, remoteSessionId, jwk.k)
 		populateContactListHTML()
 	}
@@ -551,10 +570,19 @@ window.onhashchange = () => {
 		// Didnt get sent a link, navigated to transfer.zip manually
 
 		for(let contact of contactList) {
-			rtcRecv(contact.localSessionId).then(channel => {
-				genConnectionInfoAndChannelAndUpdateUI("send").then(async ({ connectionInfo, channel }) => {
-					await handleRecvFile(connectionInfo.key, channel)
-				})
+			rtcRecv(contact.localSessionId, ws => {
+				activeRecvWebSockets.set(contact.localSessionId, ws)
+			}).then(async channel => {
+				updateUIForTransferringFile()
+
+				const key = getJwkFromK(contact.k)
+
+				// Connection established (cbConnected)
+				isFileTransferring = true
+				setStatusText("Transferring file...")
+				hideCopyLinkBtn()
+
+				await handleRecvFile(key, channel)
 			})
 		}
 
