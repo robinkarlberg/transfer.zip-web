@@ -6,10 +6,10 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<title>transfer.zip | Send 1TB+ files for free, in realtime</title>
+	<title>transfer.zip | Unlimited file sharing for free</title>
 
 	<meta name="description"
-		content="Free, fast and encrypted realtime file transfer between browsers using peer2peer. Send unlimited files with any size for free!">
+		content="Free, fast and encrypted file transfer between browsers using peer2peer. Send unlimited files with any size for free!">
 
 	<link href="/lib/bootstrap.min.css" rel="stylesheet">
 
@@ -17,6 +17,9 @@
 	<script src="/lib/StreamSaver.js"></script>
 
 	<script src="/lib/qrcode.min.js"></script>
+	
+	<script src="/persistance.js"></script>
+	<script src="/webrtc.js?v=1"></script>
 	<script defer src="/index.js?v=1"></script>
 
 	<link rel="stylesheet" href="/index.css?v=1">
@@ -43,6 +46,36 @@
 		</div>
 	</div>
 
+	<div id="upload-modal" class="modal fade" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 id="alert-modal-title" class="modal-title">Select file</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="container py-2">
+						<form>
+							<fieldset id="file-form-fieldset">
+								<div class="d-flex flex-wrap">
+									<div class="col-md-10 col-12 mb-1 me-1">
+										<input id="file-upload" class="form-control" type="file" aria-label="File upload">
+									</div>
+									<div class="">
+									</div>
+								</div>
+							</fieldset>
+						</form>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<input disabled id="send-btn" class="btn btn-primary" type="submit" value="Send">
+					<!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ok</button> -->
+				</div>
+			</div>
+		</div>
+	</div>
+
 	{{ 1.html }}
 
 	<div id="page-outer">
@@ -57,7 +90,7 @@
 						<p>Free, Fast, Encrypted</p>
 					</div>
 	
-					<div class="container py-2">
+					<!-- <div class="container py-2" style="display: none;">
 						<form>
 							<fieldset id="file-form-fieldset">
 								<div class="d-flex flex-wrap">
@@ -76,11 +109,26 @@
 											value="Receive">
 									</div>
 								</div>
-								<!-- <div class="row g-1">
-								</div> -->
 							</fieldset>
 						</form>
+					</div> -->
+	
+					<div id="contacts-collapse" class="collapse">
+						<div id="contacts-div" class="container">
+							<b>Send a file to:</b>
+							<div id="contacts-list" class="d-flex flex-column mt-2">
+								<div id="send-anyone-btn" class="contacts-list-entry"><img src="/img/globe2.svg"></img><span>Anyone</span></div>
+								<hr class="hr" style="margin: 0 auto; margin-top: 4px; margin-bottom: 8px; width: 33px;"/>
+								<!-- <div class="contacts-list-entry"><span>Mobilen</span></div> -->
+							</div>
+							<!-- + add a contact<br/> -->
+							... or <a id="receive-btn" href="#">receive a file</a> instead.
+						</div>
 					</div>
+					<!-- <div class="container"> -->
+						<!-- <input id="receive-btn" class="btn btn-primary" type="submit"
+							value="Receive a file instead"> -->
+					<!-- </div> -->
 	
 					<div id="progress-collapse" class="collapse">
 						<div id="progress-div" class="container">

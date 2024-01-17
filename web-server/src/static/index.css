@@ -41,3 +41,32 @@ canvas {
 form {
     max-width: 450px;
 }
+
+.contacts-list-entry {
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    padding: 8px;
+    background-color: #2b3035;
+    margin-bottom: 5px;
+    display: flex;
+    flex-direction: row;
+}
+
+.contacts-list-entry>img {
+    fill: white;
+    padding: 3px;
+    margin-right: 6px;
+}
+
+.contacts-list-entry:hover {
+    cursor: pointer;
+}
+
+.contacts-list-entry:active {
+    background-color: var(--bs-gray-dark);
+}
+
+.contacts-list-entry>span {
+    margin-bottom: 0px;
+    user-select: none;
+}

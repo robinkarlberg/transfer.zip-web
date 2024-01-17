@@ -20,12 +20,14 @@ wss.on("connection", conn => {
     });
 
     conn.on("close", () => {
-        if (conn._session?.id) {
-            sessions.delete(conn._session.id);
-            console.log("Connection closed, deleted session ", conn._session.id)
+        if (conn._session?.ids) {
+            for (let id of conn._session.ids) {
+                sessions.delete(conn._session.ids);
+                console.log("Connection closed, deleted session ", id)
+            }
         }
         else {
-            console.log("Connection closed, but no session id was found to delete")
+            console.log("Connection closed, but no session ids were found to delete")
         }
     });
 });
@@ -38,8 +40,8 @@ wss.on("error", e => {
  * @param {WebSocket} conn
  */
 function handleMessage(conn, message) {
-    if(message == ".") return   // Keepalive
-    
+    if (message == ".") return   // Keepalive
+
     let data;
     try {
         data = JSON.parse(message);
@@ -50,16 +52,23 @@ function handleMessage(conn, message) {
     //console.log(data);
 
     if (data.type == 0) { // login
-        conn._session = {};
 
         console.log("Login requested with session ", data.id)
         if (!data.id) return conn.close();
-        if (data.id.length != 36) return conn.close();
+        if (typeof data.id !== "string" && data.id.length != 36) return conn.close();
         if (sessions.has(data.id)) return conn.close();
 
+        if (conn._session === undefined) {
+            conn._session = {}
+            console.log("_session doesn't exist yet, adding first session ", data.id)
+            conn._session.ids = [data.id]
+        }
+        else {
+            console.log("_session list exists, adding session ", data.id)
+            conn._session.ids.push(data.id)
+        }
+
         sessions.set(data.id, conn);
-        console.log("Session added ", data.id)
-        conn._session.id = data.id;
 
         return conn.send(JSON.stringify({ success: true, type: data.type }));
     }
@@ -69,12 +78,14 @@ function handleMessage(conn, message) {
     if (data.type == 1) { // offer
         // console.log("offer", conn._session.id + " -> " + data.recipientId, data);
         if (!data.offer) return conn.close();
+        if (!data.callerId) return conn.close();
+        if (!sessions.get(data.callerId)) return conn.close()
 
         let recipientConn;
         if ((recipientConn = sessions.get(data.recipientId))) {
             recipientConn.send(JSON.stringify({
                 type: 11, // offer type
-                callerId: conn._session.id,
+                callerId: data.callerId,
                 offer: data.offer,
             }));
             return conn.send(JSON.stringify({
