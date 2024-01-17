@@ -575,7 +575,7 @@ window.onhashchange = () => {
 			}).then(async channel => {
 				updateUIForTransferringFile()
 
-				const key = getJwkFromK(contact.k)
+				const key = await getJwkFromK(contact.k)
 
 				// Connection established (cbConnected)
 				isFileTransferring = true
