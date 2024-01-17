@@ -435,7 +435,7 @@ window.onhashchange = () => {
 					sendingFile = true
 					bs_upload_modal.hide()
 
-					const key = getJwkFromK(contact.k)
+					const key = await getJwkFromK(contact.k)
 					
 					const activeRecvWebSocket = activeRecvWebSockets.get(contact.localSessionId)
 					if(activeRecvWebSocket) {

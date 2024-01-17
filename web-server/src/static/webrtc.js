@@ -83,9 +83,9 @@ const rtcRecv = async (sessionId, cbWebSocket = undefined) => {
 			peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
 			return
 		}
-		else if(e.target.connectionState == "disconnected") {
-			throw "Remote peer disconnected"
-		}
+		// else if(e.target.connectionState == "disconnected") {
+		// 	throw "Remote peer disconnected"
+		// }
 		else if(e.target.connectionState == "failed") {
 			throw "Could not connect to remote peer, check your firewall settings or try connecting to another network"
 		}
