@@ -190,95 +190,6 @@ const recvFile_new = async (key, channel, cbProgress, cbFinished) => {
 	})
 }
 
-const sendFile = async (file, cbLink, cbConnected, cbProgress, cbFinished) => {
-	const sessionId = crypto.randomUUID()
-	const key = await window.crypto.subtle.generateKey(
-		{
-			name: "AES-GCM",
-			length: 256,
-		},
-		true,
-		["encrypt", "decrypt"]
-	);
-
-	const jwk = await crypto.subtle.exportKey("jwk", key)
-	const hash = "#" + jwk.k + "," + sessionId
-	const downloadLink = window.location.origin + window.location.pathname + hash
-	cbLink(downloadLink)
-
-	const channel = await rtcRecv(sessionId)
-
-	cbConnected()
-
-	channel.addEventListener("message", async e => {
-		const data = JSON.parse(e.data)
-		if(data.type == "progress") {
-			cbProgress({ now: data.now, max: file.size })
-			if(data.now == file.size) {
-				cbFinished()
-			}
-		}
-		else if(data.type == "error") {
-			throw data.message
-		}
-	})
-
-	let offset = 0
-	let fr = new FileReader()
-	fr.onload = async e => {
-		const __data = fr.result
-
-		const packet = new Uint8Array(1 + 8 + __data.byteLength)
-		const packetDataView = new DataView(packet.buffer)
-		packetDataView.setInt8(0, PACKET_ID.fileData)
-		packetDataView.setBigUint64(1, BigInt(offset))
-		packet.set(new Uint8Array(__data), 1 + 8)
-
-		await sendAndEncryptPacket(channel, packet, key)
-		offset += __data.byteLength;
-		// cbProgress({ now: offset, max: file.size })
-		// console.log(offset + "/" + file.size)
-		if (offset < file.size) {
-			readSlice(offset);
-		}
-	}
-	fr.onerror = e => {
-		console.error("File reader error", e)
-	}
-	fr.onabort = e => {
-		console.log("File reader abort", e)
-	}
-	const readSlice = o => {
-		// console.log("readSlice", o)
-
-		if(channel.bufferedAmount > 5000000) {
-			//console.log("WAIT", channel.bufferedAmount)
-			return setTimeout(() => { readSlice(o) }, 1)
-		}
-		//console.log("READ", channel.bufferedAmount)
-
-		const slice = file.slice(offset, o + FILE_CHUNK_SIZE);
-		fr.readAsArrayBuffer(slice);
-	};
-	const fileInfo = {
-		name: file.name,
-		size: file.size,
-		type: file.type
-	}
-	const fileInfoStr = JSON.stringify(fileInfo)
-	const textEnc = new TextEncoder()
-	const fileInfoBytes = textEnc.encode(fileInfoStr)
-	console.log("Sending file info:", fileInfoStr, fileInfoBytes)
-
-	const packet = new Uint8Array(1 + fileInfoBytes.byteLength)
-	const packetDataView = new DataView(packet.buffer)
-	packetDataView.setInt8(0, PACKET_ID.fileInfo)
-	packet.set(fileInfoBytes, 1)
-
-	await sendAndEncryptPacket(channel, packet, key)
-	readSlice(0)
-}
-
 window.onhashchange = () => {
 	window.location.reload()
 }
@@ -299,6 +210,10 @@ window.onhashchange = () => {
 	const contacts_collapse = document.getElementById("contacts-collapse")
 	const bs_contacts_collapse = new bootstrap.Collapse(contacts_collapse, { toggle: true })
 	const contacts_list = document.getElementById("contacts-list")
+
+	const add_contact_btn = document.getElementById("add-contact-btn")
+	const bs_add_contact_modal = new bootstrap.Modal(document.getElementById("add-contact-modal"))
+	const add_contact_qr_div = document.getElementById("add-contact-qrcode")
 
 	const bs_alert_modal = new bootstrap.Modal(document.getElementById("alert-modal"), {})
 	const alert_modal_title = document.getElementById("alert-modal-title")
@@ -478,9 +393,14 @@ window.onhashchange = () => {
 	}
 
 	const populateContactListHTML = () => {
+		for(let alreadyAdded of document.querySelectorAll(".contacts-list-entry.dynamic")) {
+			alreadyAdded.remove()
+		}
+
 		for(let contact of contactList) {
 			const contacts_list_entry = document.createElement("div")
-			contacts_list_entry.className = "contacts-list-entry"
+			console.log(contact)
+			contacts_list_entry.className = "contacts-list-entry dynamic"
 
 			contacts_list_entry.onclick = async e => {
 				e.preventDefault()
@@ -536,6 +456,36 @@ window.onhashchange = () => {
 		e.preventDefault()
 		send_file_btn.onclick = send_file_btn_onclick_manual_navigation
 		bs_upload_modal.show()
+	}
+	
+	let add_contact_qr_code = undefined
+	add_contact_btn.onclick = async e => {
+		e.preventDefault()
+		bs_add_contact_modal.show()
+
+		const localSessionId = crypto.randomUUID()
+		const remoteSessionId = crypto.randomUUID()
+
+		const connectionInfo = await generateConnectionInfo("recv")
+		const jwk = await crypto.subtle.exportKey("jwk", connectionInfo.key)
+
+		const hash = "#" + jwk.k + "," + localSessionId + "," + remoteSessionId
+		const link = window.location.origin + "/link" + hash
+
+		if(add_contact_qr_code) {
+			add_contact_qr_code.clear()
+			add_contact_qr_code.makeCode(link)
+		}
+		else {
+			add_contact_qr_code = new QRCode(add_contact_qr_div, {
+				text: link,
+				width: 256 * 2,
+				height: 256 * 2
+			});
+		}
+
+		createContact(remoteSessionId, localSessionId, remoteSessionId, jwk.k)
+		populateContactListHTML()
 	}
 
 	populateContactListHTML()
@@ -599,6 +549,12 @@ window.onhashchange = () => {
 	}
 	else {
 		// Didnt get sent a link, navigated to transfer.zip manually
+
+		for(let contact of contactList) {
+			rtcRecv(contact.localSessionId).then(channel => {
+				
+			})
+		}
 
 		if(window.location.search.startsWith("?pwa:s")) {
 			const cache = await caches.open("file-cache")

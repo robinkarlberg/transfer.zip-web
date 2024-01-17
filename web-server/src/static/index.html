@@ -46,11 +46,32 @@
 		</div>
 	</div>
 
+	<div id="add-contact-modal" class="modal" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 id="alert-modal-title" class="modal-title">Add contact</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div class="container py-4">
+						<div id="add-contact-qrcode"></div>
+					</div>
+					<p id="add-contact-modal-desc">Scan code or 
+						<a id="add-contact-copy-link-btn" href="#">share by link</a></p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div id="upload-modal" class="modal fade" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 id="alert-modal-title" class="modal-title">Select file</h5>
+					<h5 id="upload-modal-title" class="modal-title">Select file</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
@@ -60,8 +81,6 @@
 								<div class="d-flex flex-wrap">
 									<div class="col-md-10 col-12 mb-1 me-1">
 										<input id="file-upload" class="form-control" type="file" aria-label="File upload">
-									</div>
-									<div class="">
 									</div>
 								</div>
 							</fieldset>
@@ -121,7 +140,7 @@
 								<hr class="hr" style="margin: 0 auto; margin-top: 4px; margin-bottom: 8px; width: 33px;"/>
 								<!-- <div class="contacts-list-entry"><span>Mobilen</span></div> -->
 							</div>
-							<!-- + add a contact<br/> -->
+							+ <a id="add-contact-btn" href="#">add</a> a contact<br/>
 							... or <a id="receive-btn" href="#">receive a file</a> instead.
 						</div>
 					</div>

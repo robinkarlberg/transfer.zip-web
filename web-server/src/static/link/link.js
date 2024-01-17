@@ -18,6 +18,7 @@ const accept_request = async () => {
         // TODO: compute localId from remoteId or something
 
         createContact(localId, remoteId, key)
+        window.location.href = "/"
     }
 }
 
