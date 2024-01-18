@@ -53,7 +53,6 @@ form {
 }
 
 .contacts-list-entry>img {
-    fill: white;
     padding: 3px;
     margin-right: 6px;
 }
@@ -69,4 +68,18 @@ form {
 .contacts-list-entry>span {
     margin-bottom: 0px;
     user-select: none;
+    flex-grow: 1;
+    /* white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden; */
+}
+
+#add-contact-btn img {
+    border-radius: var(--bs-border-radius);
+    padding: 3px;
+    width: 32px;
+}
+
+#add-contact-btn img:hover {
+    background-color: #2b3035;
 }

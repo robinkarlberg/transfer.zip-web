@@ -215,6 +215,7 @@ window.onhashchange = () => {
 	const bs_add_contact_modal = new bootstrap.Modal(document.getElementById("add-contact-modal"))
 	const add_contact_qr_div = document.getElementById("add-contact-qrcode")
 	const add_contact_copy_link_btn = document.getElementById("add-contact-copy-link-btn")
+	const add_contact_modal_btn = document.getElementById("add-contact-modal-btn")
 
 	const bs_alert_modal = new bootstrap.Modal(document.getElementById("alert-modal"), {})
 	const alert_modal_title = document.getElementById("alert-modal-title")
@@ -461,6 +462,16 @@ window.onhashchange = () => {
 			contacts_list_entry_p.innerText = contact.name
 			contacts_list_entry.appendChild(contacts_list_entry_p)
 
+			const contacts_list_entry_remove_img = document.createElement("img")
+			contacts_list_entry_remove_img.src = "/img/dash-lg.svg"
+			contacts_list_entry.appendChild(contacts_list_entry_remove_img)
+
+			contacts_list_entry_remove_img.onclick = e => {
+				e.stopPropagation()
+				removeContact(contact.remoteSessionId)
+				populateContactListHTML()
+			}
+
 			contacts_list.appendChild(contacts_list_entry)
 		}
 	}
@@ -503,8 +514,11 @@ window.onhashchange = () => {
 				height: 256 * 2
 			});
 		}
-		createContact(remoteSessionId, localSessionId, remoteSessionId, jwk.k)
-		populateContactListHTML()
+
+		add_contact_modal_btn.onclick = () => {
+			createContact(remoteSessionId, localSessionId, remoteSessionId, jwk.k)
+			populateContactListHTML()
+		}
 	}
 
 	populateContactListHTML()

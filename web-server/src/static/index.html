@@ -61,7 +61,7 @@
 						<a id="add-contact-copy-link-btn" href="#">share by link</a></p>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
+					<button id="add-contact-modal-btn" type="button" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
 				</div>
 			</div>
 		</div>
@@ -134,13 +134,18 @@
 	
 					<div id="contacts-collapse" class="collapse">
 						<div id="contacts-div" class="container">
-							<b>Send a file to:</b>
+							<b>Select recipient:</b>
 							<div id="contacts-list" class="d-flex flex-column mt-2">
-								<div id="send-anyone-btn" class="contacts-list-entry"><img src="/img/globe2.svg"></img><span>Anyone</span></div>
+								<div id="send-anyone-btn" class="contacts-list-entry">
+									<img src="/img/globe2.svg"></img>
+									<span>Anyone</span>
+								</div>
 								<hr class="hr" style="margin: 0 auto; margin-top: 4px; margin-bottom: 8px; width: 33px;"/>
 								<!-- <div class="contacts-list-entry"><span>Mobilen</span></div> -->
 							</div>
-							+ <a id="add-contact-btn" href="#">add</a> a contact<br/>
+							<div  class="d-flex flex-row justify-content-center">
+								<a href="#" id="add-contact-btn"><img src="/img/plus-lg.svg"></a>
+							</div>
 							... or <a id="receive-btn" href="#">receive a file</a> instead.
 						</div>
 					</div>
