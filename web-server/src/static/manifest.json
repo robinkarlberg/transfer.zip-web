@@ -21,6 +21,7 @@
     "theme_color": "#0d6efd",
     "description": "Install transfer.zip on your phone, enabling shortcuts to easily send files using the \"share\" menu on your phone.",
     "share_target": {
+        "title": "Share file",
         "action": "/share-file-collector",
         "method": "POST",
         "enctype": "multipart/form-data",

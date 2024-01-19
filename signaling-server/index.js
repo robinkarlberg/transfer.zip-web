@@ -7,6 +7,11 @@ const wss = new WebSocketServer({
 
 const sessions = new Map();
 
+const deleteSession = sessionId => {
+    console.log("Deleting session:", sessionId)
+    sessions.delete(sessionId);
+}
+
 wss.on("connection", conn => {
     console.log("conn");
 
@@ -20,10 +25,10 @@ wss.on("connection", conn => {
     });
 
     conn.on("close", () => {
+        console.log("Connection closed")
         if (conn._session?.ids) {
             for (let id of conn._session.ids) {
-                sessions.delete(id);
-                console.log("Connection closed, deleted session ", id)
+                deleteSession(id)
             }
         }
         else {
@@ -75,7 +80,7 @@ function handleMessage(conn, message) {
 
         sessions.set(data.id, conn);
 
-        return conn.send(JSON.stringify({ success: true, type: data.type }));
+        return conn.send(JSON.stringify({ targetId: data.id, success: true, type: data.type }));
     }
 
     if (!conn._session) return conn.close(); // client has to send type 0 first >:(
@@ -90,16 +95,17 @@ function handleMessage(conn, message) {
         if ((recipientConn = sessions.get(data.recipientId))) {
             recipientConn.send(JSON.stringify({
                 type: 11, // offer type
+                targetId: data.recipientId,
                 callerId: data.callerId,
                 offer: data.offer,
             }));
             return conn.send(JSON.stringify({
-                success: true, type: data.type,
+                targetId: data.callerId, success: true, type: data.type,
             }));
         } else {
-            console.log("Recipient did not exist!")
+            console.log("Recipient did not exist:", data.recipientId)
             return conn.send(JSON.stringify({
-                success: false, type: data.type,
+                targetId: data.callerId, success: false, type: data.type,
                 msg: "recipient does not exist",
             }));
         }
@@ -111,15 +117,16 @@ function handleMessage(conn, message) {
         if ((recipientConn = sessions.get(data.recipientId))) {
             recipientConn.send(JSON.stringify({
                 type: 12, // answer type
+                targetId: data.recipientId,
                 answer: data.answer,
             }));
             return conn.send(JSON.stringify({
-                success: true, type: data.type,
+                targetId: data.sessionId, success: true, type: data.type,
             }));
         } else {
             console.log("Recipient did not exist!")
             return conn.send(JSON.stringify({
-                success: false, type: data.type,
+                targetId: data.sessionId, success: false, type: data.type,
                 msg: "recipient does not exist",
             }));
         }
@@ -131,17 +138,25 @@ function handleMessage(conn, message) {
         if ((recipientConn = sessions.get(data.recipientId))) {
             recipientConn.send(JSON.stringify({
                 type: 13, // answer type
+                targetId: data.recipientId,
                 candidate: data.candidate,
             }));
             return conn.send(JSON.stringify({
-                success: true, type: data.type,
+                targetId: data.sessionId, success: true, type: data.type,
             }));
         } else {
             console.log("Recipient did not exist!")
             return conn.send(JSON.stringify({
-                success: false, type: data.type,
+                targetId: data.sessionId, success: false, type: data.type,
                 msg: "recipient does not exist",
             }));
         }
+    } else if (data.type == 4) { // logout
+        // console.log("candidate", conn._session.id + " -> " + data.recipientId, data);
+        if (!data.sessionId) return closeConnWithReason(conn, "[logout] Didn't specify sessionId")
+        if (!conn._session.ids.find(o => o === data.sessionId))
+            return closeConnWithReason(conn, "[logout] Tried to logout id not owned by them");
+
+        deleteSession(data.sessionId)
     }
 }
