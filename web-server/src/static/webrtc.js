@@ -31,7 +31,7 @@ let activeRtcSessions = []
 
 const newRtcSession = (sessionId) => {
 	closeAndRemoveRtcSessionById(sessionId)
-	const rtcSession = new RtcSession_nonexistant(sessionId)
+	const rtcSession = new RtcSession(sessionId)
 	activeRtcSessions.push(rtcSession)
 	return rtcSession
 }
@@ -82,7 +82,7 @@ ws.addEventListener("message", e => {
 	}
 })
 
-class RtcSession_nonexistant {
+class RtcSession {
 	onopen = undefined
 	onmessage = undefined
 
@@ -90,7 +90,7 @@ class RtcSession_nonexistant {
 		this.sessionId = sessionId
 	}
 
-	_recv = async () => {
+	async _recv() {
 		console.log("rtcRecv")
 		const peerConnection = new RTCPeerConnection(RTC_CONF);
 
@@ -155,7 +155,7 @@ class RtcSession_nonexistant {
 		})
 	}
 
-	_call = async (recipientId) => {
+	async _call(recipientId) {
 		console.log("rtcCall")
 		const peerConnection = new RTCPeerConnection(RTC_CONF);
 
@@ -235,7 +235,7 @@ class RtcSession_nonexistant {
 		})
 	}
 
-	waitForWebsocket = (fn, arg) => {
+	waitForWebsocket(fn, arg) {
 		if(ws.readyState == WebSocket.OPEN) {
 			return fn(arg)
 		}
@@ -248,15 +248,15 @@ class RtcSession_nonexistant {
 		}
 	}
 
-	recv = () => {
+	recv() {
 		return this.waitForWebsocket(this._recv)
 	}
 	
-	call = (recipientId) => {
+	call(recipientId) {
 		return this.waitForWebsocket(this._call, recipientId)
 	}
 
-	close = () => {
+	close() {
 		ws.send(JSON.stringify({
 			type: 4, sessionId: this.sessionId
 		}))
