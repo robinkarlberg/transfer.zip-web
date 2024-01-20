@@ -235,25 +235,27 @@ class RtcSession {
 		})
 	}
 
-	waitForWebsocket(fn, arg) {
+	async waitForWebsocket() {
 		if(ws.readyState == WebSocket.OPEN) {
-			return fn(arg)
+			return
 		}
 		else {
 			return new Promise((resolve, reject) => {
 				this.onopen = async () => {
-					resolve(fn(arg))
+					resolve()
 				}
 			})
 		}
 	}
 
-	recv() {
-		return this.waitForWebsocket(this._recv)
+	async recv() {
+		await this.waitForWebsocket()
+		return this._recv()
 	}
 	
-	call(recipientId) {
-		return this.waitForWebsocket(this._call, recipientId)
+	async call(recipientId) {
+		await this.waitForWebsocket()
+		return this._call(recipientId)
 	}
 
 	close() {
