@@ -100,6 +100,16 @@ class RtcSession {
 		}))
 	
 		let recipientId;
+	
+		peerConnection.addEventListener("icecandidate", e => {
+			console.log(e)
+			if (e.candidate) {
+				console.log("peerConnection Got ICE candidate:", e.candidate)
+				ws.send(JSON.stringify({
+					type: 3, sessionId: this.sessionId, candidate: e.candidate, recipientId
+				}))
+			}
+		})
 
 		this.onmessage = async data => {
 			if (data.type == 11 && data.offer) {
@@ -133,18 +143,6 @@ class RtcSession {
 			}
 		})
 	
-		peerConnection.addEventListener("icecandidate", e => {
-			console.log(e)
-			if (e.candidate) {
-				console.log("peerConnection Got ICE candidate:", e.candidate)
-				ws.send(JSON.stringify({
-					type: 3, sessionId: this.sessionId, candidate: e.candidate, recipientId
-				}))
-			}
-		})
-
-		console.log("before return _recv")
-	
 		return new Promise((resolve, reject) => {
 			peerConnection.addEventListener("datachannel", e => {
 				const channel = e.channel
@@ -163,6 +161,25 @@ class RtcSession {
 			type: 0,
 			id: this.sessionId
 		}))
+	
+		peerConnection.addEventListener("icecandidate", e => {
+			console.log(e)
+			if (e.candidate) {
+				console.log("peerConnection Got ICE candidate:", e.candidate)
+				ws.send(JSON.stringify({
+					type: 3, candidate: e.candidate, recipientId
+				}))
+			}
+		})
+	
+		/*
+		* Apparently, now when not waiting for ws.open anymore, data channel needs to be
+		* created before peerConnection.setLocalDescription is called. 
+		* This took too many ******* hours to figure out. I really ******* hate programming.
+		*/
+
+		let sendChannel = peerConnection.createDataChannel("sendDataChannel")
+		sendChannel.binaryType = "arraybuffer"
 
 		const offer = await peerConnection.createOffer();
 		await peerConnection.setLocalDescription(offer);
@@ -201,21 +218,6 @@ class RtcSession {
 				throw "Could not connect to remote peer, check your firewall settings or try connecting to another network"
 			}
 		})
-	
-		peerConnection.addEventListener("icecandidate", e => {
-			console.log(e)
-			if (e.candidate) {
-				console.log("peerConnection Got ICE candidate:", e.candidate)
-				ws.send(JSON.stringify({
-					type: 3, candidate: e.candidate, recipientId
-				}))
-			}
-		})
-	
-		let sendChannel = peerConnection.createDataChannel("sendDataChannel")
-		sendChannel.binaryType = "arraybuffer"
-
-		console.log("before return _call")
 	
 		return new Promise((resolve, reject) => {
 			sendChannel.addEventListener("open", e => {
