@@ -31,7 +31,7 @@ let activeRtcSessions = []
 
 const newRtcSession = (sessionId) => {
 	closeAndRemoveRtcSessionById(sessionId)
-	const rtcSession = new RtcSession(sessionId)
+	const rtcSession = new RtcSession_nonexistant(sessionId)
 	activeRtcSessions.push(rtcSession)
 	return rtcSession
 }
@@ -82,7 +82,7 @@ ws.addEventListener("message", e => {
 	}
 })
 
-class RtcSession {
+class RtcSession_nonexistant {
 	onopen = undefined
 	onmessage = undefined
 
