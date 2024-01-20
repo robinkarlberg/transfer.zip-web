@@ -90,7 +90,7 @@ class RtcSession {
 		this.sessionId = sessionId
 	}
 
-	_recv = () => {
+	_recv = async () => {
 		console.log("rtcRecv")
 		const peerConnection = new RTCPeerConnection(RTC_CONF);
 
@@ -142,6 +142,8 @@ class RtcSession {
 				}))
 			}
 		})
+
+		console.log("before return _recv")
 	
 		return new Promise((resolve, reject) => {
 			peerConnection.addEventListener("datachannel", e => {
@@ -212,6 +214,8 @@ class RtcSession {
 	
 		let sendChannel = peerConnection.createDataChannel("sendDataChannel")
 		sendChannel.binaryType = "arraybuffer"
+
+		console.log("before return _call")
 	
 		return new Promise((resolve, reject) => {
 			sendChannel.addEventListener("open", e => {

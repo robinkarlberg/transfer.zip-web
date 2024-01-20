@@ -70,7 +70,8 @@ const genConnectionInfoAndChannelAndUpdateUI = async (direction) => {
     const connectionInfo = await generateConnectionInfo(direction)
     displayAndCopyLink(connectionInfo.link)
 
-    const channel = await newRtcSession(connectionInfo.sessionId).recv()
+	const rtcSession = newRtcSession(connectionInfo.sessionId)
+    const channel = await rtcSession.recv()
 	console.log("Got channel: ", channel)
 
     // Connection established (cbConnected)
@@ -203,7 +204,8 @@ const send_file_btn_onclick_manual_navigation = async e => {
 			file_form_fieldset.setAttribute("disabled", true)
 			bs_progress_collapse.show()
 
-			const channel = await newRtcSession(sessionId).call(recipientId)
+			const rtcSession = newRtcSession(sessionId)
+			const channel = await rtcSession.call(recipientId)
 
 			// Connection established (cbConnected)
             uiOnConnectionEstablished()

@@ -29,7 +29,7 @@
             "files": [
                 {
                     "name": "file",
-                    "accept": "*"
+                    "accept": "application/octet-stream"
                 }
             ]
         }
