@@ -71,6 +71,7 @@ const genConnectionInfoAndChannelAndUpdateUI = async (direction) => {
     displayAndCopyLink(connectionInfo.link)
 
     const channel = await newRtcSession(connectionInfo.sessionId).recv()
+	console.log("Got channel: ", channel)
 
     // Connection established (cbConnected)
     uiOnConnectionEstablished()
@@ -88,29 +89,31 @@ const send_file_btn_onclick_manual_navigation = async e => {
 
 (async () => {
 
-	// window.onunhandledrejection = e => {
-	// 	// if(isFileTransferDone) {
-	// 	// 	console.log("Got unhandledrejection, but transfer was already finished:", e)
-	// 	// 	return
-	// 	// }
-	// 	showAlert("Error", e.reason)
-	// 	setProgressBarAnimation(false)
-	// 	setStatusText("Error!")
-	// }
+	window.onunhandledrejection = e => {
+		// if(isFileTransferDone) {
+		// 	console.log("Got unhandledrejection, but transfer was already finished:", e)
+		// 	return
+		// }
+		// showAlert("Error", e.reason)
+		// setProgressBarAnimation(false)
+		// setStatusText("Error!")
+		console.log(e)
+	}
 
-	// window.onerror = (e, source, lineno, colno, err) => {
-	// 	// if(isFileTransferDone) {
-	// 	// 	console.log("Got error, but transfer was already finished:", e)
-	// 	// 	return
-	// 	// }
-	// 	if(err.name == "TagError") {
-	// 		console.log("Ignored TagError", e)
-	// 		return
-	// 	}
-	// 	showAlert("Error", e)
-	// 	setProgressBarAnimation(false)
-	// 	setStatusText("Error!")
-	// }
+	window.onerror = (e, source, lineno, colno, err) => {
+		// if(isFileTransferDone) {
+		// 	console.log("Got error, but transfer was already finished:", e)
+		// 	return
+		// }
+		if(err.name == "TagError") {
+			console.log("Ignored TagError", e)
+			return
+		}
+		console.log(e)
+		// showAlert("Error", e)
+		// setProgressBarAnimation(false)
+		// setStatusText("Error!")
+	}
 
 	send_anyone_btn.onclick = e => {
 		e.preventDefault()

@@ -125,9 +125,9 @@ class RtcSession {
 				peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
 				return
 			}
-			// else if(e.target.connectionState == "disconnected") {
-			// 	throw "Remote peer disconnected"
-			// }
+			else if(e.target.connectionState == "disconnected") {
+				throw "Remote peer disconnected"
+			}
 			else if(e.target.connectionState == "failed") {
 				throw "Could not connect to remote peer, check your firewall settings or try connecting to another network"
 			}
@@ -169,9 +169,7 @@ class RtcSession {
 			type: 1, offer, recipientId, callerId: this.sessionId
 		}));
 	
-		ws.addEventListener("message", async e => {
-			const data = JSON.parse(e.data)
-	
+		this.onmessage = async data => {
 			if (data.type == 12 && data.answer) {
 				console.log("Got answer:", data.answer)
 				const remoteDesc = data.answer;
@@ -186,11 +184,7 @@ class RtcSession {
 					throw data.msg
 				}
 			}
-		})
-	
-		ws.addEventListener("error", async e => {
-			throw "WebSocket error: could not connect to server"
-		})
+		}
 	
 		let iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
 			console.log("CALL iceconnectionstatechange", e)

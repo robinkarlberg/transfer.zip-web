@@ -132,6 +132,7 @@ const populateContactListHTML = () => {
                 const key = await getJwkFromK(contact.k)
                 
                 const channel = await newRtcSession(contact.localSessionId).call(contact.remoteSessionId)
+                console.log("Got channel: ", channel)
 
                 // Connection established (cbConnected)
                 uiOnConnectionEstablished()
