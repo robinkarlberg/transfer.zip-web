@@ -48,8 +48,9 @@ class FileTransfer {
         this.key = key
     }
 
-    sendAndEncryptPacket = async (packet) => {
-        const iv = genIV(packetIndex++) // TODO: Set this to random int
+    async sendAndEncryptPacket(packet) {
+        // TODO: Set this to random int when reusing key over multiple files
+        const iv = genIV(this.packetIndex++)
     
         const encryptedPacket = await crypto.subtle.encrypt({
             "name": "AES-GCM", "iv": iv
@@ -63,8 +64,8 @@ class FileTransfer {
         this.channel.send(encryptedPacketAndIV)
     }
     
-    sendFile = async (file, cbProgress, cbFinished) => {
-        channel.addEventListener("message", async e => {
+    async sendFile(file, cbProgress, cbFinished) {
+        this.channel.addEventListener("message", async e => {
             const data = JSON.parse(e.data)
             if(data.type == "progress") {
                 cbProgress({ now: data.now, max: file.size })
@@ -88,7 +89,7 @@ class FileTransfer {
             packetDataView.setBigUint64(1, BigInt(offset))
             packet.set(new Uint8Array(__data), 1 + 8)
 
-            await sendAndEncryptPacket(channel, packet, key)
+            await this.sendAndEncryptPacket(this.channel, packet, key)
             offset += __data.byteLength;
             // cbProgress({ now: offset, max: file.size })
             // console.log(offset + "/" + file.size)
@@ -105,11 +106,11 @@ class FileTransfer {
         const readSlice = o => {
             // console.log("readSlice", o)
 
-            if(channel.bufferedAmount > 5000000) {
+            if(this.channel.bufferedAmount > 5000000) {
                 //console.log("WAIT", channel.bufferedAmount)
                 return setTimeout(() => { readSlice(o) }, 1)
             }
-            //console.log("READ", channel.bufferedAmount)
+            //console.log("READ", this.channel.bufferedAmount)
 
             const slice = file.slice(offset, o + FILE_CHUNK_SIZE);
             fr.readAsArrayBuffer(slice);
@@ -133,7 +134,7 @@ class FileTransfer {
         readSlice(0)
     }
 
-    recvFile = async (cbProgress, cbFinished) => {
+    async recvFile(cbProgress, cbFinished) {
         let chunkMap = new Map()
         let chunkIndex = -1
         let writer = undefined
@@ -147,7 +148,7 @@ class FileTransfer {
             }
             if (writer.desiredSize == null) {
                 console.error("user canceled download")
-                channel.close()
+                this.channel.close()
                 return
             }
             if (!fileInfo) {

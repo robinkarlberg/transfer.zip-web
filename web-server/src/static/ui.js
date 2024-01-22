@@ -137,7 +137,7 @@ const populateContactListHTML = () => {
                 // Connection established (cbConnected)
                 uiOnConnectionEstablished()
 
-                await handleSendFile(file_upload.files[0], key, channel)
+                await handleSendFile(file_upload.files[0], channel, key)
             }
         }
 

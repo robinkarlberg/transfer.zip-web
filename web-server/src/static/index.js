@@ -70,8 +70,7 @@ const genConnectionInfoAndChannelAndUpdateUI = async (direction) => {
     const connectionInfo = await generateConnectionInfo(direction)
     displayAndCopyLink(connectionInfo.link)
 
-	const rtcSession = newRtcSession(connectionInfo.sessionId)
-    const channel = await rtcSession.recv()
+    const channel = await newRtcSession(connectionInfo.sessionId).recv()
 	console.log("Got channel: ", channel)
 
     // Connection established (cbConnected)
@@ -85,7 +84,7 @@ const send_file_btn_onclick_manual_navigation = async e => {
     console.log("send_file_btn_onclick_manual_navigation")
     const {connectionInfo, channel} = await genConnectionInfoAndChannelAndUpdateUI("recv")
     
-    await startFileSend(file_upload.files[0], connectionInfo.key, channel)
+    await startFileSend(file_upload.files[0], channel, connectionInfo.key)
 }
 
 (async () => {
@@ -197,20 +196,19 @@ const send_file_btn_onclick_manual_navigation = async e => {
 				// Connection established (cbConnected)
                 uiOnConnectionEstablished()
 
-				await startFileSend(file_upload.files[0], key, channel)
+				await startFileSend(file_upload.files[0], channel, key)
 			}
 		}
 		else {
 			file_form_fieldset.setAttribute("disabled", true)
 			bs_progress_collapse.show()
 
-			const rtcSession = newRtcSession(sessionId)
-			const channel = await rtcSession.call(recipientId)
+			const channel = await newRtcSession(sessionId).call(recipientId)
 
 			// Connection established (cbConnected)
             uiOnConnectionEstablished()
 
-			await startFileRecv(key, channel)
+			await startFileRecv(channel, key)
 		}
 	}
 	else {
@@ -226,7 +224,7 @@ const send_file_btn_onclick_manual_navigation = async e => {
 				// Connection established (cbConnected)
                 uiOnConnectionEstablished()
 
-				await startFileRecv(key, channel)
+				await startFileRecv(channel, key)
 			})
 		}
 
@@ -243,7 +241,7 @@ const send_file_btn_onclick_manual_navigation = async e => {
 			console.log(response.headers)
 			const file = new File(response.blob(), )
 
-			await startFileSend(file, connectionInfo.key, channel)
+			await startFileSend(file, channel, connectionInfo.key)
 		}
 		else {
 			// send_file_btn.onclick = send_file_btn_onclick_manual_navigation
@@ -253,7 +251,7 @@ const send_file_btn_onclick_manual_navigation = async e => {
 				e.preventDefault()
 				const {connectionInfo, channel} = await genConnectionInfoAndChannelAndUpdateUI("send")
 	
-				await startFileRecv(connectionInfo.key, channel)
+				await startFileRecv(channel, connectionInfo.key)
 			}
 		}
 	}
