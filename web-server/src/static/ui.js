@@ -1,7 +1,16 @@
 const file_form_fieldset = document.getElementById("file-form-fieldset")
 const file_upload = document.getElementById("file-upload")
 const send_file_btn = document.getElementById("send-btn")
-const receive_file_btn = document.getElementById("receive-btn")
+
+const choice_collapse = document.getElementById("choice-collapse")
+const bs_choice_collapse = new bootstrap.Collapse(choice_collapse, { toggle: false })
+const choice_linked_devices_btn = document.getElementById("choice-linked-devices-btn")
+const choice_send_file_btn = document.getElementById("choice-send-btn")
+const choice_receive_file_btn = document.getElementById("choice-receive-btn")
+
+const contacts_collapse = document.getElementById("contacts-collapse")
+const bs_contacts_collapse = new bootstrap.Collapse(contacts_collapse, { toggle: false })
+const contacts_list = document.getElementById("contacts-list")
 
 const progress_collapse = document.getElementById("progress-collapse")
 const bs_progress_collapse = new bootstrap.Collapse(progress_collapse, { toggle: false })
@@ -9,10 +18,6 @@ const progress_bar = document.getElementById("progress-bar")
 const qr_div = document.getElementById("qrcode")
 
 const send_anyone_btn = document.getElementById("send-anyone-btn")
-
-const contacts_collapse = document.getElementById("contacts-collapse")
-const bs_contacts_collapse = new bootstrap.Collapse(contacts_collapse, {})
-const contacts_list = document.getElementById("contacts-list")
 
 const add_contact_btn = document.getElementById("add-contact-btn")
 const bs_add_contact_modal = new bootstrap.Modal(document.getElementById("add-contact-modal"))
@@ -32,15 +37,49 @@ const bs_copy_link_popover = new bootstrap.Popover(copy_link_btn)
 const status_text = document.getElementById("status-text")
 
 const uiOnLoad = () => {
+    choice_send_file_btn.toggleAttribute("disabled", false)
+    choice_receive_file_btn.toggleAttribute("disabled", false)
+    bs_choice_collapse.show()
+    bs_contacts_collapse.hide()
+    bs_progress_collapse.hide()
+    bs_upload_modal.hide()
+}
+
+const uiOnChoiceSendBtnBlicked = () => {
+    choice_send_file_btn.toggleAttribute("disabled", true)
+    choice_receive_file_btn.toggleAttribute("disabled", true)
+    choice_linked_devices_btn.toggleAttribute("disabled", true)
+    bs_choice_collapse.show()
+    bs_contacts_collapse.show()
+    bs_progress_collapse.hide()
+    bs_upload_modal.hide()
+}
+
+const uiOnChoiceRecvBtnBlicked = () => {
+    choice_send_file_btn.toggleAttribute("disabled", true)
+    choice_receive_file_btn.toggleAttribute("disabled", true)
+    choice_linked_devices_btn.toggleAttribute("disabled", true)
+    bs_choice_collapse.show()
+    bs_contacts_collapse.hide()
+    bs_progress_collapse.hide()
+    bs_upload_modal.hide()
+}
+
+const uiOnChoiceLinkedDevicesClicked = () => {
+    choice_send_file_btn.toggleAttribute("disabled", false)
+    choice_receive_file_btn.toggleAttribute("disabled", false)
+    choice_linked_devices_btn.toggleAttribute("disabled", false)
+    bs_choice_collapse.show()
     bs_contacts_collapse.show()
     bs_progress_collapse.hide()
     bs_upload_modal.hide()
 }
 
 const uiOnFileTransferStart = () => {
-    file_form_fieldset.toggleAttribute("disabled", true)
-    receive_file_btn.toggleAttribute("disabled", true)
-
+    choice_send_file_btn.toggleAttribute("disabled", true)
+    choice_receive_file_btn.toggleAttribute("disabled", true)
+    choice_linked_devices_btn.toggleAttribute("disabled", true)
+    bs_choice_collapse.show()
     bs_contacts_collapse.hide()
     bs_progress_collapse.show()
     bs_upload_modal.hide()
@@ -112,8 +151,8 @@ const setStatusText = status => {
     status_text.innerText = status
 }
 
-const populateContactListHTML = () => {
-    for(let alreadyAdded of document.querySelectorAll(".contacts-list-entry.dynamic")) {
+const populateContactListHTML = (parent = contacts_list) => {
+    for(let alreadyAdded of parent.querySelectorAll(".contacts-list-entry.dynamic")) {
         alreadyAdded.remove()
     }
 
@@ -156,13 +195,17 @@ const populateContactListHTML = () => {
         contacts_list_entry_remove_img.onclick = e => {
             e.stopPropagation()
             removeContact(contact.remoteSessionId)
-            populateContactListHTML()
+            populateContactListHTML(contacts_list)
         }
 
-        contacts_list.appendChild(contacts_list_entry)
+        parent.appendChild(contacts_list_entry)
     }
 }
 
 file_upload.onchange = e => {
     send_file_btn.toggleAttribute("disabled", file_upload.files.length < 1)
 }
+
+choice_send_file_btn.addEventListener("click", uiOnChoiceSendBtnBlicked)
+choice_receive_file_btn.addEventListener("click", uiOnChoiceRecvBtnBlicked)
+choice_linked_devices_btn.addEventListener("click", uiOnChoiceLinkedDevicesClicked)

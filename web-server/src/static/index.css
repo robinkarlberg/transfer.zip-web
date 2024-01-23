@@ -1,3 +1,7 @@
+:root {
+    --max-width: 450px;
+}
+
 body {
     overflow-x: hidden;
 }
@@ -39,7 +43,36 @@ canvas {
 }
 
 form {
-    max-width: 450px;
+    max-width: var(--max-width);
+}
+
+.maxed-width {
+    max-width: var(--max-width);
+}
+
+.choice-btn {
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    flex-grow: 1;
+    padding: 14px;
+    background-color: #2b3035;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-basis: 100%;
+}
+
+.choice-btn img {
+    width: 18px;
+    margin: 5px;
+}
+
+.choice-btn.secondary {
+    padding: 8px;
+    background-color: var(--bs-body-bg-color);
+    flex-direction: row;
+    justify-content: center;
 }
 
 .contacts-list-entry {

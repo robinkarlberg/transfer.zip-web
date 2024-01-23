@@ -98,7 +98,7 @@
 		</div>
 	</div>
 
-	{{ 1.html }}
+	<!-- {{ 1.html }} -->
 
 	<div id="page-outer">
 		<div class="outer">
@@ -107,9 +107,9 @@
 		<div id="page">
 			<div>
 				<main>
-					<div id="heading-container" class="container pb-4">
-						<h1 class="display-5 fw-medium mb-0">transfer<small>.zip</small></h1>
-						<p>Free, Fast, Encrypted</p>
+					<div id="heading-container" class="container pb-1">
+						<h1 class="display-5 fw-medium mb-0">transfer<i>.zip</i></h1>
+						<p class="text-secondary">Free, Fast, Encrypted</p>
 					</div>
 	
 					<!-- <div class="container py-2" style="display: none;">
@@ -134,22 +134,40 @@
 							</fieldset>
 						</form>
 					</div> -->
+
+					<div id="choice-collapse" class="collapse show pb-2 maxed-width">
+						<div class="container">
+							<div class="d-flex flex-row justify-content-between gap-2 mt-2">
+								<button id="choice-linked-devices-btn" class="btn choice-btn secondary">
+									Manage Devices ...
+								</button>
+							</div>
+							<div class="d-flex flex-row justify-content-between gap-2 mt-2">
+								<button id="choice-send-btn" class="btn choice-btn">
+									<img src="/img/send.svg"></img>
+									Send
+								</button>
+								<button id="choice-receive-btn" class="btn choice-btn">
+									<img src="/img/box-arrow-down.svg"></img>
+									Receive
+								</button>
+							</div>
+						</div>
+					</div>
 	
-					<div id="contacts-collapse" class="collapse">
-						<div id="contacts-div" class="container">
-							<b>Select recipient:</b>
-							<div id="contacts-list" class="d-flex flex-column mt-2">
+					<div id="contacts-collapse" class="collapse maxed-width">
+						<hr class="hr my-1" style="margin: 0 auto; width: 33px;"/>
+						<div id="contacts-div" class="container pt-2">
+							<!-- <b>Select recipient:</b> -->
+							<div id="contacts-list" class="d-flex flex-column">
 								<div id="send-anyone-btn" class="contacts-list-entry">
 									<img src="/img/globe2.svg"></img>
 									<span>Anyone</span>
 								</div>
-								<hr class="hr" style="margin: 0 auto; margin-top: 4px; margin-bottom: 8px; width: 33px;"/>
-								<!-- <div class="contacts-list-entry"><span>Mobilen</span></div> -->
 							</div>
 							<div  class="d-flex flex-row justify-content-center">
 								<a href="#" id="add-contact-btn"><img src="/img/plus-lg.svg"></a>
 							</div>
-							... or <a id="receive-btn" href="#">receive a file</a> instead.
 						</div>
 					</div>
 					<!-- <div class="container"> -->
@@ -159,7 +177,7 @@
 	
 					<div id="progress-collapse" class="collapse">
 						<div id="progress-div" class="container">
-							<div class="container py-4">
+							<div class="container py-4 text-center">
 								<div id="qrcode" class="qrcode"></div>
 							</div>
 							<div class="d-flex flex-row align-self-start mb-3">

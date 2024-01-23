@@ -163,7 +163,7 @@ const send_file_btn_onclick_manual_navigation = async e => {
 		// Clicked on a transfer.zip link
 
 		hideCopyLinkBtn()
-		receive_file_btn.toggleAttribute("disabled", true)
+		// receive_file_btn.toggleAttribute("disabled", true)
 
 		const hashList = window.location.hash.slice(1).split(",")
 		if(hashList.length != 3) {
@@ -247,7 +247,7 @@ const send_file_btn_onclick_manual_navigation = async e => {
 			// send_file_btn.onclick = send_file_btn_onclick_manual_navigation
 			// commented out bc it is set in "send_anyone_btn.onclick"
 
-			receive_file_btn.onclick = async e => {
+			choice_receive_file_btn.onclick = async e => {
 				e.preventDefault()
 				const {connectionInfo, channel} = await genConnectionInfoAndChannelAndUpdateUI("send")
 	
