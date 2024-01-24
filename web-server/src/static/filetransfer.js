@@ -89,7 +89,7 @@ class FileTransfer {
             packetDataView.setBigUint64(1, BigInt(offset))
             packet.set(new Uint8Array(__data), 1 + 8)
 
-            await this.sendAndEncryptPacket(this.channel, packet, key)
+            await this.sendAndEncryptPacket(packet)
             offset += __data.byteLength;
             // cbProgress({ now: offset, max: file.size })
             // console.log(offset + "/" + file.size)
