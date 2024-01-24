@@ -58,10 +58,16 @@
 				</div>
 				<div class="modal-body">
 					<div class="container py-4">
-						<div id="add-contact-qrcode" class="qrcode"></div>
+						<div id="add-contact-qrcode" class="qrcode text-center"></div>
 					</div>
-					<p id="add-contact-modal-desc">Scan code or 
-						<a id="add-contact-copy-link-btn" href="#">share by link</a></p>
+					<p id="add-contact-modal-desc">
+						1. Ask the other person to scan the code. 
+						<br/>
+						2. Press "Done" when they scanned it.
+					</p>
+					<p>
+						Alternatively you can <a id="add-contact-copy-link-btn" href="#">share it by link</a>.
+					</p>
 				</div>
 				<div class="modal-footer">
 					<button id="add-contact-modal-btn" type="button" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
@@ -137,11 +143,11 @@
 
 					<div id="choice-collapse" class="collapse show pb-2 maxed-width">
 						<div class="container">
-							<div class="d-flex flex-row justify-content-between gap-2 mt-2">
+							<!-- <div class="d-flex flex-row justify-content-between gap-2 mt-2">
 								<button id="choice-linked-devices-btn" class="btn choice-btn secondary">
 									Manage Devices ...
 								</button>
-							</div>
+							</div> -->
 							<div class="d-flex flex-row justify-content-between gap-2 mt-2">
 								<button id="choice-send-btn" class="btn choice-btn">
 									<img src="/img/send.svg"></img>
@@ -155,7 +161,7 @@
 						</div>
 					</div>
 	
-					<div id="contacts-collapse" class="collapse maxed-width">
+					<div id="contacts-collapse" class="collapse show maxed-width">
 						<hr class="hr my-1" style="margin: 0 auto; width: 33px;"/>
 						<div id="contacts-div" class="container pt-2">
 							<!-- <b>Select recipient:</b> -->

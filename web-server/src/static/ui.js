@@ -4,7 +4,7 @@ const send_file_btn = document.getElementById("send-btn")
 
 const choice_collapse = document.getElementById("choice-collapse")
 const bs_choice_collapse = new bootstrap.Collapse(choice_collapse, { toggle: false })
-const choice_linked_devices_btn = document.getElementById("choice-linked-devices-btn")
+// const choice_linked_devices_btn = document.getElementById("choice-linked-devices-btn")
 const choice_send_file_btn = document.getElementById("choice-send-btn")
 const choice_receive_file_btn = document.getElementById("choice-receive-btn")
 
@@ -30,6 +30,7 @@ const alert_modal_title = document.getElementById("alert-modal-title")
 const alert_modal_desc = document.getElementById("alert-modal-desc")
 
 const bs_upload_modal = new bootstrap.Modal(document.getElementById("upload-modal"), {})
+const upload_modal_title = document.getElementById("upload-modal-title")
 
 const copy_link_btn = document.getElementById("copy-link-btn")
 const bs_copy_link_popover = new bootstrap.Popover(copy_link_btn)
@@ -39,8 +40,9 @@ const status_text = document.getElementById("status-text")
 const uiOnLoad = () => {
     choice_send_file_btn.toggleAttribute("disabled", false)
     choice_receive_file_btn.toggleAttribute("disabled", false)
+    // choice_linked_devices_btn.toggleAttribute("disabled", false)
     bs_choice_collapse.show()
-    bs_contacts_collapse.hide()
+    bs_contacts_collapse.show()
     bs_progress_collapse.hide()
     bs_upload_modal.hide()
 }
@@ -48,7 +50,7 @@ const uiOnLoad = () => {
 const uiOnChoiceSendBtnBlicked = () => {
     choice_send_file_btn.toggleAttribute("disabled", true)
     choice_receive_file_btn.toggleAttribute("disabled", true)
-    choice_linked_devices_btn.toggleAttribute("disabled", true)
+    // choice_linked_devices_btn.toggleAttribute("disabled", true)
     bs_choice_collapse.show()
     bs_contacts_collapse.show()
     bs_progress_collapse.hide()
@@ -58,7 +60,7 @@ const uiOnChoiceSendBtnBlicked = () => {
 const uiOnChoiceRecvBtnBlicked = () => {
     choice_send_file_btn.toggleAttribute("disabled", true)
     choice_receive_file_btn.toggleAttribute("disabled", true)
-    choice_linked_devices_btn.toggleAttribute("disabled", true)
+    // choice_linked_devices_btn.toggleAttribute("disabled", true)
     bs_choice_collapse.show()
     bs_contacts_collapse.hide()
     bs_progress_collapse.hide()
@@ -68,7 +70,7 @@ const uiOnChoiceRecvBtnBlicked = () => {
 const uiOnChoiceLinkedDevicesClicked = () => {
     choice_send_file_btn.toggleAttribute("disabled", false)
     choice_receive_file_btn.toggleAttribute("disabled", false)
-    choice_linked_devices_btn.toggleAttribute("disabled", false)
+    // choice_linked_devices_btn.toggleAttribute("disabled", false)
     bs_choice_collapse.show()
     bs_contacts_collapse.show()
     bs_progress_collapse.hide()
@@ -78,7 +80,7 @@ const uiOnChoiceLinkedDevicesClicked = () => {
 const uiOnFileTransferStart = () => {
     choice_send_file_btn.toggleAttribute("disabled", true)
     choice_receive_file_btn.toggleAttribute("disabled", true)
-    choice_linked_devices_btn.toggleAttribute("disabled", true)
+    // choice_linked_devices_btn.toggleAttribute("disabled", true)
     bs_choice_collapse.show()
     bs_contacts_collapse.hide()
     bs_progress_collapse.show()
@@ -104,6 +106,16 @@ const showAlert = (title, description) => {
     bs_alert_modal.show()
 }
 
+const showSelectFileDialog = (title, cbAccept) => {
+    bs_upload_modal.show()
+    upload_modal_title.innerText = title
+    send_file_btn.onclick = e => {
+        e.preventDefault()
+        bs_upload_modal.hide()
+        cbAccept(file_upload.files[0])
+    }
+}
+
 let hideTimeoutId
 const copyLink = link => {
     console.log(link)
@@ -123,9 +135,9 @@ const copyLink = link => {
     }, 2000)
 }
 
-const copyLinkWithButton = (link, btn) => {
+const copyLinkWithButton = (link, btn, auto = true) => {
     // Link created (cbLink)
-    setTimeout(_ => copyLink(link), 500)
+    if(auto) setTimeout(_ => copyLink(link), 500)
 
     btn.onclick = e => {
         e.preventDefault()
@@ -163,11 +175,8 @@ const populateContactListHTML = (parent = contacts_list) => {
 
         contacts_list_entry.onclick = async e => {
             e.preventDefault()
-            bs_upload_modal.show()
-
-            send_file_btn.onclick = async () => {
-                bs_upload_modal.hide()
-
+            
+            showSelectFileDialog("Send file to " + contact.name, async (file) => {
                 const key = await getJwkFromK(contact.k)
                 
                 const channel = await newRtcSession(contact.localSessionId).call(contact.remoteSessionId)
@@ -176,8 +185,8 @@ const populateContactListHTML = (parent = contacts_list) => {
                 // Connection established (cbConnected)
                 uiOnConnectionEstablished()
 
-                await handleSendFile(file_upload.files[0], channel, key)
-            }
+                await handleSendFile(file, channel, key)
+            })
         }
 
         const contacts_list_entry_img = document.createElement("img")
@@ -201,6 +210,40 @@ const populateContactListHTML = (parent = contacts_list) => {
         parent.appendChild(contacts_list_entry)
     }
 }
+	
+let add_contact_qr_code = undefined
+add_contact_btn.onclick = async e => {
+    e.preventDefault()
+    bs_add_contact_modal.show()
+
+    const localSessionId = crypto.randomUUID()
+    const remoteSessionId = crypto.randomUUID()
+
+    const connectionInfo = await generateConnectionInfo("recv")
+    const jwk = await crypto.subtle.exportKey("jwk", connectionInfo.key)
+
+    const hash = "#" + jwk.k + "," + localSessionId + "," + remoteSessionId
+    const link = window.location.origin + "/link" + hash
+
+    copyLinkWithButton(link, add_contact_copy_link_btn, false)
+
+    if(add_contact_qr_code) {
+        add_contact_qr_code.clear()
+        add_contact_qr_code.makeCode(link)
+    }
+    else {
+        add_contact_qr_code = new QRCode(add_contact_qr_div, {
+            text: link,
+            width: 256 * 2,
+            height: 256 * 2
+        });
+    }
+
+    add_contact_modal_btn.onclick = () => {
+        createContact(remoteSessionId, localSessionId, remoteSessionId, jwk.k)
+        populateContactListHTML()
+    }
+}
 
 file_upload.onchange = e => {
     send_file_btn.toggleAttribute("disabled", file_upload.files.length < 1)
@@ -208,4 +251,14 @@ file_upload.onchange = e => {
 
 choice_send_file_btn.addEventListener("click", uiOnChoiceSendBtnBlicked)
 choice_receive_file_btn.addEventListener("click", uiOnChoiceRecvBtnBlicked)
-choice_linked_devices_btn.addEventListener("click", uiOnChoiceLinkedDevicesClicked)
+// choice_linked_devices_btn.addEventListener("click", uiOnChoiceLinkedDevicesClicked)
+
+send_anyone_btn.onclick = e => {
+	e.preventDefault()
+	showSelectFileDialog("Send file to anyone", async file => {
+		console.log("send_file_btn_onclick_manual_navigation")
+		const {connectionInfo, channel} = await genConnectionInfoAndChannelAndUpdateUI("recv")
+        
+		await startFileSend(file, channel, connectionInfo.key)
+	})
+}

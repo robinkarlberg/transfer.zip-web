@@ -79,14 +79,6 @@ const genConnectionInfoAndChannelAndUpdateUI = async (direction) => {
     return {connectionInfo, channel}
 }
 
-const send_file_btn_onclick_manual_navigation = async e => {
-    e.preventDefault()
-    console.log("send_file_btn_onclick_manual_navigation")
-    const {connectionInfo, channel} = await genConnectionInfoAndChannelAndUpdateUI("recv")
-    
-    await startFileSend(file_upload.files[0], channel, connectionInfo.key)
-}
-
 (async () => {
 
 	window.onunhandledrejection = e => {
@@ -115,47 +107,7 @@ const send_file_btn_onclick_manual_navigation = async e => {
 		// setStatusText("Error!")
 	}
 
-	send_anyone_btn.onclick = e => {
-		e.preventDefault()
-		send_file_btn.onclick = send_file_btn_onclick_manual_navigation
-		bs_upload_modal.show()
-	}
-
 	populateContactListHTML()
-	
-    let add_contact_qr_code = undefined
-    add_contact_btn.onclick = async e => {
-        e.preventDefault()
-        bs_add_contact_modal.show()
-    
-        const localSessionId = crypto.randomUUID()
-        const remoteSessionId = crypto.randomUUID()
-    
-        const connectionInfo = await generateConnectionInfo("recv")
-        const jwk = await crypto.subtle.exportKey("jwk", connectionInfo.key)
-    
-        const hash = "#" + jwk.k + "," + localSessionId + "," + remoteSessionId
-        const link = window.location.origin + "/link" + hash
-    
-        copyLinkWithButton(link, add_contact_copy_link_btn)
-    
-        if(add_contact_qr_code) {
-            add_contact_qr_code.clear()
-            add_contact_qr_code.makeCode(link)
-        }
-        else {
-            add_contact_qr_code = new QRCode(add_contact_qr_div, {
-                text: link,
-                width: 256 * 2,
-                height: 256 * 2
-            });
-        }
-    
-        add_contact_modal_btn.onclick = () => {
-            createContact(remoteSessionId, localSessionId, remoteSessionId, jwk.k)
-            populateContactListHTML()
-        }
-    }
 	
 	let isPWA = window.location.search.startsWith("?pwa")
 
@@ -182,6 +134,7 @@ const send_file_btn_onclick_manual_navigation = async e => {
 		}, { name: "AES-GCM" }, false, ["encrypt", "decrypt"])
 
 		let sessionId = crypto.randomUUID()
+		uiOnFileTransferStart()
 
 		if(directionChar == "S") {
 			send_file_btn.onclick = async e => {
@@ -244,9 +197,6 @@ const send_file_btn_onclick_manual_navigation = async e => {
 			await startFileSend(file, channel, connectionInfo.key)
 		}
 		else {
-			// send_file_btn.onclick = send_file_btn_onclick_manual_navigation
-			// commented out bc it is set in "send_anyone_btn.onclick"
-
 			choice_receive_file_btn.onclick = async e => {
 				e.preventDefault()
 				const {connectionInfo, channel} = await genConnectionInfoAndChannelAndUpdateUI("send")
