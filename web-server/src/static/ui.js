@@ -38,6 +38,7 @@ const bs_copy_link_popover = new bootstrap.Popover(copy_link_btn)
 const status_text = document.getElementById("status-text")
 
 const uiOnLoad = () => {
+    console.debug("uiOnLoad")
     choice_send_file_btn.toggleAttribute("disabled", false)
     choice_receive_file_btn.toggleAttribute("disabled", false)
     // choice_linked_devices_btn.toggleAttribute("disabled", false)
@@ -48,6 +49,7 @@ const uiOnLoad = () => {
 }
 
 const uiOnChoiceSendBtnBlicked = () => {
+    console.debug("uiOnChoiceSendBtnBlicked")
     choice_send_file_btn.toggleAttribute("disabled", true)
     choice_receive_file_btn.toggleAttribute("disabled", true)
     // choice_linked_devices_btn.toggleAttribute("disabled", true)
@@ -58,6 +60,7 @@ const uiOnChoiceSendBtnBlicked = () => {
 }
 
 const uiOnChoiceRecvBtnBlicked = () => {
+    console.debug("uiOnChoiceRecvBtnBlicked")
     choice_send_file_btn.toggleAttribute("disabled", true)
     choice_receive_file_btn.toggleAttribute("disabled", true)
     // choice_linked_devices_btn.toggleAttribute("disabled", true)
@@ -68,6 +71,7 @@ const uiOnChoiceRecvBtnBlicked = () => {
 }
 
 const uiOnChoiceLinkedDevicesClicked = () => {
+    console.debug("uiOnChoiceLinkedDevicesClicked")
     choice_send_file_btn.toggleAttribute("disabled", false)
     choice_receive_file_btn.toggleAttribute("disabled", false)
     // choice_linked_devices_btn.toggleAttribute("disabled", false)
@@ -78,6 +82,7 @@ const uiOnChoiceLinkedDevicesClicked = () => {
 }
 
 const uiOnFileTransferStart = () => {
+    console.debug("uiOnFileTransferStart")
     choice_send_file_btn.toggleAttribute("disabled", true)
     choice_receive_file_btn.toggleAttribute("disabled", true)
     // choice_linked_devices_btn.toggleAttribute("disabled", true)
@@ -88,6 +93,7 @@ const uiOnFileTransferStart = () => {
 }
 
 const uiOnConnectionEstablished = () => {
+    console.debug("uiOnConnectionEstablished")
     setStatusText("Transferring file...")
     hideCopyLinkBtn()
 }

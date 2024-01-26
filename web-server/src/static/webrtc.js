@@ -71,9 +71,10 @@ ws.addEventListener("open", e => {
 
 ws.addEventListener("message", e => {
 	const data = JSON.parse(e.data)
-	console.log(data)
+	console.debug(data)
 	if(data.targetId == undefined) {
-		console.error("targetId not specified: ", data)
+		console.warn("targetId not specified: ", data)
+		return
 	}
 	for(let rtcSession of activeRtcSessions) {
 		if (rtcSession.sessionId === data.targetId) {
@@ -102,7 +103,7 @@ class RtcSession {
 		let recipientId;
 	
 		peerConnection.addEventListener("icecandidate", e => {
-			console.log(e)
+			console.debug(e)
 			if (e.candidate) {
 				console.log("peerConnection Got ICE candidate:", e.candidate)
 				ws.send(JSON.stringify({
@@ -180,13 +181,6 @@ class RtcSession {
 
 		let sendChannel = peerConnection.createDataChannel("sendDataChannel")
 		sendChannel.binaryType = "arraybuffer"
-
-		const offer = await peerConnection.createOffer();
-		await peerConnection.setLocalDescription(offer);
-		console.log("Sending offer:", offer)
-		ws.send(JSON.stringify({
-			type: 1, offer, recipientId, callerId: this.sessionId
-		}));
 	
 		this.onmessage = async data => {
 			if (data.type == 12 && data.answer) {
@@ -218,6 +212,13 @@ class RtcSession {
 				throw "Could not connect to remote peer, check your firewall settings or try connecting to another network"
 			}
 		})
+
+		const offer = await peerConnection.createOffer();
+		await peerConnection.setLocalDescription(offer);
+		console.log("Sending offer:", offer)
+		ws.send(JSON.stringify({
+			type: 1, offer, recipientId, callerId: this.sessionId
+		}));
 	
 		return new Promise((resolve, reject) => {
 			sendChannel.addEventListener("open", e => {

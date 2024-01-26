@@ -65,6 +65,7 @@ class FileTransfer {
     }
     
     async sendFile(file, cbProgress, cbFinished) {
+        console.debug("sendFile")
         this.channel.addEventListener("message", async e => {
             const data = JSON.parse(e.data)
             if(data.type == "progress") {
@@ -135,6 +136,7 @@ class FileTransfer {
     }
 
     async recvFile(cbProgress, cbFinished) {
+        console.debug("recvFile")
         let chunkMap = new Map()
         let chunkIndex = -1
         let writer = undefined
