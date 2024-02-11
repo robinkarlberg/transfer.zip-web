@@ -31,7 +31,10 @@
             "files": [
                 {
                     "name": "file",
-                    "accept": "application/octet-stream"
+                    "accept": [
+                        "image/png",
+                        "image/jpeg"
+                    ]
                 }
             ]
         }
