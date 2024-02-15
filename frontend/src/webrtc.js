@@ -109,6 +109,7 @@ export class RtcSession {
 
 	closed = false
 	has_logged_in = false
+	peerConnection = undefined
 
 	constructor(sessionId) {
 		// if(!ws) {
@@ -124,6 +125,7 @@ export class RtcSession {
 		}
 		console.log("rtcRecv")
 		const peerConnection = new RTCPeerConnection(RTC_CONF);
+		this.peerConnection = peerConnection;
 
 		ws.send(JSON.stringify({
 			type: 0,
@@ -192,6 +194,7 @@ export class RtcSession {
 		}
 		console.log("rtcCall")
 		const peerConnection = new RTCPeerConnection(RTC_CONF);
+		this.peerConnection = peerConnection;
 
 		ws.send(JSON.stringify({
 			type: 0,
@@ -300,6 +303,9 @@ export class RtcSession {
 	close() {
 		console.log("[RtcSession] close")
 		this.closed = true
+		if(this.peerConnection) {
+			this.peerConnection.close()
+		}
 		if(ws && ws.readyState == WebSocket.OPEN && this.has_logged_in) {
 			ws.send(JSON.stringify({
 				type: 4, sessionId: this.sessionId
