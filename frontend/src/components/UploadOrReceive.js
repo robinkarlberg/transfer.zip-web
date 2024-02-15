@@ -7,12 +7,17 @@ import { useNavigate } from "react-router-dom"
 
 export default function UploadOrReceive({setFileToUpload}) {
 
-    const {file, setFile} = useContext(ApplicationContext)
+    const {file, setFile, setFileInfo } = useContext(ApplicationContext)
     const navigate = useNavigate()
     const fileInputRef = useRef()
 
     const setUploadedFile = file => {
         setFile(file)
+        setFileInfo({
+            name: file.name,
+            size: file.size,
+            type: file.type
+        })
         navigate("/upload")
     }
 

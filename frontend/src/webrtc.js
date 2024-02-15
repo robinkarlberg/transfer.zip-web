@@ -22,7 +22,8 @@ const RTC_CONF = {
 	]
 }
 
-const WS_URL = (window.location.protocol.includes("s") ? "wss://" : "ws://") + window.location.host + "/ws"
+// const WS_URL = (window.location.protocol.includes("s") ? "wss://" : "ws://") + window.location.host + "/ws"
+const WS_URL = "ws://localhost:9002"
 
 /**
  * List containing all RtcSession instances
@@ -51,6 +52,7 @@ export const removeRtcSession = (rtcSession) => {
 let ws;
 
 export const createWebSocket = () => {
+	console.log("createWebSocket")
 	ws = new WebSocket(WS_URL)
 		
 	let keepAliveIntervalId = undefined
@@ -63,7 +65,7 @@ export const createWebSocket = () => {
 
 	ws.addEventListener("close", e => {
 		clearInterval(keepAliveIntervalId)
-		console.error("WebSocket closed!")
+		console.error("WebSocket closed! code:", e.code)
 	})
 			
 	ws.addEventListener("open", e => {
@@ -103,15 +105,23 @@ export const closeWebSocket = () => {
 export class RtcSession {
 	onopen = undefined
 	onmessage = undefined
+	onclose = undefined
+
+	closed = false
+	has_logged_in = false
 
 	constructor(sessionId) {
-		if(!ws) {
-			throw "[RtcSession] RtcSession created before calling createWebSocket. WebSocket object has not yet been created."
-		}
+		// if(!ws) {
+		// 	throw "[RtcSession] RtcSession created before calling createWebSocket. WebSocket object has not yet been created."
+		// }
 		this.sessionId = sessionId
 	}
 
 	async _recv() {
+		if(this.closed) {
+			console.warn("[RtcSession] _recv was called after close")
+			return
+		}
 		console.log("rtcRecv")
 		const peerConnection = new RTCPeerConnection(RTC_CONF);
 
@@ -119,6 +129,7 @@ export class RtcSession {
 			type: 0,
 			id: this.sessionId
 		}))
+		this.has_logged_in = true
 	
 		let recipientId;
 	
@@ -175,6 +186,10 @@ export class RtcSession {
 	}
 
 	async _call(recipientId) {
+		if(this.closed) {
+			console.warn("[RtcSession] _call was called after close")
+			return null
+		}
 		console.log("rtcCall")
 		const peerConnection = new RTCPeerConnection(RTC_CONF);
 
@@ -182,6 +197,7 @@ export class RtcSession {
 			type: 0,
 			id: this.sessionId
 		}))
+		this.has_logged_in = true
 	
 		peerConnection.addEventListener("icecandidate", e => {
 			console.log(e)
@@ -259,7 +275,7 @@ export class RtcSession {
 	}
 
 	async waitForWebsocket() {
-		if(ws.readyState == WebSocket.OPEN) {
+		if(ws && ws.readyState == WebSocket.OPEN) {
 			return
 		}
 		else {
@@ -282,9 +298,17 @@ export class RtcSession {
 	}
 
 	close() {
-		ws.send(JSON.stringify({
-			type: 4, sessionId: this.sessionId
-		}))
+		console.log("[RtcSession] close")
+		this.closed = true
+		if(ws && ws.readyState == WebSocket.OPEN && this.has_logged_in) {
+			ws.send(JSON.stringify({
+				type: 4, sessionId: this.sessionId
+			}))
+		}
+		else {
+			console.warn("[RtcSession] close was called but ws is invalid")
+		}
+		this.onclose && this.onclose()
 	}
 
 }

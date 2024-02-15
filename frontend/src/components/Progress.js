@@ -3,44 +3,155 @@ import { ApplicationContext } from "../providers/ApplicationProvider";
 
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Modal from "react-bootstrap/Modal"
-import { useBlocker } from "react-router-dom";
+import { useBlocker, useNavigate } from "react-router-dom";
 import { humanFileSize } from "../utils";
+import * as WebRtc from "../webrtc"
+import * as FileTransfer from "../filetransfer"
+
+const TRANSFER_STATE_IDLE = "idle"
+const TRANSFER_STATE_TRANSFERRING = "transferring"
+const TRANSFER_STATE_FINISHED = "finished"
+const TRANSFER_STATE_FAILED = "failed"
 
 export default function Progress() {
-    const { file } = useContext(ApplicationContext)
+    const { file, fileInfo, setFileInfo, hashList } = useContext(ApplicationContext)
 
-    const [transferState, setTransferState] = useState("idle")
+    const [transferState, setTransferState] = useState(TRANSFER_STATE_IDLE)
     const [transferProgress, setTransferProgress] = useState(0)
 
-    const blocker = useBlocker(() => !(transferState === "finished" || transferState === "failed"))
-
+    const blocker = useBlocker(() => !(transferState === TRANSFER_STATE_FINISHED || transferState === TRANSFER_STATE_FAILED))
+    const navigate = useNavigate()
     const qrRef = useRef()
 
+    // useEffect(() => {
+
+    //     setTransferState(TRANSFER_STATE_IDLE)
+    //     const timer1 = setTimeout(() => {
+    //         setTransferState(TRANSFER_STATE_TRANSFERRING)
+    //         setTransferProgress(40)
+    //     }, 1000)
+    //     const timer2 = setTimeout(() => {
+    //         setTransferProgress(0)
+    //         setTransferState(TRANSFER_STATE_FAILED)
+    //     }, 3000)
+    //     const timer3 = setTimeout(() => {
+    //         setTransferState(TRANSFER_STATE_TRANSFERRING)
+    //         setTransferProgress(30)
+    //     }, 5000)
+    //     const timer4 = setTimeout(() => {
+    //         setTransferProgress(100)
+    //         setTransferState(TRANSFER_STATE_FINISHED)
+    //     }, 7000)
+    //     return () => {
+    //         clearTimeout(timer1)
+    //         clearTimeout(timer2)
+    //         clearTimeout(timer3)
+    //         clearTimeout(timer4)
+    //     }
+    // }, [])
+
     useEffect(() => {
-        setTransferState("idle")
-        const timer1 = setTimeout(() => {
-            setTransferState("transferring")
-            setTransferProgress(40)
-        }, 1000)
-        const timer2 = setTimeout(() => {
-            setTransferProgress(0)
-            setTransferState("failed")
-        }, 3000)
-        const timer3 = setTimeout(() => {
-            setTransferState("transferring")
-            setTransferProgress(30)
-        }, 5000)
-        const timer4 = setTimeout(() => {
-            setTransferProgress(100)
-            setTransferState("finished")
-        }, 7000)
+        if (!file && !hashList) {
+            navigate("/")
+            return
+        }
+
+        let sessionId = crypto.randomUUID()
+        const rtcSession = WebRtc.newRtcSession(sessionId)
+        rtcSession.onclose = () => {
+            console.log("rtcSession onclose")
+            WebRtc.removeRtcSession(rtcSession)
+        }
+
+        const onChannelAndKeySendDirection = (channel, key) => {
+            if (channel == null) {
+                console.warn("channel was null, look for '[RtcSession] _call was called after close' messages. If they do not exist, you have a problem.")
+                return
+            }
+            console.log("onChannelAndKeySendDirection", channel, key)
+            setTransferState(TRANSFER_STATE_TRANSFERRING)
+            const fileTransfer = FileTransfer.newFileTransfer(channel, key)
+            fileTransfer.sendFile(file, progress => {
+                const { now, max } = progress
+                setTransferProgress(now / max * 100)
+            }, _ => {
+                setTransferState(TRANSFER_STATE_FINISHED)
+            }).catch(err => {
+                setTransferState(TRANSFER_STATE_FAILED)
+                console.error("transfer failed:", err)
+            }).finally(() => {
+                // FileTransfer.removeFileTransfer(fileTransfer)
+            })
+        }
+
+        const onChannelAndKeyRecvDirection = (channel, key) => {
+            if (channel == null) {
+                console.warn("channel was null, look for '[RtcSession] _call was called after close' messages. If they do not exist, you have a problem.")
+                return
+            }
+            console.log("onChannelAndKeyRecvDirection", channel, key)
+            setTransferState(TRANSFER_STATE_TRANSFERRING)
+            const fileTransfer = FileTransfer.newFileTransfer(channel, key)
+            fileTransfer.recvFile(fileInfo => {
+                setFileInfo(fileInfo)
+            }, progress => {
+                const { now, max } = progress
+                setTransferProgress(now / max * 100)
+            }, _ => {
+                setTransferState(TRANSFER_STATE_FINISHED)
+            }).catch(err => {
+                setTransferState(TRANSFER_STATE_FAILED)
+                console.error("transfer failed:", err)
+            }).finally(() => {
+                // FileTransfer.removeFileTransfer(fileTransfer)
+            })
+        }
+
+        if (hashList) {  // User has been sent a link, assuming action be taken
+            const [key_b, recipientId, directionChar] = hashList
+            const k = key_b
+
+            crypto.subtle.importKey("jwk", {
+                alg: "A256GCM",
+                ext: true,
+                k,
+                kty: "oct",
+                key_ops: ["encrypt", "decrypt"]
+            }, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]).then(key => {
+                rtcSession.call(recipientId).then(channel => { onChannelAndKeyRecvDirection(channel, key) })
+            })
+
+        }
+        else if (file) {
+            const directionChar = { "send": "S", "recv": "R" }["recv"]
+
+            window.crypto.subtle.generateKey(
+                {
+                    name: "AES-GCM",
+                    length: 256,
+                },
+                true,
+                ["encrypt", "decrypt"]
+            ).then(key => {
+                rtcSession.recv().then(channel => { onChannelAndKeySendDirection(channel, key) })
+                crypto.subtle.exportKey("jwk", key).then(jwk => {
+                    const hash = "#" + jwk.k + "," + sessionId + "," + directionChar
+                    const link = window.location.origin + "/" + hash
+                    navigator.clipboard.writeText(link).then(() => {
+                        console.log("Successfully copied ", link)
+                    }).catch(() => {
+                        console.log("Couldn't copy ", link)
+                    })
+                })
+            })
+
+        }
+
         return () => {
-            clearTimeout(timer1)
-            clearTimeout(timer2)
-            clearTimeout(timer3)
-            clearTimeout(timer4)
+            rtcSession?.close()
         }
     }, [])
+
 
     const onBlockerStayClicked = () => {
         console.log("onBlockerStayClicked")
@@ -52,12 +163,17 @@ export default function Progress() {
         blocker.proceed()
     }
 
-    const transferStateColor = {
-        "idle": "bg-body-tertiary",
-        "transferring": "bg-body-tertiary",
-        "finished": "bg-body-tertiary",
-        "failed": "bg-danger-subtle"
-    }
+    const fileName = fileInfo
+        ?
+        (<span className="fs-6">{fileInfo.name}</span>)
+        :
+        (<span className="placeholder w-50"></span>)
+
+    const fileSize = fileInfo
+        ?
+        (<span className="text-secondary">{humanFileSize(fileInfo.size, true)}</span>)
+        :
+        (<span className="placeholder w-25 bg-secondary"></span>)
 
     return (
         <div className="Progress flex-grow-1">
@@ -77,30 +193,48 @@ export default function Progress() {
             </Modal>
 
             <div className="w-100 d-flex flex-column">
-                <div className={"w-100 card " + transferStateColor[transferState]}>
+                <div className={"w-100 card " + (transferState === TRANSFER_STATE_FAILED ?
+                    "bg-danger-subtle" : "bg-body-tertiary")}>
                     <div className="d-flex flex-row justify-content-between align-items-center p-4 py-3 pb-2">
                         <div className="d-flex flex-column w-100">
-                            <span className="fs-6">{file.name}</span>
-                            <small><span className="text-secondary">{humanFileSize(file.size, true)}</span></small>
+                            {fileName}
+                            <small>{fileSize}</small>
                         </div>
                         <div className="p-0 d-flex flex-column">
                             {
                                 transferState === "idle" || transferState === "transferring" ?
-                                (
-                                    <div className="spinner-border spinner-border-sm" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                    </div>
-                                )
-                                :
-                                transferState === "finished" ?
-                                ( <i className="bi bi-check-lg"></i> )
-                                :
-                                ( <i className="bi bi-exclamation-lg"></i> )
+                                    (
+                                        <div className="spinner-border spinner-border-sm" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                    )
+                                    :
+                                    transferState === "finished" ?
+                                        (<i className="bi bi-check-lg"></i>)
+                                        :
+                                        (<i className="bi bi-exclamation-lg"></i>)
                             }
 
                         </div>
                     </div>
                     <ProgressBar now={transferProgress} style={{ height: "8px" }} />
+                    {/* {
+                        transferState === TRANSFER_STATE_IDLE
+                        ?
+                        (
+                            <div>
+                                <ProgressBar striped animated now={100} style={{ height: "8px" }} />
+                            </div>
+                        )
+                        :
+                        (
+                            <section>
+                                <ProgressBar now={transferProgress} style={{ height: "8px" }} />
+                            </section>
+                        )
+                    } */}
+
+
                 </div>
                 <div className="container py-4 text-center">
                     <div ref={qrRef} className="qrcode"></div>

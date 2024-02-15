@@ -28,7 +28,7 @@ export default function UploadOptions() {
                         <i className="bi bi-x fs-1"></i>
                     </div>
                 </div>
-                <hr className="hr my-2" style={{ margin: "0 auto", width: "33px" }}></hr>
+                {/* <hr className="hr my-2" style={{ margin: "0 auto", width: "33px" }}></hr>
                 <div className="p-3 py-3 w-100 bg-body-tertiary btn">
                     <div className="d-flex flex-row">
                         <div className="d-flex flex-column align-items-start">
@@ -36,7 +36,7 @@ export default function UploadOptions() {
                             <small><span className="text-secondary">The link will contain the encryption key</span></small>
                         </div>
                     </div>
-                </div>
+                </div> */}
                 <hr className="hr my-2" style={{ margin: "0 auto", width: "33px" }}></hr>
                 <div className="p-3 py-3 w-100 bg-body-tertiary btn mb-2">
                     <div className="d-flex flex-row">

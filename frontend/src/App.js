@@ -1,10 +1,28 @@
+import { useContext, useEffect } from "react";
 import "./App.css";
 
 
 import { Outlet, useNavigate } from "react-router-dom";
+import { ApplicationContext } from "./providers/ApplicationProvider";
 
 function App() {
+  const { setHashList } = useContext(ApplicationContext)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (window.location.hash) {  // User has been sent a link, assuming action be taken
+      const hashList = window.location.hash.slice(1).split(",")
+
+      if (hashList.length != 3) {
+        throw "The URL parameters are malformed. Did you copy the URL correctly?"
+      }
+
+      const [key_b, recipientId, directionChar] = hashList
+      setHashList(hashList)
+      window.location.hash = ""
+      navigate("/progress")
+    }
+  }, [])
 
   return (
     <div id="page-outer">
@@ -24,7 +42,7 @@ function App() {
           </div>
           <main className="d-flex flex-column">
             <div className="container d-flex justify-content-center flex-grow-1">
-              <Outlet/>
+              <Outlet />
             </div>
           </main>
 

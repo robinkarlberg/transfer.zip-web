@@ -152,11 +152,11 @@ function handleMessage(conn, message) {
             }));
         }
     } else if (data.type == 4) { // logout
-        // console.log("candidate", conn._session.id + " -> " + data.recipientId, data);
         if (!data.sessionId) return closeConnWithReason(conn, "[logout] Didn't specify sessionId")
         if (!conn._session.ids.find(o => o === data.sessionId))
             return closeConnWithReason(conn, "[logout] Tried to logout id not owned by them");
 
+        console.log("[logout]", data.sessionId);
         deleteSession(data.sessionId)
     }
 }

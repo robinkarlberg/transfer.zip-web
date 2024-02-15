@@ -1,5 +1,8 @@
 import { useContext } from "react"
 import { ApplicationContext } from "../providers/ApplicationProvider"
+import ContactsListEntry from "./ContactsListEntry"
+
+import "./ContactsList.css"
 
 export default function ContactsList() {
     const { contactsList, createContact, removeContact } = useContext(ApplicationContext)
@@ -9,19 +12,14 @@ export default function ContactsList() {
             <div className="d-flex flex-column">
                 {
                     contactsList.map(contact => {
-                        return (
-                            <div className="p-2 px-3 w-100 bg-body-tertiary btn border mb-2">
-                                <div className="d-flex flex-row">
-                                    <div className="d-flex flex-column align-items-start">
-                                        <span><i className="bi bi-person-fill me-2"></i>{contact.name}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        )
+                        return <ContactsListEntry contact={contact} key={contact.remoteSessionId}/>
                     })
                 }
             </div>
             
+            <div className="d-flex flex-row justify-content-center">
+                <a className="contacts-list-add-contact text-body border" href="#"><i className="bi bi-plus-lg fs-1"></i></a>
+            </div>
         </div>
     )
 }
