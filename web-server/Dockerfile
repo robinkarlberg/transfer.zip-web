@@ -1,14 +1,22 @@
-FROM nginx:alpine
+FROM node:alpine3.19 as build
 
-ARG USE_INCLUDES=false
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+COPY src/ src/
+COPY public/ public/
+# COPY . .
+
+# RUN ls -alh && sleep 10
+RUN npm i
+RUN npm run build
+
+FROM nginx:alpine as serve
 
 COPY nginx.conf /etc/nginx/conf.d/nginx.conf
-ADD src/static /var/www/static
+# ADD src/static /var/www/static
+COPY --from=build /app/build /var/www/static
 RUN rm /etc/nginx/conf.d/default.conf
-
-ADD includes /tmp/includes
-COPY build-html.sh /tmp
-RUN /tmp/build-html.sh $USE_INCLUDES
 
 COPY run-server.sh /usr/local/bin
 
