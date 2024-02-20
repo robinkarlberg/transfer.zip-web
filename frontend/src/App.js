@@ -1,12 +1,12 @@
 import { useContext, useEffect } from "react";
 import "./App.css";
 
-
 import { Outlet, useNavigate } from "react-router-dom";
 import { ApplicationContext } from "./providers/ApplicationProvider";
+import IntentDescription from "./components/IntentDescription"
 
 function App() {
-  const { setHashList } = useContext(ApplicationContext)
+  const { setHashList, setTransferDirection } = useContext(ApplicationContext)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -19,6 +19,7 @@ function App() {
 
       const [key_b, recipientId, directionChar] = hashList
       setHashList(hashList)
+      setTransferDirection(directionChar)
       window.location.hash = ""
       navigate("/progress")
     }
@@ -48,12 +49,7 @@ function App() {
 
           <div id="footer-container" className="container fs-6">
             <footer>
-              <div className="row mt-4">
-                <p className="mb-2">
-                  Data sent with this service is end-to-end encrypted and transferred in realtime between
-                  browsers. No file data, plaintext or encrypted, ever touches the server.
-                </p>
-              </div>
+              <IntentDescription/>
               <div className="d-flex flex-row justify-content-center mb-3">
                 <a className="mx-1" href="/">Home</a>
                 <a className="mx-1" href="/about">About</a>

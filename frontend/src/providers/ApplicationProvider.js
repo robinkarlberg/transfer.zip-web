@@ -12,6 +12,7 @@ export const ApplicationProvider = () => {
     const [file, setFile] = useState(null)
     const [fileInfo, setFileInfo] = useState(null)
     const [hashList, setHashList] = useState(null)
+    const [transferDirection, setTransferDirection] = useState(null)
 
     // TODO: Revert changes to contacts.js
     const [contactsList, setContactsList] = useState(Contacts.contactList)
@@ -42,6 +43,8 @@ export const ApplicationProvider = () => {
             setFileInfo,
             hashList,
             setHashList,
+            transferDirection,
+            setTransferDirection,
             createContact,
             removeContact,
             contactsList

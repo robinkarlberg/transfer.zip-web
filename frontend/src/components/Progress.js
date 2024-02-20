@@ -2,8 +2,10 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { ApplicationContext } from "../providers/ApplicationProvider";
 
 import ProgressBar from 'react-bootstrap/ProgressBar';
-import Modal from "react-bootstrap/Modal"
 import { useBlocker, useNavigate } from "react-router-dom";
+
+import QRCode from "react-qr-code";
+import Modal from "react-bootstrap/Modal"
 import { humanFileSize } from "../utils";
 import * as WebRtc from "../webrtc"
 import * as FileTransfer from "../filetransfer"
@@ -14,44 +16,26 @@ const TRANSFER_STATE_FINISHED = "finished"
 const TRANSFER_STATE_FAILED = "failed"
 
 export default function Progress() {
-    const { file, fileInfo, setFileInfo, hashList } = useContext(ApplicationContext)
+    const { file, fileInfo, setFileInfo, hashList, transferDirection } = useContext(ApplicationContext)
 
     const [transferState, setTransferState] = useState(TRANSFER_STATE_IDLE)
     const [transferProgress, setTransferProgress] = useState(0)
 
     const blocker = useBlocker(() => !(transferState === TRANSFER_STATE_FINISHED || transferState === TRANSFER_STATE_FAILED))
     const navigate = useNavigate()
-    const qrRef = useRef()
 
-    // useEffect(() => {
+    const [transferLink, setTransferLink] = useState(null)
 
-    //     setTransferState(TRANSFER_STATE_IDLE)
-    //     const timer1 = setTimeout(() => {
-    //         setTransferState(TRANSFER_STATE_TRANSFERRING)
-    //         setTransferProgress(40)
-    //     }, 1000)
-    //     const timer2 = setTimeout(() => {
-    //         setTransferProgress(0)
-    //         setTransferState(TRANSFER_STATE_FAILED)
-    //     }, 3000)
-    //     const timer3 = setTimeout(() => {
-    //         setTransferState(TRANSFER_STATE_TRANSFERRING)
-    //         setTransferProgress(30)
-    //     }, 5000)
-    //     const timer4 = setTimeout(() => {
-    //         setTransferProgress(100)
-    //         setTransferState(TRANSFER_STATE_FINISHED)
-    //     }, 7000)
-    //     return () => {
-    //         clearTimeout(timer1)
-    //         clearTimeout(timer2)
-    //         clearTimeout(timer3)
-    //         clearTimeout(timer4)
-    //     }
-    // }, [])
+    const copyTransferLink = () => {
+        navigator.clipboard.writeText(transferLink).then(() => {
+            console.log("Successfully copied ", transferLink)
+        }).catch(() => {
+            console.log("Couldn't copy ", transferLink)
+        })
+    }
 
     useEffect(() => {
-        if (!file && !hashList) {
+        if (!transferDirection) {
             navigate("/")
             return
         }
@@ -65,7 +49,7 @@ export default function Progress() {
 
         const onChannelAndKeySendDirection = (channel, key) => {
             if (channel == null) {
-                console.warn("channel was null, look for '[RtcSession] _call was called after close' messages. If they do not exist, you have a problem.")
+                console.warn("channel was null, look for '[RtcSession] _call was called after close' messages. If they do not exist, you have a problem. This warning should only appear when useEffect is called twice: https://react.dev/reference/react/useEffect#my-effect-runs-twice-when-the-component-mounts")
                 return
             }
             console.log("onChannelAndKeySendDirection", channel, key)
@@ -86,7 +70,7 @@ export default function Progress() {
 
         const onChannelAndKeyRecvDirection = (channel, key) => {
             if (channel == null) {
-                console.warn("channel was null, look for '[RtcSession] _call was called after close' messages. If they do not exist, you have a problem.")
+                console.warn("channel was null, look for '[RtcSession] _call was called after close' messages. If they do not exist, you have a problem. This warning should only appear when useEffect is called twice: https://react.dev/reference/react/useEffect#my-effect-runs-twice-when-the-component-mounts")
                 return
             }
             console.log("onChannelAndKeyRecvDirection", channel, key)
@@ -108,7 +92,7 @@ export default function Progress() {
         }
 
         if (hashList) {  // User has been sent a link, assuming action be taken
-            const [key_b, recipientId, directionChar] = hashList
+            const [key_b, recipientId, _] = hashList
             const k = key_b
 
             crypto.subtle.importKey("jwk", {
@@ -122,8 +106,8 @@ export default function Progress() {
             })
 
         }
-        else if (file) {
-            const directionChar = { "send": "S", "recv": "R" }["recv"]
+        else {
+            const directionCharForRecipient = transferDirection == "R" ? "S" : "R"
 
             window.crypto.subtle.generateKey(
                 {
@@ -133,15 +117,16 @@ export default function Progress() {
                 true,
                 ["encrypt", "decrypt"]
             ).then(key => {
-                rtcSession.recv().then(channel => { onChannelAndKeySendDirection(channel, key) })
+                rtcSession.recv().then(channel => {
+                    if (transferDirection == "S") onChannelAndKeySendDirection(channel, key)
+                    else if (transferDirection == "R") onChannelAndKeyRecvDirection(channel, key)
+                })
                 crypto.subtle.exportKey("jwk", key).then(jwk => {
-                    const hash = "#" + jwk.k + "," + sessionId + "," + directionChar
+                    const hash = "#" + jwk.k + "," + sessionId + "," + directionCharForRecipient
                     const link = window.location.origin + "/" + hash
-                    navigator.clipboard.writeText(link).then(() => {
-                        console.log("Successfully copied ", link)
-                    }).catch(() => {
-                        console.log("Couldn't copy ", link)
-                    })
+
+                    setTransferLink(link)
+                    copyTransferLink()
                 })
             })
 
@@ -176,7 +161,7 @@ export default function Progress() {
         (<span className="placeholder w-25 bg-secondary"></span>)
 
     return (
-        <div className="Progress flex-grow-1">
+        <div className="Progress d-flex flex-grow-1">
             <Modal show={blocker.state === "blocked"} centered onHide={onBlockerStayClicked}>
                 <Modal.Header closeButton>
                     <Modal.Title>Not so fast...</Modal.Title>
@@ -233,12 +218,35 @@ export default function Progress() {
                             </section>
                         )
                     } */}
-
-
                 </div>
-                <div className="container py-4 text-center">
-                    <div ref={qrRef} className="qrcode"></div>
-                </div>
+
+                {
+                    transferLink && transferState == TRANSFER_STATE_IDLE && (
+                        <div className="container py-4 text-center">
+                            <QRCode style={{ height: "auto", maxWidth: "100%", width: "100%", padding: "24px" }}
+                                className="bg-white mb-3 rounded"
+                                size={256}
+                                fgColor="#212529"
+                                value={transferLink} />
+                            <div class="input-group mb-3">
+                                <input className="form-control text-body-secondary" type="url" value={transferLink} />
+                                <div className="input-group-append">
+                                    <button onClick={copyTransferLink} className="btn btn-outline-secondary" type="button"><i className="bi bi-clipboard"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                }
+
+                {
+                    transferState == TRANSFER_STATE_FINISHED && (
+                        <div className="flex-grow-1 d-flex flex-column justify-content-end">
+                            <div className="d-flex flex-row justify-content-between gap-2">
+                                <button onClick={() => { navigate("/") }} className="btn btn-primary btn-lg flex-grow-1">Transfer another file</button>
+                            </div>
+                        </div>
+                    )
+                }
             </div>
         </div>
     )

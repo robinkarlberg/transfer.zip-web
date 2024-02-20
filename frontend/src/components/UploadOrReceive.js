@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom"
 
 export default function UploadOrReceive({setFileToUpload}) {
 
-    const {file, setFile, setFileInfo } = useContext(ApplicationContext)
+    const {file, setFile, setFileInfo, setTransferDirection } = useContext(ApplicationContext)
     const navigate = useNavigate()
     const fileInputRef = useRef()
 
@@ -18,6 +18,7 @@ export default function UploadOrReceive({setFileToUpload}) {
             size: file.size,
             type: file.type
         })
+        setTransferDirection("S")
         navigate("/upload")
     }
 
@@ -29,6 +30,11 @@ export default function UploadOrReceive({setFileToUpload}) {
 
     const onReceiveClicked = e => {
         e.stopPropagation()
+
+        setFile(null)
+        setFileInfo(null)
+        setTransferDirection("R")
+        navigate("/progress")
         console.log("onReceiveClicked")
     }
 
