@@ -22,8 +22,12 @@ const RTC_CONF = {
 	]
 }
 
-const WS_URL = (window.location.protocol.includes("s") ? "wss://" : "ws://") + window.location.host + "/ws"
-// const WS_URL = "ws://localhost:9002"
+let WS_URL
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    WS_URL = "ws://localhost:9002"
+} else {
+    WS_URL = (window.location.protocol.includes("s") ? "wss://" : "ws://") + window.location.host + "/ws"
+}
 
 /**
  * List containing all RtcSession instances
