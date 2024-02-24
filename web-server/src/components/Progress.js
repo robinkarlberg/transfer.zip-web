@@ -9,6 +9,7 @@ import Modal from "react-bootstrap/Modal"
 import { humanFileSize } from "../utils";
 import * as WebRtc from "../webrtc"
 import * as FileTransfer from "../filetransfer"
+import QRLink from "./QRLink";
 
 const TRANSFER_STATE_IDLE = "idle"
 const TRANSFER_STATE_TRANSFERRING = "transferring"
@@ -25,14 +26,6 @@ export default function Progress() {
     const navigate = useNavigate()
 
     const [transferLink, setTransferLink] = useState(null)
-
-    const copyTransferLink = () => {
-        navigator.clipboard.writeText(transferLink).then(() => {
-            console.log("Successfully copied ", transferLink)
-        }).catch(() => {
-            console.log("Couldn't copy ", transferLink)
-        })
-    }
 
     useEffect(() => {
         if (!transferDirection) {
@@ -81,6 +74,15 @@ export default function Progress() {
             }, progress => {
                 const { now, max } = progress
                 setTransferProgress(now / max * 100)
+
+                const copyTransferLink = (overrideLink = null) => {
+                    const link = overrideLink ? overrideLink : transferLink
+                    navigator.clipboard.writeText(link).then(() => {
+                        console.log("Successfully copied ", link)
+                    }).catch(() => {
+                        console.log("Couldn't copy ", link)
+                    })
+                }
             }, _ => {
                 setTransferState(TRANSFER_STATE_FINISHED)
             }).catch(err => {
@@ -110,10 +112,7 @@ export default function Progress() {
             const directionCharForRecipient = transferDirection == "R" ? "S" : "R"
 
             window.crypto.subtle.generateKey(
-                {
-                    name: "AES-GCM",
-                    length: 256,
-                },
+                { name: "AES-GCM", length: 256 },
                 true,
                 ["encrypt", "decrypt"]
             ).then(key => {
@@ -126,7 +125,7 @@ export default function Progress() {
                     const link = window.location.origin + "/" + hash
 
                     setTransferLink(link)
-                    copyTransferLink()
+                    // copyTransferLink(link)
                 })
             })
 
@@ -223,17 +222,7 @@ export default function Progress() {
                 {
                     transferLink && transferState == TRANSFER_STATE_IDLE && (
                         <div className="container py-4 text-center">
-                            <QRCode style={{ height: "auto", maxWidth: "100%", width: "100%", padding: "24px" }}
-                                className="bg-white mb-3 rounded"
-                                size={256}
-                                fgColor="#212529"
-                                value={transferLink} />
-                            <div class="input-group mb-3">
-                                <input className="form-control text-body-secondary" type="url" value={transferLink} />
-                                <div className="input-group-append">
-                                    <button onClick={copyTransferLink} className="btn btn-outline-secondary" type="button"><i className="bi bi-clipboard"></i></button>
-                                </div>
-                            </div>
+                            <QRLink link={transferLink}/>
                         </div>
                     )
                 }

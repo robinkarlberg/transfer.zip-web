@@ -17,6 +17,7 @@ import Progress from './components/Progress';
 import 'bootstrap/dist/css/bootstrap.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { ApplicationProvider } from './providers/ApplicationProvider';
+import Link from './pages/Link';
 
 const router = createBrowserRouter([
   {
@@ -37,12 +38,12 @@ const router = createBrowserRouter([
           {
             path: "progress",
             element: <Progress/>
-          },
-          {
-            path: "contacts",
-            element: <ContactsList/>
           }
         ]
+      },
+      {
+        path: "/link",
+        element: <Link/>
       }
     ]
   },
