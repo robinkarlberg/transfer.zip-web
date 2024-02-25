@@ -10,22 +10,22 @@ export default function Link() {
                         </div>
                     </div>
                     <main>
-                        <div class="container py-2">
+                        <div className="container py-2">
                             <p>Linking allows you to send files more easily. By remembering devices, you don't have to
                                 create a link or a QR code. Simply choose the recipient from your contact list.
                                 This can be reverted at any time.</p>
                             <p>Do you want to link your devices?</p>
                             <form>
                                 <fieldset id="file-form-fieldset">
-                                    <div class="d-flex flex-wrap">
-                                        <div class="">
-                                            <input id="cancel-btn" class="btn btn-outline-secondary" type="submit" value="Cancel" />
+                                    <div className="d-flex flex-wrap">
+                                        <div className="">
+                                            <input className="btn btn-outline-secondary" type="submit" value="Cancel" />
                                         </div>
-                                        <div class="my-auto px-2">
+                                        <div className="my-auto px-2">
                                             &zwnj;
                                         </div>
-                                        <div class="">
-                                            <input id="yes-btn" class="btn btn-primary" type="submit" value="Yes" />
+                                        <div className="">
+                                            <input className="btn btn-primary" type="submit" value="Yes" />
                                         </div>
                                     </div>
                                 </fieldset>
