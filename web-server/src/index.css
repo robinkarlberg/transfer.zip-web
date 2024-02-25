@@ -93,7 +93,7 @@
 
 :root {
   --max-width: 450px;
-  font: "Ubuntu";
+  font-family: "Ubuntu";
 }
 
 body {
