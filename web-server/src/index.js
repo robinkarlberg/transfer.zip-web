@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 
 import './index.css';
+import './ubuntu.css';
 import App from './App';
 import NotFound from './pages/NotFound';
 import ContactsList from './components/ContactsList';
