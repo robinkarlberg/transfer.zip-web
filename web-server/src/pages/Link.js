@@ -1,4 +1,34 @@
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom"
+import { ApplicationContext } from "../providers/ApplicationProvider";
+
 export default function Link() {
+
+    const navigate = useNavigate()
+
+    const { createContact } = useContext(ApplicationContext)
+
+    const onYesClicked = () => {
+        if (window.location.hash) {
+            const hashList = window.location.hash.slice(1).split(",")
+            if(hashList.length != 3) {
+                throw "The URL parameters are malformed. Did you copy the URL correctly?"
+            }
+            const [ key, remoteId, localId ] = hashList
+    
+            // let localId = crypto.randomUUID()
+            // TODO: validate UUIDs
+            // TODO: compute localId from remoteId or something
+    
+            createContact(remoteId, localId, remoteId, key)
+            navigate("/")
+        }
+    }
+
+    const onCancelClicked = () => {
+        navigate("/")
+    }
+
     return (
         <div id="page-outer">
             <div id="page">
@@ -19,13 +49,13 @@ export default function Link() {
                                 <fieldset id="file-form-fieldset">
                                     <div className="d-flex flex-wrap">
                                         <div className="">
-                                            <input className="btn btn-outline-secondary" type="submit" value="Cancel" />
+                                            <input onClick={onCancelClicked} className="btn btn-outline-secondary" type="submit" value="Cancel" />
                                         </div>
                                         <div className="my-auto px-2">
                                             &zwnj;
                                         </div>
                                         <div className="">
-                                            <input className="btn btn-primary" type="submit" value="Yes" />
+                                            <input onClick={onYesClicked} className="btn btn-primary" type="submit" value="Yes" />
                                         </div>
                                     </div>
                                 </fieldset>

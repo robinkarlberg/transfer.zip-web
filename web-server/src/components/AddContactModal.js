@@ -22,8 +22,10 @@ export default function AddContactModal() {
     }
 
     useEffect(() => {
-        setLocalSessionId(crypto.randomUUID())
-        setRemoteSessionId(crypto.randomUUID())
+        let _localSessionId = crypto.randomUUID();
+        let _remoteSessionId = crypto.randomUUID();
+        setLocalSessionId(_localSessionId)
+        setRemoteSessionId(_remoteSessionId)
 
         window.crypto.subtle.generateKey(
             { name: "AES-GCM", length: 256 },
@@ -32,7 +34,7 @@ export default function AddContactModal() {
         ).then(key => {
             crypto.subtle.exportKey("jwk", key).then(jwk => {
                 setk(jwk.k)
-                const hash = "#" + jwk.k + "," + localSessionId + "," + remoteSessionId
+                const hash = "#" + jwk.k + "," + _localSessionId + "," + _remoteSessionId
                 const link = window.location.origin + "/link" + hash
                 setLink(link)
             })
