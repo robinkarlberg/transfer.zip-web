@@ -5,7 +5,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { ApplicationContext } from "./providers/ApplicationProvider";
 import IntentDescription from "./components/IntentDescription"
 import ContactsListOffcanvas from "./components/ContactsListOffcanvas";
-import AddContactModal from "./components/AddContactModal";
+import AddContactModal from "./components/modals/AddContactModal";
 
 function App() {
   const { setHashList, setTransferDirection } = useContext(ApplicationContext)

@@ -1,12 +1,13 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom"
 import { ApplicationContext } from "../providers/ApplicationProvider";
+import EditContactModal from "../components/modals/EditContactModal";
 
 export default function Link() {
 
     const navigate = useNavigate()
 
-    const { createContact } = useContext(ApplicationContext)
+    const { createContact, contactsList } = useContext(ApplicationContext)
 
     const onYesClicked = () => {
         if (window.location.hash) {
@@ -31,6 +32,7 @@ export default function Link() {
 
     return (
         <div id="page-outer">
+            <EditContactModal contact={contactsList[0]}/>
             <div id="page">
                 <div>
                     <div id="heading-container" className="container mb-1 d-flex justify-content-between">

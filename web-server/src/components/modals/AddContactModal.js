@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react"
 import { Modal } from 'react-bootstrap'
-import { ApplicationContext } from '../providers/ApplicationProvider'
-import QRLink from "./QRLink"
+import { ApplicationContext } from '../../providers/ApplicationProvider'
+import QRLink from "../QRLink"
 
 export default function AddContactModal() {
     const { showAddContact, setShowAddContact, createContact } = useContext(ApplicationContext)

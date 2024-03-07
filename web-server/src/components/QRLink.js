@@ -12,8 +12,8 @@ export default function QRLink({ link }) {
     }
 
     return (
-        <>
-            <QRCode style={{ height: "auto", maxWidth: "100%", width: "100%", padding: "24px" }}
+        <div style={{ maxWidth: "380px" }}>
+            <QRCode style={{ height: "auto", maxWidth: "100%", width: "100%", padding: "24px"}}
                 className="bg-white mb-3 rounded"
                 size={256}
                 fgColor="#212529"
@@ -24,7 +24,7 @@ export default function QRLink({ link }) {
                     <button onClick={() => {copyLink()}} className="btn btn-outline-secondary" type="button"><i className="bi bi-clipboard"></i></button>
                 </div>
             </div>
-        </>
+        </div>
         
     )
 }
