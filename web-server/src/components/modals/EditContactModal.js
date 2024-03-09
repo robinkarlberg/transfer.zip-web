@@ -24,7 +24,7 @@ export default function EditContactModal({ contact, show, setShow }) {
                 <Modal.Body>
                     <div className="d-flex flex-row">
                         <div className="d-flex flex-column align-items-start">
-                            <span><i className="bi bi-person-fill me-2 fs-1"></i>{contact.name}<i className="bi bi-pencil-fill"></i></span>
+                            <span><i className="bi bi-person-fill me-2 fs-1"></i>{contact?.name}<i className="bi bi-pencil-fill"></i></span>
                         </div>
                     </div>
                     <div>
