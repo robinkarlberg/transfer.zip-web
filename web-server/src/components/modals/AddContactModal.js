@@ -39,7 +39,7 @@ export default function AddContactModal() {
                 setLink(link)
             })
         })
-    }, [])
+    }, [showAddContact])
 
     return (
         <>

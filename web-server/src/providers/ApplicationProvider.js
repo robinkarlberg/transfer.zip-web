@@ -24,9 +24,6 @@ export const ApplicationProvider = () => {
     const [editedContact, setEditedContact] = useState(null)
     const [showEditContact, setShowEditContact] = useState(false)
 
-    const navigate = useNavigate()
-    // const wsRef = useRef(null)
-
     useEffect(() => {
         WebRtc.createWebSocket()
         return () => {
