@@ -35,11 +35,15 @@ export const ApplicationProvider = () => {
     }, [])
 
     const createContact = useCallback((name, localSessionId, remoteSessionId, k) => {
-        setContactsList(Contacts.asWithNewContact(name, localSessionId, remoteSessionId, k))
+        const newContactList = Contacts.asWithNewContact(name, localSessionId, remoteSessionId, k)
+        setContactsList(newContactList)
+        Contacts.saveContactList(newContactList)
     })
 
     const removeContact = useCallback((remoteSessionId) => {
-        setContactsList(Contacts.asWithRemovedContact(remoteSessionId))
+        const newContactList = Contacts.asWithRemovedContact(remoteSessionId)
+        setContactsList(newContactList)
+        Contacts.saveContactList(newContactList)
     })
 
     const handleCloseContactsList = () => {

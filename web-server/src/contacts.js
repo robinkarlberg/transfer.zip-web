@@ -21,7 +21,8 @@ const TEST_CONTACTS = [
 
 export let contactList = window.localStorage.getItem("contacts") ? JSON.parse(window.localStorage.getItem("contacts")) : TEST_CONTACTS
 
-export const saveContactList = () => {
+export const saveContactList = (newContactList) => {
+    contactList = newContactList
     window.localStorage.setItem("contacts", JSON.stringify(contactList))
 }
 
