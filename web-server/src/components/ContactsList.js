@@ -5,14 +5,18 @@ import ContactsListEntry from "./ContactsListEntry"
 import "./ContactsList.css"
 
 export default function ContactsList() {
-    const { contactsList, createContact, removeContact, setShowAddContact } = useContext(ApplicationContext)
+    const { contactsList, createContact, removeContact, setShowAddContact, showEditContactModal } = useContext(ApplicationContext)
 
     return (
         <div className="ContactsList flex-grow-1">
             <div className="d-flex flex-column">
                 {
                     contactsList.map(contact => {
-                        return <ContactsListEntry contact={contact} key={contact.remoteSessionId}/>
+                        return (
+                            <ContactsListEntry contact={contact} key={contact.remoteSessionId} onClick={() => {
+                                showEditContactModal(contact)
+                            }}/>
+                        )
                     })
                 }
             </div>

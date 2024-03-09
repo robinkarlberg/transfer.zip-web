@@ -4,18 +4,11 @@ import "./App.css";
 import { Outlet, useNavigate } from "react-router-dom";
 import { ApplicationContext } from "./providers/ApplicationProvider";
 import IntentDescription from "./components/IntentDescription"
-import ContactsListOffcanvas from "./components/ContactsListOffcanvas";
 import AddContactModal from "./components/modals/AddContactModal";
 
 function App() {
-  const { setHashList, setTransferDirection } = useContext(ApplicationContext)
+  const { setHashList, setTransferDirection, setShowContacts } = useContext(ApplicationContext)
   const navigate = useNavigate()
-
-  const [showContacts, setShowContacts] = useState(false)
-
-  const handleCloseContactsList = () => {
-      setShowContacts(false)
-  }
 
   useEffect(() => {
     if (window.location.hash) {  // User has been sent a link, assuming action be taken
@@ -50,7 +43,6 @@ function App() {
             </div>
           </div>
           <AddContactModal/>
-          <ContactsListOffcanvas show={showContacts} handleClose={handleCloseContactsList}/>
           <main className="d-flex flex-column">
             <div className="container d-flex justify-content-center flex-grow-1">
               <Outlet/>

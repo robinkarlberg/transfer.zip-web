@@ -5,6 +5,8 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 import * as WebRtc from "../webrtc";
 import * as Contacts from "../contacts"
+import ContactsListOffcanvas from "../components/ContactsListOffcanvas";
+import EditContactModal from "../components/modals/EditContactModal";
 
 export const ApplicationContext = createContext({})
 
@@ -18,6 +20,9 @@ export const ApplicationProvider = () => {
 
     // TODO: Revert changes to contacts.js
     const [contactsList, setContactsList] = useState(Contacts.contactList)
+    const [showContacts, setShowContacts] = useState(false)
+    const [editedContact, setEditedContact] = useState(null)
+    const [showEditContact, setShowEditContact] = useState(false)
 
     const navigate = useNavigate()
     // const wsRef = useRef(null)
@@ -36,6 +41,15 @@ export const ApplicationProvider = () => {
     const removeContact = useCallback((remoteSessionId) => {
         setContactsList(Contacts.asWithRemovedContact(remoteSessionId))
     })
+
+    const handleCloseContactsList = () => {
+        setShowContacts(false)
+    }
+
+    const showEditContactModal = (contact) => {
+        setEditedContact(contact)
+        setShowEditContact(true)
+    }
     
     return (
         <ApplicationContext.Provider value={{
@@ -51,8 +65,12 @@ export const ApplicationProvider = () => {
             setShowAddContact,
             createContact,
             removeContact,
-            contactsList
+            contactsList,
+            setShowContacts,
+            showEditContactModal
         }}>
+            <EditContactModal show={showEditContact} setShow={setShowEditContact} contact={editedContact}/>
+            <ContactsListOffcanvas show={showContacts} handleClose={handleCloseContactsList}/>
             <Outlet/>
         </ApplicationContext.Provider>
     )
