@@ -1,15 +1,15 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { ApplicationContext } from "../providers/ApplicationProvider";
+import { ApplicationContext } from "../../providers/ApplicationProvider";
 
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import { useBlocker, useNavigate } from "react-router-dom";
 
 import QRCode from "react-qr-code";
 import Modal from "react-bootstrap/Modal"
-import { humanFileSize } from "../utils";
-import * as WebRtc from "../webrtc"
-import * as FileTransfer from "../filetransfer"
-import QRLink from "./QRLink";
+import { humanFileSize } from "../../utils";
+import * as WebRtc from "../../webrtc"
+import * as FileTransfer from "../../filetransfer"
+import QRLink from "../../components/QRLink";
 
 const TRANSFER_STATE_IDLE = "idle"
 const TRANSFER_STATE_TRANSFERRING = "transferring"
@@ -104,7 +104,10 @@ export default function Progress() {
                 kty: "oct",
                 key_ops: ["encrypt", "decrypt"]
             }, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]).then(key => {
-                rtcSession.call(recipientId).then(channel => { onChannelAndKeyRecvDirection(channel, key) })
+                rtcSession.call(recipientId).then(channel => {
+                    if(transferDirection == "S") onChannelAndKeySendDirection(channel, key)
+                    else if(transferDirection == "R") onChannelAndKeyRecvDirection(channel, key)
+                })
             })
 
         }
@@ -202,25 +205,10 @@ export default function Progress() {
                         </div>
                     </div>
                     <ProgressBar now={transferProgress} style={{ height: "8px" }} />
-                    {/* {
-                        transferState === TRANSFER_STATE_IDLE
-                        ?
-                        (
-                            <div>
-                                <ProgressBar striped animated now={100} style={{ height: "8px" }} />
-                            </div>
-                        )
-                        :
-                        (
-                            <section>
-                                <ProgressBar now={transferProgress} style={{ height: "8px" }} />
-                            </section>
-                        )
-                    } */}
                 </div>
 
                 {
-                    transferLink && transferState == TRANSFER_STATE_IDLE && (
+                    !hashList && transferLink && transferState == TRANSFER_STATE_IDLE && (
                         <div className="container py-4 text-center">
                             <QRLink link={transferLink}/>
                         </div>

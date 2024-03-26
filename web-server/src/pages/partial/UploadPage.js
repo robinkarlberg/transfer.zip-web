@@ -1,10 +1,10 @@
 import { useContext, useState } from "react";
-import { ApplicationContext } from "../providers/ApplicationProvider";
+import { ApplicationContext } from "../../providers/ApplicationProvider";
 
-import { humanFileSize } from "../utils"
+import { humanFileSize } from "../../utils"
 import { useNavigate } from "react-router-dom";
 
-import UploadOptionsButton from "./UploadOptionsButton";
+import UploadOptionsButton from "../../components/UploadOptionsButton";
 
 export default function UploadOptions() {
     const { file } = useContext(ApplicationContext)

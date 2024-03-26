@@ -22,7 +22,12 @@ function App() {
       setHashList(hashList)
       setTransferDirection(directionChar)
       window.location.hash = ""
-      navigate("/progress")
+      if(directionChar == "R") {
+        navigate("/progress")
+      }
+      else if(directionChar == "S") {
+        navigate("/upload-on-behalf")
+      }
     }
   }, [])
 

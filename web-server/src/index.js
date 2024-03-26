@@ -9,16 +9,17 @@ import {
 import './index.css';
 import './ubuntu.css';
 import App from './App';
-import NotFound from './pages/NotFound';
-import ContactsList from './components/ContactsList';
-import UploadOrReceive from "./components/UploadOrReceive"
-import UploadOptions from './components/UploadOptions';
-import Progress from './components/Progress';
+import NotFoundPage from './pages/NotFoundPage';
+import LinkPage from './pages/LinkPage';
+
+import IndexPage from "./pages/partial/IndexPage"
+import UploadPage from './pages/partial/UploadPage';
+import UploadOnBehalfPage from './pages/partial/UploadOnBehalfPage';
+import ProgressPage from './pages/partial/ProgressPage';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { ApplicationProvider } from './providers/ApplicationProvider';
-import Link from './pages/Link';
 
 const router = createBrowserRouter([
   {
@@ -30,27 +31,31 @@ const router = createBrowserRouter([
         children: [
           {
             path: "/",
-            element: <UploadOrReceive/>
+            element: <IndexPage/>
           },
           {
             path: "upload",
-            element: <UploadOptions/>
+            element: <UploadPage/>
+          },
+          {
+            path: "upload-on-behalf",
+            element: <UploadOnBehalfPage/>
           },
           {
             path: "progress",
-            element: <Progress/>
+            element: <ProgressPage/>
           }
         ]
       },
       {
         path: "/link",
-        element: <Link/>
+        element: <LinkPage/>
       }
     ]
   },
   {
     path: "*",
-    element: <NotFound/>
+    element: <NotFoundPage/>
   }
 ])
 
