@@ -7,7 +7,7 @@ export default function EditContactModal({ contact, show, setShow }) {
     const { removeContact } = useContext(ApplicationContext)
 
     const [editingName, setEditingName] = useState(false)
-    const [newName, setNewName] = useState(contact.name)
+    const [newName, setNewName] = useState(null)
 
     const editNameButton = useRef(null)
 
