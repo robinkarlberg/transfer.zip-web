@@ -32,14 +32,17 @@ export default function UploadOnBehalfPage() {
                 <Modal.Header closeButton>
                     <Modal.Title>File request</Modal.Title>
                 </Modal.Header>
-                <Modal.Body style={ { "minHeight": "30vh" } } className="d-flex">
+                <Modal.Body style={{ "minHeight": "30vh" }} className="d-flex flex-column">
                     <UploadOrReceiveArea allowReceive={false} onFileSelected={onFileSelected} />
+                    <p className="mb-2 text-body-secondary">
+                        All file data is end-to-end encrypted and will be transferred directly to the recipient, using peer-to-peer technology.
+                    </p>
                 </Modal.Body>
                 {/* <Modal.Footer>
                     <button onClick={onDoneClicked} className="btn btn-primary">Done</button>
                 </Modal.Footer> */}
             </Modal>
-            
+
         </>
 
     )

@@ -1,30 +1,72 @@
-import { useContext } from "react"
+import { useContext, useRef, useState } from "react"
 import { Modal } from "react-bootstrap"
 import { ApplicationContext } from "../../providers/ApplicationProvider"
 
 export default function EditContactModal({ contact, show, setShow }) {
 
-    const { removeContact, showEditContactModal } = useContext(ApplicationContext)
+    const { removeContact } = useContext(ApplicationContext)
 
-    const onDoneClicked = () => {
-        setShow(false)
-    }
+    const [editingName, setEditingName] = useState(false)
+    const [newName, setNewName] = useState(contact.name)
+
+    const editNameButton = useRef(null)
 
     const onRemoveClicked = () => {
         removeContact(contact.remoteSessionId)
         setShow(false)
     }
 
+    const onEditClicked = () => {
+        setEditingName(true)
+        setNewName(contact.name)
+    }
+
+    const onNameInputChange = (e) => {
+        if(e != undefined) {
+            setNewName(e.target.value)
+        }
+    }
+
+    const onEditNameBlur = () => {
+        setEditingName(false)
+        saveName()
+    }
+
+    const saveName = () => {
+        if(newName.length == "") {
+            setNewName(contact.remoteSessionId.substring(0, 8))
+        }
+        contact.name = newName
+    }
+
+    const onDoneClicked = () => {
+        setShow(false)
+        saveName()
+    }
+
+    const onModalClicked = (e) => {
+        if(e.target.nodeName != "INPUT" && e.target != editNameButton.current) {
+            onEditNameBlur()
+            e.stopPropagation();
+        }
+    }
+
+    const editNameElement = (
+        <input onChange={onNameInputChange} onBlur={onEditNameBlur} defaultValue={contact?.name}/>
+    )
+
     return (
         <>
-            <Modal show={show} centered onHide={onDoneClicked}>
+            <Modal onShow={() => {setNewName(contact.name)}} show={show} onClick={onModalClicked} centered onHide={onDoneClicked}>
                 <Modal.Header closeButton>
                     <Modal.Title>Edit contact</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="d-flex flex-row">
                         <div className="d-flex flex-column align-items-start">
-                            <span><i className="bi bi-person-fill me-2 fs-1"></i>{contact?.name}<i className="bi bi-pencil-fill"></i></span>
+                            <span><i className="bi bi-person-fill me-2 fs-1"></i>
+                            { editingName ? editNameElement : contact?.name }
+                            <a className="ms-2" href="#" onClick={onEditClicked}><i ref={editNameButton} className="bi bi-pencil-fill"></i></a></span>
                         </div>
                     </div>
                     <div>
