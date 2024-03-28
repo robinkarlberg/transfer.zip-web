@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import "./App.css";
+import logo from "./img/transfer-zip-logotext-cropped.png"
 
 import { Outlet, useNavigate } from "react-router-dom";
 import { ApplicationContext } from "./providers/ApplicationProvider";
@@ -40,7 +41,8 @@ function App() {
         <div>
           <div id="heading-container" className="container mb-1 d-flex justify-content-between">
             <div>
-              <h1 className="display-5 fw-medium mb-0">transfer<i>.zip</i></h1>
+              {/* <h1 className="display-5 fw-medium mb-0">transfer<i>.zip</i></h1> */}
+              <img style={ { maxWidth: "200px", marginBottom: "-10px", marginLeft: "-5px" } } src={logo}></img>
               <p className="text-secondary">Free, Fast, Encrypted</p>
             </div>
             <div>
