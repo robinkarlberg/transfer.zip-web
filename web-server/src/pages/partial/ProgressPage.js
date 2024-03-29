@@ -93,7 +93,8 @@ export default function Progress() {
             })
         }
 
-        if (hashList) {  // User has been sent a link, assuming action be taken
+        // TODO: Replace hashlist with something better and more structured
+        if (hashList) {  // User has been sent a link, assuming action be taken (OR contact has been selected)
             const [key_b, recipientId, _] = hashList
             const k = key_b
 
