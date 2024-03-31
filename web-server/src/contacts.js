@@ -26,8 +26,21 @@ export const saveContactList = (newContactList) => {
     window.localStorage.setItem("contacts", JSON.stringify(contactList))
 }
 
-export const asWithNewContact = (name, localSessionId, remoteSessionId, k) => {
-    return JSON.parse(JSON.stringify([...contactList, { name: name.substring(0, 8), localSessionId, remoteSessionId, k }]))
+// export const asWithNewContact = (name, localSessionId, remoteSessionId, k) => {
+//     return JSON.parse(JSON.stringify([...contactList, { name: name.substring(0, 8), localSessionId, remoteSessionId, k }]))
+// }
+
+export const asWithNewContact = (contact) => {
+    return JSON.parse(JSON.stringify([...contactList, contact]))
+}
+
+/**
+ * Constructor for contact object, does not update the contactsList array
+ * @param {*} contact 
+ * @returns 
+ */
+export const newContact = (name, localSessionId, remoteSessionId, k) => {
+    return { name, localSessionId, remoteSessionId, k }
 }
 
 export const asWithRemovedContact = (remoteSessionId) => {

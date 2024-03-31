@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react"
 import { Modal } from 'react-bootstrap'
 import { ApplicationContext } from '../../providers/ApplicationProvider'
 import QRLink from "../QRLink"
+import * as Contacts from "../../contacts"
 
 export default function AddContactModal() {
     const { showAddContact, setShowAddContact, createContact } = useContext(ApplicationContext)
@@ -17,7 +18,7 @@ export default function AddContactModal() {
     const [ k, setk ] = useState(null)
 
     const onAddClicked = () => {
-        createContact(remoteSessionId.substring(0, 8), localSessionId, remoteSessionId, k)
+        createContact(Contacts.newContact(remoteSessionId.substring(0, 8), localSessionId, remoteSessionId, k))
         setShowAddContact(false)
     }
 

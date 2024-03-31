@@ -2,6 +2,8 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom"
 import { ApplicationContext } from "../providers/ApplicationProvider";
 
+import * as Contacts from "../contacts"
+
 export default function LinkPage() {
 
     const navigate = useNavigate()
@@ -20,7 +22,7 @@ export default function LinkPage() {
             // TODO: validate UUIDs
             // TODO: compute localId from remoteId or something
     
-            createContact(remoteId, localId, remoteId, key)
+            createContact(Contacts.newContact(remoteId.substring(0, 8), localId, remoteId, key))
             navigate("/")
         }
     }

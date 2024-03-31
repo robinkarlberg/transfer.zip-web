@@ -37,6 +37,10 @@ let activeRtcSessions = []
 export const newRtcSession = (sessionId) => {
 	closeAndRemoveRtcSessionById(sessionId)
 	const rtcSession = new RtcSession(sessionId)
+	rtcSession._onclose = () => {
+		console.log("rtcSession _onclose")
+		removeRtcSession(rtcSession)
+	}
 	activeRtcSessions.push(rtcSession)
 	return rtcSession
 }
@@ -110,6 +114,11 @@ export class RtcSession {
 	onopen = undefined
 	onmessage = undefined
 	onclose = undefined
+
+	/**
+	 * Used internally by webrtc.js
+	 */
+	_onclose = undefined
 
 	closed = false
 	has_logged_in = false
@@ -318,6 +327,7 @@ export class RtcSession {
 		else {
 			console.warn("[RtcSession] close was called but ws is invalid")
 		}
+		this._onclose && this._onclose()
 		this.onclose && this.onclose()
 	}
 

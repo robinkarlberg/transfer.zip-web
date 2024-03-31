@@ -17,7 +17,7 @@ const TRANSFER_STATE_FINISHED = "finished"
 const TRANSFER_STATE_FAILED = "failed"
 
 export default function Progress() {
-    const { file, fileInfo, setFileInfo, hashList, transferDirection } = useContext(ApplicationContext)
+    const { file, fileInfo, setFileInfo, hashList, transferDirection, predefinedTransferChannel } = useContext(ApplicationContext)
 
     const [transferState, setTransferState] = useState(TRANSFER_STATE_IDLE)
     const [transferProgress, setTransferProgress] = useState(0)
@@ -31,13 +31,6 @@ export default function Progress() {
         if (!transferDirection) {
             navigate("/")
             return
-        }
-
-        let sessionId = crypto.randomUUID()
-        const rtcSession = WebRtc.newRtcSession(sessionId)
-        rtcSession.onclose = () => {
-            console.log("rtcSession onclose")
-            WebRtc.removeRtcSession(rtcSession)
         }
 
         const onChannelAndKeySendDirection = (channel, key) => {
@@ -93,9 +86,13 @@ export default function Progress() {
             })
         }
 
-        // TODO: Replace hashlist with something better and more structured
-        if (hashList) {  // User has been sent a link, assuming action be taken (OR contact has been selected)
-            const [key_b, recipientId, _] = hashList
+        let rtcSession = undefined
+
+        if(predefinedTransferChannel) {
+            // User has accepted a file request from contact, import key and use predefined data channel
+
+            // TODO: Replace hashlist with something better and more structured
+            const key_b = hashList[0]
             const k = key_b
 
             crypto.subtle.importKey("jwk", {
@@ -105,35 +102,65 @@ export default function Progress() {
                 kty: "oct",
                 key_ops: ["encrypt", "decrypt"]
             }, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]).then(key => {
-                rtcSession.call(recipientId).then(channel => {
-                    if(transferDirection == "S") onChannelAndKeySendDirection(channel, key)
-                    else if(transferDirection == "R") onChannelAndKeyRecvDirection(channel, key)
-                })
+                onChannelAndKeyRecvDirection(predefinedTransferChannel, key)
             })
-
         }
         else {
-            const directionCharForRecipient = transferDirection == "R" ? "S" : "R"
+            let sessionId = crypto.randomUUID()
+            rtcSession= WebRtc.newRtcSession(sessionId)
+            rtcSession.onclose = () => {
+                console.log("rtcSession onclose")
+                // WebRtc.removeRtcSession(rtcSession)
+            }
 
-            window.crypto.subtle.generateKey(
-                { name: "AES-GCM", length: 256 },
-                true,
-                ["encrypt", "decrypt"]
-            ).then(key => {
-                rtcSession.recv().then(channel => {
-                    if (transferDirection == "S") onChannelAndKeySendDirection(channel, key)
-                    else if (transferDirection == "R") onChannelAndKeyRecvDirection(channel, key)
+            // TODO: Replace hashlist with something better and more structured
+            if (hashList) {
+                // User has been sent a link, assuming action be taken (OR contact has been selected)
+                
+                const [key_b, recipientId, _] = hashList
+                const k = key_b
+
+                crypto.subtle.importKey("jwk", {
+                    alg: "A256GCM",
+                    ext: true,
+                    k,
+                    kty: "oct",
+                    key_ops: ["encrypt", "decrypt"]
+                }, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]).then(key => {
+                    rtcSession.call(recipientId).then(channel => {
+                        if(transferDirection == "S") onChannelAndKeySendDirection(channel, key)
+                        else if(transferDirection == "R") onChannelAndKeyRecvDirection(channel, key)
+                    })
                 })
-                crypto.subtle.exportKey("jwk", key).then(jwk => {
-                    const hash = "#" + jwk.k + "," + sessionId + "," + directionCharForRecipient
-                    const link = window.location.origin + "/" + hash
 
-                    setTransferLink(link)
-                    // copyTransferLink(link)
+            }
+            else {
+                // User initiated file transfer via UI
+
+                const directionCharForRecipient = transferDirection == "R" ? "S" : "R"
+
+                window.crypto.subtle.generateKey(
+                    { name: "AES-GCM", length: 256 },
+                    true,
+                    ["encrypt", "decrypt"]
+                ).then(key => {
+                    rtcSession.recv().then(channel => {
+                        if (transferDirection == "S") onChannelAndKeySendDirection(channel, key)
+                        else if (transferDirection == "R") onChannelAndKeyRecvDirection(channel, key)
+                    })
+                    crypto.subtle.exportKey("jwk", key).then(jwk => {
+                        const hash = "#" + jwk.k + "," + sessionId + "," + directionCharForRecipient
+                        const link = window.location.origin + "/" + hash
+
+                        setTransferLink(link)
+                        // copyTransferLink(link)
+                    })
                 })
-            })
 
+            }
         }
+
+        
 
         return () => {
             rtcSession?.close()
