@@ -91,6 +91,7 @@ export default function Progress() {
 
         if(predefinedDataChannel) {
             // User has accepted a file request from contact, import key and use predefined data channel
+            console.log("predefinedDataChannel exists!")
 
             // TODO: Replace hashlist with something better and more structured
             const key_b = hashList[0]
