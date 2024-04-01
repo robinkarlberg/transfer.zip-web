@@ -17,7 +17,7 @@ const TRANSFER_STATE_FINISHED = "finished"
 const TRANSFER_STATE_FAILED = "failed"
 
 export default function Progress() {
-    const { file, fileInfo, setFileInfo, hashList, transferDirection, predefinedTransferChannel } = useContext(ApplicationContext)
+    const { file, fileInfo, setFileInfo, hashList, transferDirection, predefinedDataChannel } = useContext(ApplicationContext)
 
     const [transferState, setTransferState] = useState(TRANSFER_STATE_IDLE)
     const [transferProgress, setTransferProgress] = useState(0)
@@ -89,7 +89,7 @@ export default function Progress() {
 
         let rtcSession = undefined
 
-        if(predefinedTransferChannel) {
+        if(predefinedDataChannel) {
             // User has accepted a file request from contact, import key and use predefined data channel
 
             // TODO: Replace hashlist with something better and more structured
@@ -103,7 +103,7 @@ export default function Progress() {
                 kty: "oct",
                 key_ops: ["encrypt", "decrypt"]
             }, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]).then(key => {
-                onChannelAndKeyRecvDirection(predefinedTransferChannel, key)
+                onChannelAndKeyRecvDirection(predefinedDataChannel, key)
             })
         }
         else {
