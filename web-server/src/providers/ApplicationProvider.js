@@ -133,7 +133,8 @@ export const ApplicationProvider = () => {
             removeContact,
             contactsList,
             setShowContacts,
-            showEditContactModal
+            showEditContactModal,
+            predefinedDataChannel
         }}>
             <EditContactModal show={showEditContact} setShow={setShowEditContact} contact={editedContact}/>
             <ContactsListOffcanvas show={showContacts} handleClose={handleCloseContactsList}/>
