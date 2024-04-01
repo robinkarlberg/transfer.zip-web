@@ -42,7 +42,8 @@ export const ApplicationProvider = () => {
             setTransferDirection("R")
             setHashList([
                 contact.k,
-                contact.remoteSessionId
+                contact.remoteSessionId,
+                "R"
             ])
             navigate("/progress")
         })

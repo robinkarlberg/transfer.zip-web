@@ -29,6 +29,7 @@ export default function Progress() {
 
     useEffect(() => {
         if (!transferDirection) {
+            console.log("transferDirection is null, go back to /")
             navigate("/")
             return
         }
@@ -110,7 +111,6 @@ export default function Progress() {
             rtcSession= WebRtc.newRtcSession(sessionId)
             rtcSession.onclose = () => {
                 console.log("rtcSession onclose")
-                // WebRtc.removeRtcSession(rtcSession)
             }
 
             // TODO: Replace hashlist with something better and more structured
