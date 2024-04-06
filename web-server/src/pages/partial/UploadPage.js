@@ -1,14 +1,13 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 
 import { humanFileSize } from "../../utils"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import UploadOptionsButton from "../../components/UploadOptionsButton";
 import SelectContactModal from "../../components/modals/SelectContactModal";
 
 export default function UploadOptions() {
-    const { file, setHashList, setTransferDirection } = useContext(ApplicationContext)
     const navigate = useNavigate()
 
     const [ globalOptionSelected, setGlobalOptionSelected ] = useState(false)
@@ -17,25 +16,36 @@ export default function UploadOptions() {
     const [ showSelectContactModal, setShowSelectContactModal ] = useState(false)
     const [ selectedContact, setSelectedContact ] = useState(null)
 
+    const { state } = useLocation()
+    
+    useEffect(() => {
+        if(!state) return navigate("/")
+    }, [])
+    
+    const { file } = state || {}
+
     const onFileCancelClicked = () => {
         navigate(-1)
     }
 
     const onNextClicked = () => {
         if(globalOptionSelected) {
-            navigate("/progress")
+            navigate("/progress", {
+                state
+            })
         }
         else if(contactsOptionSelected) {
             if(selectedContact == null) {
                 return
             }
 
-            setHashList([
-                selectedContact.k,
-                selectedContact.remoteSessionId,
-                "S"
-            ])
-            navigate("/progress")
+            navigate("/progress", {
+                state: {
+                    ...state,
+                    key: selectedContact.k,
+                    remoteSessionId: selectedContact.remoteSessionId,
+                }
+            })
         }
     }
 

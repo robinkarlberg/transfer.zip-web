@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 
 import ProgressBar from 'react-bootstrap/ProgressBar';
-import { useBlocker, useNavigate } from "react-router-dom";
+import { useBlocker, useNavigate, useLocation } from "react-router-dom";
 
 import QRCode from "react-qr-code";
 import Modal from "react-bootstrap/Modal"
@@ -17,7 +17,7 @@ const TRANSFER_STATE_FINISHED = "finished"
 const TRANSFER_STATE_FAILED = "failed"
 
 export default function Progress() {
-    const { file, fileInfo, setFileInfo, hashList, transferDirection, predefinedDataChannel } = useContext(ApplicationContext)
+    // const { file, fileInfo, setFileInfo, hashList, transferDirection, predefinedDataChannel } = useContext(ApplicationContext)
 
     const [transferState, setTransferState] = useState(TRANSFER_STATE_IDLE)
     const [transferProgress, setTransferProgress] = useState(0)
@@ -25,11 +25,17 @@ export default function Progress() {
     const blocker = useBlocker(() => !(transferState === TRANSFER_STATE_FINISHED || transferState === TRANSFER_STATE_FAILED))
     const navigate = useNavigate()
 
+    const { state } = useLocation()
+    
+    let { file, fileInfo, transferDirection, key, remoteSessionId, predefinedDataChannel } = state || {}
+
     const [transferLink, setTransferLink] = useState(null)
 
+    const isSentLinkWithHash = key && remoteSessionId && transferDirection
+
     useEffect(() => {
-        if (!transferDirection) {
-            console.log("transferDirection is null, go back to /")
+        if (!state) {
+            console.log("state is null, go back to /")
             navigate("/")
             return
         }
@@ -51,7 +57,7 @@ export default function Progress() {
                 setTransferState(TRANSFER_STATE_FAILED)
                 console.error("transfer failed:", err)
             }).finally(() => {
-                // FileTransfer.removeFileTransfer(fileTransfer)
+                // FileTransfer.removeFileTransfer(fileTransfer)key
             })
         }
 
@@ -63,8 +69,8 @@ export default function Progress() {
             console.log("onChannelAndKeyRecvDirection", channel, key)
             setTransferState(TRANSFER_STATE_TRANSFERRING)
             const fileTransfer = FileTransfer.newFileTransfer(channel, key)
-            fileTransfer.recvFile(fileInfo => {
-                setFileInfo(fileInfo)
+            fileTransfer.recvFile(_fileInfo => {
+                fileInfo = _fileInfo
             }, progress => {
                 const { now, max } = progress
                 setTransferProgress(now / max * 100)
@@ -93,9 +99,7 @@ export default function Progress() {
             // User has accepted a file request from contact, import key and use predefined data channel
             console.log("predefinedDataChannel exists!")
 
-            // TODO: Replace hashlist with something better and more structured
-            const key_b = hashList[0]
-            const k = key_b
+            const k = key
 
             crypto.subtle.importKey("jwk", {
                 alg: "A256GCM",
@@ -114,12 +118,10 @@ export default function Progress() {
                 console.log("rtcSession onclose")
             }
 
-            // TODO: Replace hashlist with something better and more structured
-            if (hashList) {
+            if (isSentLinkWithHash) {
                 // User has been sent a link, assuming action be taken (OR contact has been selected)
                 
-                const [key_b, recipientId, _] = hashList
-                const k = key_b
+                const k = key
 
                 crypto.subtle.importKey("jwk", {
                     alg: "A256GCM",
@@ -128,7 +130,7 @@ export default function Progress() {
                     kty: "oct",
                     key_ops: ["encrypt", "decrypt"]
                 }, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]).then(key => {
-                    rtcSession.call(recipientId).then(channel => {
+                    rtcSession.call(remoteSessionId).then(channel => {
                         if(transferDirection == "S") onChannelAndKeySendDirection(channel, key)
                         else if(transferDirection == "R") onChannelAndKeyRecvDirection(channel, key)
                     })
@@ -237,7 +239,7 @@ export default function Progress() {
                 </div>
 
                 {
-                    !hashList && transferLink && transferState == TRANSFER_STATE_IDLE && (
+                    !isSentLinkWithHash && transferLink && transferState == TRANSFER_STATE_IDLE && (
                         <div className="container py-4 text-center">
                             <QRLink link={transferLink}/>
                         </div>

@@ -8,7 +8,7 @@ import IntentDescription from "./components/IntentDescription"
 import AddContactModal from "./components/modals/AddContactModal";
 
 function App() {
-  const { setHashList, setTransferDirection, setShowContacts } = useContext(ApplicationContext)
+  const { setShowContacts } = useContext(ApplicationContext)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -20,14 +20,24 @@ function App() {
       }
 
       const [key_b, recipientId, directionChar] = hashList
-      setHashList(hashList)
-      setTransferDirection(directionChar)
+      // setHashList(hashList)
+      // setTransferDirection(directionChar)
+      const state = {
+        key: key_b,
+        remoteSessionId: recipientId,
+        transferDirection: directionChar
+      }
+
       window.location.hash = ""
       if(directionChar == "R") {
-        navigate("/progress")
+        navigate("/progress", {
+          state
+        })
       }
       else if(directionChar == "S") {
-        navigate("/upload-on-behalf")
+        navigate("/upload-on-behalf", {
+          state
+        })
       }
     }
   }, [])

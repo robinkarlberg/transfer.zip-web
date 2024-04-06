@@ -11,11 +11,11 @@ import EditContactModal from "../components/modals/EditContactModal";
 export const ApplicationContext = createContext({})
 
 export const ApplicationProvider = () => {
-    const [file, setFile] = useState(null)
-    const [fileInfo, setFileInfo] = useState(null)
-    const [hashList, setHashList] = useState(null)
-    const [transferDirection, setTransferDirection] = useState(null)
-    const [predefinedDataChannel, setPredefinedDataChannel] = useState(null)
+    // const [file, setFile] = useState(null)
+    // const [fileInfo, setFileInfo] = useState(null)
+    // const [hashList, setHashList] = useState(null)
+    // const [transferDirection, setTransferDirection] = useState(null)
+    // const [predefinedDataChannel, setPredefinedDataChannel] = useState(null)
     
     const [showAddContact, setShowAddContact] = useState(false)
 
@@ -38,14 +38,14 @@ export const ApplicationProvider = () => {
             // WebRtc.removeRtcSession(rtcSession)
         }
         rtcSession.recv().then(channel => {
-            setPredefinedDataChannel(channel)
-            setTransferDirection("R")
-            setHashList([
-                contact.k,
-                contact.remoteSessionId,
-                "R"
-            ])
-            navigate("/progress")
+            navigate("/progress", {
+                state: {
+                    key: contact.k,
+                    remoteSessionId: contact.remoteSessionId,
+                    transferDirection: "R",
+                    predefinedDataChannel: channel
+                }
+            })
         })
         setContactRtcSessions([
             ...contactRtcSessions,
@@ -119,22 +119,13 @@ export const ApplicationProvider = () => {
     
     return (
         <ApplicationContext.Provider value={{
-            file,
-            setFile,
-            fileInfo,
-            setFileInfo,
-            hashList,
-            setHashList,
-            transferDirection,
-            setTransferDirection,
             showAddContact,
             setShowAddContact,
             createContact,
             removeContact,
             contactsList,
             setShowContacts,
-            showEditContactModal,
-            predefinedDataChannel
+            showEditContactModal
         }}>
             <EditContactModal show={showEditContact} setShow={setShowEditContact} contact={editedContact}/>
             <ContactsListOffcanvas show={showContacts} handleClose={handleCloseContactsList}/>

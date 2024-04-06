@@ -1,6 +1,6 @@
-import { useContext, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { ApplicationContext } from "../../providers/ApplicationProvider"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom"
 
 import { Modal } from "react-bootstrap"
 
@@ -8,18 +8,27 @@ import UploadOrReceiveArea from "../../components/UploadOrReceiveArea"
 
 export default function UploadOnBehalfPage() {
 
-    const { file, setFile, setFileInfo, setTransferDirection } = useContext(ApplicationContext)
+    // const { setFile, setFileInfo, setTransferDirection } = useContext(ApplicationContext)
+
+    const { state } = useLocation()
     const navigate = useNavigate()
 
+    useEffect(() => {
+        if(!state) navigate("/")
+    }, [])
+
     const onFileSelected = file => {
-        setFile(file)
-        setFileInfo({
-            name: file.name,
-            size: file.size,
-            type: file.type
+        navigate("/progress", {
+            state: {
+                file,
+                fileInfo: {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                },
+                transferDirection: "S"
+            }
         })
-        setTransferDirection("S")
-        navigate("/progress")
     }
 
     const onDoneClicked = () => {
