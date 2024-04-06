@@ -18,10 +18,6 @@ export default function UploadOptions() {
 
     const { state } = useLocation()
     
-    useEffect(() => {
-        if(!state) return navigate("/")
-    }, [])
-    
     const { file } = state || {}
 
     const onFileCancelClicked = () => {
@@ -70,6 +66,11 @@ export default function UploadOptions() {
         setShowSelectContactModal(false)
         setContactsOptionSelected(false)
     }
+    
+    useEffect(() => {
+        onGlobalOptionClicked()
+        if(!state) return navigate("/")
+    }, [])
 
     const contactOptionButtonTitle = selectedContact == null ? "Contact" : selectedContact.name
 
@@ -102,7 +103,7 @@ export default function UploadOptions() {
                 </div> */}
                 <hr className="hr my-2" style={{ margin: "0 auto", width: "33px" }}></hr>
                 <UploadOptionsButton onClick={onGlobalOptionClicked} selected={globalOptionSelected} icon="bi-globe" title="Global" description="Anyone with the link can access the file"/>
-                <UploadOptionsButton onClick={onContactOptionClicked} selected={contactsOptionSelected} icon="bi-person-fill" title={contactOptionButtonTitle} description="Share file instantly without a link"/>
+                {/* <UploadOptionsButton onClick={onContactOptionClicked} selected={contactsOptionSelected} icon="bi-person-fill" title={contactOptionButtonTitle} description="Share file instantly without a link"/> */}
                 <div className="flex-grow-1 d-flex flex-column justify-content-end">
                     <div className="d-flex flex-row justify-content-between gap-2">
                         <button onClick={onFileCancelClicked} className="btn btn-outline-secondary btn-lg flex-grow-1">Back</button>

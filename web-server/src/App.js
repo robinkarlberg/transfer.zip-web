@@ -55,9 +55,9 @@ function App() {
               <img style={ { maxWidth: "200px", marginBottom: "-10px", marginLeft: "-5px" } } src={logo}></img>
               <p className="text-secondary">Free, Fast, Encrypted</p>
             </div>
-            <div>
+            {/* <div>
               <button onClick={() => { setShowContacts(true) }} className="btn btn-outline-secondary m-1"><i className="bi bi-person-lines-fill"></i></button>
-            </div>
+            </div> */}
           </div>
           <AddContactModal/>
           <main className="d-flex flex-column">
@@ -67,7 +67,7 @@ function App() {
           </main>
 
           <div id="footer-container" className="container fs-6">
-            <footer>
+            <footer style={{maxWidth: "900px"}}>
               <IntentDescription/>
               <div className="d-flex flex-row justify-content-center mb-3">
                 <a className="mx-1" href="/">Home</a>

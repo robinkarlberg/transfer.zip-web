@@ -30,6 +30,7 @@ export const ApplicationProvider = () => {
     const navigate = useNavigate()
 
     const createContactRtcSession = (contact) => {
+        return
         const rtcSession = WebRtc.newRtcSession(contact.localSessionId)
         console.log("[createContactRtcSession] created rtcSession")
         rtcSession.onclose = () => {
@@ -54,12 +55,14 @@ export const ApplicationProvider = () => {
     }
 
     const removeContactRtcSession = (contact) => {
+        return
         // Close handling does not need to happen here, removeContactRtcSession is only called
         // when RtcSession.close already has been called
         setContactRtcSessions(contactRtcSessions.filter(s => s.sessionId != contact.localSessionId))
     }
 
     const closeContactRtcSession = (contact) => {
+        return
         const existingContactRtcSession = contactRtcSessions.find(s => s.sessionId == contact.localSessionId)
         if(!existingContactRtcSession) {
             console.warn("[closeContactRtcSession] contactRtcSession does not exist for contact: ", contact)
@@ -69,6 +72,7 @@ export const ApplicationProvider = () => {
     }
 
     const closeAndRemoveAllContactRtcSessions = () => {
+        return
         for(let contactRtcSession of contactRtcSessions) {
             contactRtcSession.close()
         }

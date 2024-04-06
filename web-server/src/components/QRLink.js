@@ -1,6 +1,6 @@
 import QRCode from "react-qr-code"
 
-export default function QRLink({ link }) {
+export default function QRLink({ link, className }) {
 
     const copyLink = (overrideLink = null) => {
         const linkToCopy = overrideLink ? overrideLink : link
@@ -12,7 +12,7 @@ export default function QRLink({ link }) {
     }
 
     return (
-        <div style={{ maxWidth: "380px" }}>
+        <div className={className} style={{ maxWidth: "380px" }}>
             <QRCode style={{ height: "auto", maxWidth: "100%", width: "100%", padding: "24px"}}
                 className="bg-white mb-3 rounded"
                 size={256}

@@ -27,7 +27,7 @@ export default function Progress() {
 
     const { state } = useLocation()
     
-    let { file, fileInfo, transferDirection, key, remoteSessionId, predefinedDataChannel } = state || {}
+    let { file, fileInfo, key, remoteSessionId, transferDirection, predefinedDataChannel } = state || {}
 
     const [transferLink, setTransferLink] = useState(null)
 
@@ -211,7 +211,7 @@ export default function Progress() {
             </Modal>
 
             <div className="w-100 d-flex flex-column">
-                <div className={"w-100 card " + (transferState === TRANSFER_STATE_FAILED ?
+                <div style={{maxWidth:"410px"}} className={"w-100 card " + (transferState === TRANSFER_STATE_FAILED ?
                     "bg-danger-subtle" : "bg-body-tertiary")}>
                     <div className="d-flex flex-row justify-content-between align-items-center p-4 py-3 pb-2">
                         <div className="d-flex flex-column w-100">
@@ -241,7 +241,7 @@ export default function Progress() {
                 {
                     !isSentLinkWithHash && transferLink && transferState == TRANSFER_STATE_IDLE && (
                         <div className="container py-4 text-center">
-                            <QRLink link={transferLink}/>
+                            <QRLink className="" link={transferLink}/>
                         </div>
                     )
                 }
