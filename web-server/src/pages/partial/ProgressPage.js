@@ -27,7 +27,8 @@ export default function Progress() {
 
     const { state } = useLocation()
     
-    let { file, fileInfo, key, remoteSessionId, transferDirection, predefinedDataChannel } = state || {}
+    let { file, fileInfo: stateFileInfo, key, remoteSessionId, transferDirection, predefinedDataChannel } = state || {}
+    const [fileInfo, setFileInfo] = useState(stateFileInfo)
 
     const [transferLink, setTransferLink] = useState(null)
 
@@ -70,7 +71,7 @@ export default function Progress() {
             setTransferState(TRANSFER_STATE_TRANSFERRING)
             const fileTransfer = FileTransfer.newFileTransfer(channel, key)
             fileTransfer.recvFile(_fileInfo => {
-                fileInfo = _fileInfo
+                setFileInfo(_fileInfo)
             }, progress => {
                 const { now, max } = progress
                 setTransferProgress(now / max * 100)
