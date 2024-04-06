@@ -26,7 +26,9 @@ export default function UploadOnBehalfPage() {
                     size: file.size,
                     type: file.type
                 },
-                transferDirection: "S"
+                transferDirection: "S",
+                key: state.key,
+                remoteSessionid: state.remoteSessionId,
             }
         })
     }
