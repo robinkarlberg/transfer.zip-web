@@ -1,15 +1,17 @@
 import { useContext, useEffect, useState } from "react";
 import "./App.css";
+import "./extra.css";
 import logo from "./img/transfer-zip-logotext-cropped.png"
 
 import { Outlet, useNavigate } from "react-router-dom";
 import { ApplicationContext } from "./providers/ApplicationProvider";
 import IntentDescription from "./components/IntentDescription"
 import AddContactModal from "./components/modals/AddContactModal";
+import Adsense from "./components/Adsense";
 
 function App() {
   const { setShowContacts } = useContext(ApplicationContext)
-  const navigate = useNavigate()
+  const navigate = useNavigate()  
 
   useEffect(() => {
     if (window.location.hash) {  // User has been sent a link, assuming action be taken
@@ -61,8 +63,9 @@ function App() {
           </div>
           <AddContactModal/>
           <main className="d-flex flex-column">
-            <div className="container d-flex justify-content-center flex-grow-1">
+            <div className="container d-flex flex-column justify-content-center flex-grow-1">
               <Outlet/>
+              <Adsense className={"mobile-banner-ad"} data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932"/>
             </div>
           </main>
 
