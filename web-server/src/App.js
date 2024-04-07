@@ -47,7 +47,7 @@ function App() {
   return (
     <div id="page-outer">
       <div className="outer">
-
+        <Adsense className={"outer-ad-left outer-ad"} data_ad_client={"ca-pub-9550547294674683"} data_ad_slot={"5132630574"}/>
       </div>
       <div id="page">
         <div>
@@ -82,7 +82,7 @@ function App() {
         </div>
       </div>
       <div className="outer">
-
+        <Adsense className={"outer-ad-right outer-ad"} data_ad_client={"ca-pub-9550547294674683"} data_ad_slot={"5132630574"}/>
       </div>
     </div>
   );
