@@ -22,18 +22,16 @@ export default function Adsense({ data_ad_client, data_ad_slot, className }) {
             (window.adsbygoogle = window.adsbygoogle || []).push({});
         }
         catch {
-            
+
         }
     }, [])
 
     return (
-        <div>
-            <ins className={"adsbygoogle " + className}
-                style={{ display: "block", backgroundColor: "white" }}
-                data-ad-client={data_ad_client}
-                data-ad-slot={data_ad_slot}
-                data-ad-format="auto"
-                data-full-width-responsive="true"></ins>
-        </div>
+        <ins className={"adsbygoogle " + className}
+            style={{ display: "block", backgroundColor: "white" }}
+            data-ad-client={data_ad_client}
+            data-ad-slot={data_ad_slot}
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
     )
 }
