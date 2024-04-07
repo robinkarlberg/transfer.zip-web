@@ -7,6 +7,7 @@ import * as WebRtc from "../webrtc";
 import * as Contacts from "../contacts"
 import ContactsListOffcanvas from "../components/ContactsListOffcanvas";
 import EditContactModal from "../components/modals/EditContactModal";
+import Adsense from "../components/Adsense";
 
 export const ApplicationContext = createContext({})
 
@@ -133,6 +134,7 @@ export const ApplicationProvider = () => {
         }}>
             <EditContactModal show={showEditContact} setShow={setShowEditContact} contact={editedContact}/>
             <ContactsListOffcanvas show={showContacts} handleClose={handleCloseContactsList}/>
+            <Adsense className={"mobile-banner-ad"} data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932"/>
             <Outlet/>
         </ApplicationContext.Provider>
     )

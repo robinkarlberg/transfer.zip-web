@@ -65,7 +65,6 @@ function App() {
           <main className="d-flex flex-column">
             <div className="container d-flex flex-column justify-content-center flex-grow-1">
               <Outlet/>
-              <Adsense className={"mobile-banner-ad"} data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932"/>
             </div>
           </main>
 

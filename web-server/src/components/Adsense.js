@@ -2,13 +2,32 @@ import { useEffect } from "react"
 
 export default function Adsense({ data_ad_client, data_ad_slot, className }) {
     useEffect(() => {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        const scriptElement = window.document.createElement("script")
+        scriptElement.async = true
+        scriptElement.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + data_ad_client
+        scriptElement.crossorigin = "anonymous"
+
+
+        document.body.appendChild(scriptElement)
+
+        // (window.adsbygoogle = window.adsbygoogle || []).push({}); // dont uncomment this, it breaks appendChild for some fucking reason (i fucking hate programming)
+
+        return () => {
+            document.body.removeChild(scriptElement)
+        }
+    }, [])
+
+    useEffect(() => {
+        try {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+        }
+        catch {
+            
+        }
     }, [])
 
     return (
         <div>
-            <script async src={"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + data_ad_client}
-                crossOrigin="anonymous"></script>
             <ins className={"adsbygoogle " + className}
                 style={{ display: "block", backgroundColor: "white" }}
                 data-ad-client={data_ad_client}
