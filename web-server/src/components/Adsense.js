@@ -10,7 +10,7 @@ export default function Adsense({ data_ad_client, data_ad_slot, className }) {
             <script async src={"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + data_ad_client}
                 crossOrigin="anonymous"></script>
             <ins className={"adsbygoogle " + className}
-                style={{ display: "block", height: "200px", backgroundColor: "white" }}
+                style={{ display: "block", backgroundColor: "white" }}
                 data-ad-client={data_ad_client}
                 data-ad-slot={data_ad_slot}
                 data-ad-format="auto"
