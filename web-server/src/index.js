@@ -20,48 +20,52 @@ import ProgressPage from './pages/partial/ProgressPage';
 import 'bootstrap/dist/css/bootstrap.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { ApplicationProvider } from './providers/ApplicationProvider';
+import { FileTransferProvider } from './providers/FileTransferProvider';
 
 const router = createBrowserRouter([
   {
-    element: <ApplicationProvider/>,
+    element: <ApplicationProvider />,
     children: [
       {
         path: "/",
-        element: <App/>, // TODO: Implement element that redirects to appropriate route depending on URL hash (send/receive)
-        children: [
-          {
-            path: "/",
-            element: <IndexPage/>
-          },
-          {
-            path: "upload",
-            element: <UploadPage/>
-          },
-          {
-            path: "upload-on-behalf",
-            element: <UploadOnBehalfPage/>
-          },
-          {
-            path: "progress",
-            element: <ProgressPage/>
-          }
-        ]
+        element: <FileTransferProvider />,
+        children: [{
+          element: <App />, // TODO: Implement element that redirects to appropriate route depending on URL hash (send/receive)
+          children: [
+            {
+              path: "/",
+              element: <IndexPage />
+            },
+            {
+              path: "upload",
+              element: <UploadPage />
+            },
+            {
+              path: "upload-on-behalf",
+              element: <UploadOnBehalfPage />
+            },
+            {
+              path: "progress",
+              element: <ProgressPage />
+            }
+          ]
+        }]
       },
-      {
-        path: "/link",
-        element: <LinkPage/>
-      }
+      // {
+      //   path: "/link",
+      //   element: <LinkPage />
+      // }
     ]
   },
   {
     path: "*",
-    element: <NotFoundPage/>
+    element: <NotFoundPage />
   }
 ])
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router}/>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );

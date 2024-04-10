@@ -28,18 +28,18 @@ export default function UploadOnBehalfPage() {
                 },
                 transferDirection: "S",
                 key: state.key,
-                remoteSessionid: state.remoteSessionId,
+                remoteSessionId: state.remoteSessionId,
             }
         })
     }
 
-    const onDoneClicked = () => {
+    const onHideClicked = () => {
         navigate("/")
     }
 
     return (
         <>
-            <Modal show={true} centered onHide={onDoneClicked}>
+            <Modal show={true} centered onHide={onHideClicked}>
                 <Modal.Header closeButton>
                     <Modal.Title>File request</Modal.Title>
                 </Modal.Header>

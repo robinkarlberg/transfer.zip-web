@@ -10,6 +10,7 @@ import { humanFileSize } from "../../utils";
 import * as WebRtc from "../../webrtc"
 import * as FileTransfer from "../../filetransfer"
 import QRLink from "../../components/QRLink";
+import { FileTransferContext } from "../../providers/FileTransferProvider";
 
 const TRANSFER_STATE_IDLE = "idle"
 const TRANSFER_STATE_TRANSFERRING = "transferring"
@@ -18,6 +19,7 @@ const TRANSFER_STATE_FAILED = "failed"
 
 export default function Progress() {
     // const { file, fileInfo, setFileInfo, hashList, transferDirection, predefinedDataChannel } = useContext(ApplicationContext)
+    const { newFileTransfer } = useContext(FileTransferContext)
 
     const [transferState, setTransferState] = useState(TRANSFER_STATE_IDLE)
     const [transferProgress, setTransferProgress] = useState(0)
@@ -48,7 +50,7 @@ export default function Progress() {
             }
             console.log("onChannelAndKeySendDirection", channel, key)
             setTransferState(TRANSFER_STATE_TRANSFERRING)
-            const fileTransfer = FileTransfer.newFileTransfer(channel, key)
+            const fileTransfer = newFileTransfer(channel, key)
             fileTransfer.sendFile(file, progress => {
                 const { now, max } = progress
                 setTransferProgress(now / max * 100)
@@ -69,7 +71,7 @@ export default function Progress() {
             }
             console.log("onChannelAndKeyRecvDirection", channel, key)
             setTransferState(TRANSFER_STATE_TRANSFERRING)
-            const fileTransfer = FileTransfer.newFileTransfer(channel, key)
+            const fileTransfer = newFileTransfer(channel, key)
             fileTransfer.recvFile(_fileInfo => {
                 setFileInfo(_fileInfo)
             }, progress => {
@@ -119,8 +121,10 @@ export default function Progress() {
                 console.log("rtcSession onclose")
             }
 
+            console.log(isSentLinkWithHash, state)
+
             if (isSentLinkWithHash) {
-                // User has been sent a link, assuming action be taken (OR contact has been selected)
+                // User has been sent a link, assuming upload on behalf (OR contact has been selected)
                 
                 const k = key
 

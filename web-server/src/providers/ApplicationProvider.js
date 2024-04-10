@@ -31,7 +31,6 @@ export const ApplicationProvider = () => {
     const navigate = useNavigate()
 
     const createContactRtcSession = (contact) => {
-        return
         const rtcSession = WebRtc.newRtcSession(contact.localSessionId)
         console.log("[createContactRtcSession] created rtcSession")
         rtcSession.onclose = () => {
@@ -56,14 +55,12 @@ export const ApplicationProvider = () => {
     }
 
     const removeContactRtcSession = (contact) => {
-        return
         // Close handling does not need to happen here, removeContactRtcSession is only called
         // when RtcSession.close already has been called
         setContactRtcSessions(contactRtcSessions.filter(s => s.sessionId != contact.localSessionId))
     }
 
     const closeContactRtcSession = (contact) => {
-        return
         const existingContactRtcSession = contactRtcSessions.find(s => s.sessionId == contact.localSessionId)
         if(!existingContactRtcSession) {
             console.warn("[closeContactRtcSession] contactRtcSession does not exist for contact: ", contact)
@@ -73,7 +70,6 @@ export const ApplicationProvider = () => {
     }
 
     const closeAndRemoveAllContactRtcSessions = () => {
-        return
         for(let contactRtcSession of contactRtcSessions) {
             contactRtcSession.close()
         }
@@ -83,18 +79,18 @@ export const ApplicationProvider = () => {
     useEffect(() => {
         WebRtc.createWebSocket()
 
-        for(let contact of contactsList) {
-            createContactRtcSession(contact)
-        }
+        // for(let contact of contactsList) {
+        //     createContactRtcSession(contact)
+        // }
 
         return () => {
-            closeAndRemoveAllContactRtcSessions()
+            // closeAndRemoveAllContactRtcSessions()
             WebRtc.closeWebSocket()
         }
     }, [])
 
     const createContact = useCallback(contact => {
-        createContactRtcSession(contact)
+        // createContactRtcSession(contact)
         const newContactList = Contacts.asWithNewContact(contact)
         setContactsList(newContactList)
         Contacts.saveContactList(newContactList)
@@ -107,7 +103,7 @@ export const ApplicationProvider = () => {
             return
         }
 
-        closeContactRtcSession(existingContact)
+        // closeContactRtcSession(existingContact)
         const newContactList = Contacts.asWithRemovedContact(remoteSessionId)
         setContactsList(newContactList)
         Contacts.saveContactList(newContactList)
@@ -132,8 +128,8 @@ export const ApplicationProvider = () => {
             setShowContacts,
             showEditContactModal
         }}>
-            <EditContactModal show={showEditContact} setShow={setShowEditContact} contact={editedContact}/>
-            <ContactsListOffcanvas show={showContacts} handleClose={handleCloseContactsList}/>
+            {/* <EditContactModal show={showEditContact} setShow={setShowEditContact} contact={editedContact}/>
+            <ContactsListOffcanvas show={showContacts} handleClose={handleCloseContactsList}/> */}
             <Adsense className={"mobile-banner-ad"} data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932"/>
             <Outlet/>
         </ApplicationContext.Provider>

@@ -30,20 +30,20 @@ const getJwkFromK = async (k) => {
     return key
 }
 
-/**
- * List containing all FileTransfer instances
- */
-let activeFileTransfers = []
+// /**
+//  * List containing all FileTransfer instances
+//  */
+// let activeFileTransfers = []
 
-export const newFileTransfer = (channel, key) => {
-    const fileTransfer = new FileTransfer(channel, key)
-    activeFileTransfers.push(fileTransfer)
-    return fileTransfer
-}
+// export const newFileTransfer = (channel, key) => {
+//     const fileTransfer = new FileTransfer(channel, key)
+//     activeFileTransfers.push(fileTransfer)
+//     return fileTransfer
+// }
 
-export const removeFileTransfer = (fileTransfer) => {
-    activeFileTransfers = activeFileTransfers.filter(o => o !== fileTransfer)
-}
+// export const removeFileTransfer = (fileTransfer) => {
+//     activeFileTransfers = activeFileTransfers.filter(o => o !== fileTransfer)
+// }
 
 export class FileTransfer {
     packetIndex = 0
