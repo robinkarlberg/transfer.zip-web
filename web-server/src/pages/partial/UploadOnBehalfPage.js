@@ -39,7 +39,7 @@ export default function UploadOnBehalfPage() {
 
     return (
         <>
-            <Modal show={true} centered onHide={onHideClicked}>
+            <Modal show={true} backdrop="static" centered onHide={onHideClicked}>
                 <Modal.Header closeButton>
                     <Modal.Title>File request</Modal.Title>
                 </Modal.Header>
