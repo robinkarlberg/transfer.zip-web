@@ -21,6 +21,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { ApplicationProvider } from './providers/ApplicationProvider';
 import { FileTransferProvider } from './providers/FileTransferProvider';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
         children: [{
           element: <App />, // TODO: Implement element that redirects to appropriate route depending on URL hash (send/receive)
           children: [
+            {
+              path: "/privacy-policy",
+              element: <PrivacyPolicyPage />
+            },
             {
               path: "/",
               element: <IndexPage />
@@ -50,11 +55,7 @@ const router = createBrowserRouter([
             }
           ]
         }]
-      },
-      // {
-      //   path: "/link",
-      //   element: <LinkPage />
-      // }
+      }
     ]
   },
   {

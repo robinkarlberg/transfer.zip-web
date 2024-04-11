@@ -3,7 +3,7 @@ import "./App.css";
 import "./extra.css";
 import logo from "./img/transfer-zip-logotext-cropped.png"
 
-import { Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { ApplicationContext } from "./providers/ApplicationProvider";
 import IntentDescription from "./components/IntentDescription"
 import AddContactModal from "./components/modals/AddContactModal";
@@ -11,7 +11,9 @@ import Adsense from "./components/Adsense";
 
 function App() {
   const { setShowContacts } = useContext(ApplicationContext)
-  const navigate = useNavigate()  
+  const navigate = useNavigate()
+
+  const isInfoPage = window.location.href.indexOf("privacy-policy") > -1
 
   useEffect(() => {
     if (window.location.hash) {  // User has been sent a link, assuming action be taken
@@ -47,7 +49,7 @@ function App() {
   return (
     <div id="page-outer">
       <div className="outer">
-        <Adsense className={"outer-ad-left outer-ad"} data_ad_client={"ca-pub-9550547294674683"} data_ad_slot={"5132630574"}/>
+        { !isInfoPage && <Adsense className={"outer-ad-left outer-ad"} data_ad_client={"ca-pub-9550547294674683"} data_ad_slot={"5132630574"}/>}
       </div>
       <div id="page">
         <div>
@@ -70,19 +72,19 @@ function App() {
 
           <div id="footer-container" className="container fs-6">
             <footer style={{maxWidth: "900px"}}>
-              <IntentDescription/>
+              { !isInfoPage && <IntentDescription/> }
               <div className="d-flex flex-row justify-content-center mb-3">
-                <a className="mx-1" href="/">Home</a>
-                <a className="mx-1" href="/about">About</a>
-                <a className="mx-1" href="/privacy-policy">Privacy Policy</a>
-                <a className="mx-1" href="https://github.com/robinkarlberg/transfer.zip-web">View on GitHub</a>
+                <Link className="mx-1" to="/">Home</Link>
+                <Link className="mx-1" to="https://github.com/robinkarlberg/transfer.zip-web/?tab=readme-ov-file#transferzip">About</Link>
+                <Link className="mx-1" to="/privacy-policy">Privacy Policy</Link>
+                <Link className="mx-1" to="https://github.com/robinkarlberg/transfer.zip-web">View on GitHub</Link>
               </div>
             </footer>
           </div>
         </div>
       </div>
       <div className="outer">
-        <Adsense className={"outer-ad-right outer-ad"} data_ad_client={"ca-pub-9550547294674683"} data_ad_slot={"5132630574"}/>
+        { !isInfoPage && <Adsense className={"outer-ad-right outer-ad"} data_ad_client={"ca-pub-9550547294674683"} data_ad_slot={"5132630574"}/> }
       </div>
     </div>
   );

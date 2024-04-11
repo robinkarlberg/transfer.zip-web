@@ -29,6 +29,7 @@ export const ApplicationProvider = () => {
     const [contactRtcSessions, setContactRtcSessions] = useState([])
 
     const navigate = useNavigate()
+    const isInfoPage = window.location.href.indexOf("privacy-policy") > -1
 
     const createContactRtcSession = (contact) => {
         const rtcSession = WebRtc.newRtcSession(contact.localSessionId)
@@ -130,7 +131,7 @@ export const ApplicationProvider = () => {
         }}>
             {/* <EditContactModal show={showEditContact} setShow={setShowEditContact} contact={editedContact}/>
             <ContactsListOffcanvas show={showContacts} handleClose={handleCloseContactsList}/> */}
-            <Adsense className={"mobile-banner-ad"} data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932"/>
+            { !isInfoPage && <Adsense className={"mobile-banner-ad"} data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932"/> }
             <Outlet/>
         </ApplicationContext.Provider>
     )

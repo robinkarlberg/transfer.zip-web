@@ -1,8 +1,8 @@
-/* @media screen and (min-width: 800px) {
+@media screen and (min-width: 800px) {
     .mobile-banner-ad {
         display: none !important;
     }
-} */
+}
 
 #page-outer {
     display: flex;
