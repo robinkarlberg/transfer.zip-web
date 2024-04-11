@@ -18,7 +18,7 @@ const TRANSFER_STATE_FINISHED = "finished"
 const TRANSFER_STATE_FAILED = "failed"
 
 export default function Progress() {
-    // const { file, fileInfo, setFileInfo, hashList, transferDirection, predefinedDataChannel } = useContext(ApplicationContext)
+    const { setErrorMessage, setShowPeerConnectionError } = useContext(ApplicationContext)
     const { newFileTransfer } = useContext(FileTransferContext)
 
     const [transferState, setTransferState] = useState(TRANSFER_STATE_IDLE)
@@ -28,7 +28,7 @@ export default function Progress() {
     const navigate = useNavigate()
 
     const { state } = useLocation()
-    
+
     let { file, fileInfo: stateFileInfo, key, remoteSessionId, transferDirection, predefinedDataChannel } = state || {}
     const [fileInfo, setFileInfo] = useState(stateFileInfo)
 
@@ -98,7 +98,7 @@ export default function Progress() {
 
         let rtcSession = undefined
 
-        if(predefinedDataChannel) {
+        if (predefinedDataChannel) {
             // User has accepted a file request from contact, import key and use predefined data channel
             console.log("predefinedDataChannel exists!")
 
@@ -116,7 +116,7 @@ export default function Progress() {
         }
         else {
             let sessionId = crypto.randomUUID()
-            rtcSession= WebRtc.newRtcSession(sessionId)
+            rtcSession = WebRtc.newRtcSession(sessionId)
             rtcSession.onclose = () => {
                 console.log("rtcSession onclose")
             }
@@ -125,7 +125,7 @@ export default function Progress() {
 
             if (isSentLinkWithHash) {
                 // User has been sent a link, assuming upload on behalf (OR contact has been selected)
-                
+
                 const k = key
 
                 crypto.subtle.importKey("jwk", {
@@ -136,8 +136,15 @@ export default function Progress() {
                     key_ops: ["encrypt", "decrypt"]
                 }, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]).then(key => {
                     rtcSession.call(remoteSessionId).then(channel => {
-                        if(transferDirection == "S") onChannelAndKeySendDirection(channel, key)
-                        else if(transferDirection == "R") onChannelAndKeyRecvDirection(channel, key)
+                        if (transferDirection == "S") onChannelAndKeySendDirection(channel, key)
+                        else if (transferDirection == "R") onChannelAndKeyRecvDirection(channel, key)
+                    }).catch(err => {
+                        if(err instanceof WebRtc.PeerConnectionError) {
+                            setShowPeerConnectionError(true)
+                        }
+                        else {
+                            setErrorMessage(err.message || "Sorry an unknown error has occured! Check back later and we should hopefully have fixed it.")
+                        }
                     })
                 })
 
@@ -152,23 +159,31 @@ export default function Progress() {
                     true,
                     ["encrypt", "decrypt"]
                 ).then(key => {
-                    rtcSession.recv().then(channel => {
-                        if (transferDirection == "S") onChannelAndKeySendDirection(channel, key)
-                        else if (transferDirection == "R") onChannelAndKeyRecvDirection(channel, key)
-                    })
                     crypto.subtle.exportKey("jwk", key).then(jwk => {
                         const hash = "#" + jwk.k + "," + sessionId + "," + directionCharForRecipient
                         const link = window.location.origin + "/" + hash
 
                         setTransferLink(link)
                         // copyTransferLink(link)
+                        
+                        rtcSession.recv().then(channel => {
+                            if (transferDirection == "S") onChannelAndKeySendDirection(channel, key)
+                            else if (transferDirection == "R") onChannelAndKeyRecvDirection(channel, key)
+                        }).catch(err => {
+                            if(err instanceof WebRtc.PeerConnectionError) {
+                                setShowPeerConnectionError(true)
+                            }
+                            else {
+                                setErrorMessage(err.message || "Sorry an unknown error has occured! Check back later and we should hopefully have fixed it.")
+                            }
+                        })
                     })
                 })
 
             }
         }
 
-        
+
 
         return () => {
             rtcSession?.close()
@@ -216,7 +231,7 @@ export default function Progress() {
             </Modal>
 
             <div className="w-100 d-flex flex-column">
-                <div style={{maxWidth:"410px"}} className={"w-100 card " + (transferState === TRANSFER_STATE_FAILED ?
+                <div style={{ maxWidth: "410px" }} className={"w-100 card " + (transferState === TRANSFER_STATE_FAILED ?
                     "bg-danger-subtle" : "bg-body-tertiary")}>
                     <div className="d-flex flex-row justify-content-between align-items-center p-4 py-3 pb-2">
                         <div className="d-flex flex-column w-100">
@@ -246,7 +261,7 @@ export default function Progress() {
                 {
                     !isSentLinkWithHash && transferLink && transferState == TRANSFER_STATE_IDLE && (
                         <div className="container py-4 text-center">
-                            <QRLink className="" link={transferLink}/>
+                            <QRLink className="" link={transferLink} />
                         </div>
                     )
                 }

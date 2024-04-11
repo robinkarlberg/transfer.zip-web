@@ -1,3 +1,10 @@
+export class PeerConnectionError extends Error {
+    constructor() {
+        super("Could not connect to remote peer, check your firewall settings or try connecting to another network.");
+        this.name = "PeerConnectionError";
+    }
+}
+
 const RTC_CONF = {
 	iceServers: [
 		{ urls: "stun:stun.l.google.com:19302" },
@@ -176,25 +183,26 @@ export class RtcSession {
 			}
 		}
 	
-		let iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
-			console.log("RECV iceconnectionstatechange", e)
-			if(e.target.connectionState == "connected") {
-				peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
-				return
-			}
-			else if(e.target.connectionState == "disconnected") {
-				throw "Remote peer disconnected"
-			}
-			else if(e.target.connectionState == "failed") {
-				throw "Could not connect to remote peer, check your firewall settings or try connecting to another network"
-			}
-		})
-	
 		return new Promise((resolve, reject) => {
+			let iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
+				console.log("RECV iceconnectionstatechange", e)
+				if(e.target.connectionState == "connected") {
+					peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
+					return
+				}
+				else if(e.target.connectionState == "disconnected") {
+					reject(new Error("Remote peer disconnected"))
+				}
+				else if(e.target.connectionState == "failed") {
+					reject(new PeerConnectionError())
+				}
+			})
+
 			peerConnection.addEventListener("datachannel", e => {
 				const channel = e.channel
 				console.log("Got datachannel!", channel)
 				channel.binaryType = "arraybuffer"
+				peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
 				resolve(channel)
 			})
 		})
@@ -234,45 +242,45 @@ export class RtcSession {
 		let sendChannel = peerConnection.createDataChannel("sendDataChannel")
 		sendChannel.binaryType = "arraybuffer"
 	
-		this.onmessage = async data => {
-			if (data.type == 12 && data.answer) {
-				console.log("Got answer:", data.answer)
-				const remoteDesc = data.answer;
-				await peerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc));
-			}
-			else if (data.type == 13 && data.candidate) {
-				console.log("Got candidate:", data.candidate)
-				await peerConnection.addIceCandidate(data.candidate)
-			}
-			else {
-				if(!data.success) {
-					throw data.msg
+		return new Promise(async (resolve, reject) => {
+			this.onmessage = async data => {
+				if (data.type == 12 && data.answer) {
+					console.log("Got answer:", data.answer)
+					const remoteDesc = data.answer;
+					await peerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc));
+				}
+				else if (data.type == 13 && data.candidate) {
+					console.log("Got candidate:", data.candidate)
+					await peerConnection.addIceCandidate(data.candidate)
+				}
+				else {
+					if(!data.success) {
+						reject(data.msg)
+					}
 				}
 			}
-		}
+		
+			let iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
+				console.log("CALL iceconnectionstatechange", e)
+				if(e.target.connectionState == "connected") {
+					peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
+					return
+				}
+				else if(e.target.connectionState == "disconnected") {
+					reject(new Error("Remote peer disconnected"))
+				}
+				else if(e.target.connectionState == "failed") {
+					reject(new PeerConnectionError())
+				}
+			})
 	
-		let iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
-			console.log("CALL iceconnectionstatechange", e)
-			if(e.target.connectionState == "connected") {
-				peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
-				return
-			}
-			else if(e.target.connectionState == "disconnected") {
-				throw "Remote peer disconnected"
-			}
-			else if(e.target.connectionState == "failed") {
-				throw "Could not connect to remote peer, check your firewall settings or try connecting to another network"
-			}
-		})
+			const offer = await peerConnection.createOffer();
+			await peerConnection.setLocalDescription(offer);
+			console.log("Sending offer:", offer)
+			ws.send(JSON.stringify({
+				type: 1, offer, recipientId, callerId: this.sessionId
+			}));
 
-		const offer = await peerConnection.createOffer();
-		await peerConnection.setLocalDescription(offer);
-		console.log("Sending offer:", offer)
-		ws.send(JSON.stringify({
-			type: 1, offer, recipientId, callerId: this.sessionId
-		}));
-	
-		return new Promise((resolve, reject) => {
 			sendChannel.addEventListener("open", e => {
 				console.log("datachannel open", e)
 				resolve(sendChannel)
