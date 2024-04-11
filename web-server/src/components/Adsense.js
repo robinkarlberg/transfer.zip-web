@@ -28,7 +28,7 @@ export default function Adsense({ data_ad_client, data_ad_slot, className }) {
 
     return (
         <ins className={"adsbygoogle " + className}
-            style={{ display: "block", backgroundColor: "white" }}
+            style={{ display: "block" }}
             data-ad-client={data_ad_client}
             data-ad-slot={data_ad_slot}
             data-ad-format="auto"
