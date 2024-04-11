@@ -13,7 +13,7 @@ function App() {
   const { setShowContacts } = useContext(ApplicationContext)
   const navigate = useNavigate()
 
-  const isInfoPage = window.location.href.indexOf("privacy-policy") > -1
+  const isInfoPage = window.location.href.indexOf("privacy-policy") + window.location.href.indexOf("about") > -1
 
   useEffect(() => {
     if (window.location.hash) {  // User has been sent a link, assuming action be taken
@@ -75,7 +75,7 @@ function App() {
               { !isInfoPage && <IntentDescription/> }
               <div className="d-flex flex-row justify-content-center mb-3">
                 <Link className="mx-1" to="/">Home</Link>
-                <Link className="mx-1" to="https://github.com/robinkarlberg/transfer.zip-web/?tab=readme-ov-file#transferzip">About</Link>
+                <Link className="mx-1" to="/about">About</Link>
                 <Link className="mx-1" to="/privacy-policy">Privacy Policy</Link>
                 <Link className="mx-1" to="https://github.com/robinkarlberg/transfer.zip-web">View on GitHub</Link>
               </div>
