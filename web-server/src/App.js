@@ -56,7 +56,7 @@ function App() {
           <div id="heading-container" className="container mb-1 d-flex justify-content-between">
             <div>
               {/* <h1 className="display-5 fw-medium mb-0">transfer<i>.zip</i></h1> */}
-              <img style={ { maxWidth: "200px", marginBottom: "-10px", marginLeft: "-5px" } } src={logo}></img>
+              <h1 className="lh-0 m-0 p-0" style={{ lineHeight: "0" }}><img style={ { maxWidth: "200px", marginBottom: "-10px", marginLeft: "-5px" } } src={logo} alt="transfer.zip"></img></h1>
               <p className="text-secondary">Free, Fast, Encrypted</p>
             </div>
             {/* <div>
