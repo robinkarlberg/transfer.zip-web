@@ -1,0 +1,123 @@
+* {
+  font-family: "Ubuntu", system-ui, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+:root {
+  --max-width: 450px;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+#page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#page>div {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  max-width: 900px;
+}
+
+#page>div>main {
+  flex-grow: 1;
+  /* max-height: 900px; */
+}
+
+#heading-container {
+  padding-top: 1rem;
+  /* background-color: rgb(40, 41, 42); */
+}
+
+@media (min-width: 576px) {
+  #heading-container {
+      margin-top: 5vw;
+  }
+}
+
+.qrcode>img,
+canvas {
+  border: 5mm solid white;
+  width: 100%;
+  max-width: 256px;
+}
+
+form {
+  max-width: var(--max-width);
+}
+
+.maxed-width {
+  max-width: var(--max-width);
+}
+
+.choice-btn {
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  flex-grow: 1;
+  padding: 14px;
+  background-color: #2b3035;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-basis: 100%;
+}
+
+.choice-btn img {
+  width: 18px;
+  margin: 5px;
+}
+
+.choice-btn.secondary {
+  padding: 8px;
+  background-color: var(--bs-body-bg-color);
+  flex-direction: row;
+  justify-content: center;
+}
+
+.contacts-list-entry {
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  padding: 8px;
+  background-color: #2b3035;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: row;
+}
+
+.contacts-list-entry>img {
+  padding: 3px;
+  margin-right: 6px;
+}
+
+.contacts-list-entry:hover {
+  cursor: pointer;
+}
+
+.contacts-list-entry:active {
+  background-color: var(--bs-gray-dark);
+}
+
+.contacts-list-entry>span {
+  margin-bottom: 0px;
+  user-select: none;
+  flex-grow: 1;
+  /* white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden; */
+}
+
+#add-contact-btn img {
+  border-radius: var(--bs-border-radius);
+  padding: 3px;
+  width: 32px;
+}
+
+#add-contact-btn img:hover {
+  background-color: #2b3035;
+}

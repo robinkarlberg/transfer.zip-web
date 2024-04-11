@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>transfer.zip | Link device</title>
+
+    <meta name="description" content="Link a device to transfer faster">
+
+    <link href="/lib/bootstrap.min.css" rel="stylesheet">
+
+	<script src="/persistance.js"></script>
+	<script src="/webrtc.js?v=1"></script>
+    <script defer src="./link.js?v=1"></script>
+
+    <link rel="stylesheet" href="/index.css?v=1">
+    <!-- <link rel="stylesheet" href="/extra.css?v=1"> -->
+
+    <link rel="manifest" href="/manifest.json">
+</head>
+
+<body>
+    <div id="page-outer">
+        <div id="page">
+            <div>
+                <main>
+                    <div id="heading-container" class="container pb-4">
+						<h1 class="display-5 fw-medium mb-0">transfer<i>.zip</i></h1>
+                        <!-- <p>Do you want to link your device with "Dinmamma"?</p> -->
+                    </div>
+                    <div class="container py-2">
+                        <p>Linking allows you to send files more easily. By remembering devices, you don't have to
+                            create a link or a QR code. Simply choose the recipient from your contact list. 
+                            This can be reverted at any time.</p>
+                        <p>Do you want to link your devices?</p>
+                        <form>
+                            <fieldset id="file-form-fieldset">
+                                <div class="d-flex flex-wrap">
+                                    <div class="">
+                                        <input id="cancel-btn" class="btn btn-secondary" type="submit" value="Cancel">
+                                    </div>
+                                    <div class="my-auto px-2">
+                                        &zwnj;
+                                    </div>
+                                    <div class="">
+                                        <input id="yes-btn" class="btn btn-primary" type="submit" value="Yes">
+                                    </div>
+                                </div>
+                                <!-- <div class="row g-1">
+                                    </div> -->
+                            </fieldset>
+                        </form>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+    <script src="/lib/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
