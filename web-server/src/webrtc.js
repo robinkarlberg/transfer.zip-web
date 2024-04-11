@@ -255,7 +255,7 @@ export class RtcSession {
 				}
 				else {
 					if(!data.success) {
-						reject(data.msg)
+						reject(new Error(data.msg))
 					}
 				}
 			}
