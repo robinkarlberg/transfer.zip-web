@@ -1,16 +1,17 @@
 export default function PrivacyPolicyPage({ }) {
     return (
-        <main>
-            <div id="heading-container" className="container pb-4">
+        <main className="flex-grow-1">
+            {/* <div id="heading-container" className="container pb-4">
                 <h1 className="display-5 fw-medium mb-0">Privacy Policy</h1>
-            </div>
+            </div> */}
 
             <div className="container py-2">
+                <h1 className="h3">Privacy policy</h1>
                 <p>Thank you for visiting Transfer.zip. This Privacy Policy outlines how we handle and protect your
                     personal information when you use our website. Please read this policy carefully to understand
                     our practices regarding your data and how we ensure your privacy.</p>
 
-                <h2>Information We Collect</h2>
+                <h2 className="h4">Information We Collect</h2>
 
                 <p> <b>Personal Information:</b> Transfer.zip does not collect any personal information.</p>
 
@@ -19,14 +20,14 @@ export default function PrivacyPolicyPage({ }) {
                     information such as browser type, operating system, and referral source. Transfer.zip serves ads
                     to minimize the costs of running the service. The domain name is not cheap!</p>
 
-                <h2>Contact Information</h2>
+                <h2 className="h4">Contact Information</h2>
 
                 <p>If you have any questions, concerns, or inquiries regarding this Privacy Policy or the practices
                     of
                     Transfer.zip, you can contact us via the github page. We will make every effort
                     to respond to your communication promptly.</p>
 
-                <h2>Changes to the Privacy Policy</h2>
+                <h2 className="h4">Changes to the Privacy Policy</h2>
 
                 <p>We reserve the right to modify or update this Privacy Policy at any time. Any changes made will
                     be
@@ -35,7 +36,7 @@ export default function PrivacyPolicyPage({ }) {
                     review this Privacy Policy periodically to stay informed about how we are protecting your
                     information.</p>
 
-                <h2>Data Security</h2>
+                <h2 className="h4">Data Security</h2>
 
                 <p>At Transfer.zip, we prioritize the security and privacy of our users. We have implemented
                     measures
@@ -59,14 +60,14 @@ export default function PrivacyPolicyPage({ }) {
                     security
                     software up to date to minimize potential risks.</p>
 
-                <h2>Compliance with Laws</h2>
+                <h2 className="h4">Compliance with Laws</h2>
 
                 <p>Transfer.zip complies with all applicable data protection laws and regulations. This Privacy
                     Policy
                     is intended to be in line with the General Data Protection Regulation (GDPR) and other relevant
                     privacy laws.</p>
 
-                <h2>Consent</h2>
+                <h2 className="h4">Consent</h2>
 
                 <p>By using Transfer.zip, you consent to the terms outlined in this Privacy Policy and agree to the
                     collection, use, and disclosure of your information as described herein.</p>

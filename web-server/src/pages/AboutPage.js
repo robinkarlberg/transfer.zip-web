@@ -8,7 +8,7 @@ export default function AboutPage({ }) {
             </div> */}
 
             <div className="container py-2 pt-4">
-                <h3>About this site</h3>
+                <h1 className="h3">About this site</h1>
                 <p>
                     <a href="/">transfer.zip</a> is an open source web application that allows you to easily transfer files between two devices. 
                     At the moment, transfer.zip is the easiest and most secure way to share files on the web. There is no signup, 
