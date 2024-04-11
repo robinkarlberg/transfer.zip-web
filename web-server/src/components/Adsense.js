@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 
 export default function Adsense({ data_ad_client, data_ad_slot, className }) {
-    const ads = false;//process?.env?.REACT_APP_ADSENSE
+    const ads = process.env.REACT_APP_ADSENSE && process.env.REACT_APP_ADSENSE == "true"
 
     useEffect(() => {
         if(!ads) {
