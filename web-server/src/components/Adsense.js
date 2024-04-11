@@ -1,7 +1,13 @@
 import { useEffect } from "react"
 
 export default function Adsense({ data_ad_client, data_ad_slot, className }) {
+    const ads = process?.env?.REACT_APP_ADSENSE
+
     useEffect(() => {
+        if(!ads) {
+            return
+        }
+
         const scriptElement = window.document.createElement("script")
         scriptElement.async = true
         scriptElement.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + data_ad_client
@@ -18,6 +24,7 @@ export default function Adsense({ data_ad_client, data_ad_slot, className }) {
     }, [])
 
     useEffect(() => {
+        if(!ads) return;
         try {
             (window.adsbygoogle = window.adsbygoogle || []).push({});
         }
@@ -25,6 +32,8 @@ export default function Adsense({ data_ad_client, data_ad_slot, className }) {
 
         }
     }, [])
+
+    if(!ads) return <></>
 
     return (
         <ins className={"adsbygoogle " + className}
