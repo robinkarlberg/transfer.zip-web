@@ -140,7 +140,7 @@ export const ApplicationProvider = () => {
             <PeerConnectionErrorModal show={showPeerConnectionError} onCancel={() => { setShowPeerConnectionError(false) }}/>
             {/* <EditContactModal show={showEditContact} setShow={setShowEditContact} contact={editedContact}/>
             <ContactsListOffcanvas show={showContacts} handleClose={handleCloseContactsList}/> */}
-            {!isInfoPage && <Adsense className={"mobile-banner-ad"} data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932" />}
+            {/* {!isInfoPage && <Adsense className={"mobile-banner-ad"} data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932" />} */}
             <Outlet />
         </ApplicationContext.Provider>
     )
