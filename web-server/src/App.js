@@ -1,13 +1,15 @@
 import { useContext, useEffect, useState } from "react";
-import "./App.css";
-import "./extra.css";
+// import "./App.css";
+// import "./extra.css";
 import logo from "./img/transfer-zip-logotext-cropped.png"
 
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { ApplicationContext } from "./providers/ApplicationProvider";
+import { ApplicationContext, ApplicationProvider } from "./providers/ApplicationProvider";
 import IntentDescription from "./components/IntentDescription"
 import AddContactModal from "./components/modals/AddContactModal";
 import Adsense from "./components/Adsense";
+import SideBar from "./components/app/SideBar";
+import { ApiProvider } from "./providers/ApiProvider";
 
 function App() {
   const { setShowContacts } = useContext(ApplicationContext)
@@ -33,12 +35,12 @@ function App() {
       }
 
       window.location.hash = ""
-      if(directionChar == "R") {
+      if (directionChar == "R") {
         navigate("/progress", {
           state
         })
       }
-      else if(directionChar == "S") {
+      else if (directionChar == "S") {
         navigate("/upload-on-behalf", {
           state
         })
@@ -47,45 +49,9 @@ function App() {
   }, [])
 
   return (
-    <div id="page-outer">
-      <div className="outer">
-        { !isInfoPage && <Adsense className={"outer-ad-left outer-ad"} data_ad_client={"ca-pub-9550547294674683"} data_ad_slot={"5132630574"}/>}
-      </div>
-      <div id="page">
-        <div>
-          <div id="heading-container" className="container mb-1 d-flex justify-content-between">
-            <div>
-              {/* <h1 className="display-5 fw-medium mb-0">transfer<i>.zip</i></h1> */}
-              <h1 className="lh-0 m-0 p-0" style={{ lineHeight: "0" }}><img style={ { maxWidth: "200px", marginBottom: "-10px", marginLeft: "-5px" } } src={logo} alt="transfer.zip"></img></h1>
-              <p className="text-secondary">Free, Fast, Encrypted</p>
-            </div>
-            {/* <div>
-              <button onClick={() => { setShowContacts(true) }} className="btn btn-outline-secondary m-1"><i className="bi bi-person-lines-fill"></i></button>
-            </div> */}
-          </div>
-          <AddContactModal/>
-          <main className="d-flex flex-column">
-            <div className="container d-flex flex-column justify-content-center flex-grow-1">
-              <Outlet/>
-            </div>
-          </main>
-
-          <div id="footer-container" className="container fs-6">
-            <footer style={{maxWidth: "900px"}}>
-              { !isInfoPage && <IntentDescription/> }
-              <div className="d-flex flex-row justify-content-center mb-3">
-                <Link className="mx-1" to="/">Home</Link>
-                <Link className="mx-1" to="/about">About</Link>
-                <Link className="mx-1" to="/privacy-policy">Privacy Policy</Link>
-                <Link className="mx-1" to="https://github.com/robinkarlberg/transfer.zip-web">View on GitHub</Link>
-              </div>
-            </footer>
-          </div>
-        </div>
-      </div>
-      <div className="outer">
-        { !isInfoPage && <Adsense className={"outer-ad-right outer-ad"} data_ad_client={"ca-pub-9550547294674683"} data_ad_slot={"5132630574"}/> }
-      </div>
+    <div className="App bg-dark-subtle min-vh-100 d-flex">
+      <SideBar />
+      <Outlet />
     </div>
   );
 }

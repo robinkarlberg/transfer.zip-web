@@ -79,6 +79,7 @@ export class FileTransfer {
                     cbProgress({ now: data.now, max: file.size })
                     if (data.now == file.size) {
                         cbFinished()
+                        resolve()
                     }
                 }
                 else if (data.type == "error") {

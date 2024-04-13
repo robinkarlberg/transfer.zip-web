@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import ReactDOM from 'react-dom/client';
 
 import {
   createBrowserRouter,
+  createRoutesFromElements,
+  Navigate,
+  Route,
   RouterProvider,
 } from "react-router-dom";
 
@@ -23,51 +26,82 @@ import { ApplicationProvider } from './providers/ApplicationProvider';
 import { FileTransferProvider } from './providers/FileTransferProvider';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import AboutPage from './pages/AboutPage';
+import { ApiProvider } from './providers/ApiProvider';
+import TransfersPage from './pages/app/TransfersPage';
+import AccountPage from './pages/app/AccountPage';
+import HomePage from "./pages/app/HomePage";
+import TransferInfoPage from "./pages/app/TransferInfoPage";
+import DownloadPage from "./pages/app/DownloadPage";
 
-const router = createBrowserRouter([
-  {
-    element: <ApplicationProvider />,
-    children: [
-      {
-        path: "/",
-        element: <FileTransferProvider />,
-        children: [{
-          element: <App />, // TODO: Implement element that redirects to appropriate route depending on URL hash (send/receive)
-          children: [
-            {
-              path: "/about",
-              element: <AboutPage />
-            },
-            {
-              path: "/privacy-policy",
-              element: <PrivacyPolicyPage />
-            },
-            {
-              path: "/",
-              element: <IndexPage />
-            },
-            {
-              path: "upload",
-              element: <UploadPage />
-            },
-            {
-              path: "upload-on-behalf",
-              element: <UploadOnBehalfPage />
-            },
-            {
-              path: "progress",
-              element: <ProgressPage />
-            }
-          ]
-        }]
-      }
-    ]
-  },
-  {
-    path: "*",
-    element: <NotFoundPage />
-  }
-])
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route>
+      <Route path="/dl/:secretCode" element={<DownloadPage/>}/>
+      <Route element={<ApplicationProvider />}>
+        <Route element={<ApiProvider />}>
+          <Route element={<FileTransferProvider />}>
+            <Route element={<App />}>
+              <Route path="/home" element={<HomePage/>}/>
+              <Route path="/transfers">
+                <Route path="/transfers" element={<TransfersPage/>}/>
+                <Route path=":id" element={<TransferInfoPage/>}/>
+              </Route>
+              <Route path="/account" element={<AccountPage/>} />
+            </Route>
+          </Route>
+        </Route>
+      </Route>
+      <Route path="*" element={<Navigate to={"/home"} />} />
+    </Route >
+  )
+  // [
+  // {
+  //   element: <ApplicationProvider />,
+  //   children: [
+  //     {
+  //       element: <ApiProvider />,
+  //       children: [
+  //         {
+  //           element: <FileTransferProvider />,
+  //           children: [{
+  //             element: <App />,
+  //             children: [
+  //               {
+  //                 path: "/",
+  //                 element: <IndexPage />
+  //               },
+  //               {
+  //                 path: "/transfers",
+  //                 element: <TransfersPage />
+  //               },
+  //               {
+  //                 path: "/account",
+  //                 element: <AccountPage />
+  //               },
+  //               {
+  //                 path: "/upload",
+  //                 element: <UploadPage />
+  //               },
+  //               {
+  //                 path: "/upload-on-behalf",
+  //                 element: <UploadOnBehalfPage />
+  //               },
+  //               {
+  //                 path: "/progress",
+  //                 element: <ProgressPage />
+  //               }
+  //             ]
+  //           }]
+  //         }
+  //       ]
+  //     },
+  //   ]
+  // },
+  // {
+  //   path: "*",
+  //   element: <NotFoundPage />
+  // }]
+)
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

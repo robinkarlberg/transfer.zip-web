@@ -1,7 +1,7 @@
 import { useRef } from "react"
 import "./UploadOrReceiveArea.css"
 
-export default function UploadOrReceiveArea({ allowReceive, onFileSelected, onReceiveClicked }) {
+export default function UploadOrReceiveArea({ title, subtitle, allowReceive, onFileSelected, onFilesSelected, onReceiveClicked }) {
 
     const fileInputRef = useRef()
 
@@ -25,7 +25,8 @@ export default function UploadOrReceiveArea({ allowReceive, onFileSelected, onRe
         console.log("onDrop", e)
 
         if(e.dataTransfer.files[0]) {
-            onFileSelected(e.dataTransfer.files[0])
+            if(onFileSelected) onFileSelected(e.dataTransfer.files[0])
+            else if(onFilesSelected) onFilesSelected(e.dataTransfer.files)
         }
         else {
             console.log("No file on drop?")
@@ -35,7 +36,8 @@ export default function UploadOrReceiveArea({ allowReceive, onFileSelected, onRe
     const onFileInputChange = e => {
         console.log("onFileInputChange", e)
         if(e.target.files[0]) {
-            onFileSelected(e.target.files[0])
+            if(onFileSelected) onFileSelected(e.target.files[0])
+            else if(onFilesSelected) onFilesSelected(e.target.files)
         }
         else {
             console.log("No file picked?")
@@ -53,12 +55,14 @@ export default function UploadOrReceiveArea({ allowReceive, onFileSelected, onRe
                     </div>
                 </div>
                 <div>
-                    <h5 className="mb-1">Upload file</h5>
+                    <h5 className="mb-1">{title || "Upload file"}</h5>
 
                     { allowReceive && (
                         <small><a onClick={_onReceiveClicked} href="#">Or receive a file instead</a></small>
                     ) }
-                    
+                    { subtitle && (
+                        <small className="text-secondary">{subtitle}</small>
+                    ) }
                 </div>
             </div>
             <form style={{ display: "none" }}>

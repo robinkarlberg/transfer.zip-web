@@ -31,3 +31,16 @@ export function humanFileSize(bytes, si = false, dp = 1) {
 
     return bytes.toFixed(dp) + ' ' + units[u];
 }
+
+export function humanFileSizePair(bytes, si = false, dp = 1) {
+    const [ amount, unit ] = humanFileSize(bytes, si, dp).split(" ")
+    return { amount, unit }
+}
+
+export const getTransferLink = (transfer) => {
+    return `${window.location.origin}/dl/${transfer.secretCode}#`
+}
+
+export const copyTransferLink = async (transfer) => {
+    await navigator.clipboard.writeText(await getTransferLink(transfer))
+}
