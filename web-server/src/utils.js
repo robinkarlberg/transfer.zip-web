@@ -38,9 +38,20 @@ export function humanFileSizePair(bytes, si = false, dp = 1) {
 }
 
 export const getTransferLink = (transfer) => {
-    return `${window.location.origin}/dl/${transfer.secretCode}#`
+    const k = transfer.k || ""
+    return `${window.location.origin}/dl/${transfer.secretCode}#${k}`
 }
 
 export const copyTransferLink = async (transfer) => {
     await navigator.clipboard.writeText(await getTransferLink(transfer))
+}
+
+const textEnc = new TextEncoder()
+const textDec = new TextDecoder()
+
+export const encodeString = (str) => {
+    return textEnc.encode(str)
+}
+export const decodeString = (str) => {
+    return textDec.decode(str)
 }

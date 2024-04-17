@@ -1,39 +1,59 @@
-import { Link, Navigate, useLocation, useParams } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import AppGenericPage from "../../components/app/AppGenericPage";
 import { useContext, useEffect, useState } from "react";
-import { ApiContext } from "../../providers/ApiProvider";
+import { AuthContext } from "../../providers/AuthProvider";
 
 import * as Api from "../../api/Api"
 import FilesList from "../../components/app/FilesList";
 import StatCard from "../../components/app/StatCard"
 import UploadFilesModal from "../../components/app/UploadFilesModal";
 import { humanFileSize, humanFileSizePair, copyTransferLink } from "../../utils";
+import { ApplicationContext } from "../../providers/ApplicationProvider";
 
 export default function TransferInfoPage({ }) {
     const { id } = useParams()
-    const { transfers, refreshTransfers } = useContext(ApiContext)
     const [transfer, setTransfer] = useState(null)
+    const { rtTransfers } = useContext(ApplicationContext)
 
+    const navigate = useNavigate()
     const { state } = useLocation()
     const [showUploadFilesModal, setShowUploadFilesModal] = useState(state?.addFiles)
 
-    const refreshTransfer = () => {
+    const refreshApiTransfer = () => {
         Api.getTransfer(id).then(t => setTransfer(t.transfer))
     }
 
     const onUploadFileModalDone = async (files) => {
         setShowUploadFilesModal(false)
         console.log(files)
-        for(let file of files) {
-            const upload = await Api.uploadTransferFile(file, id, progress => {
 
-            })
-            refreshTransfer()
+        if (!transfer.isRealtime) {
+            for (let file of files) {
+                const upload = await Api.uploadTransferFile(file, id, progress => {
+
+                })
+                refreshApiTransfer()
+            }
+        }
+        else {
+            transfer.files.push(...files.map((x, i) => { return { nativeFile: x, id: i, info: { name: x.name, size: x.size, type: x.type } } }))
         }
     }
 
     useEffect(() => {
-        refreshTransfer()
+        const isRealtimeTransfer = id[0] == "r"
+        if (isRealtimeTransfer) {
+            const rtTransfer = rtTransfers.find(x => x.id == id)
+            if(!rtTransfer) {
+                navigate("/transfers")
+            }
+            else {
+                setTransfer(rtTransfer)
+            }
+        }
+        else {
+            refreshApiTransfer()
+        }
     }, [])
 
     if (!id) {
@@ -73,7 +93,7 @@ export default function TransferInfoPage({ }) {
     return (
         <AppGenericPage titleElement={titleElement}>
             <UploadFilesModal show={showUploadFilesModal} onCancel={() => setShowUploadFilesModal(false)}
-                onDone={ onUploadFileModalDone } />
+                onDone={onUploadFileModalDone} />
             {/* <h3>{transfer.name || transfer.id}</h3> */}
             <div className="d-flex flex-row flex-wrap gap-3 mb-3">
                 <StatCard title={"Size"} stat={totalFileSizeStat()}>
@@ -83,11 +103,11 @@ export default function TransferInfoPage({ }) {
                     <a href="#" onClick={() => setShowUploadFilesModal(true)} style={{ textDecoration: "none" }}>Add files<i className="bi bi-arrow-right-short"></i></a>
                 </StatCard>
                 <StatCard title={"Downloads"} stat={"123"}>
-                    <a href="#" style={{ textDecoration: "none" }} onClick={ () => copyTransferLink(transfer) }>Copy link<i className="bi bi-arrow-right-short"></i></a>
+                    <a href="#" style={{ textDecoration: "none" }} onClick={() => copyTransferLink(transfer)}>Copy link<i className="bi bi-arrow-right-short"></i></a>
                 </StatCard>
             </div>
             <h4>Files</h4>
-            <FilesList files={transfer.files} onFileChange={refreshTransfer}/>
+            <FilesList files={transfer.files} onFileChange={refreshApiTransfer} />
         </AppGenericPage>
     )
 }

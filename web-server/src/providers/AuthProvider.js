@@ -3,11 +3,10 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 import * as Api from "../api/Api";
 
-export const ApiContext = createContext({})
+export const AuthContext = createContext({})
 
-export const ApiProvider = () => {
+export const AuthProvider = () => {
     const [user, setUser] = useState(null)
-    const [transfers, setTransfers] = useState([])
 
     const refreshUser = useCallback(async () => {
         try {
@@ -43,11 +42,6 @@ export const ApiProvider = () => {
         return res
     })
 
-    const refreshTransfers = useCallback(async () => {
-        const res = await Api.getTransfers()
-        setTransfers(res.transfers)
-    })
-
     // const uploadTransferFile = useCallback(async (file, transferId, cbProgress) => {
     //     const res = Api.uploadTransferFile(file, transferId, cbProgress)
     //     return res
@@ -55,18 +49,16 @@ export const ApiProvider = () => {
 
     useEffect(() => {
         refreshUser()
-        refreshTransfers()
     }, [])
 
     return (
-        <ApiContext.Provider value={{
+        <AuthContext.Provider value={{
             user, refreshUser,
             login,
             logout,
             register,
-            transfers, refreshTransfers
         }}>
             <Outlet />
-        </ApiContext.Provider>
+        </AuthContext.Provider>
     )
 }

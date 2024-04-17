@@ -41,11 +41,24 @@ if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
  */
 let activeRtcSessions = []
 
-export const newRtcSession = (sessionId) => {
+// const 
+
+export const newRtcSession = (sessionId, peerConnection) => {
 	closeAndRemoveRtcSessionById(sessionId)
-	const rtcSession = new RtcSession(sessionId)
+	const rtcSession = new RtcSession(sessionId, peerConnection)
 	rtcSession._onclose = () => {
-		console.log("rtcSession _onclose")
+		console.log("RtcSession _onclose")
+		removeRtcSession(rtcSession)
+	}
+	activeRtcSessions.push(rtcSession)
+	return rtcSession
+}
+
+export const newRtcListener = (sessionId) => {
+	closeAndRemoveRtcSessionById(sessionId)
+	const rtcSession = new RtcListener(sessionId)
+	rtcSession._onclose = () => {
+		console.log("RtcListener _onclose")
 		removeRtcSession(rtcSession)
 	}
 	activeRtcSessions.push(rtcSession)
@@ -63,6 +76,8 @@ export const closeAndRemoveRtcSessionById = (sessionId) => {
 export const removeRtcSession = (rtcSession) => {
 	activeRtcSessions = activeRtcSessions.filter(o => o !== rtcSession)
 }
+
+
 
 let ws;
 
@@ -103,7 +118,7 @@ export const createWebSocket = () => {
 			return
 		}
 		for(let rtcSession of activeRtcSessions) {
-			if (rtcSession.sessionId === data.targetId) {
+			if (rtcSession instanceof RtcListener || rtcSession.sessionId === data.targetId) {
 				rtcSession.onmessage && rtcSession.onmessage(data)
 			}
 		}
@@ -115,6 +130,145 @@ export const createWebSocket = () => {
 export const closeWebSocket = () => {
 	console.log("Closing WebSocket...")
 	ws.close()
+}
+
+export class RtcListener {
+	onmessage = undefined
+	onrtcsession = undefined
+	_onclose = undefined
+	onclose = undefined
+	onopen = undefined
+
+	callerIdPeerConnectionEntries = []
+
+	closed = false
+	has_logged_in = false
+
+	constructor(sessionId) {
+		this.sessionId = sessionId
+	}
+
+	async _listen() {
+		if(this.closed) {
+			console.warn("[RtcListener] _recv was called after close")
+			return
+		}
+
+		ws.send(JSON.stringify({		// login
+			type: 0,
+			id: this.sessionId
+		}))
+		this.has_logged_in = true
+
+		this.onmessage = async data => {
+
+			if (data.type == 11 && data.offer) {
+				console.log("Got offer:", data.offer)
+				let recipientId = data.callerId
+
+				let entry = this.callerIdPeerConnectionEntries.find(x => x.callerId === x.callerId)
+				if(!entry) {
+					entry = { callerId: data.callerId, peerConnection: new RTCPeerConnection(RTC_CONF) }
+	
+					const icecandidatelistener = entry.peerConnection.addEventListener("icecandidate", e => {
+						if (e.candidate) {
+							console.log("peerConnection Got ICE candidate:", e.candidate)
+							ws.send(JSON.stringify({
+								type: 3, sessionId: this.sessionId, candidate: e.candidate, recipientId
+							}))
+						}
+					})
+	
+					const iceconnectionstatechangeListener = entry.peerConnection.addEventListener("iceconnectionstatechange", async e => {
+						console.log("RECV iceconnectionstatechange", e)
+						if(e.target.connectionState == "connected") {
+							entry.peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
+							return
+						}
+						else if(e.target.connectionState == "disconnected") {
+							// reject(new Error("Remote peer disconnected"))
+							console.error(e)
+						}
+						else if(e.target.connectionState == "failed") {
+							console.error(e)
+							// reject(new PeerConnectionError())
+						}
+					})
+		
+					const datachannellistener = entry.peerConnection.addEventListener("datachannel", e => {
+						const channel = e.channel
+						console.log("[RtcListener] Got datachannel!", channel)
+						channel.binaryType = "arraybuffer"
+
+						entry.peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
+						entry.peerConnection.removeEventListener("icecandidate", icecandidatelistener)
+						entry.peerConnection.removeEventListener("datachannel", datachannellistener)
+
+						// remove entry from entry list now that it is fully set up
+						this.callerIdPeerConnectionEntries = this.callerIdPeerConnectionEntries.filter(x => x.callerId != entry.callerId)
+
+						this.onrtcsession && this.onrtcsession(newRtcSession(this.sessionId + entry.callerId, entry.peerConnection), channel)
+					})
+
+					this.callerIdPeerConnectionEntries.push(entry)
+				}
+				entry.peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+				const answer = await entry.peerConnection.createAnswer();
+				await entry.peerConnection.setLocalDescription(answer);
+				console.log("Sending answer:", answer)
+				ws.send(JSON.stringify({
+					type: 2, sessionId: this.sessionId, answer, recipientId
+				}));
+			}
+			else if (data.type == 13 && data.candidate) {
+				const entry = this.callerIdPeerConnectionEntries.find(x => x.callerId == x.callerId)
+				if(!entry) {
+					console.warn("Caller id not found in callerIdPeerConnectionEntries:", data.callerId)
+					return
+				}
+
+				console.log(`Got candidate from ${data.callerId}:`, data.candidate)
+				await entry.peerConnection.addIceCandidate(data.candidate)
+			}
+		}
+	}
+
+	async waitForWebsocket() {
+		if(ws && ws.readyState == WebSocket.OPEN) {
+			return
+		}
+		else {
+			return new Promise((resolve, reject) => {
+				this.onopen = async () => {
+					resolve()
+				}
+			})
+		}
+	}
+
+	async listen() {
+		await this.waitForWebsocket()
+		return this._listen()
+	}
+
+	close() {
+		console.log("[RtcListener] close")
+		this.closed = true
+		if(ws && ws.readyState == WebSocket.OPEN && this.has_logged_in) {
+			ws.send(JSON.stringify({	// logout
+				type: 4, sessionId: this.sessionId
+			}))
+		}
+		else {
+			console.warn("[RtcListener] close was called but ws is invalid")
+		}
+		for(let entry of this.callerIdPeerConnectionEntries) {
+			entry.peerConnection.close()
+		}
+		this.callerIdPeerConnectionEntries = []
+		this._onclose && this._onclose()
+		this.onclose && this.onclose()
+	}
 }
 
 export class RtcSession {
@@ -131,82 +285,83 @@ export class RtcSession {
 	has_logged_in = false
 	peerConnection = undefined
 
-	constructor(sessionId) {
+	constructor(sessionId, peerConnection) {
 		// if(!ws) {
 		// 	throw "[RtcSession] RtcSession created before calling createWebSocket. WebSocket object has not yet been created."
 		// }
 		this.sessionId = sessionId
+		this.peerConnection = peerConnection
 	}
 
-	async _recv() {
-		if(this.closed) {
-			console.warn("[RtcSession] _recv was called after close")
-			return
-		}
-		console.log("rtcRecv")
-		const peerConnection = new RTCPeerConnection(RTC_CONF);
-		this.peerConnection = peerConnection;
+	// async _recv() {
+	// 	if(this.closed) {
+	// 		console.warn("[RtcSession] _recv was called after close")
+	// 		return
+	// 	}
+	// 	console.log("rtcRecv")
+	// 	const peerConnection = new RTCPeerConnection(RTC_CONF);
+	// 	this.peerConnection = peerConnection;
 
-		ws.send(JSON.stringify({
-			type: 0,
-			id: this.sessionId
-		}))
-		this.has_logged_in = true
+	// 	ws.send(JSON.stringify({
+	// 		type: 0,
+	// 		id: this.sessionId
+	// 	}))
+	// 	this.has_logged_in = true
 	
-		let recipientId;
+	// 	let recipientId;
 	
-		peerConnection.addEventListener("icecandidate", e => {
-			console.debug(e)
-			if (e.candidate) {
-				console.log("peerConnection Got ICE candidate:", e.candidate)
-				ws.send(JSON.stringify({
-					type: 3, sessionId: this.sessionId, candidate: e.candidate, recipientId
-				}))
-			}
-		})
+	// 	peerConnection.addEventListener("icecandidate", e => {
+	// 		console.debug(e)
+	// 		if (e.candidate) {
+	// 			console.log("peerConnection Got ICE candidate:", e.candidate)
+	// 			ws.send(JSON.stringify({
+	// 				type: 3, sessionId: this.sessionId, candidate: e.candidate, recipientId
+	// 			}))
+	// 		}
+	// 	})
 
-		this.onmessage = async data => {
-			if (data.type == 11 && data.offer) {
-				console.log("Got offer:", data.offer)
-				peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
-				const answer = await peerConnection.createAnswer();
-				await peerConnection.setLocalDescription(answer);
-				console.log("Sending answer:", answer)
-				recipientId = data.callerId
-				ws.send(JSON.stringify({
-					type: 2, sessionId: this.sessionId, answer, recipientId
-				}));
-			}
-			else if (data.type == 13 && data.candidate) {
-				console.log("Got candidate:", data.candidate)
-				await peerConnection.addIceCandidate(data.candidate)
-			}
-		}
+	// 	this.onmessage = async data => {
+	// 		if (data.type == 11 && data.offer) {
+	// 			console.log("Got offer:", data.offer)
+	// 			peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+	// 			const answer = await peerConnection.createAnswer();
+	// 			await peerConnection.setLocalDescription(answer);
+	// 			console.log("Sending answer:", answer)
+	// 			recipientId = data.callerId
+	// 			ws.send(JSON.stringify({
+	// 				type: 2, sessionId: this.sessionId, answer, recipientId
+	// 			}));
+	// 		}
+	// 		else if (data.type == 13 && data.candidate) {
+	// 			console.log("Got candidate:", data.candidate)
+	// 			await peerConnection.addIceCandidate(data.candidate)
+	// 		}
+	// 	}
 	
-		return new Promise((resolve, reject) => {
-			let iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
-				console.log("RECV iceconnectionstatechange", e)
-				if(e.target.connectionState == "connected") {
-					peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
-					return
-				}
-				else if(e.target.connectionState == "disconnected") {
-					reject(new Error("Remote peer disconnected"))
-				}
-				else if(e.target.connectionState == "failed") {
-					reject(new PeerConnectionError())
-				}
-			})
+	// 	return new Promise((resolve, reject) => {
+	// 		let iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
+	// 			console.log("RECV iceconnectionstatechange", e)
+	// 			if(e.target.connectionState == "connected") {
+	// 				peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
+	// 				return
+	// 			}
+	// 			else if(e.target.connectionState == "disconnected") {
+	// 				reject(new Error("Remote peer disconnected"))
+	// 			}
+	// 			else if(e.target.connectionState == "failed") {
+	// 				reject(new PeerConnectionError())
+	// 			}
+	// 		})
 
-			peerConnection.addEventListener("datachannel", e => {
-				const channel = e.channel
-				console.log("Got datachannel!", channel)
-				channel.binaryType = "arraybuffer"
-				peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
-				resolve(channel)
-			})
-		})
-	}
+	// 		peerConnection.addEventListener("datachannel", e => {
+	// 			const channel = e.channel
+	// 			console.log("Got datachannel!", channel)
+	// 			channel.binaryType = "arraybuffer"
+	// 			peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
+	// 			resolve(channel)
+	// 		})
+	// 	})
+	// }
 
 	async _call(recipientId) {
 		if(this.closed) {
@@ -217,18 +372,18 @@ export class RtcSession {
 		const peerConnection = new RTCPeerConnection(RTC_CONF);
 		this.peerConnection = peerConnection;
 
-		ws.send(JSON.stringify({
+		ws.send(JSON.stringify({	// login
 			type: 0,
 			id: this.sessionId
 		}))
 		this.has_logged_in = true
 	
-		peerConnection.addEventListener("icecandidate", e => {
+		const icecandidatelistener = peerConnection.addEventListener("icecandidate", e => {
 			console.log(e)
 			if (e.candidate) {
 				console.log("peerConnection Got ICE candidate:", e.candidate)
 				ws.send(JSON.stringify({
-					type: 3, candidate: e.candidate, recipientId
+					type: 3, candidate: e.candidate, recipientId, sessionId: this.sessionId
 				}))
 			}
 		})
@@ -260,10 +415,11 @@ export class RtcSession {
 				}
 			}
 		
-			let iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
+			const iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
 				console.log("CALL iceconnectionstatechange", e)
 				if(e.target.connectionState == "connected") {
 					peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
+					peerConnection.removeEventListener("icecandidatelistener", icecandidatelistener)
 					return
 				}
 				else if(e.target.connectionState == "disconnected") {
@@ -311,10 +467,10 @@ export class RtcSession {
 		}
 	}
 
-	async recv() {
-		await this.waitForWebsocket()
-		return this._recv()
-	}
+	// async recv() {
+	// 	await this.waitForWebsocket()
+	// 	return this._recv()
+	// }
 	
 	async call(recipientId) {
 		await this.waitForWebsocket()
@@ -328,7 +484,7 @@ export class RtcSession {
 			this.peerConnection.close()
 		}
 		if(ws && ws.readyState == WebSocket.OPEN && this.has_logged_in) {
-			ws.send(JSON.stringify({
+			ws.send(JSON.stringify({		// logout
 				type: 4, sessionId: this.sessionId
 			}))
 		}

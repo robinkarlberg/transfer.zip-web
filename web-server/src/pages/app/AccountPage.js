@@ -1,11 +1,11 @@
 import { useContext } from "react";
-import { ApiContext } from "../../providers/ApiProvider"
+import { AuthContext } from "../../providers/AuthProvider"
 import { API_URL } from "../../api/Api";
 import { useNavigate } from "react-router-dom"
 import AppGenericPage from "../../components/app/AppGenericPage";
 
 export default function AccountPage({ }) {
-    const { user, logout } = useContext(ApiContext)
+    const { user, logout } = useContext(AuthContext)
 
     const navigate = useNavigate()
 

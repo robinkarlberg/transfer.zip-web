@@ -26,7 +26,7 @@ import { ApplicationProvider } from './providers/ApplicationProvider';
 import { FileTransferProvider } from './providers/FileTransferProvider';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import AboutPage from './pages/AboutPage';
-import { ApiProvider } from './providers/ApiProvider';
+import { AuthProvider } from './providers/AuthProvider';
 import TransfersPage from './pages/app/TransfersPage';
 import AccountPage from './pages/app/AccountPage';
 import HomePage from "./pages/app/HomePage";
@@ -36,18 +36,16 @@ import DownloadPage from "./pages/app/DownloadPage";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
-      <Route path="/dl/:secretCode" element={<DownloadPage/>}/>
+      <Route path="/dl/:secretCode" element={<DownloadPage />} />
       <Route element={<ApplicationProvider />}>
-        <Route element={<ApiProvider />}>
-          <Route element={<FileTransferProvider />}>
-            <Route element={<App />}>
-              <Route path="/home" element={<HomePage/>}/>
-              <Route path="/transfers">
-                <Route path="/transfers" element={<TransfersPage/>}/>
-                <Route path=":id" element={<TransferInfoPage/>}/>
-              </Route>
-              <Route path="/account" element={<AccountPage/>} />
+        <Route element={<AuthProvider />}>
+          <Route element={<App />}>
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/transfers">
+              <Route path="/transfers" element={<TransfersPage />} />
+              <Route path=":id" element={<TransferInfoPage />} />
             </Route>
+            <Route path="/account" element={<AccountPage />} />
           </Route>
         </Route>
       </Route>
@@ -59,7 +57,7 @@ const router = createBrowserRouter(
   //   element: <ApplicationProvider />,
   //   children: [
   //     {
-  //       element: <ApiProvider />,
+  //       element: <AuthProvider />,
   //       children: [
   //         {
   //           element: <FileTransferProvider />,
@@ -105,7 +103,7 @@ const router = createBrowserRouter(
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>
+  // </React.StrictMode>
 );

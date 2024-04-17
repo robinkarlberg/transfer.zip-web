@@ -9,7 +9,7 @@ import IntentDescription from "./components/IntentDescription"
 import AddContactModal from "./components/modals/AddContactModal";
 import Adsense from "./components/Adsense";
 import SideBar from "./components/app/SideBar";
-import { ApiProvider } from "./providers/ApiProvider";
+import { AuthProvider } from "./providers/AuthProvider";
 
 function App() {
   const { setShowContacts } = useContext(ApplicationContext)

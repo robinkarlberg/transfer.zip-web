@@ -4,10 +4,10 @@ import { forwardRef, useContext } from "react";
 import { Dropdown } from "react-bootstrap";
 
 import * as Api from "../../api/Api"
-import { ApiContext } from "../../providers/ApiProvider";
+import { AuthContext } from "../../providers/AuthProvider";
 
 export default function FilesList({ files, onFileChange }) {
-    const { refreshTransfers } = useContext(ApiContext)
+    const { refreshTransfers } = useContext(AuthContext)
 
     const CustomToggle = forwardRef(({ children, onClick }, ref) => (
         <button className="btn" ref={ref} onClick={(e) => { e.preventDefault(); onClick(e) }}>
@@ -58,7 +58,7 @@ export default function FilesList({ files, onFileChange }) {
             </tr>
         )
     }
-
+    console.log(files)
     return (
         <div className="FilesList" style={{ maxWidth: "800px" }}>
 

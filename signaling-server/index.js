@@ -133,6 +133,8 @@ function handleMessage(conn, message) {
     } else if (data.type == 3) { // candidate
         // console.log("candidate", conn._session.id + " -> " + data.recipientId, data);
         if (!data.candidate) return closeConnWithReason(conn, "[candidate] Didn't specify candidate");
+        if (!data.sessionId) return closeConnWithReason(conn, "[candidate] Didn't specify sessionId");
+        if (!sessions.get(data.sessionId)) return closeConnWithReason(conn, "[candidate] Specified sessionId does not exist")
 
         let recipientConn;
         if ((recipientConn = sessions.get(data.recipientId))) {
@@ -140,6 +142,7 @@ function handleMessage(conn, message) {
                 type: 13, // answer type
                 targetId: data.recipientId,
                 candidate: data.candidate,
+                callerId: data.sessionId
             }));
             return conn.send(JSON.stringify({
                 targetId: data.sessionId, success: true, type: data.type,

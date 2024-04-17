@@ -106,10 +106,12 @@ export async function deleteTransferFile(transferId, fileId) {
 }
 
 export async function getDownload(secretCode) {
+    if(secretCode[0] == "r") throw "can't download a realtime transfer"
     return await get(`/download/${secretCode}`)
 }
 
 export async function downloadAll(secretCode) {
+    if(secretCode[0] == "r") throw "can't download a realtime transfer"
     // return await get(`/transfers/${transferId}/files/${fileId}/download`)
     window.location.href = `${API_URL}/download/${secretCode}/zip`
 }

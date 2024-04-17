@@ -3,12 +3,13 @@ import { Dropdown } from "react-bootstrap";
 import { Link } from "react-router-dom"
 
 import * as Api from "../../api/Api"
-import { ApiContext } from "../../providers/ApiProvider";
+// import { AuthContext } from "../../providers/AuthProvider";
 
 import { copyTransferLink } from "../../utils"
+import { ApplicationContext } from "../../providers/ApplicationProvider";
 
 export default function TransfersList({ transfers }) {
-    const { refreshTransfers } = useContext(ApiContext)
+    const { removeTransfer } = useContext(ApplicationContext)
 
     const CustomToggle = forwardRef(({ children, onClick }, ref) => (
         <button className="btn" ref={ref} onClick={(e) => { e.preventDefault(); onClick(e) }}>
@@ -16,9 +17,8 @@ export default function TransfersList({ transfers }) {
         </button>
     ))
 
-    const onDeleteTransfer = async (transferId) => {
-        await Api.deleteTransfer(transferId)
-        await refreshTransfers()
+    const onDeleteTransfer = (transfer) => {
+        removeTransfer(transfer)
     }
 
     const TransfersListEntry = ({ transfer }) => {
@@ -41,7 +41,7 @@ export default function TransfersList({ transfers }) {
                         <Dropdown.Menu className="text-small shadow">
                             <Dropdown.Item onClick={() => copyTransferLink(transfer)}>Copy link</Dropdown.Item>
                             <Dropdown.Divider></Dropdown.Divider>
-                            <Dropdown.Item className="text-danger" onClick={() => onDeleteTransfer(transfer.id)}>
+                            <Dropdown.Item className="text-danger" onClick={() => onDeleteTransfer(transfer)}>
                                 Delete
                             </Dropdown.Item>
                         </Dropdown.Menu>
