@@ -2,7 +2,7 @@
 
 import streamSaver from "./lib/StreamSaver"
 import { decodeString, encodeString } from "./utils"
-streamSaver.mitm = "./mitm.html"
+streamSaver.mitm = "/mitm.html"
 
 const FILE_CHUNK_SIZE = 16384
 const FILE_STREAM_SIZE = 32
