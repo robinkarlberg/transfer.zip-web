@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 
-import * as Zip from "@zip.js/zip.js";
+// import * as Zip from "@zip.js/zip.js";
 
 import * as Api from "../../api/Api";
 import { humanFileSize } from "../../utils";
@@ -71,7 +71,7 @@ export default function DownloadPage({ }) {
                 setFilesList(fileList)
 
                 fileTransfer.onprogress = (progress, fileInfo) => {
-                    
+
                 }
 
                 fileTransfer.onfilefinished = (fileInfo) => {
