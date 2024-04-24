@@ -80,9 +80,11 @@ export const removeRtcSession = (rtcSession) => {
 
 
 let ws;
+let isWsSupposedToClose = false;
 
 export const createWebSocket = () => {
 	console.log("createWebSocket")
+	isWsSupposedToClose = false;
 	ws = new WebSocket(WS_URL)
 		
 	let keepAliveIntervalId = undefined
@@ -91,11 +93,20 @@ export const createWebSocket = () => {
 		clearInterval(keepAliveIntervalId)
 		console.error("WebSocket error: could not connect to server")
 		// throw "WebSocket error: could not connect to server"
+		// if(!isWsSupposedToClose) {
+		// 	setTimeout(createWebSocket, 1000)
+		// }
 	})
 
 	ws.addEventListener("close", e => {
 		clearInterval(keepAliveIntervalId)
 		console.error("WebSocket closed! code:", e.code)
+		if(!isWsSupposedToClose) {
+			setTimeout(createWebSocket, 1000)
+		}
+		for(let rtcSession of activeRtcSessions) {
+			rtcSession.onwsclose && rtcSession.onwsclose()
+		}
 	})
 			
 	ws.addEventListener("open", e => {
@@ -106,7 +117,10 @@ export const createWebSocket = () => {
 		}, 30000)
 
 		for(let rtcSession of activeRtcSessions) {
-			rtcSession.onopen && rtcSession.onopen()
+			rtcSession.onwsopen && rtcSession.onwsopen()
+		}
+		for(let rtcSession of activeRtcSessions) {
+			rtcSession.onwsrestart && rtcSession.onwsrestart()
 		}
 	})
 
@@ -129,6 +143,7 @@ export const createWebSocket = () => {
 
 export const closeWebSocket = () => {
 	console.log("Closing WebSocket...")
+	isWsSupposedToClose = true
 	ws.close()
 }
 
@@ -137,7 +152,7 @@ export class RtcListener {
 	onrtcsession = undefined
 	_onclose = undefined
 	onclose = undefined
-	onopen = undefined
+	onwsopen = undefined
 
 	callerIdPeerConnectionEntries = []
 
@@ -148,20 +163,27 @@ export class RtcListener {
 		this.sessionId = sessionId
 	}
 
+	try_login() {
+		if(this.closed) {
+			console.warn("[RtcListener] try_login was called after close")
+			return
+		}
+		if(!this.has_logged_in) {
+			ws.send(JSON.stringify({		// login
+				type: 0,
+				id: this.sessionId
+			}))
+			this.has_logged_in = true
+		}
+	}
+
 	async _listen() {
 		if(this.closed) {
 			console.warn("[RtcListener] _recv was called after close")
 			return
 		}
-
-		ws.send(JSON.stringify({		// login
-			type: 0,
-			id: this.sessionId
-		}))
-		this.has_logged_in = true
-
+		this.try_login()
 		this.onmessage = async data => {
-
 			if (data.type == 11 && data.offer) {
 				console.log("Got offer:", data.offer)
 				let recipientId = data.callerId
@@ -239,7 +261,7 @@ export class RtcListener {
 		}
 		else {
 			return new Promise((resolve, reject) => {
-				this.onopen = async () => {
+				this.onwsopen = async () => {
 					resolve()
 				}
 			})
@@ -249,6 +271,14 @@ export class RtcListener {
 	async listen() {
 		await this.waitForWebsocket()
 		return this._listen()
+	}
+
+	onwsrestart() {
+		this.try_login()
+	}
+
+	onwsclose() {
+		this.has_logged_in = false
 	}
 
 	close() {
@@ -272,9 +302,10 @@ export class RtcListener {
 }
 
 export class RtcSession {
-	onopen = undefined
+	onwsopen = undefined
 	onmessage = undefined
 	onclose = undefined
+	onwsrestart = undefined
 
 	/**
 	 * Used internally by webrtc.js
@@ -460,7 +491,7 @@ export class RtcSession {
 		}
 		else {
 			return new Promise((resolve, reject) => {
-				this.onopen = async () => {
+				this.onwsopen = async () => {
 					resolve()
 				}
 			})
