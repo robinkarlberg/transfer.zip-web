@@ -26,7 +26,7 @@ export default function HomePage({ }) {
                     <StatCard
                         title={"Transfers"}
                         stat={54}
-                        subtitle={"active links"}
+                        subtitle={"active now"}
                     >
                     <Link to="/transfers" style={{ textDecoration: "none" }}>View transfers<i className="bi bi-arrow-right-short"></i></Link>
                     </StatCard>

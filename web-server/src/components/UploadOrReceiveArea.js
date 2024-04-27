@@ -66,7 +66,7 @@ export default function UploadOrReceiveArea({ title, subtitle, allowReceive, onF
                 </div>
             </div>
             <form style={{ display: "none" }}>
-                <input ref={fileInputRef} onChange={onFileInputChange} type="file" aria-hidden="true"></input>
+                <input ref={fileInputRef} onChange={onFileInputChange} type="file" aria-hidden="true" multiple></input>
             </form>
         </div>
     )

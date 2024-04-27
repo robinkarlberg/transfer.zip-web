@@ -115,3 +115,8 @@ export async function downloadAll(secretCode) {
     // return await get(`/transfers/${transferId}/files/${fileId}/download`)
     window.location.href = `${API_URL}/download/${secretCode}/zip`
 }
+
+export async function downloadDlFile(secretCode, fileId) {
+    // return await get(`/transfers/${transferId}/files/${fileId}/download`)
+    window.location.href = `${API_URL}/download/${secretCode}/${fileId}`
+}

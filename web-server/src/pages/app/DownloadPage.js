@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom"
 // import * as Zip from "@zip.js/zip.js";
 
 import * as Api from "../../api/Api";
-import { humanFileSize } from "../../utils";
+import { getFileIconFromExtension, humanFileSize } from "../../utils";
 import { ProgressBar } from "react-bootstrap";
 import AppGenericPage from "../../components/app/AppGenericPage";
 
@@ -12,6 +12,9 @@ import logo from "../../img/transfer-zip-logotext-cropped.png"
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 import * as WebRtc from "../../webrtc";
 import { FileTransfer } from "../../filetransfer";
+import FilePreviewModal from "../../components/modals/FilePreviewModal";
+
+const fileExtRe = /(?:\.([^.]+))?$/;
 
 const downloadRealtimeTransfer = async (k, recipientId) => {
     const key = await crypto.subtle.importKey("jwk", {
@@ -50,6 +53,9 @@ export default function DownloadPage({ }) {
     const { secretCode } = useParams()
     const [downloadWorker, setDownloadWorker] = useState(null)
     const [filesList, setFilesList] = useState(null)
+    const [showFilePreviewModal, setShowFilePreviewModal] = useState(false)
+    const [filePreviewFile, setFilePreviewFile] = useState(null)
+    const [cachedFileData, setCachedFileData] = useState([])
 
     const TRANSFER_STATE_IDLE = "idle"
     const TRANSFER_STATE_TRANSFERRING = "transferring"
@@ -88,8 +94,12 @@ export default function DownloadPage({ }) {
     }, [])
 
     const downloadFileById = (id) => {
-        if(isRealtimeTransfer) {
+        if (isRealtimeTransfer) {
             downloadWorker.requestFile(id)
+        }
+        else {
+            console.log(downloadWorker, id)
+            Api.downloadDlFile(secretCode, id)
         }
     }
 
@@ -123,7 +133,7 @@ export default function DownloadPage({ }) {
                         {
                             transfer.state === "idle" ?
                                 (
-                                    <a className="link-light" href="#" onClick={(e) => {e.preventDefault(); downloadFileById(transfer.file.id)}}><i className="bi bi-cloud-download-fill"></i></a>
+                                    <a className="link-light" href="#" onClick={(e) => { e.preventDefault(); downloadFileById(transfer.file.id) }}><i className="bi bi-cloud-download-fill"></i></a>
                                 )
                                 :
                                 transfer.state === "transferring" ?
@@ -146,16 +156,52 @@ export default function DownloadPage({ }) {
         )
     }
 
-    return (
-        <div className="m-auto" style={{ maxWidth: "700px" }}>
-            <AppGenericPage titleElement={<img width="160" src={logo}></img>}>
-                <div className="d-flex flex-column gap-3 mb-3">
-                    {filesList.map((f, i) => {
-                        return <FileCard transfer={{ file: { ...f, id: i }, progress: 0, state: TRANSFER_STATE_IDLE }} />
-                    })}
+    const FileGridEntry = ({ transfer }) => {
+        const icon = getFileIconFromExtension(fileExtRe.exec(transfer.file.info.name)[1])
+        return (
+            <div onClick={() => downloadFileById(transfer.file.id)} className="btn d-flex flex-column align-items-center p-3" style={{ width: "140px" }}>
+                <div className="abg-body-tertiary mb-1">
+                    <i className={"mt-2 fs-3 bi " + icon}></i>
+                    {/* <div className="text-body-secondary d-flex flex-row justify-content-between w-100">
+                        <small>{transfer.file.info.type}</small>
+                        <small>{humanFileSize(transfer.file.info.size, true)}</small>
+                    </div> */}
                 </div>
-                {!isRealtimeTransfer && <button className="btn btn-primary" onClick={downloadAll}>Download all as zip</button>}
-            </AppGenericPage>
+                <div style={{ height: "2em" }}>
+                    {/* <a href="#" className="w-100 link-body-emphasis link-underline link-underline-opacity-0 link-underline-opacity-100-hover text-truncate text-wrap">
+                        
+                    </a> */}
+                    <span>
+                        <small className="text-break">{transfer.file.info.name}</small>
+                    </span>
+                </div>
+            </div>
+
+        )
+    }
+
+    const FileGrid = ({ filesList }) => {
+        return (
+            <div className="d-flex flex-row flex-wrap gap-3 p-3">
+                {filesList.map((f, i) => {
+                    const id = f.id || i
+                    return <FileGridEntry key={id} transfer={{ file: { ...f, id }, progress: 0, state: TRANSFER_STATE_IDLE }} />
+                })}
+            </div>
+        )
+    }
+
+    return (
+        <div className="m-auto">
+            {/* <FilePreviewModal show={showFilePreviewModal} file={filePreviewFile}/> */}
+            <div className="d-flex flex-row justify-content-between p-3 bg-body-tertiary border-bottom">
+                <img width="160" src={logo}></img>
+                <div>
+                    {/* {!isRealtimeTransfer && <button className="btn disabled btn-outline-primary me-2" onClick={downloadAll}>Download selected</button>} */}
+                    {!isRealtimeTransfer && <button className="btn btn-primary text-truncate" onClick={downloadAll}>Download all</button>}
+                </div>
+            </div>
+            <FileGrid filesList={filesList} />
         </div>
     )
 }

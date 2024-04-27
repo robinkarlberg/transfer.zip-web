@@ -55,3 +55,22 @@ export const encodeString = (str) => {
 export const decodeString = (str) => {
     return textDec.decode(str)
 }
+
+const __getFileIconFromExtension = (ext) => {
+    if(ext == "exe") return "filetype-exe"
+    if(ext == "zip" || ext == "tar" || ext == "gz" || ext == "gzip" || ext == "rar") return "file-earmark-zip"
+    if(ext == "bin" || ext == "img" || ext == "iso") return "file-earmark-binary"
+    if(ext == "js" || ext == "c" || ext == "cpp" || ext == "py" || ext == "java" || ext == "css" || ext == "html" || ext == "xml") return "file-earmark-code"
+    if(ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "bmp" || ext == "dng" || ext == "webp") return "file-earmark-image"
+    if(ext == "wav" || ext == "mp3" || ext == "flac") return "file-earmark-music"
+    if(ext == "pdf") return "file-earmark-pdf"
+    if(ext == "mov" || ext == "mp4" || ext == "mkv") return "file-earmark-play"
+    if(ext == "docx" || ext == "doc") return "file-earmark-word"
+    if(ext == "txt" || ext == "tex") return "file-earmark-text"
+}
+
+export const getFileIconFromExtension = (ext) => {
+    const bi_ext = __getFileIconFromExtension(ext)
+    if(!bi_ext) return null
+    else return "bi-" + bi_ext
+}

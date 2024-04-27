@@ -13,6 +13,9 @@ import PeerConnectionErrorModal from "../components/modals/PeerConnectionErrorMo
 import * as Api from "../api/Api"
 import { FileTransfer } from "../filetransfer";
 
+import streamSaver from "../lib/StreamSaver"
+streamSaver.mitm = "/mitm.html"
+
 export const ApplicationContext = createContext({})
 
 export const ApplicationProvider = () => {
@@ -81,6 +84,41 @@ export const ApplicationProvider = () => {
         return transfer
     }
 
+    const downloadRealtimeTransferFile = (file) => {
+        const chunkSize = 163840
+        const fileReader = new FileReader()
+
+        const fileStream = streamSaver.createWriteStream(file.info.name, {
+            size: file.info.size
+        })
+        const writer = fileStream.getWriter()
+        
+        let offset = 0
+        fileReader.onload = () => {
+            const data = new Uint8Array(fileReader.result)
+            console.log(data)
+            writer.write(data)
+            offset += data.byteLength;
+            if (offset < file.info.size) {
+                readSlice(offset);
+            }
+            else {
+                writer.close()
+            }
+        }
+        fileReader.onerror = e => {
+            console.error("File reader error", e)
+        }
+        fileReader.onabort = e => {
+            console.log("File reader abort", e)
+        }
+        const readSlice = o => {
+            const slice = file.nativeFile.slice(offset, o + chunkSize);
+            fileReader.readAsArrayBuffer(slice);
+        };
+        readSlice(0)
+    }
+
     const refreshApiTransfers = useCallback(async () => {
         const res = await Api.getTransfers()
         setApiTransfers(res.transfers)
@@ -126,7 +164,8 @@ export const ApplicationProvider = () => {
             apiTransfers,
             removeTransfer,
             newRealtimeTransfer,
-            newApiTransfer
+            newApiTransfer,
+            downloadRealtimeTransferFile
         }}>
             <GenericErrorModal show={errorMessage != null} errorMessage={errorMessage} onCancel={() => { setErrorMessage(null) }} />
             <PeerConnectionErrorModal show={showPeerConnectionError} onCancel={() => { setShowPeerConnectionError(false) }} />

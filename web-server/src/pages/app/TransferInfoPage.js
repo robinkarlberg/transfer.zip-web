@@ -13,11 +13,12 @@ import { ApplicationContext } from "../../providers/ApplicationProvider";
 export default function TransferInfoPage({ }) {
     const { id } = useParams()
     const [transfer, setTransfer] = useState(null)
-    const { rtTransfers } = useContext(ApplicationContext)
+    const { rtTransfers, downloadRealtimeTransferFile } = useContext(ApplicationContext)
 
     const navigate = useNavigate()
     const { state } = useLocation()
     const [showUploadFilesModal, setShowUploadFilesModal] = useState(state?.addFiles)
+    const isRealtimeTransfer = id && id[0] == "r"
 
     const refreshApiTransfer = () => {
         Api.getTransfer(id).then(t => setTransfer(t.transfer))
@@ -41,10 +42,9 @@ export default function TransferInfoPage({ }) {
     }
 
     useEffect(() => {
-        const isRealtimeTransfer = id[0] == "r"
         if (isRealtimeTransfer) {
             const rtTransfer = rtTransfers.find(x => x.id == id)
-            if(!rtTransfer) {
+            if (!rtTransfer) {
                 navigate("/transfers")
             }
             else {
@@ -90,6 +90,31 @@ export default function TransferInfoPage({ }) {
         return <div>{total.amount}<small>{total.unit}</small></div>
     }
 
+    const onFilesListAction = (action, file) => {
+        if (isRealtimeTransfer) {
+            if (action == "rename") {
+
+            }
+            else if (action == "preview") {
+
+            }
+            else if (action == "download") {
+                downloadRealtimeTransferFile(file)
+            }
+        }
+        else {
+            if (action == "rename") {
+
+            }
+            else if (action == "preview") {
+
+            }
+            else if (action == "download") {
+                Api.downloadTransferFile(transfer.id, file.id)
+            }
+        }
+    }
+
     return (
         <AppGenericPage titleElement={titleElement}>
             <UploadFilesModal show={showUploadFilesModal} onCancel={() => setShowUploadFilesModal(false)}
@@ -107,7 +132,7 @@ export default function TransferInfoPage({ }) {
                 </StatCard>
             </div>
             <h4>Files</h4>
-            <FilesList files={transfer.files} onFileChange={refreshApiTransfer} />
+            <FilesList files={transfer.files} onFileChange={refreshApiTransfer} onAction={onFilesListAction} allowedActions={{ "preview": true, "download": true, "rename": true }} />
         </AppGenericPage>
     )
 }
