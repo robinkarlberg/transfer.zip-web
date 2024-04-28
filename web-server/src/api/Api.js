@@ -1,4 +1,4 @@
-export const API_URL = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') ? "http://localhost:8001" : (process.env.API_URL)
+export const API_URL = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') ? "http://localhost:8001" : (process.env.REACT_API_URL)
 
 const get = async (endpoint) => {
     const res = await (await fetch(API_URL + endpoint, {
