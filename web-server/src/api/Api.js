@@ -1,4 +1,4 @@
-export const API_URL = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') ? "http://localhost:8001" : "https://api.transfer.zip"
+export const API_URL = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') ? "http://localhost:8001" : (process.env.ENVIRONMENT === 'remote-dev' ? "https://api-dev.transfer.zip" : "https://api.transfer.zip")
 
 const get = async (endpoint) => {
     const res = await (await fetch(API_URL + endpoint, {
