@@ -90,6 +90,10 @@ export default function TransferInfoPage({ }) {
         return <div>{total.amount}<small>{total.unit}</small></div>
     }
 
+    const totalDownloadsStat = () => {
+        return transfer.statistics.length
+    }
+
     const onFilesListAction = (action, file) => {
         if (isRealtimeTransfer) {
             if (action == "rename") {
@@ -127,12 +131,12 @@ export default function TransferInfoPage({ }) {
                 <StatCard title={"Files"} stat={transfer.files.length}>
                     <a href="#" onClick={() => setShowUploadFilesModal(true)} style={{ textDecoration: "none" }}>Add files<i className="bi bi-arrow-right-short"></i></a>
                 </StatCard>
-                <StatCard title={"Downloads"} stat={"123"}>
+                <StatCard title={"Downloads"} stat={totalDownloadsStat()}>
                     <a href="#" style={{ textDecoration: "none" }} onClick={() => copyTransferLink(transfer)}>Copy link<i className="bi bi-arrow-right-short"></i></a>
                 </StatCard>
             </div>
             <h4>Files</h4>
-            <FilesList files={transfer.files} onFileChange={refreshApiTransfer} onAction={onFilesListAction} allowedActions={{ "preview": true, "download": true, "rename": true }} />
+            <FilesList files={transfer.files} onFileChange={refreshApiTransfer} onAction={onFilesListAction} allowedActions={{ "preview": false, "download": true, "rename": false }} />
         </AppGenericPage>
     )
 }

@@ -134,6 +134,7 @@ class FileTransferFile {
 export class FileTransfer {
     onprogress = undefined
     onfilefinished = undefined
+    onfilebegin = undefined
 
     packetIndex = 0
     currentFile = undefined
@@ -210,6 +211,7 @@ export class FileTransfer {
             size: file.info.size,
             type: file.info.type
         }
+        this.onfilebegin(fileInfo)
         const fileInfoStr = JSON.stringify(fileInfo)
         const fileInfoBytes = encodeString(fileInfoStr)
         console.log("[FileTransfer] Sending file info:", fileInfoStr, fileInfoBytes)

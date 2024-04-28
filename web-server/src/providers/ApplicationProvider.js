@@ -25,6 +25,7 @@ export const ApplicationProvider = () => {
     const [rtTransfers, setRtTransfers] = useState([])
     const [apiTransfers, setApiTransfers] = useState([])
     const [transfers, setTransfers] = useState([])
+    const [hasFetched, setHasFetched] = useState(false)
 
     const [activeRtTransferChannels, setActiveRtTransferChannels] = useState([])
 
@@ -45,6 +46,7 @@ export const ApplicationProvider = () => {
             name,
             files: [],
             secretCode: "r" + worker.sessionId,
+            statistics: [],
             k,
             isRealtime: true// || worker instanceof WebRtc.RtcSession
         }
@@ -72,6 +74,10 @@ export const ApplicationProvider = () => {
         rtcSession.onrtcsession = (rtcSession, channel) => {
             const fileTransfer = new FileTransfer(channel, key)
             fileTransfer.serveFiles(transfer.files)
+            fileTransfer.onfilebegin = fileInfo => {
+                console.debug("[ApplicationProvider] Begin", fileInfo)
+                transfer.statistics.push([{ time: new Date() }])
+            }
             fileTransfer.onfilefinished = fileInfo => {
                 console.debug("[ApplicationProvider] Finished", fileInfo)
             }
@@ -92,7 +98,7 @@ export const ApplicationProvider = () => {
             size: file.info.size
         })
         const writer = fileStream.getWriter()
-        
+
         let offset = 0
         fileReader.onload = () => {
             const data = new Uint8Array(fileReader.result)
@@ -123,6 +129,7 @@ export const ApplicationProvider = () => {
         const res = await Api.getTransfers()
         setApiTransfers(res.transfers)
         updateAllTransfersList(rtTransfers, res.transfers)
+        if (!hasFetched) setHasFetched(true)
     })
 
     const newApiTransfer = async (expiresAt = 0) => {
@@ -165,7 +172,8 @@ export const ApplicationProvider = () => {
             removeTransfer,
             newRealtimeTransfer,
             newApiTransfer,
-            downloadRealtimeTransferFile
+            downloadRealtimeTransferFile,
+            hasFetched
         }}>
             <GenericErrorModal show={errorMessage != null} errorMessage={errorMessage} onCancel={() => { setErrorMessage(null) }} />
             <PeerConnectionErrorModal show={showPeerConnectionError} onCancel={() => { setShowPeerConnectionError(false) }} />
