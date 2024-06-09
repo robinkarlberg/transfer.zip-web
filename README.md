@@ -18,6 +18,6 @@ On some Safari browsers, the file download may not work because of bugs on Apple
 
 To build and run transfer.zip locally, use docker compose.
 ```
-docker compose up
+ENVIRONMENT=dev docker compose up
 ```
 This will start the web server on `localhost:9001`. The signaling server will be proxied through the web-server on the `/ws` endpoint.
