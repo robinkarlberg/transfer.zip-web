@@ -3,6 +3,9 @@ services:
     build: web-server
     ports:
       - 127.0.0.1:9002:80
+    env_file:
+      - ${ENVIRONMENT}.env
+      
     restart: unless-stopped
 
   signaling-server:
