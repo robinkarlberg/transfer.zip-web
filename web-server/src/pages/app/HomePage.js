@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AppGenericPage from "../../components/app/AppGenericPage";
 import IndexPage from "../partial/IndexPage"
 import StatCard from "../../components/app/StatCard";
@@ -7,16 +7,18 @@ import { ApplicationContext } from "../../providers/ApplicationProvider";
 
 export default function HomePage({ }) {
 
-    const { transfers, apiTransfers, hasFetched } = useContext(ApplicationContext)
+    const { transfers, apiTransfers, hasFetched, newApiTransferAndNavigate, newRealtimeTransferAndNavigate } = useContext(ApplicationContext)
+
+    const navigate = useNavigate()
 
     const getDownloadsCount = () => {
         if(!hasFetched) {
             return 0
         }
         let downloads = 0
-        transfers.forEach(x => {
-            downloads += x.statistics.length
-        })
+        // transfers.forEach(x => {
+        //     downloads += x.statistics.length
+        // })
         return downloads
     }
 
@@ -38,13 +40,13 @@ export default function HomePage({ }) {
     return (
         <AppGenericPage title={"Home"} className={"HomePage"}>
             <div className="d-flex flex-column gap-3">
-                <div className="d-flex flex-row flex-wrap gap-3">
+                <div className="d-flex flex-row flex-wrap gap-3 order-1">
                     <StatCard
-                        title={"Storage"}
-                        stat={<div>20<small>GB</small></div>}
-                        subtitle={"of 200GB used"}
+                        title={"Transfers"}
+                        stat={getTransfersCount()}
+                        subtitle={"active now"}
                     >
-                        <Link to="/upgrade" style={{ textDecoration: "none" }}>Upgrade plan<i className="bi bi-arrow-right-short"></i></Link>
+                    <Link to="/transfers" style={{ textDecoration: "none" }}>View transfers<i className="bi bi-arrow-right-short"></i></Link>
                     </StatCard>
                     <StatCard
                         title={"Files"}
@@ -54,13 +56,6 @@ export default function HomePage({ }) {
                     <Link to="/files" style={{ textDecoration: "none" }}>View files<i className="bi bi-arrow-right-short"></i></Link>
                     </StatCard>
                     <StatCard
-                        title={"Transfers"}
-                        stat={getTransfersCount()}
-                        subtitle={"active now"}
-                    >
-                    <Link to="/transfers" style={{ textDecoration: "none" }}>View transfers<i className="bi bi-arrow-right-short"></i></Link>
-                    </StatCard>
-                    <StatCard
                         title={"Downloads"}
                         stat={getDownloadsCount()}
                         subtitle={"last week"}
@@ -68,10 +63,19 @@ export default function HomePage({ }) {
                     >
                     <Link to="/statistics" style={{ textDecoration: "none" }}>View stats<i className="bi bi-arrow-right-short"></i></Link>
                     </StatCard>
+                    <StatCard
+                        title={"Storage"}
+                        stat={<div>20<small>GB</small></div>}
+                        subtitle={"of 200GB used"}
+                    >
+                        <Link to="/upgrade" style={{ textDecoration: "none" }}>Upgrade plan<i className="bi bi-arrow-right-short"></i></Link>
+                    </StatCard>
                 </div>
-                <div className="d-flex flex-row flex-wrap gap-3">
+                <div className="d-flex flex-row flex-wrap gap-3 order-0 order-sm-2">
                     {/* <div className="bg-body rounded p-5 border" style={{ maxWidth: "300px" }}>
                     </div> */}
+                    <button onClick={newApiTransferAndNavigate} style={{ minWidth: "180px" }} className="btn btn-lg bg-body rounded border-primary p-3 pb-3 flex-grow-1 flex-md-grow-0">New Transfer<i className="bi bi-arrow-right-short"></i></button>
+                    <button onClick={newRealtimeTransferAndNavigate} style={{ minWidth: "180px" }} className="btn btn-lg bg-body rounded p-3 pb-3 flex-grow-1 flex-md-grow-0">Quick Share<i className="bi bi-arrow-right-short"></i></button>
                 </div>
             </div>
         </AppGenericPage>

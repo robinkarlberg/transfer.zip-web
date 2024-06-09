@@ -13,6 +13,7 @@ import { ApplicationContext } from "../../providers/ApplicationProvider";
 import * as WebRtc from "../../webrtc";
 import { FileTransfer } from "../../filetransfer";
 import FilePreviewModal from "../../components/modals/FilePreviewModal";
+import FilesList from "../../components/app/FilesList";
 
 const fileExtRe = /(?:\.([^.]+))?$/;
 
@@ -54,8 +55,11 @@ export default function DownloadPage({ }) {
     const [downloadWorker, setDownloadWorker] = useState(null)
     const [filesList, setFilesList] = useState(null)
     const [showFilePreviewModal, setShowFilePreviewModal] = useState(false)
-    const [filePreviewFile, setFilePreviewFile] = useState(null)
+    // const [filePreviewFile, setFilePreviewFile] = useState(null)
+    const [filePreviewIndex, setFilePreviewIndex] = useState(0)
     const [cachedFileData, setCachedFileData] = useState([])
+
+    const [displayMode, setDisplayMode] = useState("list")
 
     const TRANSFER_STATE_IDLE = "idle"
     const TRANSFER_STATE_TRANSFERRING = "transferring"
@@ -100,6 +104,39 @@ export default function DownloadPage({ }) {
         else {
             console.log(downloadWorker, id)
             Api.downloadDlFile(secretCode, id)
+        }
+    }
+
+    const previewFile = (file) => {
+        if (isRealtimeTransfer) {
+            downloadWorker.requestFile(file.id)
+            // TODO: Fix preview for quick share (or disable preview, quick share is just for sharing one file fast, no clicking around and previewing shit lol)
+        }
+        else {
+            setFilePreviewIndex(filesList.indexOf(file))
+            setShowFilePreviewModal(true)
+        }
+    }
+
+    const onFileListAction = (action, file) => {
+        if (action == "preview" || action == "click") {
+            previewFile(file)
+        }
+        else if (action == "download") {
+            downloadFileById(file.id)
+        }
+    }
+
+    const onFilePreviewModalAction = (action) => {
+        if(action == "prev") {
+            let nextIndex = (filePreviewIndex - 1)
+            if(nextIndex < 0) {
+                nextIndex = filesList.length - 1
+            }
+            setFilePreviewIndex(nextIndex)
+        }
+        else if(action == "next") {
+            setFilePreviewIndex((filePreviewIndex + 1) % filesList.length)
         }
     }
 
@@ -160,7 +197,7 @@ export default function DownloadPage({ }) {
         const icon = getFileIconFromExtension(fileExtRe.exec(transfer.file.info.name)[1])
         return (
             <div onClick={() => downloadFileById(transfer.file.id)} className="btn d-flex flex-column align-items-center p-3" style={{ width: "140px" }}>
-                <div className="abg-body-tertiary mb-1">
+                <div className="bg-dark-subtle mb-1">
                     <i className={"mt-2 fs-3 bi " + icon}></i>
                     {/* <div className="text-body-secondary d-flex flex-row justify-content-between w-100">
                         <small>{transfer.file.info.type}</small>
@@ -192,16 +229,28 @@ export default function DownloadPage({ }) {
     }
 
     return (
-        <div className="m-auto">
-            {/* <FilePreviewModal show={showFilePreviewModal} file={filePreviewFile}/> */}
-            <div className="d-flex flex-row justify-content-between p-3 bg-body-tertiary border-bottom">
-                <img width="160" src={logo}></img>
-                <div>
-                    {/* {!isRealtimeTransfer && <button className="btn disabled btn-outline-primary me-2" onClick={downloadAll}>Download selected</button>} */}
-                    {!isRealtimeTransfer && <button className="btn btn-primary text-truncate" onClick={downloadAll}>Download all</button>}
+        <div className="m-auto bg-dark-subtle min-vh-100">
+            <FilePreviewModal onAction={onFilePreviewModalAction} secretCode={secretCode} show={showFilePreviewModal} filesList={filesList} fileIndex={filePreviewIndex} onCancel={() => { setShowFilePreviewModal(false) }} />
+            <div className="border-bottom mb-2 p-3 bg-body-tertiary ">
+                <div className="d-flex flex-row justify-content-between m-auto" style={{ maxWidth: "1280px" }}>
+                    <img width="160" src={logo}></img>
+                    <div className="d-flex flex-row">
+                        <div className="d-flex flex-row px-3 d-none d-sm-inline-block">
+                            <button className="btn" onClick={() => setDisplayMode("list")}><i className="bi bi-list-check"></i></button>
+                            <button className="btn" onClick={() => setDisplayMode("grid")}><i className="bi bi-grid"></i></button>
+                        </div>
+                        {/* {!isRealtimeTransfer && <button className="btn disabled btn-outline-primary me-2" onClick={downloadAll}>Download selected</button>} */}
+                        {!isRealtimeTransfer && <button className="btn btn-primary text-truncate" onClick={downloadAll}>Download all</button>}
+                    </div>
                 </div>
             </div>
-            <FileGrid filesList={filesList} />
+            <div className="m-auto" style={{ maxWidth: "1280px" }}>
+                {/* <h4>Test Transfer<span className="fs-6"> by Test Testsson</span></h4> */}
+                {displayMode == "list" && <FilesList files={filesList} allowedActions={{ "preview": true, "download": true }} onAction={onFileListAction} />}
+                {displayMode == "grid" && <FileGrid filesList={filesList} />}
+            </div>
+            {/* <div className="bg-dark-subtle">
+            </div> */}
         </div>
     )
 }

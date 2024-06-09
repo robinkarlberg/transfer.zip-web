@@ -10,19 +10,8 @@ import StatCard from "../../components/app/StatCard"
 import { ApplicationContext } from "../../providers/ApplicationProvider"
 
 export default function TransfersPage({ }) {
-    const { rtTransfers, apiTransfers, transfers, newApiTransfer, newRealtimeTransfer } = useContext(ApplicationContext)
-    const navigate = useNavigate()
+    const { rtTransfers, apiTransfers, transfers, newApiTransferAndNavigate, newRealtimeTransferAndNavigate } = useContext(ApplicationContext)
     // const { transfers: realtimeTransfers } = useContext(FileTransferContext)
-
-    const onNewApiTransferClicked = async () => {
-        const newTransfer = await newApiTransfer()
-        navigate("/transfers/" + newTransfer.id, { state: { addFiles: true } })
-    }
-
-    const onNewRtTransferClicked = async () => {
-        const newTransfer = await newRealtimeTransfer()
-        navigate("/transfers/" + newTransfer.id, { state: { addFiles: true } })
-    }
 
     if (!transfers) {
         return (
@@ -36,14 +25,14 @@ export default function TransfersPage({ }) {
     return (
         <AppGenericPage title={"Transfers"} className={"TransfersPage"}>
             <div className="d-flex flex-row flex-wrap gap-3 mb-3">
-                <StatCard title={"Storage Transfers"} stat={apiTransfers.length}>
-                    <a href="#" style={{ textDecoration: "none" }} onClick={() => onNewApiTransferClicked()}>New storage transfer<i className="bi bi-arrow-right-short"></i></a>
+                <StatCard title={"Transfers"} stat={apiTransfers.length}>
+                    <a href="#" style={{ textDecoration: "none" }} onClick={() => newApiTransferAndNavigate()}>New transfer<i className="bi bi-arrow-right-short"></i></a>
                 </StatCard>
-                <StatCard title={"Realtime Transfers"} stat={rtTransfers.length}>
-                    <a href="#" style={{ textDecoration: "none" }} onClick={() => onNewRtTransferClicked()}>New realtime transfer<i className="bi bi-arrow-right-short"></i></a>
+                <StatCard title={"Quick Shares"} stat={rtTransfers.length}>
+                    <a href="#" style={{ textDecoration: "none" }} onClick={() => newRealtimeTransferAndNavigate()}>New quick share<i className="bi bi-arrow-right-short"></i></a>
                 </StatCard>
             </div>
-            <TransfersList transfers={transfers} />
+            <TransfersList transfers={transfers} maxWidth="800px"/>
         </AppGenericPage>
     )
 }

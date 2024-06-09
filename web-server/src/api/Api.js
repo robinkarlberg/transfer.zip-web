@@ -60,6 +60,14 @@ export async function getTransfer(id) {
     return await get(`/transfers/${id}`)
 }
 
+export async function getTransferStatistics(id, fromDate) {
+    return await get(`/transfers/${id}/statistics/${fromDate}`)
+}
+
+export async function getAllStatistics(fromDate) {
+    return await get(`/statistics/${fromDate}`)
+}
+
 export async function deleteTransfer(id) {
     return await post(`/transfers/${id}/delete`)
 }
@@ -116,7 +124,12 @@ export async function downloadAll(secretCode) {
     window.location.href = `${API_URL}/download/${secretCode}/zip`
 }
 
-export async function downloadDlFile(secretCode, fileId) {
+export function getDownloadLink(secretCode, fileId) {
     // return await get(`/transfers/${transferId}/files/${fileId}/download`)
-    window.location.href = `${API_URL}/download/${secretCode}/${fileId}`
+    return `${API_URL}/download/${secretCode}/${fileId}`
+}
+
+export function downloadDlFile(secretCode, fileId) {
+    // return await get(`/transfers/${transferId}/files/${fileId}/download`)
+    window.location.href = getDownloadLink(secretCode, fileId)
 }

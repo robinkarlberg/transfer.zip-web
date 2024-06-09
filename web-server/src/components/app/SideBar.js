@@ -37,6 +37,11 @@ export default function SideBar({ }) {
                         Statistics
                     </NavLink>
                 </li>
+                <li>
+                    <NavLink to="/files">
+                        Files
+                    </NavLink>
+                </li>
             </ul>
             <hr />
             <ul className="nav nav-pills flex-column">

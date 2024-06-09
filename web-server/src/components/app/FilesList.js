@@ -6,7 +6,7 @@ import { Dropdown } from "react-bootstrap";
 import * as Api from "../../api/Api"
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 
-export default function FilesList({ files, onFileChange, onAction, allowedActions }) {
+export default function FilesList({ files, onAction, allowedActions, maxWidth }) {
     const { refreshApiTransfers } = useContext(ApplicationContext)
 
     const CustomToggle = forwardRef(({ children, onClick }, ref) => (
@@ -15,17 +15,11 @@ export default function FilesList({ files, onFileChange, onAction, allowedAction
         </button>
     ))
 
-    const onDeleteFile = async (file) => {
-        await Api.deleteTransferFile(file.transferId, file.id)
-        await refreshApiTransfers()
-        onFileChange()
-    }
-
     const FilesListEntry = ({ file }) => {
         return (
             <tr>
                 <td scope="row" style={{ padding: 0 }}>
-                    <Link className="list-group-item list-group-item-action p-2">
+                    <Link className="list-group-item list-group-item-action p-2" onClick={() => onAction("click", file)}>
                         {file.info.name}
                         {/* <span className="me-2">{file.name || file.id}</span>
                         <small className="text-body-secondary">{file.files.length} files</small> */}
@@ -34,7 +28,7 @@ export default function FilesList({ files, onFileChange, onAction, allowedAction
                 <td>
                     <small>{humanFileSize(file.info.size, true)}</small>
                 </td>
-                <td>
+                <td className="d-none d-sm-table-cell" >
                     <small>{file.info.type}</small>
                 </td>
                 <td>
@@ -45,13 +39,18 @@ export default function FilesList({ files, onFileChange, onAction, allowedAction
                         <Dropdown.Toggle as={CustomToggle} />
 
                         <Dropdown.Menu className="text-small shadow">
-                            { allowedActions?.rename && <Dropdown.Item onClick={() => { onAction("rename", file) }}>Rename</Dropdown.Item> }
-                            { allowedActions?.preview && <Dropdown.Item onClick={() => { onAction("preview", file) }}>Preview</Dropdown.Item> }
-                            { allowedActions?.download && <Dropdown.Item onClick={() => { onAction("download", file) }}>Download</Dropdown.Item> }
-                            <Dropdown.Divider></Dropdown.Divider>
-                            <Dropdown.Item className="text-danger" onClick={() => onDeleteFile(file)}>
-                                Remove
-                            </Dropdown.Item>
+                            {allowedActions?.rename && <Dropdown.Item onClick={() => { onAction("rename", file) }}>Rename</Dropdown.Item>}
+                            {allowedActions?.preview && <Dropdown.Item onClick={() => { onAction("preview", file) }}>Preview</Dropdown.Item>}
+                            {allowedActions?.download && <Dropdown.Item onClick={() => { onAction("download", file) }}>Download</Dropdown.Item>}
+                            {allowedActions?.delete && (
+                                <>
+                                    <Dropdown.Divider></Dropdown.Divider>
+                                    <Dropdown.Item className="text-danger" onClick={() => { onAction("delete", file) }}>
+                                        Remove
+                                    </Dropdown.Item>
+                                </>
+                            )}
+
                         </Dropdown.Menu>
                     </Dropdown>
                 </td>
@@ -60,14 +59,14 @@ export default function FilesList({ files, onFileChange, onAction, allowedAction
     }
     console.log(files)
     return (
-        <div className="FilesList" style={{ maxWidth: "800px" }}>
+        <div className="FilesList" style={{ maxWidth: maxWidth || "unset" }}>
 
             <table className="table table-hover table-responsive border">
                 <thead>
                     <tr>
-                        <th scope="col">Name</th>
+                        <th scope="col">File Name</th>
                         <th scope="col">Size</th>
-                        <th scope="col">Type</th>
+                        <th className="d-none d-sm-table-cell" scope="col">Type</th>
                         <th scope="col"></th>
                         <th scope="col"></th>
                     </tr>

@@ -13,7 +13,7 @@ import { ApplicationContext } from "../../providers/ApplicationProvider";
 export default function TransferInfoPage({ }) {
     const { id } = useParams()
     const [transfer, setTransfer] = useState(null)
-    const { rtTransfers, downloadRealtimeTransferFile } = useContext(ApplicationContext)
+    const { rtTransfers, downloadRealtimeTransferFile, refreshApiTransfers } = useContext(ApplicationContext)
 
     const navigate = useNavigate()
     const { state } = useLocation()
@@ -39,6 +39,12 @@ export default function TransferInfoPage({ }) {
         else {
             transfer.files.push(...files.map((x, i) => { return { nativeFile: x, id: i, info: { name: x.name, size: x.size, type: x.type } } }))
         }
+    }
+
+    const onDeleteFile = async (file) => {
+        await Api.deleteTransferFile(file.transferId, file.id)
+        await refreshApiTransfers()
+        refreshApiTransfer()
     }
 
     useEffect(() => {
@@ -91,7 +97,8 @@ export default function TransferInfoPage({ }) {
     }
 
     const totalDownloadsStat = () => {
-        return transfer.statistics.length
+        return 0
+        // return transfer.statistics.length
     }
 
     const onFilesListAction = (action, file) => {
@@ -99,7 +106,7 @@ export default function TransferInfoPage({ }) {
             if (action == "rename") {
 
             }
-            else if (action == "preview") {
+            else if (action == "preview" || action == "click") {
 
             }
             else if (action == "download") {
@@ -110,11 +117,14 @@ export default function TransferInfoPage({ }) {
             if (action == "rename") {
 
             }
-            else if (action == "preview") {
+            else if (action == "preview" || action == "click") {
 
             }
             else if (action == "download") {
                 Api.downloadTransferFile(transfer.id, file.id)
+            }
+            else if(action == "delete") {
+                onDeleteFile(file)
             }
         }
     }
@@ -136,7 +146,7 @@ export default function TransferInfoPage({ }) {
                 </StatCard>
             </div>
             <h4>Files</h4>
-            <FilesList files={transfer.files} onFileChange={refreshApiTransfer} onAction={onFilesListAction} allowedActions={{ "preview": false, "download": true, "rename": false }} />
+            <FilesList files={transfer.files} onAction={onFilesListAction} allowedActions={{ "preview": false, "download": true, "rename": false }} maxWidth={"800px"} />
         </AppGenericPage>
     )
 }

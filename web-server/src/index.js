@@ -32,6 +32,8 @@ import AccountPage from './pages/app/AccountPage';
 import HomePage from "./pages/app/HomePage";
 import TransferInfoPage from "./pages/app/TransferInfoPage";
 import DownloadPage from "./pages/app/DownloadPage";
+import StatisticsPage from "./pages/app/StatisticsPage";
+import FilesPage from "./pages/app/FilesPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -46,6 +48,8 @@ const router = createBrowserRouter(
               <Route path=":id" element={<TransferInfoPage />} />
             </Route>
             <Route path="/account" element={<AccountPage />} />
+            <Route path="/statistics" element={<StatisticsPage />} />
+            <Route path="/files" element={<FilesPage />} />
           </Route>
         </Route>
       </Route>

@@ -29,6 +29,8 @@ export const ApplicationProvider = () => {
 
     const [activeRtTransferChannels, setActiveRtTransferChannels] = useState([])
 
+    const navigate = useNavigate()
+
     const updateAllTransfersList = (rtTransfers, apiTransfers) => {
         setTransfers([...rtTransfers, ...apiTransfers])
     }
@@ -148,6 +150,16 @@ export const ApplicationProvider = () => {
         }
     }
 
+    const newApiTransferAndNavigate = async () => {
+        const newTransfer = await newApiTransfer()
+        navigate("/transfers/" + newTransfer.id, { state: { addFiles: true } })
+    }
+
+    const newRealtimeTransferAndNavigate = async () => {
+        const newTransfer = await newRealtimeTransfer()
+        navigate("/transfers/" + newTransfer.id, { state: { addFiles: true } })
+    }
+
     useEffect(() => {
         WebRtc.createWebSocket()
         refreshApiTransfers()
@@ -173,7 +185,9 @@ export const ApplicationProvider = () => {
             newRealtimeTransfer,
             newApiTransfer,
             downloadRealtimeTransferFile,
-            hasFetched
+            hasFetched,
+            newApiTransferAndNavigate,
+            newRealtimeTransferAndNavigate
         }}>
             <GenericErrorModal show={errorMessage != null} errorMessage={errorMessage} onCancel={() => { setErrorMessage(null) }} />
             <PeerConnectionErrorModal show={showPeerConnectionError} onCancel={() => { setShowPeerConnectionError(false) }} />

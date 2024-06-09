@@ -8,7 +8,7 @@ import * as Api from "../../api/Api"
 import { copyTransferLink } from "../../utils"
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 
-export default function TransfersList({ transfers }) {
+export default function TransfersList({ transfers, maxWidth }) {
     const { removeTransfer } = useContext(ApplicationContext)
 
     const CustomToggle = forwardRef(({ children, onClick }, ref) => (
@@ -32,7 +32,7 @@ export default function TransfersList({ transfers }) {
             <tr>
                 <td scope="row" style={{ padding: 0 }}>
                     <Link to={"/transfers/" + transfer.id} className="list-group-item list-group-item-action p-2">
-                        { transfer.isRealtime && <small className="me-2 bg-dark-subtle text-body-secondary rounded border p-1">{spinner}REALTIME</small> }
+                        { transfer.isRealtime && <small className="me-2 bg-dark-subtle text-body-secondary rounded border p-1">{spinner}QUICK SHARE</small> }
                         <span className="me-2">{transfer.name || transfer.id}</span>
                         <small className="text-body-secondary">{transfer.files.length} files</small>
                     </Link>
@@ -59,11 +59,11 @@ export default function TransfersList({ transfers }) {
     }
 
     return (
-        <div className="TransfersList" style={{ maxWidth: "800px" }}>
+        <div className="TransfersList" style={{ maxWidth: maxWidth || "unset" }}>
             <table className="table table-hover border">
                 <thead>
                     <tr>
-                        <th scope="col">Name</th>
+                        <th scope="col">Transfer Name</th>
                         <th scope="col"></th>
                         <th scope="col"></th>
                     </tr>
