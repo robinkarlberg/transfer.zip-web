@@ -34,6 +34,8 @@ import TransferInfoPage from "./pages/app/TransferInfoPage";
 import DownloadPage from "./pages/app/DownloadPage";
 import StatisticsPage from "./pages/app/StatisticsPage";
 import FilesPage from "./pages/app/FilesPage";
+import QuickSharePage from "./pages/app/quick-share/QuickSharePage";
+import QuickShareIndex from "./pages/app/quick-share/QuickShareNew";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -42,6 +44,11 @@ const router = createBrowserRouter(
       <Route element={<ApplicationProvider />}>
         <Route element={<AuthProvider />}>
           <Route element={<App />}>
+            <Route path="/quick-share" element={<QuickSharePage/>}>
+              <Route path="new" element={<QuickShareIndex />} />
+              {/* <Route path="progress" element={<TransfersPage />} /> */}
+              {/* <Route path=":id" element={<TransferInfoPage />} /> */}
+            </Route>
             <Route path="/home" element={<HomePage />} />
             <Route path="/transfers">
               <Route path="/transfers" element={<TransfersPage />} />
@@ -108,6 +115,6 @@ const router = createBrowserRouter(
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <React.StrictMode>
-    <RouterProvider router={router} />
+  <RouterProvider router={router} />
   // </React.StrictMode>
 );

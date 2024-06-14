@@ -237,7 +237,7 @@ export default function DownloadPage({ }) {
                     <div className="d-flex flex-row">
                         <div className="d-flex flex-row px-3 d-none d-sm-inline-block">
                             <button className="btn" onClick={() => setDisplayMode("list")}><i className="bi bi-list-check"></i></button>
-                            <button className="btn" onClick={() => setDisplayMode("grid")}><i className="bi bi-grid"></i></button>
+                            {/* <button className="btn" onClick={() => setDisplayMode("grid")}><i className="bi bi-grid"></i></button> */}
                         </div>
                         {/* {!isRealtimeTransfer && <button className="btn disabled btn-outline-primary me-2" onClick={downloadAll}>Download selected</button>} */}
                         {!isRealtimeTransfer && <button className="btn btn-primary text-truncate" onClick={downloadAll}>Download all</button>}
@@ -247,7 +247,7 @@ export default function DownloadPage({ }) {
             <div className="m-auto" style={{ maxWidth: "1280px" }}>
                 {/* <h4>Test Transfer<span className="fs-6"> by Test Testsson</span></h4> */}
                 {displayMode == "list" && <FilesList files={filesList} allowedActions={{ "preview": true, "download": true }} onAction={onFileListAction} />}
-                {displayMode == "grid" && <FileGrid filesList={filesList} />}
+                {/* {displayMode == "grid" && <FileGrid filesList={filesList} />} */}
             </div>
             {/* <div className="bg-dark-subtle">
             </div> */}

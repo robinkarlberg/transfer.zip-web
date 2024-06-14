@@ -52,6 +52,10 @@ function App() {
     <div className="App bg-dark-subtle min-vh-100 d-flex">
       <SideBar />
       <Outlet />
+      {/* <div className="w-100">
+        <div className="m-auto" style={{ maxWidth: "1500px" }}>
+        </div>
+      </div> */}
     </div>
   );
 }

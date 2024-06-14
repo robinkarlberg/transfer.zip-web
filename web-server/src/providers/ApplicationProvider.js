@@ -128,9 +128,14 @@ export const ApplicationProvider = () => {
     }
 
     const refreshApiTransfers = useCallback(async () => {
-        const res = await Api.getTransfers()
-        setApiTransfers(res.transfers)
-        updateAllTransfersList(rtTransfers, res.transfers)
+        try {
+            const res = await Api.getTransfers()
+            setApiTransfers(res.transfers)
+            updateAllTransfersList(rtTransfers, res.transfers)
+        }
+        catch(e) {
+            console.error(e)
+        }
         if (!hasFetched) setHasFetched(true)
     })
 
@@ -162,6 +167,7 @@ export const ApplicationProvider = () => {
 
     useEffect(() => {
         WebRtc.createWebSocket()
+        
         refreshApiTransfers()
         // for(let contact of contactsList) {
         //     createContactRtcSession(contact)
@@ -187,7 +193,7 @@ export const ApplicationProvider = () => {
             downloadRealtimeTransferFile,
             hasFetched,
             newApiTransferAndNavigate,
-            newRealtimeTransferAndNavigate
+            newRealtimeTransferAndNavigate,
         }}>
             <GenericErrorModal show={errorMessage != null} errorMessage={errorMessage} onCancel={() => { setErrorMessage(null) }} />
             <PeerConnectionErrorModal show={showPeerConnectionError} onCancel={() => { setShowPeerConnectionError(false) }} />

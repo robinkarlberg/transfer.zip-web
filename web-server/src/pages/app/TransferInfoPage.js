@@ -6,7 +6,7 @@ import { AuthContext } from "../../providers/AuthProvider";
 import * as Api from "../../api/Api"
 import FilesList from "../../components/app/FilesList";
 import StatCard from "../../components/app/StatCard"
-import UploadFilesModal from "../../components/app/UploadFilesModal";
+import UploadFilesModal from "../../components/modals/UploadFilesModal";
 import { humanFileSize, humanFileSizePair, copyTransferLink } from "../../utils";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 

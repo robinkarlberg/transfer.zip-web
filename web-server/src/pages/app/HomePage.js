@@ -4,10 +4,13 @@ import IndexPage from "../partial/IndexPage"
 import StatCard from "../../components/app/StatCard";
 import { useContext } from "react";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
+import { AuthContext } from "../../providers/AuthProvider";
+import { humanFileSize } from "../../utils";
 
 export default function HomePage({ }) {
 
-    const { transfers, apiTransfers, hasFetched, newApiTransferAndNavigate, newRealtimeTransferAndNavigate } = useContext(ApplicationContext)
+    const { transfers, apiTransfers, hasFetched, newApiTransferAndNavigate } = useContext(ApplicationContext)
+    const { user } = useContext(AuthContext)
 
     const navigate = useNavigate()
 
@@ -35,6 +38,10 @@ export default function HomePage({ }) {
 
     const getTransfersCount = () => {
         return transfers.length
+    }
+
+    const getMaxStorage = () => {
+        return user ? humanFileSize(user.storage, true) : "0GB"
     }
 
     return (
@@ -65,8 +72,8 @@ export default function HomePage({ }) {
                     </StatCard>
                     <StatCard
                         title={"Storage"}
-                        stat={<div>20<small>GB</small></div>}
-                        subtitle={"of 200GB used"}
+                        stat={<div>0<small>B</small></div>}
+                        subtitle={"of " + getMaxStorage()}
                     >
                         <Link to="/upgrade" style={{ textDecoration: "none" }}>Upgrade plan<i className="bi bi-arrow-right-short"></i></Link>
                     </StatCard>
@@ -75,7 +82,7 @@ export default function HomePage({ }) {
                     {/* <div className="bg-body rounded p-5 border" style={{ maxWidth: "300px" }}>
                     </div> */}
                     <button onClick={newApiTransferAndNavigate} style={{ minWidth: "180px" }} className="btn btn-lg bg-body rounded border-primary p-3 pb-3 flex-grow-1 flex-md-grow-0">New Transfer<i className="bi bi-arrow-right-short"></i></button>
-                    <button onClick={newRealtimeTransferAndNavigate} style={{ minWidth: "180px" }} className="btn btn-lg bg-body rounded p-3 pb-3 flex-grow-1 flex-md-grow-0">Quick Share<i className="bi bi-arrow-right-short"></i></button>
+                    <button onClick={() => navigate("/quick-share/new")} style={{ minWidth: "180px" }} className="btn btn-lg bg-body rounded border p-3 pb-3 flex-grow-1 flex-md-grow-0">Quick Share<i className="bi bi-arrow-right-short"></i></button>
                 </div>
             </div>
         </AppGenericPage>

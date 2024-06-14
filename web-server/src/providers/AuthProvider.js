@@ -14,11 +14,27 @@ export const AuthProvider = () => {
             setUser(res.user)
         }
         catch (err) {
-            // console.error("refreshUser", err)
-            setUser(null)
-            // logout(false)
+            if(err.message == "no token provided") {
+                setUser({
+                    id: null,
+                    email: null,
+                    plan: "free",
+                    storage: 0
+                })
+            }
+            else {
+                setUser(null)
+            }
         }
     })
+
+    const isGuestUser = () => {
+        return user && user.id == null
+    }
+
+    const isGuestOrFreeUser = () => {
+        return isGuestUser() || user.plan == "free"
+    }
 
     const login = useCallback(async (email, password) => {
         const res = await Api.login(email, password)
@@ -53,7 +69,7 @@ export const AuthProvider = () => {
 
     return (
         <AuthContext.Provider value={{
-            user, refreshUser,
+            user, refreshUser, isGuestOrFreeUser, isGuestUser,
             login,
             logout,
             register,

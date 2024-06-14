@@ -1,14 +1,21 @@
 import { Link } from "react-router-dom"
 import logo from "../../img/transfer-zip-logotext-cropped.png"
 import { ProgressBar } from "react-bootstrap"
+import { useContext } from "react"
+import { AuthContext } from "../../providers/AuthProvider"
 
 export default function SideBar({ }) {
 
+    const { user, isGuestOrFreeUser, isGuestUser } = useContext(AuthContext)
+
+    const disable = user == null || isGuestOrFreeUser()
+
     const currentPage = window.location.pathname
 
-    const NavLink = ({ to, children }) => {
+    const NavLink = ({ to, children, disable }) => {
+        const disableClass = disable ? "disabled" : "text-white"
         return (
-            <Link className={"nav-link text-white " + (currentPage.startsWith(to) && "active")} to={to}>
+            <Link className={"nav-link " + (currentPage.startsWith(to) ? "active " : "") + disableClass} to={to}>
                 {children}
             </Link>
         )
@@ -24,21 +31,26 @@ export default function SideBar({ }) {
             <ul className="nav nav-pills flex-column mb-auto">
                 <li>
                     <NavLink to="/home">
-                        Home
+                        <b>Home</b>
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink to="/transfers">
+                    <NavLink to="/quick-share/new">
+                        Quick Share
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/transfers" disable={disable}>
                         Transfers
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink to="/statistics">
+                    <NavLink to="/statistics" disable={disable}>
                         Statistics
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink to="/files">
+                    <NavLink to="/files" disable={disable}>
                         Files
                     </NavLink>
                 </li>
@@ -47,7 +59,7 @@ export default function SideBar({ }) {
             <ul className="nav nav-pills flex-column">
                 <li>
                     <NavLink to="/account">
-                        Account
+                        { isGuestUser() ? "Sign up" : "Account" }
                         {/* <div className="d-flex align-items-center text-white text-decoration-none">
                             <img src="https://avatars.githubusercontent.com/u/10927692?v=4" alt="" width="32" height="32" className="rounded-circle me-2" />
                             <strong>user</strong>
