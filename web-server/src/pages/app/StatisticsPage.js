@@ -7,6 +7,7 @@ import { ApplicationContext } from "../../providers/ApplicationProvider";
 import GraphCard from "../../components/app/GraphCard";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie } from 'recharts';
 import * as Api from "../../api/Api"
+import StorageStatCard from "../../components/app/statcards/StorageStatCard";
 
 export default function StatisticsPage({ }) {
 
@@ -71,13 +72,7 @@ export default function StatisticsPage({ }) {
                     >
                         <Link onClick={() => { }} style={{ textDecoration: "none" }}>See year<i className="bi bi-arrow-right-short"></i></Link>
                     </StatCard>
-                    <StatCard
-                        title={"Storage"}
-                        stat={<div>20<small>GB</small></div>}
-                        subtitle={"of 200GB used"}
-                    >
-                        <Link to="/upgrade" style={{ textDecoration: "none" }}>Upgrade plan<i className="bi bi-arrow-right-short"></i></Link>
-                    </StatCard>
+                    <StorageStatCard/>
                 </div>
                 <div className="d-flex flex-row flex-wrap gap-3">
                     <GraphCard title="Downloads Last week">

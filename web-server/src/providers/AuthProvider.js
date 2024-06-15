@@ -7,19 +7,23 @@ export const AuthContext = createContext({})
 
 export const AuthProvider = () => {
     const [user, setUser] = useState(null)
+    const [userStorage, setUserStorage] = useState(null)
 
     const refreshUser = useCallback(async () => {
         try {
-            const res = await Api.getUser()
-            setUser(res.user)
+            const [ resUser, resStorage ] = await Promise.all([
+                Api.getUser(), Api.getUserStorage()
+            ])
+            
+            setUser(resUser.user)
+            setUserStorage(resStorage.storage)
         }
         catch (err) {
             if(err.message == "no token provided") {
                 setUser({
                     id: null,
                     email: null,
-                    plan: "free",
-                    storage: 0
+                    plan: "free"
                 })
             }
             else {
@@ -70,6 +74,7 @@ export const AuthProvider = () => {
     return (
         <AuthContext.Provider value={{
             user, refreshUser, isGuestOrFreeUser, isGuestUser,
+            userStorage,
             login,
             logout,
             register,

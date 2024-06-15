@@ -5,12 +5,12 @@ import StatCard from "../../components/app/StatCard";
 import { useContext } from "react";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 import { AuthContext } from "../../providers/AuthProvider";
-import { humanFileSize } from "../../utils";
+import { humanFileSize, humanFileSizePair } from "../../utils";
+import StorageStatCard from "../../components/app/statcards/StorageStatCard";
 
 export default function HomePage({ }) {
 
     const { transfers, apiTransfers, hasFetched, newApiTransferAndNavigate } = useContext(ApplicationContext)
-    const { user } = useContext(AuthContext)
 
     const navigate = useNavigate()
 
@@ -40,10 +40,6 @@ export default function HomePage({ }) {
         return transfers.length
     }
 
-    const getMaxStorage = () => {
-        return user ? humanFileSize(user.storage, true) : "0GB"
-    }
-
     return (
         <AppGenericPage title={"Home"} className={"HomePage"}>
             <div className="d-flex flex-column gap-3">
@@ -70,13 +66,7 @@ export default function HomePage({ }) {
                     >
                     <Link to="/statistics" style={{ textDecoration: "none" }}>View stats<i className="bi bi-arrow-right-short"></i></Link>
                     </StatCard>
-                    <StatCard
-                        title={"Storage"}
-                        stat={<div>0<small>B</small></div>}
-                        subtitle={"of " + getMaxStorage()}
-                    >
-                        <Link to="/upgrade" style={{ textDecoration: "none" }}>Upgrade plan<i className="bi bi-arrow-right-short"></i></Link>
-                    </StatCard>
+                    <StorageStatCard/>
                 </div>
                 <div className="d-flex flex-row flex-wrap gap-3 order-0 order-sm-2">
                     {/* <div className="bg-body rounded p-5 border" style={{ maxWidth: "300px" }}>

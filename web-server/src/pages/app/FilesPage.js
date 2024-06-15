@@ -9,6 +9,7 @@ import { Link, useNavigate, useParams } from "react-router-dom"
 import StatCard from "../../components/app/StatCard"
 import { ApplicationContext } from "../../providers/ApplicationProvider"
 import FilesList from "../../components/app/FilesList"
+import StorageStatCard from "../../components/app/statcards/StorageStatCard"
 
 export default function FilesPage({ }) {
     const { rtTransfers, apiTransfers, transfers, newApiTransferAndNavigate, newRealtimeTransferAndNavigate, hasFetched } = useContext(ApplicationContext)
@@ -17,7 +18,7 @@ export default function FilesPage({ }) {
     const navigate = useNavigate()
 
     const getFilesCount = () => {
-        if(!hasFetched) {
+        if (!hasFetched) {
             return 0
         }
         let files = 0
@@ -28,20 +29,20 @@ export default function FilesPage({ }) {
     }
 
     const getFiles = () => {
-        if(!hasFetched) {
+        if (!hasFetched) {
             return []
         }
         let files = []
         apiTransfers.forEach(x => {
             console.log(x)
-            files.push(... x.files)
+            files.push(...x.files)
         })
         files.sort((a, b) => b.info.size - a.info.size)
         return files
     }
 
     const onFilesListAction = (action, file) => {
-        if(action == "click") {
+        if (action == "click") {
             navigate("/transfers/" + file.transferId)
         }
     }
@@ -63,11 +64,12 @@ export default function FilesPage({ }) {
         <AppGenericPage title={"Files"} className={"FilesPage"}>
             <div className="d-flex flex-row flex-wrap gap-3 mb-3">
                 <StatCard title={"Files"} stat={getFilesCount()} subtitle={`in ${getApiTransfersCount()} transfers`}>
-                    <a href="#" style={{ textDecoration: "none" }} onClick={() => {}}>View files<i className="bi bi-arrow-right-short"></i></a>
+                    <Link to="/transfers" style={{ textDecoration: "none" }}>View transfers<i className="bi bi-arrow-right-short"></i></Link>
                 </StatCard>
+                <StorageStatCard />
             </div>
             <h4>Your Largest Files</h4>
-            <FilesList onAction={onFilesListAction} files={getFiles()} maxWidth={"800px"}/>
+            <FilesList onAction={onFilesListAction} files={getFiles()} maxWidth={"800px"} />
         </AppGenericPage>
     )
 }

@@ -36,6 +36,10 @@ export async function getUser() {
     return await get("/user")
 }
 
+export async function getUserStorage() {
+    return await get("/user/storage")
+}
+
 export async function login(email, password) {
     return await post("/auth/login", { email, password })
 }
