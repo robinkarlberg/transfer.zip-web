@@ -74,3 +74,62 @@ export const getFileIconFromExtension = (ext) => {
     if(!bi_ext) return null
     else return "bi-" + bi_ext
 }
+
+export const groupStatisticsByInterval = (statistics, interval) => {
+    // groups contains objects: { name: <new Date(obj.time).toISOString().split('T')[0]>, value: 0 }
+    const groups = []
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours());
+
+    if (interval === "day") {
+        // push the last 24 hours to groups
+        for (let i = 0; i < 24; i++) {
+            const date = new Date(today);
+            date.setHours(date.getHours() - i);
+            groups.push({ name: date.toISOString().split("T")[0] + " " + String(date.getHours()).padStart(2, '0') + ":00", value: 0 });
+        }
+    } else if (interval === "week") {
+        // push the last 7 days to groups
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            groups.push({ name: date.toISOString().split('T')[0], value: 0 });
+        }
+    } else if (interval === "month") {
+        // push the last 30 days to groups
+        for (let i = 0; i < 30; i++) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            groups.push({ name: date.toISOString().split('T')[0], value: 0 });
+        }
+    } else if (interval === "year") {
+        // push the last 12 months to groups
+        for (let i = 0; i < 12; i++) {
+            const date = new Date(today);
+            date.setMonth(date.getMonth() - i);
+            groups.push({ name: date.toISOString().split('T')[0].slice(0, 7), value: 0 });
+        }
+    }
+    // console.log(groups)
+
+    statistics.forEach(obj => {
+        let key;
+
+        if (interval === 'day') {
+            key = new Date(obj.time).toISOString().split("T")[0] + " " + String(new Date(obj.time).getHours()).padStart(2, '0') + ":00"; // Group by hour in the last 24 hours
+        } else if (interval === 'week' || interval === 'month') {
+            key = new Date(obj.time).toISOString().split('T')[0]; // Group by day for week or month
+        } else if (interval === 'year') {
+            key = new Date(obj.time).toISOString().split('T')[0].slice(0, 7); // Group by month for the last year
+        }
+
+        const existingGroup = groups.find(x => x.name === key);
+        if (existingGroup) {
+            // console.log(key)
+            existingGroup.value += 1;
+        }
+    });
+
+    return groups.reverse();
+}

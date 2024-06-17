@@ -28,9 +28,9 @@ export default function TransfersPage({ }) {
                 <StatCard title={"Transfers"} stat={apiTransfers.length}>
                     <a href="#" style={{ textDecoration: "none" }} onClick={() => newApiTransferAndNavigate()}>New transfer<i className="bi bi-arrow-right-short"></i></a>
                 </StatCard>
-                <StatCard title={"Quick Shares"} stat={rtTransfers.length}>
+                {/* <StatCard title={"Quick Shares"} stat={rtTransfers.length}>
                     <a href="#" style={{ textDecoration: "none" }} onClick={() => newRealtimeTransferAndNavigate()}>New quick share<i className="bi bi-arrow-right-short"></i></a>
-                </StatCard>
+                </StatCard> */}
             </div>
             <TransfersList transfers={transfers} maxWidth="800px"/>
         </AppGenericPage>

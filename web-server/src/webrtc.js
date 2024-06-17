@@ -144,7 +144,12 @@ export const createWebSocket = () => {
 export const closeWebSocket = () => {
 	console.log("Closing WebSocket...")
 	isWsSupposedToClose = true
-	ws.close()
+	if(ws) {
+		ws.close()
+	}
+	else {
+		console.warn("closeWebSocket was called, but ws is undefined")
+	}
 }
 
 export class RtcListener {

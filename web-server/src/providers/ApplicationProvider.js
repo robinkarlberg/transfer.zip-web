@@ -166,7 +166,7 @@ export const ApplicationProvider = () => {
     }
 
     useEffect(() => {
-        WebRtc.createWebSocket()
+        // WebRtc.createWebSocket()
         
         refreshApiTransfers()
         // for(let contact of contactsList) {

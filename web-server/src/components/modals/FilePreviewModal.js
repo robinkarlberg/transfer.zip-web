@@ -49,6 +49,8 @@ export default function FilePreviewModal({ secretCode, show, onCancel, filesList
             <div style={{ minHeight: "400px" }} className="d-flex flex-column align-items-center justify-content-center">
                 <i className="h1 bi bi-file-earmark-x-fill"></i>
                 <span className="">{reason}</span>
+                <button className="btn btn-primary btn-sm position-relative" style={{ top: "12px" }}
+                    onClick={() => Api.downloadDlFile(secretCode, file.id)}>Download</button>
             </div>
         </div>
     )

@@ -9,6 +9,7 @@ import StatCard from "../../components/app/StatCard"
 import UploadFilesModal from "../../components/modals/UploadFilesModal";
 import { humanFileSize, humanFileSizePair, copyTransferLink } from "../../utils";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
+import UploadingFilesModal from "../../components/modals/UploadingFilesModal";
 
 export default function TransferInfoPage({ }) {
     const { id } = useParams()
@@ -20,6 +21,9 @@ export default function TransferInfoPage({ }) {
     const [showUploadFilesModal, setShowUploadFilesModal] = useState(state?.addFiles)
     const isRealtimeTransfer = id && id[0] == "r"
 
+    const [showUploadingFilesModal, setShowUploadingFilesModal] = useState(false)
+    const [uploadProgress, setUploadProgress] = useState(null)
+
     const refreshApiTransfer = () => {
         Api.getTransfer(id).then(t => setTransfer(t.transfer))
     }
@@ -29,12 +33,23 @@ export default function TransferInfoPage({ }) {
         console.log(files)
 
         if (!transfer.isRealtime) {
+            setShowUploadFilesModal(false)
+
+            const progressObjectList = files.map(file => {
+                return { file, progress: 0 }
+            })
+
+            setShowUploadingFilesModal(true)
+            setUploadProgress(progressObjectList)
             for (let file of files) {
                 const upload = await Api.uploadTransferFile(file, id, progress => {
-
+                    progressObjectList.find(x => x.file == file).progress = progress
+                    // setUploadProgress([])
+                    setUploadProgress(progressObjectList.map(x => x))
                 })
                 refreshApiTransfer()
             }
+            setShowUploadingFilesModal(false)
         }
         else {
             transfer.files.push(...files.map((x, i) => { return { nativeFile: x, id: i, info: { name: x.name, size: x.size, type: x.type } } }))
@@ -123,7 +138,7 @@ export default function TransferInfoPage({ }) {
             else if (action == "download") {
                 Api.downloadTransferFile(transfer.id, file.id)
             }
-            else if(action == "delete") {
+            else if (action == "delete") {
                 onDeleteFile(file)
             }
         }
@@ -131,6 +146,7 @@ export default function TransferInfoPage({ }) {
 
     return (
         <AppGenericPage titleElement={titleElement}>
+            <UploadingFilesModal show={showUploadingFilesModal} onCancel={() => { }} uploadProgress={uploadProgress} />
             <UploadFilesModal show={showUploadFilesModal} onCancel={() => setShowUploadFilesModal(false)}
                 onDone={onUploadFileModalDone} />
             {/* <h3>{transfer.name || transfer.id}</h3> */}
@@ -146,7 +162,7 @@ export default function TransferInfoPage({ }) {
                 </StatCard>
             </div>
             <h4>Files</h4>
-            <FilesList files={transfer.files} onAction={onFilesListAction} allowedActions={{ "preview": false, "download": true, "rename": false }} maxWidth={"800px"} />
+            <FilesList files={transfer.files} onAction={onFilesListAction} allowedActions={{ "preview": false, "download": true, "rename": false, "delete": true }} maxWidth={"800px"} />
         </AppGenericPage>
     )
 }

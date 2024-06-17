@@ -42,7 +42,7 @@ export default function FilesList({ files, onFileChange, onAction, allowedAction
             </div>
         )
     }
-    console.log(files)
+    // console.log(files)
     return (
         <div className="FilesGrid">
             <div className="d-flex flex-row flex-wrap">

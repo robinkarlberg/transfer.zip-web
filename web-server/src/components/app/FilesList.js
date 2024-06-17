@@ -57,7 +57,7 @@ export default function FilesList({ files, onAction, allowedActions, maxWidth })
             </tr>
         )
     }
-    console.log(files)
+    // console.log(files)
     return (
         <div className="FilesList" style={{ maxWidth: maxWidth || "unset" }}>
 
