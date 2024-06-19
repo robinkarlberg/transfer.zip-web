@@ -35,7 +35,9 @@ import DownloadPage from "./pages/app/DownloadPage";
 import StatisticsPage from "./pages/app/StatisticsPage";
 import FilesPage from "./pages/app/FilesPage";
 import QuickSharePage from "./pages/app/quick-share/QuickSharePage";
-import QuickShareIndex from "./pages/app/quick-share/QuickShareNew";
+import QuickShareNew from "./pages/app/quick-share/QuickShareNew";
+import EmptyPage from "./pages/EmptyPage";
+import QuickShareProgress from "./pages/app/quick-share/QuickShareProgress";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -44,12 +46,13 @@ const router = createBrowserRouter(
       <Route element={<ApplicationProvider />}>
         <Route element={<AuthProvider />}>
           <Route element={<App />}>
-            <Route path="/quick-share" element={<QuickSharePage/>}>
-              <Route path="new" element={<QuickShareIndex />} />
+            <Route path="/quick-share" element={<QuickSharePage />}>
+              <Route path="/quick-share" element={<QuickShareNew />}/>
+              <Route path="progress" element={<QuickShareProgress />} />
               {/* <Route path="progress" element={<TransfersPage />} /> */}
               {/* <Route path=":id" element={<TransferInfoPage />} /> */}
             </Route>
-            <Route path="/home" element={<HomePage />} />
+            <Route path="/dashboard" element={<HomePage />} />
             <Route path="/transfers">
               <Route path="/transfers" element={<TransfersPage />} />
               <Route path=":id" element={<TransferInfoPage />} />
@@ -58,9 +61,9 @@ const router = createBrowserRouter(
             <Route path="/statistics" element={<StatisticsPage />} />
             <Route path="/files" element={<FilesPage />} />
           </Route>
+          <Route path="*" element={<EmptyPage />} />
         </Route>
       </Route>
-      <Route path="*" element={<Navigate to={"/home"} />} />
     </Route >
   )
   // [

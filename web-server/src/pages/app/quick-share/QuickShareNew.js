@@ -11,13 +11,13 @@ import UploadOrReceiveArea from "../../../components/UploadOrReceiveArea"
 
 import * as Api from "../../../api/Api"
 
-export default function QuickShareIndex({ }) {
+export default function QuickShareNew({ }) {
     const { } = useContext(ApplicationContext)
 
     const navigate = useNavigate()
 
     const onFileSelected = file => {
-        navigate("/quick-share/upload", {
+        navigate("/quick-share/progress", {
             state: {
                 file,
                 fileInfo: {
@@ -39,8 +39,28 @@ export default function QuickShareIndex({ }) {
     }
 
     return (
-        <div className="d-flex flex-row flex-wrap gap-3 mb-3 bg-body rounded border" style={{ minHeight: "300px", maxWidth: "500px" }}>
-            <UploadOrReceiveArea allowReceive={true} onFileSelected={onFileSelected} onReceiveClicked={onReceiveClicked} />
+        <div className="d-flex flex-column gap-0 me-md-5">
+            <div className="d-flex flex-column flex-wrap gap-0 justify-content-center mt-2">
+                <div style={{ maxWidth: "400px" }}>
+                    <h2 className="mb-3">Quick Share</h2>
+                    <p className="">
+                        Quick Share is a free and open source service from transfer.zip that allows you
+                        to share files without any size or bandwidth limitations. <Link>Read&nbsp;more...</Link>
+
+                        {/* 
+                        The files are end-to-end encrypted,
+                        and will be transfered directly between you and the recipient, using peer-to-peer technology. 
+                        Quick Share requires your browser window to be open during the whole transfer,
+                        and a network that permits WebRTC connections.  */}
+                    </p>
+
+                </div>
+                <div>
+                    <div className="d-flex bg-body rounded" style={{ minWidth: "283px", minHeight: "243px" }}>
+                        <UploadOrReceiveArea allowReceive={true} onFileSelected={onFileSelected} onReceiveClicked={onReceiveClicked} />
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }

@@ -10,7 +10,7 @@ export default function StatCard({ title, stat, subtitle, children, disabled }) 
     const placeholder = (user == null || !hasFetched) ? "placeholder" : ""
 
     return (
-        <div className={"bg-body rounded p-3 pb-3 border flex-grow-1 flex-md-grow-0 " + placeholder} style={{ minWidth: "180px" }}>
+        <div className={"bg-body rounded p-3 pb-3 border flex-grow-1 flex-sm-grow-0 " + placeholder} style={{ minWidth: "180px" }}>
             <h5>{title}</h5>
             <div className="p-2 pe-3">
                 <h1 className={placeholder}>{stat}</h1>
