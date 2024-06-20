@@ -84,6 +84,7 @@ let isWsSupposedToClose = false;
 
 export const createWebSocket = () => {
 	console.log("createWebSocket")
+	if(ws && !isWsSupposedToClose) return
 	isWsSupposedToClose = false;
 	ws = new WebSocket(WS_URL)
 		

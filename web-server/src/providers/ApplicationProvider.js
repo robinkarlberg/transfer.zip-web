@@ -13,8 +13,6 @@ import PeerConnectionErrorModal from "../components/modals/PeerConnectionErrorMo
 import * as Api from "../api/Api"
 import { FileTransfer } from "../filetransfer";
 
-import streamSaver from "../lib/StreamSaver"
-streamSaver.mitm = "/mitm.html"
 
 export const ApplicationContext = createContext({})
 
@@ -22,116 +20,16 @@ export const ApplicationProvider = () => {
     const [errorMessage, setErrorMessage] = useState(null)
     const [showPeerConnectionError, setShowPeerConnectionError] = useState(false)
 
-    const [rtTransfers, setRtTransfers] = useState([])
     const [apiTransfers, setApiTransfers] = useState([])
-    const [transfers, setTransfers] = useState([])
+    // const [transfers, setTransfers] = useState([])
     const [hasFetched, setHasFetched] = useState(false)
 
-    const [activeRtTransferChannels, setActiveRtTransferChannels] = useState([])
-
     const navigate = useNavigate()
-
-    const updateAllTransfersList = (rtTransfers, apiTransfers) => {
-        setTransfers([...rtTransfers, ...apiTransfers])
-    }
-
-    const newRtTransferObj = (worker, k) => {
-        let name = "New Transfer"
-        let nameAdd = ""
-        let nameRounds = 1
-        while (rtTransfers.find(x => x.name == (name + nameAdd))) {
-            nameAdd = ` (${nameRounds++})`
-        }
-        name = name + nameAdd
-        return {
-            id: "r" + worker.sessionId,
-            name,
-            files: [],
-            secretCode: "r" + worker.sessionId,
-            statistics: [],
-            k,
-            isRealtime: true// || worker instanceof WebRtc.RtcSession
-        }
-    }
-
-    const newRealtimeTransfer = async () => {
-        const key = await window.crypto.subtle.generateKey(
-            { name: "AES-GCM", length: 256 },
-            true,
-            ["encrypt", "decrypt"]
-        )
-        const jwk = await crypto.subtle.exportKey("jwk", key)
-        const keyBase64 = jwk.k
-
-        const rtcSession = WebRtc.newRtcListener(crypto.randomUUID())
-        await rtcSession.listen()
-        console.log("[newRealtimeTransfer]")
-        rtcSession.onclose = () => {
-            console.log("[newRealtimeTransfer] onclose")
-
-            setRtTransfers(rtTransfers.filter(x => x.id != transfer.id))
-            updateAllTransfersList(rtTransfers.filter(x => x.id != transfer.id))
-        }
-        const transfer = newRtTransferObj(rtcSession, keyBase64)
-        rtcSession.onrtcsession = (rtcSession, channel) => {
-            const fileTransfer = new FileTransfer(channel, key)
-            fileTransfer.serveFiles(transfer.files)
-            fileTransfer.onfilebegin = fileInfo => {
-                console.debug("[ApplicationProvider] Begin", fileInfo)
-                transfer.statistics.push([{ time: new Date() }])
-            }
-            fileTransfer.onfilefinished = fileInfo => {
-                console.debug("[ApplicationProvider] Finished", fileInfo)
-            }
-            fileTransfer.onprogress = (progress, fileInfo) => {
-                console.debug("[ApplicationProvider] Progress", progress, fileInfo)
-            }
-        }
-        setRtTransfers([...rtTransfers, transfer])
-        updateAllTransfersList([...rtTransfers, transfer], apiTransfers)
-        return transfer
-    }
-
-    const downloadRealtimeTransferFile = (file) => {
-        const chunkSize = 163840
-        const fileReader = new FileReader()
-
-        const fileStream = streamSaver.createWriteStream(file.info.name, {
-            size: file.info.size
-        })
-        const writer = fileStream.getWriter()
-
-        let offset = 0
-        fileReader.onload = () => {
-            const data = new Uint8Array(fileReader.result)
-            console.log(data)
-            writer.write(data)
-            offset += data.byteLength;
-            if (offset < file.info.size) {
-                readSlice(offset);
-            }
-            else {
-                writer.close()
-            }
-        }
-        fileReader.onerror = e => {
-            console.error("File reader error", e)
-        }
-        fileReader.onabort = e => {
-            console.log("File reader abort", e)
-        }
-        const readSlice = o => {
-            const slice = file.nativeFile.slice(offset, o + chunkSize);
-            fileReader.readAsArrayBuffer(slice);
-        };
-        readSlice(0)
-    }
 
     const refreshApiTransfers = useCallback(async () => {
         try {
             const res = await Api.getTransfers()
             setApiTransfers(res.transfers)
-            updateAllTransfersList(rtTransfers, res.transfers)
         }
         catch(e) {
             console.error(e)
@@ -160,11 +58,6 @@ export const ApplicationProvider = () => {
         navigate("/transfers/" + newTransfer.id, { state: { addFiles: true } })
     }
 
-    const newRealtimeTransferAndNavigate = async () => {
-        const newTransfer = await newRealtimeTransfer()
-        navigate("/transfers/" + newTransfer.id, { state: { addFiles: true } })
-    }
-
     useEffect(() => {
         // WebRtc.createWebSocket()
         
@@ -184,16 +77,11 @@ export const ApplicationProvider = () => {
             setErrorMessage,
             setShowPeerConnectionError,
             refreshApiTransfers,
-            transfers,
-            rtTransfers,
             apiTransfers,
             removeTransfer,
-            newRealtimeTransfer,
             newApiTransfer,
-            downloadRealtimeTransferFile,
             hasFetched,
             newApiTransferAndNavigate,
-            newRealtimeTransferAndNavigate,
         }}>
             <GenericErrorModal show={errorMessage != null} errorMessage={errorMessage} onCancel={() => { setErrorMessage(null) }} />
             <PeerConnectionErrorModal show={showPeerConnectionError} onCancel={() => { setShowPeerConnectionError(false) }} />

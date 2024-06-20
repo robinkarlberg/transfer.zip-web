@@ -38,6 +38,7 @@ import QuickSharePage from "./pages/app/quick-share/QuickSharePage";
 import QuickShareNew from "./pages/app/quick-share/QuickShareNew";
 import EmptyPage from "./pages/EmptyPage";
 import QuickShareProgress from "./pages/app/quick-share/QuickShareProgress";
+import { QuickShareProvider } from "./providers/QuickShareProvider";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -46,11 +47,13 @@ const router = createBrowserRouter(
       <Route element={<ApplicationProvider />}>
         <Route element={<AuthProvider />}>
           <Route element={<App />}>
-            <Route path="/quick-share" element={<QuickSharePage />}>
-              <Route path="/quick-share" element={<QuickShareNew />}/>
-              <Route path="progress" element={<QuickShareProgress />} />
-              {/* <Route path="progress" element={<TransfersPage />} /> */}
-              {/* <Route path=":id" element={<TransferInfoPage />} /> */}
+            <Route element={<QuickShareProvider />}>
+              <Route path="/quick-share" element={<QuickSharePage />}>
+                <Route path="/quick-share" element={<QuickShareNew />} />
+                <Route path="progress" element={<QuickShareProgress />} />
+                {/* <Route path="progress" element={<TransfersPage />} /> */}
+                {/* <Route path=":id" element={<TransferInfoPage />} /> */}
+              </Route>
             </Route>
             <Route path="/dashboard" element={<HomePage />} />
             <Route path="/transfers">

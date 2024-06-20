@@ -1,10 +1,11 @@
 import { Modal } from "react-bootstrap";
 import UploadOrReceiveArea from "../UploadOrReceiveArea";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 
-export default function UploadFilesModal({ show, onDone, onCancel }) {
+export default function UploadFilesModal({ show, onDone, onCancel, showFilePickerOnShow }) {
     const [files, setFiles] = useState([])
+    const selectFilesRef = useRef(null)
 
     const onFilesSelected = (newFiles) => {
         console.log(newFiles)
@@ -17,6 +18,9 @@ export default function UploadFilesModal({ show, onDone, onCancel }) {
 
     useEffect(() => {
         if(show) {
+            if(showFilePickerOnShow) {
+                // selectFilesRef.current.click()
+            }
             setFiles([])
         }
     }, [show])
@@ -47,7 +51,7 @@ export default function UploadFilesModal({ show, onDone, onCancel }) {
                         }) }
                     </div>
                     <div className="d-flex" style={{ minHeight: "200px" }}>
-                        <UploadOrReceiveArea title={"Pick files"} subtitle={"Or drag files here"}
+                        <UploadOrReceiveArea ref={selectFilesRef} title={"Pick files"} subtitle={"Or drag files here"}
                             allowReceive={false} onFilesSelected={onFilesSelected}
                         />
                     </div>

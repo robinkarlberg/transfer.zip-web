@@ -7,8 +7,37 @@ export default function EmptyPage({ }) {
 
     const navigate = useNavigate()
 
+
     useEffect(() => {
-        if (user) {
+        if (window.location.hash) {  // User has been sent a link, assuming action be taken
+            const hashList = window.location.hash.slice(1).split(",")
+
+            if (hashList.length != 3) {
+                throw "The URL parameters are malformed. Did you copy the URL correctly?"
+            }
+
+            const [key_b, recipientId, directionChar] = hashList
+            // setHashList(hashList)
+            // setTransferDirection(directionChar)
+            const state = {
+                key: key_b,
+                remoteSessionId: recipientId,
+                transferDirection: directionChar
+            }
+
+            window.location.hash = ""
+            if (directionChar == "R") {
+                navigate("/quick-share/progress", {
+                    state
+                })
+            }
+            else if (directionChar == "S") {
+                navigate("/quick-share", {
+                    state
+                })
+            }
+        }
+        else if (user) {
             if (user.plan == "free") {
                 navigate("/quick-share")
             }

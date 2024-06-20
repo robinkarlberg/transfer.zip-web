@@ -43,7 +43,7 @@ export const getTransferLink = (transfer) => {
 }
 
 export const copyTransferLink = async (transfer) => {
-    await navigator.clipboard.writeText(await getTransferLink(transfer))
+    await navigator.clipboard.writeText(getTransferLink(transfer))
 }
 
 const textEnc = new TextEncoder()

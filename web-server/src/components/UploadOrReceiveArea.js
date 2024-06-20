@@ -1,7 +1,7 @@
 import { useRef } from "react"
 import "./UploadOrReceiveArea.css"
 
-export default function UploadOrReceiveArea({ title, subtitle, allowReceive, onFileSelected, onFilesSelected, onReceiveClicked }) {
+export default function UploadOrReceiveArea({ title, subtitle, allowReceive, onFileSelected, onFilesSelected, onReceiveClicked, ref }) {
 
     const fileInputRef = useRef()
 
@@ -46,7 +46,7 @@ export default function UploadOrReceiveArea({ title, subtitle, allowReceive, onF
     }
     
     return (
-        <div onDragEnter={onDragEnter} onDragOver={onDragOver} onDrop={onDrop}
+        <div ref={ref} onDragEnter={onDragEnter} onDragOver={onDragOver} onDrop={onDrop}
             onClick={_onUploadClicked} className="Upload d-flex flex-column justify-content-center gap-3 flex-grow-1">
             <div className="send d-flex flex-column align-items-center justify-content-center btn flex-grow-1">
                 <div className="mb-3">

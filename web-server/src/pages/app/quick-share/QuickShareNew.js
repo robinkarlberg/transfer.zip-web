@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom"
 import { ApplicationContext } from "../../../providers/ApplicationProvider"
 import { AuthContext } from "../../../providers/AuthProvider"
@@ -10,25 +10,16 @@ import FilesList from "../../../components/app/FilesList"
 import UploadOrReceiveArea from "../../../components/UploadOrReceiveArea"
 
 import * as Api from "../../../api/Api"
+import { QuickShareContext } from "../../../providers/QuickShareProvider"
+import UploadFilesModal from "../../../components/modals/UploadFilesModal"
 
 export default function QuickShareNew({ }) {
-    const { } = useContext(ApplicationContext)
+    const { } = useContext(QuickShareContext)
+
+    const [showUploadFilesModal, setShowUploadFilesModal] = useState(false)
+    // const [files, setFiles] = useState([])
 
     const navigate = useNavigate()
-
-    const onFileSelected = file => {
-        navigate("/quick-share/progress", {
-            state: {
-                file,
-                fileInfo: {
-                    name: file.name,
-                    size: file.size,
-                    type: file.type
-                },
-                transferDirection: "S"
-            }
-        })
-    }
 
     const onReceiveClicked = e => {
         navigate("/quick-share/progress", {
@@ -38,8 +29,22 @@ export default function QuickShareNew({ }) {
         })
     }
 
+    const onUploadFilesModalDone = async (files) => {
+        setShowUploadFilesModal(false)
+        console.log(files)
+
+        navigate("/quick-share/progress", {
+            state: {
+                files,
+                transferDirection: "S"
+            }
+        })
+    }
+
     return (
         <div className="d-flex flex-column gap-0 me-md-5">
+            <UploadFilesModal show={showUploadFilesModal} onCancel={() => setShowUploadFilesModal(false)}
+                onDone={onUploadFilesModalDone} showFilePickerOnShow={true}/>
             <div className="d-flex flex-column flex-wrap gap-0 justify-content-center mt-2">
                 <div style={{ maxWidth: "400px" }}>
                     <h2 className="mb-3">Quick Share</h2>
@@ -57,7 +62,8 @@ export default function QuickShareNew({ }) {
                 </div>
                 <div>
                     <div className="d-flex bg-body rounded" style={{ minWidth: "283px", minHeight: "243px" }}>
-                        <UploadOrReceiveArea allowReceive={true} onFileSelected={onFileSelected} onReceiveClicked={onReceiveClicked} />
+                        {/* <UploadOrReceiveArea allowReceive={true} onFileSelected={onFileSelected} onReceiveClicked={onReceiveClicked} /> */}
+                        <button onClick={() => setShowUploadFilesModal(true)}></button>
                     </div>
                 </div>
             </div>
