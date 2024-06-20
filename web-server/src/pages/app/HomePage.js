@@ -12,7 +12,7 @@ import GraphCard from "../../components/app/GraphCard";
 
 export default function HomePage({ }) {
 
-    const { transfers, apiTransfers, hasFetched, newApiTransferAndNavigate } = useContext(ApplicationContext)
+    const { apiTransfers, hasFetched, newApiTransferAndNavigate } = useContext(ApplicationContext)
     const { user } = useContext(AuthContext)
 
     const navigate = useNavigate()
@@ -40,7 +40,7 @@ export default function HomePage({ }) {
     }
 
     const getTransfersCount = () => {
-        return transfers.length
+        return apiTransfers.length
     }
 
     useEffect(() => {

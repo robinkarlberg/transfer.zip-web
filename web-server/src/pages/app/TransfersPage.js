@@ -10,10 +10,10 @@ import StatCard from "../../components/app/StatCard"
 import { ApplicationContext } from "../../providers/ApplicationProvider"
 
 export default function TransfersPage({ }) {
-    const { rtTransfers, apiTransfers, transfers, newApiTransferAndNavigate, newRealtimeTransferAndNavigate } = useContext(ApplicationContext)
+    const { apiTransfers, newApiTransferAndNavigate, newRealtimeTransferAndNavigate } = useContext(ApplicationContext)
     // const { transfers: realtimeTransfers } = useContext(FileTransferContext)
 
-    if (!transfers) {
+    if (!apiTransfers) {
         return (
             <AppGenericPage title={"Transfers"} className={"TransfersPage"}>
                 <div className="spinner-border" role="status">
@@ -32,7 +32,7 @@ export default function TransfersPage({ }) {
                     <a href="#" style={{ textDecoration: "none" }} onClick={() => newRealtimeTransferAndNavigate()}>New quick share<i className="bi bi-arrow-right-short"></i></a>
                 </StatCard> */}
             </div>
-            <TransfersList transfers={transfers} maxWidth="800px"/>
+            <TransfersList transfers={apiTransfers} maxWidth="800px"/>
         </AppGenericPage>
     )
 }

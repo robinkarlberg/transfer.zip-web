@@ -63,7 +63,7 @@ export default function QuickShareNew({ }) {
                 <div>
                     <div className="d-flex bg-body rounded" style={{ minWidth: "283px", minHeight: "243px" }}>
                         {/* <UploadOrReceiveArea allowReceive={true} onFileSelected={onFileSelected} onReceiveClicked={onReceiveClicked} /> */}
-                        <button onClick={() => setShowUploadFilesModal(true)}></button>
+                        <button className="btn btn-lg flex-grow w-100" onClick={() => setShowUploadFilesModal(true)}>Start xddd</button>
                     </div>
                 </div>
             </div>

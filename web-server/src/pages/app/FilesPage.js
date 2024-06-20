@@ -12,7 +12,7 @@ import FilesList from "../../components/app/FilesList"
 import StorageStatCard from "../../components/app/statcards/StorageStatCard"
 
 export default function FilesPage({ }) {
-    const { rtTransfers, apiTransfers, transfers, newApiTransferAndNavigate, newRealtimeTransferAndNavigate, hasFetched } = useContext(ApplicationContext)
+    const { apiTransfers, newApiTransferAndNavigate, newRealtimeTransferAndNavigate, hasFetched } = useContext(ApplicationContext)
     // const { transfers: realtimeTransfers } = useContext(FileTransferContext)
 
     const navigate = useNavigate()
@@ -51,7 +51,7 @@ export default function FilesPage({ }) {
         return apiTransfers.length
     }
 
-    if (!transfers) {
+    if (!apiTransfers) {
         return (
             <AppGenericPage title={"Transfers"} className={"TransfersPage"}>
                 <div className="spinner-border" role="status">
