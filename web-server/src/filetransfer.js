@@ -49,28 +49,29 @@ const getJwkFromK = async (k) => {
 // }
 
 class FileTransferFile {
+    onfiledata = undefined
     onprogress = undefined
     onfilefinished = undefined
 
     chunkMap = new Map()
     chunkIndex = -1
-    writer = undefined
+    // writer = undefined
     bytesRecieved = 0
     fileInfo = undefined
 
-    constructor(fileTransfer, onprogress, onfilefinished) {
-        this.fileTransfer = fileTransfer
+    constructor(onfiledata, onprogress, onfilefinished) {
+        this.onfiledata = onfiledata
         this.onprogress = onprogress
         this.onfilefinished = onfilefinished
     }
 
     setFileInfo(fileInfo) {
         console.log("Set file info", fileInfo)
-        const fileStream = streamSaver.createWriteStream(fileInfo.name, {
-            size: fileInfo.size
-        })
+        // const fileStream = streamSaver.createWriteStream(fileInfo.name, {
+        //     size: fileInfo.size
+        // })
         this.fileInfo = fileInfo
-        this.writer = fileStream.getWriter()
+        // this.writer = fileStream.getWriter()
     }
 
     isFileInfoSet() {
@@ -93,16 +94,16 @@ class FileTransferFile {
     }
 
     handleChunkMap = () => {
-        if (!this.writer) {
-            console.error("writer undefined")
+        if (!this.onfiledata) {
+            console.error("onfiledata undefined")
             return
         }
-        if (this.writer.desiredSize == null) {
-            console.error("user canceled download")
-            this.fileTransfer.sendData(JSON.stringify({ type: "error", message: "cancel" }))
-            this.channel.close()
-            throw new Error("user cancelled the download")
-        }
+        // if (this.writer.desiredSize == null) {
+        //     console.error("user canceled download")
+        //     this.fileTransfer.sendData(JSON.stringify({ type: "error", message: "cancel" }))
+        //     this.channel.close()
+        //     throw new Error("user cancelled the download")
+        // }
         if (!this.fileInfo) {
             console.error("fileInfo undefined")
             return
@@ -113,12 +114,13 @@ class FileTransferFile {
             // console.log(data)
             this.chunkMap.delete(this.chunkIndex + 1)
             this.chunkIndex++
-            this.writer.write(data)
+            this.onfiledata(data, this.fileInfo)
+            // this.writer.write(data)
         }
         if (this.bytesRecieved == this.fileInfo.size && this.chunkMap.size == 0) {
             console.log("Close writer")
-            this.writer.close()
-            this.checkProgress()
+            // this.writer.close()
+            // this.checkProgress()
         }
     }
 
@@ -135,6 +137,7 @@ export class FileTransfer {
     onprogress = undefined
     onfilefinished = undefined
     onfilebegin = undefined
+    onfiledata = undefined
 
     packetIndex = 0
     currentFile = undefined
@@ -166,6 +169,8 @@ export class FileTransfer {
         const iv = new Uint8Array(__data.slice(0, 12))
         const encryptedPacket = __data.slice(12)
 
+        // console.log(__data)
+
         const packet = new Uint8Array(await crypto.subtle.decrypt({
             "name": "AES-GCM", "iv": iv
         }, this.key, encryptedPacket));
@@ -188,7 +193,7 @@ export class FileTransfer {
             this.sendData(await this.encryptData(packet))
             offset += __data.byteLength;
 
-            if (offset < file.info.size) {
+            if (offset < file.size) {
                 readSlice(offset);
             }
         }
@@ -202,14 +207,14 @@ export class FileTransfer {
             if (this.channel.bufferedAmount > 5000000) {
                 return setTimeout(() => { readSlice(o) }, 1)
             }
-            const slice = file.nativeFile.slice(offset, o + FILE_CHUNK_SIZE);
+            const slice = file.slice(offset, o + FILE_CHUNK_SIZE);
             fileReader.readAsArrayBuffer(slice);
         };
 
         const fileInfo = {
-            name: file.info.name,
-            size: file.info.size,
-            type: file.info.type
+            name: file.name,
+            size: file.size,
+            type: file.type
         }
         this.onfilebegin(fileInfo)
         const fileInfoStr = JSON.stringify(fileInfo)
@@ -253,12 +258,12 @@ export class FileTransfer {
             else if (data.type == "list") {
                 console.log("[FileTransfer] Got list file request:", data)
                 const fileList = files.map(x => {
-                    return { info: { name: x.info.name, size: x.info.size, type: x.info.type } }
+                    return { name: x.name, size: x.size, type: x.type }
                 })
-                
+
                 const fileListBytes = encodeString(JSON.stringify(fileList))
                 console.log("[FileTransfer] Sending file list:", fileList, fileListBytes)
-        
+
                 const packet = new Uint8Array(1 + fileListBytes.byteLength)
                 const packetDataView = new DataView(packet.buffer)
                 packetDataView.setInt8(0, PACKET_ID.fileList)
@@ -273,6 +278,9 @@ export class FileTransfer {
                 const fileIndexToDownload = data.index
                 this.sendFile(files[fileIndexToDownload])
             }
+            else {
+                console.warn("FileTransfer] Unknown packet:", data)
+            }
         })
     }
 
@@ -285,20 +293,29 @@ export class FileTransfer {
     queryForFiles(cbFileList) {
         console.log("[FileTransfer] queryForFiles")
 
+        const onfiledata = (data, fileInfo) => {
+            if(!this.onfiledata) {
+                console.warn("filedata udefined")
+                return
+            }
+            this.onfiledata(data, fileInfo)
+        }
+
         const onprogress = async (progress, fileInfo) => {
-            if ((progress.now / FILE_CHUNK_SIZE) % 50 == 49) {
+            console.log("[FileTransfer] onprogress", progress, fileInfo, Math.round(progress.now / FILE_CHUNK_SIZE) % 30 == 15)
+            if (Math.round(progress.now / FILE_CHUNK_SIZE) % 30 == 15 || progress.done) {
                 console.log("[FileTransfer] send progress:", progress)
-                this.sendData(await this.encryptData(encodeString(JSON.stringify(progress))))
+                this.sendData(await this.encryptData(encodeString(JSON.stringify({ type: "progress", ...progress }))))
             }
             this.onprogress(progress, fileInfo)
         }
 
         const onfilefinished = (fileInfo) => {
             this.onfilefinished(fileInfo)
-            this.currentFile = new FileTransferFile(this.channel, onprogress, onfilefinished)
+            this.currentFile = new FileTransferFile(onfiledata, onprogress, onfilefinished)
         }
 
-        this.currentFile = new FileTransferFile(this.channel, onprogress, onfilefinished)
+        this.currentFile = new FileTransferFile(onfiledata, onprogress, onfilefinished)
 
         this.channel.addEventListener("message", async e => {
             const packet = await this.decryptData(e.data)
@@ -321,8 +338,9 @@ export class FileTransfer {
 
                 if (this.currentFile.isFileTransferDone()) {     // actually new file
                     console.error("New file transfer :)")
-                    this.currentFile = new FileTransferFile(this.channel, onprogress, onfilefinished)
+                    this.currentFile = new FileTransferFile(onfiledata, onprogress, onfilefinished)
                 }
+                
                 console.log("Got file info:", fileInfo)
 
                 this.currentFile.setFileInfo(fileInfo)
@@ -336,8 +354,15 @@ export class FileTransfer {
                 const index = offset / FILE_CHUNK_SIZE
 
                 this.currentFile.setChunkMap(index, data)
+
+                // Commented out as this is done in queryForFiles instead
+                // if (index % 50 == 49 || this.currentFile.isFileTransferDone()) {
+                //     this.encryptData(encodeString(JSON.stringify({ type: "progress", now: this.currentFile.bytesRecieved }))).then(encryptedData => {
+                //         this.sendData(encryptedData)
+                //     })
+                // }
             }
-            else if(packetId == PACKET_ID.fileList) {
+            else if (packetId == PACKET_ID.fileList) {
                 const data = packet.slice(1)
                 const fileList = JSON.parse(decodeString(data))
                 cbFileList(fileList)

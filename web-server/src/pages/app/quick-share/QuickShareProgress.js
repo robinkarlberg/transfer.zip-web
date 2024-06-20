@@ -17,8 +17,10 @@ import { humanFileSize } from "../../../utils"
 import { ProgressBar } from "react-bootstrap"
 import { QuickShareContext } from "../../../providers/QuickShareProvider"
 
+import * as zip from "@zip.js/zip.js";
+
 export default function QuickShareProgress({ }) {
-    const { newQuickShare, downloadQuickShare } = useContext(QuickShareContext)
+    const { newQuickShare, downloadQuickShare, createFileStream } = useContext(QuickShareContext)
 
     const navigate = useNavigate()
     const { state } = useLocation()
@@ -40,7 +42,7 @@ export default function QuickShareProgress({ }) {
     )
 
     const ProgressEntry = ({ progressObject }) => {
-        console.log(progressObject)
+        // console.log(progressObject)
         const { file, progress, mock } = progressObject
         return (
             <div className={"d-flex flex-column " + (mock && "placeholder-wave")} style={{ marginBottom: "16px", height: "36px" }}>
@@ -48,7 +50,7 @@ export default function QuickShareProgress({ }) {
                     <span className={"text-nowrap text-truncate me-1 " + (mock && "placeholder user-select-none")}>{file.name}</span>
                     <span><nobr><small className={"text-secondary " + (mock && "placeholder user-select-none")}>{humanFileSize(file.size/* * progress*/, true)}</small></nobr></span>
                 </div>
-                <ProgressBar animated={progress > 0 && progress < 1} className={"flex-grow-1 " + (mock && "placeholder placeholder-xs bg-secondary")} now={progress * 100} style={{ height: "8px" }} />
+                <ProgressBar className={"flex-grow-1 " + (mock && "placeholder placeholder-xs bg-secondary")} now={progress * 100} style={{ height: "8px" }} />
             </div>
         )
     }
@@ -93,43 +95,114 @@ export default function QuickShareProgress({ }) {
 
         WebRtc.createWebSocket()
         console.log("isSentLinkWithHash:", isSentLinkWithHash)
+
+        let _filesDone = 0
+
         if (isSentLinkWithHash) {
             setHasConnected(true)
             // User has been sent a link, assuming upload on behalf or receive files
 
             if(transferDirection == "R") {
-                downloadQuickShare(key, remoteSessionId).then((fileTransfer, fileList) => {
-                    setFilesProgress(fileList.map(file => {
+                downloadQuickShare(key, remoteSessionId).then(({ fileTransfer, fileList }) => {
+                    const doZip = fileList.length > 1
+                    const fileStream = createFileStream(doZip ? "transfer.zip" : fileList[0].name, doZip ? undefined : fileList[0].size)
+
+                    let _filesProgress = fileList.map(file => {
                         return { file: file, progress: 0 }
-                    }))
+                    })
+                    setFilesProgress(_filesProgress.map(x => x))
                     requestFile(fileTransfer, fileList, 0)
-
-                    fileTransfer.onprogress = () => {
-
+    
+                    fileTransfer.onprogress = ({ now, max }, fileInfo) => {
+                        if(_filesDone >= fileList.length) return console.warn("[QuickShareProgress] fileTransfer.onprogress called after files are done")
+                        _filesProgress[_filesDone].progress = now / max
+                        setFilesProgress(_filesProgress.map(x => x))
                     }
 
-                    fileTransfer.onfilefinished = (fileInfo) => {
-                        setFilesDone(filesDone + 1)
-                        requestFile(fileTransfer, fileList, filesDone + 1)
+                    if(doZip) {
+                        const zipStream = new zip.ZipWriterStream({ level: 0 })
+    
+                        let _filesProgress = fileList.map(file => {
+                            return { file: file, progress: 0 }
+                        })
+                        setFilesProgress(_filesProgress.map(x => x))
+                        requestFile(fileTransfer, fileList, 0)
+    
+                        // zipStream.readable.pipeTo(fileStream)
+                        // console.log(fileList[0].name)
+                        let currentZipWriter = zipStream.writable(fileList[0].name).getWriter()
+                        zipStream.readable.pipeTo(fileStream)
+    
+                        fileTransfer.onfiledata = (data, fileInfo) =>  {
+                            currentZipWriter.write(data)
+                        }
+    
+                        fileTransfer.onfilefinished = (fileInfo) => {
+                            if(doZip) {
+                                
+                            }
+                            else {
+    
+                            }
+                            currentZipWriter.close()
+                            
+                            setFilesDone(++_filesDone)
+                            if(_filesDone >= fileList.length) {
+                                zipStream.close()
+                                // fileWriter.close()
+                                return
+                            }
+    
+                            currentZipWriter = zipStream.writable(fileList[_filesDone].name).getWriter()
+                            requestFile(fileTransfer, fileList, _filesDone)
+                        }
                     }
+                    else {
+                        const fileWriter = fileStream.getWriter()
+                        fileTransfer.onfiledata = (data, fileInfo) =>  {
+                            fileWriter.write(data)
+                        }
+    
+                        fileTransfer.onfilefinished = (fileInfo) => {
+                            fileWriter.close()
+                            
+                            setFilesDone(++_filesDone)
+                        }
+                    }
+
+                    // const zipReader = zipStream.readable.getReader()
+                    // const pump = () => zipReader.read().then(res => res.done ? fileWriter.close() : fileWriter.write(res.value).then(pump))
+                    // pump()
                 })
             }
         }
         else {
             const directionCharForRecipient = transferDirection == "R" ? "S" : "R"
             newQuickShare().then(quickShare => {
+                quickShare.files = files
                 setQuickShareLink(quickShare.link)
                 console.log("Quick Share started!")
-                setFilesProgress(files.map(file => {
+
+                let _filesProgress = files.map(file => {
                     return { file: file, progress: 0 }
-                }))
+                })
+                setFilesProgress(_filesProgress.map(x => x))
 
                 quickShare.onconnection = () => {
                     setHasConnected(true)
                 }
 
-                quickShare.onfileprogress = () => {
-                    
+                quickShare.onfileprogress = ({ now, max }, fileInfo) => {
+                    _filesProgress[_filesDone].progress = now / max
+                    setFilesProgress(_filesProgress.map(x => x))
+                    console.log(_filesProgress, filesProgress)
+                }
+
+                quickShare.onfilefinished = (fileInfo) => {
+                    setFilesDone(++_filesDone)
+                    if(_filesDone >= files.length) {
+                        
+                    }
                 }
             })
         }

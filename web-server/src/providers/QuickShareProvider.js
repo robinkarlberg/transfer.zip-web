@@ -3,7 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 import * as Api from "../api/Api";
 import * as WebRtc from "../webrtc"
-import * as FileTransfer from "../filetransfer"
+import { FileTransfer } from "../filetransfer";
 
 import streamSaver from "../lib/StreamSaver"
 streamSaver.mitm = "/mitm.html"
@@ -11,7 +11,22 @@ streamSaver.mitm = "/mitm.html"
 export const QuickShareContext = createContext({})
 
 export const QuickShareProvider = () => {
-    
+
+    /**
+     * List containing all FileTransfer instances
+     */
+    // let [ activeFileTransfers, setActiveFileTransfers ] = useState([])
+
+    // const removeFileTransfer = (fileTransfer) => {
+    //     setActiveFileTransfers(activeFileTransfers.filter(o => o !== fileTransfer))
+    // }
+
+    // const newFileTransfer = (channel, key) => {
+    //     const fileTransfer = new FileTransfer.FileTransfer(channel, key)
+    //     setActiveFileTransfers([...activeFileTransfers, fileTransfer])
+    //     return fileTransfer
+    // }
+
     const [quickShares, setQuickShares] = useState([])
     const [activeQuickShareChannels, setActiveQuickShareChannels] = useState([])
 
@@ -71,7 +86,7 @@ export const QuickShareProvider = () => {
                 // quickShare.statistics.push([{ time: new Date() }])
             }
             fileTransfer.onprogress = (progress, fileInfo) => {
-                quickShare.onfileprogress && quickShare.onfileprogress(fileInfo)
+                quickShare.onfileprogress && quickShare.onfileprogress(progress, fileInfo)
                 console.debug("[QuickShareProvider] Progress", progress, fileInfo)
             }
             fileTransfer.onfilefinished = fileInfo => {
@@ -84,11 +99,14 @@ export const QuickShareProvider = () => {
         return quickShare
     }
 
-    const crateZipStream = (fileName) => {
-        
+    const createFileStream = (fileName, size) => {
+        const fileStream = streamSaver.createWriteStream("transfer.zip", {
+            size
+        })
+        return fileStream
     }
 
-    const downloadQuickShareFile = (file) => {
+    const downloadLocalQuickShareFile = (file) => {
         const chunkSize = 163840
         const fileReader = new FileReader()
 
@@ -131,18 +149,18 @@ export const QuickShareProvider = () => {
             kty: "oct",
             key_ops: ["encrypt", "decrypt"]
         }, { name: "AES-GCM" }, false, ["encrypt", "decrypt"])
-    
+
         console.log("[QuickShareProvider] [downloadQuickShare]", k, recipientId)
         const rtcSession = WebRtc.newRtcSession(crypto.randomUUID())
         rtcSession.onclose = () => {
             console.log("[QuickShareProvider] [downloadQuickShare] onclose")
-    
+
             // setQuickShares(quickShares.fill(x => x.id != transfer.id))
             // updateAllTransfersList(rtTransfers.filter(x => x.id != transfer.id))
         }
         const channel = await rtcSession.call(recipientId)
         const fileTransfer = new FileTransfer(channel, key)
-    
+
         return new Promise((resolve, reject) => {
             // const transfer = { files: [], worker: fileTransfer }
             fileTransfer.queryForFiles(fileList => {
@@ -164,7 +182,7 @@ export const QuickShareProvider = () => {
     return (
         <QuickShareContext.Provider value={{
             newQuickShare, quickShares, activeQuickShareChannels,
-            downloadQuickShareFile, downloadQuickShare
+            downloadQuickShare, createFileStream
         }}>
             <Outlet />
         </QuickShareContext.Provider>
