@@ -100,7 +100,7 @@ export const QuickShareProvider = () => {
     }
 
     const createFileStream = (fileName, size) => {
-        const fileStream = streamSaver.createWriteStream("transfer.zip", {
+        const fileStream = streamSaver.createWriteStream(fileName, {
             size
         })
         return fileStream

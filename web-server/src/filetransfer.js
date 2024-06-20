@@ -285,6 +285,7 @@ export class FileTransfer {
     }
 
     requestFile(fileListIndex) {
+        console.log("[FileTransfer] [requestFile]", fileListIndex)
         this.encryptData(encodeString(JSON.stringify({ type: "download", index: fileListIndex }))).then(encryptedData => {
             this.sendData(encryptedData)
         })

@@ -105,6 +105,7 @@ export default function QuickShareProgress({ }) {
             if(transferDirection == "R") {
                 downloadQuickShare(key, remoteSessionId).then(({ fileTransfer, fileList }) => {
                     const doZip = fileList.length > 1
+                    console.log("[QuickShareProgress] [downloadQuickShare] File list query has been received", fileList, "doZip:", doZip)
                     const fileStream = createFileStream(doZip ? "transfer.zip" : fileList[0].name, doZip ? undefined : fileList[0].size)
 
                     let _filesProgress = fileList.map(file => {
@@ -126,7 +127,6 @@ export default function QuickShareProgress({ }) {
                             return { file: file, progress: 0 }
                         })
                         setFilesProgress(_filesProgress.map(x => x))
-                        requestFile(fileTransfer, fileList, 0)
     
                         // zipStream.readable.pipeTo(fileStream)
                         // console.log(fileList[0].name)
@@ -138,12 +138,6 @@ export default function QuickShareProgress({ }) {
                         }
     
                         fileTransfer.onfilefinished = (fileInfo) => {
-                            if(doZip) {
-                                
-                            }
-                            else {
-    
-                            }
                             currentZipWriter.close()
                             
                             setFilesDone(++_filesDone)
