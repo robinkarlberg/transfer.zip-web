@@ -18,7 +18,6 @@ export const ApplicationContext = createContext({})
 
 export const ApplicationProvider = () => {
     const [errorMessage, setErrorMessage] = useState(null)
-    const [showPeerConnectionError, setShowPeerConnectionError] = useState(false)
 
     const [apiTransfers, setApiTransfers] = useState([])
     // const [transfers, setTransfers] = useState([])
@@ -75,7 +74,6 @@ export const ApplicationProvider = () => {
     return (
         <ApplicationContext.Provider value={{
             setErrorMessage,
-            setShowPeerConnectionError,
             refreshApiTransfers,
             apiTransfers,
             removeTransfer,
@@ -84,7 +82,6 @@ export const ApplicationProvider = () => {
             newApiTransferAndNavigate,
         }}>
             <GenericErrorModal show={errorMessage != null} errorMessage={errorMessage} onCancel={() => { setErrorMessage(null) }} />
-            <PeerConnectionErrorModal show={showPeerConnectionError} onCancel={() => { setShowPeerConnectionError(false) }} />
             {/* {!isInfoPage && <Adsense className={"mobile-banner-ad"} data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932" />} */}
             <Outlet />
         </ApplicationContext.Provider>

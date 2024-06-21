@@ -155,6 +155,7 @@ export const closeWebSocket = () => {
 
 export class RtcListener {
 	onmessage = undefined
+	oncandidate = undefined
 	onrtcsession = undefined
 	_onclose = undefined
 	onclose = undefined
@@ -256,6 +257,7 @@ export class RtcListener {
 				}
 
 				console.log(`Got candidate from ${data.callerId}:`, data.candidate)
+				this.oncandidate && this.oncandidate()
 				await entry.peerConnection.addIceCandidate(data.candidate)
 			}
 		}

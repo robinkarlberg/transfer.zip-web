@@ -84,7 +84,7 @@ class FileTransferFile {
 
     checkProgress = () => {
         let isFileTransferDone = this.isFileTransferDone()
-
+        
         this.onprogress({ now: this.bytesRecieved, max: this.fileInfo.size, done: isFileTransferDone }, this.fileInfo)
 
         if (isFileTransferDone) {
@@ -118,7 +118,7 @@ class FileTransferFile {
             // this.writer.write(data)
         }
         if (this.bytesRecieved == this.fileInfo.size && this.chunkMap.size == 0) {
-            console.log("Close writer")
+            // console.log("Close writer")
             // this.writer.close()
             // this.checkProgress()
         }
@@ -304,14 +304,18 @@ export class FileTransfer {
 
         const onprogress = async (progress, fileInfo) => {
             console.log("[FileTransfer] onprogress", progress, fileInfo, Math.round(progress.now / FILE_CHUNK_SIZE) % 30 == 15)
+            this.onprogress(progress, fileInfo)
+
+            // Important: this.onprogress needs to be called before this if statement, 
+            // otherwise the file will be finished before the last progress has been reported
             if (Math.round(progress.now / FILE_CHUNK_SIZE) % 30 == 15 || progress.done) {
                 console.log("[FileTransfer] send progress:", progress)
                 this.sendData(await this.encryptData(encodeString(JSON.stringify({ type: "progress", ...progress }))))
             }
-            this.onprogress(progress, fileInfo)
         }
 
         const onfilefinished = (fileInfo) => {
+            console.log("[FileTransfer] onfilefinished", fileInfo)
             this.onfilefinished(fileInfo)
             this.currentFile = new FileTransferFile(onfiledata, onprogress, onfilefinished)
         }

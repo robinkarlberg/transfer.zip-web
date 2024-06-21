@@ -4,6 +4,8 @@ import { Modal } from 'react-bootstrap'
 import ContactsListEntry from "../ContactsListEntry"
 import { ApplicationContext } from "../../providers/ApplicationProvider"
 
+const SITE_URL = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') ? "http://localhost:3001" : (process.env.REACT_APP_SITE_URL)
+
 export default function PeerConnectionErrorModal({ show, onCancel }) {
     return (
         <>
@@ -16,10 +18,11 @@ export default function PeerConnectionErrorModal({ show, onCancel }) {
                         <p>Could not connect to remote peer, check your firewall settings or try connecting to another network.</p>
                         <div className="p-1 pt-0">
                             <small className="text-body-secondary">
-                                transfer.zip uses <a href="http://www.webrtc.org/" target="_blank">WebRTC</a> for peer-to-peer data 
+                                Quick Share uses WebRTC for peer-to-peer data 
                                 transfer, meaning the files are streamed directly between peers and not stored anywhere in the process. 
-                                Therefore, there are no file size or bandwidth limitations. However, some some network firewalls 
-                                may not allow direct connections between devices. 
+                                However, some some network firewalls may not allow direct connections between devices. 
+                                To bypass your network limitations, consider <a href={`${SITE_URL}/signup`}><nobr>signing up for a plan</nobr></a> at
+                                transfer.zip, making file sharing easier than ever.
                             </small>
                         </div>
                     </div>

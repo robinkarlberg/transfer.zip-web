@@ -18,9 +18,18 @@ import { ProgressBar } from "react-bootstrap"
 import { QuickShareContext } from "../../../providers/QuickShareProvider"
 
 import * as zip from "@zip.js/zip.js";
+import PeerConnectionErrorModal from "../../../components/modals/PeerConnectionErrorModal"
+import Checkmark from "../../../components/app/Checkmark"
+
+const TRANSFER_STATE_IDLE = "idle"
+const TRANSFER_STATE_CONNECTING = "connecting"
+const TRANSFER_STATE_TRANSFERRING = "transferring"
+const TRANSFER_STATE_FINISHED = "finished"
+const TRANSFER_STATE_FAILED = "failed"
 
 export default function QuickShareProgress({ }) {
     const { newQuickShare, downloadQuickShare, createFileStream } = useContext(QuickShareContext)
+    const { setErrorMessage } = useContext(ApplicationContext)
 
     const navigate = useNavigate()
     const { state } = useLocation()
@@ -28,12 +37,23 @@ export default function QuickShareProgress({ }) {
     let { files, key, remoteSessionId, transferDirection, predefinedDataChannel } = state || {}
     const isSentLinkWithHash = key && remoteSessionId && transferDirection
 
+    const [showPeerConnectionError, setShowPeerConnectionError] = useState(false)
+
     const [quickShareLink, setQuickShareLink] = useState(null)
     const [filesProgress, setFilesProgress] = useState(null)
-    const [hasConnected, setHasConnected] = useState(false)
 
     const [filesDone, setFilesDone] = useState(0)
-    let translate = -52 * filesDone
+    const [transferState, _setTransferState] = useState(TRANSFER_STATE_IDLE)
+    const setTransferState = (ts) => {
+        console.log("[QuickShareProgress] setTransferState", ts)
+        _setTransferState(ts)
+    }
+
+    const hasConnected = () => {
+        return transferState == TRANSFER_STATE_TRANSFERRING || transferState == TRANSFER_STATE_FINISHED
+    }
+
+    let translate = -52 * Math.max(filesDone - 5, 0)
 
     const spinner = (
         <div className="spinner-border" role="status" style={{ width: "1em", height: "1em" }}>
@@ -56,10 +76,15 @@ export default function QuickShareProgress({ }) {
     }
 
     const qrChildren = (
-        <div className="qr-children-container bg-body rounded w-100 p-3 overflow-hidden " style={{ aspectRatio: "1/1" }}>
-            <div className="d-flex flex-column" style={{ position: "relative", transform: `translate(0, ${translate}px)`, transition: "transform 0.5s" }}>
+        <div className="qr-children-container bg-body rounded w-100 overflow-hidden " style={{ position: "relative", aspectRatio: "1/1" }}>
+            {transferState == TRANSFER_STATE_FINISHED && (
+                <div className="w-100 h-100 d-flex justify-content-center align-items-center z-2 shadow" style={{ position: "absolute" }}>
+                    <Checkmark className="text-success" />
+                </div>
+            )}
+            <div className="d-flex flex-column p-3" style={{ position: "relative", transform: `translate(0, ${translate}px)`, transition: "transform 0.5s" }}>
                 {filesProgress ?
-                    filesProgress.map(x => <ProgressEntry progressObject={x}/>)
+                    filesProgress.map(x => <ProgressEntry progressObject={x} />)
                     :
                     [
                         <ProgressEntry progressObject={{ file: { name: "mockfileeeeeeee", size: 100000 }, progress: 0.4, mock: true }} />,
@@ -79,7 +104,7 @@ export default function QuickShareProgress({ }) {
     )
 
     const requestFile = (fileTransfer, fileList, index) => {
-        if(index >= fileList.length) {
+        if (index >= fileList.length) {
             console.log("All files downloaded!")
             return
         }
@@ -99,11 +124,12 @@ export default function QuickShareProgress({ }) {
         let _filesDone = 0
 
         if (isSentLinkWithHash) {
-            setHasConnected(true)
+            setTransferState(TRANSFER_STATE_CONNECTING)
             // User has been sent a link, assuming upload on behalf or receive files
 
-            if(transferDirection == "R") {
+            if (transferDirection == "R") {
                 downloadQuickShare(key, remoteSessionId).then(({ fileTransfer, fileList }) => {
+                    setTransferState(TRANSFER_STATE_TRANSFERRING)
                     const doZip = fileList.length > 1
                     console.log("[QuickShareProgress] [downloadQuickShare] File list query has been received", fileList, "doZip:", doZip)
                     const fileStream = createFileStream(doZip ? "transfer.zip" : fileList[0].name, doZip ? undefined : fileList[0].size)
@@ -113,60 +139,71 @@ export default function QuickShareProgress({ }) {
                     })
                     setFilesProgress(_filesProgress.map(x => x))
                     requestFile(fileTransfer, fileList, 0)
-    
-                    fileTransfer.onprogress = ({ now, max }, fileInfo) => {
-                        if(_filesDone >= fileList.length) return console.warn("[QuickShareProgress] fileTransfer.onprogress called after files are done")
+
+                    fileTransfer.onprogress = ({ now, max, done }, fileInfo) => {
+                        if (_filesDone >= fileList.length) return console.warn("[QuickShareProgress] fileTransfer.onprogress called after files are done")
                         _filesProgress[_filesDone].progress = now / max
+                        console.log(now / max)
                         setFilesProgress(_filesProgress.map(x => x))
                     }
 
-                    if(doZip) {
+                    if (doZip) {
                         const zipStream = new zip.ZipWriterStream({ level: 0 })
-    
+
                         let _filesProgress = fileList.map(file => {
                             return { file: file, progress: 0 }
                         })
                         setFilesProgress(_filesProgress.map(x => x))
-    
+
                         // zipStream.readable.pipeTo(fileStream)
                         // console.log(fileList[0].name)
                         let currentZipWriter = zipStream.writable(fileList[0].name).getWriter()
                         zipStream.readable.pipeTo(fileStream)
-    
-                        fileTransfer.onfiledata = (data, fileInfo) =>  {
+
+                        fileTransfer.onfiledata = (data, fileInfo) => {
                             currentZipWriter.write(data)
                         }
-    
+
                         fileTransfer.onfilefinished = (fileInfo) => {
                             currentZipWriter.close()
-                            
+
                             setFilesDone(++_filesDone)
-                            if(_filesDone >= fileList.length) {
+                            if (_filesDone >= fileList.length) {
                                 zipStream.close()
-                                // fileWriter.close()
+                                setTransferState(TRANSFER_STATE_FINISHED)
                                 return
                             }
-    
+
                             currentZipWriter = zipStream.writable(fileList[_filesDone].name).getWriter()
                             requestFile(fileTransfer, fileList, _filesDone)
                         }
                     }
                     else {
                         const fileWriter = fileStream.getWriter()
-                        fileTransfer.onfiledata = (data, fileInfo) =>  {
+                        fileTransfer.onfiledata = (data, fileInfo) => {
                             fileWriter.write(data)
                         }
-    
+
                         fileTransfer.onfilefinished = (fileInfo) => {
                             fileWriter.close()
-                            
+
                             setFilesDone(++_filesDone)
+                            setTransferState(TRANSFER_STATE_FINISHED)
                         }
                     }
 
                     // const zipReader = zipStream.readable.getReader()
                     // const pump = () => zipReader.read().then(res => res.done ? fileWriter.close() : fileWriter.write(res.value).then(pump))
                     // pump()
+                }).catch(err => {
+                    console.error(err)
+                    setTransferState(TRANSFER_STATE_FAILED)
+                    if (err instanceof WebRtc.PeerConnectionError) {
+                        setShowPeerConnectionError(true)
+                    }
+                    else {
+                        setErrorMessage(err.message || "Sorry an unknown error has occured! Check back later and we should hopefully have fixed it.")
+                    }
                 })
             }
         }
@@ -182,8 +219,17 @@ export default function QuickShareProgress({ }) {
                 })
                 setFilesProgress(_filesProgress.map(x => x))
 
+                let waitTimer = null
+
+                quickShare.oncandidate = () => {
+                    waitTimer && clearTimeout(waitTimer)
+                    waitTimer = setTimeout(() => setTransferState(TRANSFER_STATE_IDLE), 10000)
+                    setTransferState(TRANSFER_STATE_CONNECTING)
+                }
+
                 quickShare.onconnection = () => {
-                    setHasConnected(true)
+                    waitTimer && clearTimeout(waitTimer)
+                    setTransferState(TRANSFER_STATE_TRANSFERRING)
                 }
 
                 quickShare.onfileprogress = ({ now, max }, fileInfo) => {
@@ -194,8 +240,8 @@ export default function QuickShareProgress({ }) {
 
                 quickShare.onfilefinished = (fileInfo) => {
                     setFilesDone(++_filesDone)
-                    if(_filesDone >= files.length) {
-                        
+                    if (_filesDone >= files.length) {
+                        setTransferState(TRANSFER_STATE_FINISHED)
                     }
                 }
             })
@@ -208,12 +254,13 @@ export default function QuickShareProgress({ }) {
 
     return (
         <div className="d-flex flex-column gap-0 me-md-5">
+            <PeerConnectionErrorModal show={showPeerConnectionError} onCancel={() => { setShowPeerConnectionError(false) }} />
             <div className="d-flex flex-column flex-lg-row gap-3 justify-content-center mt-2">
                 <div>
                     <h1 className="mb-3 d-block d-lg-none mb-4">Quick Share</h1>
                     <div className="mx-3 mx-lg-0" style={{ maxWidth: "300px" }}>
                         <QRLink link={quickShareLink}>
-                            {hasConnected && qrChildren}
+                            {(hasConnected() || isSentLinkWithHash) && qrChildren}
                         </QRLink>
                         {/* <div className="bg-body">
                             <p>asd</p>
@@ -225,9 +272,10 @@ export default function QuickShareProgress({ }) {
                     {/* <img className="mb-2" src={logo} height={"60em"}></img> */}
                     <ol className="ps-3">
                         {/* <li>Choose if you want to send or receive files.</li> */}
-                        <li>Scan the QR code or send the link to the recipient. {spinner}</li>
-                        <li className="text-body-tertiary">Wait for your devices to establish a connection.</li>
-                        <li className="text-body-tertiary">Stand by while the files are being transfered.</li>
+                        <li className={transferState == TRANSFER_STATE_IDLE || "text-body-tertiary"}>Scan the QR code or send the link to the recipient. {transferState == TRANSFER_STATE_IDLE && spinner}</li>
+                        <li className={transferState == TRANSFER_STATE_CONNECTING || "text-body-tertiary"}>Wait for your devices to establish a connection. {transferState == TRANSFER_STATE_CONNECTING && spinner}</li>
+                        <li className={transferState == TRANSFER_STATE_TRANSFERRING || "text-body-tertiary"}>Stand by while the files are being transfered. {transferState == TRANSFER_STATE_TRANSFERRING && spinner}</li>
+                        <li className={transferState == TRANSFER_STATE_FINISHED|| "text-body-tertiary"}>Done!</li>
                     </ol>
                 </div>
             </div>

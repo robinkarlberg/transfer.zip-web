@@ -49,6 +49,7 @@ export const QuickShareProvider = () => {
             k,
             isRealtime: true,// || worker instanceof WebRtc.RtcSession
             link: `${window.location.origin}#${k},${worker.sessionId},R`,
+            oncandidate: undefined,
             onconnection: undefined,
             onfilebegin: undefined,
             onfileprogress: undefined,
@@ -75,6 +76,9 @@ export const QuickShareProvider = () => {
             // updateAllTransfersList(quickShares.filter(x => x.id != transfer.id))
         }
         const quickShare = newQuickShareObj(rtcSession, keyBase64)
+        rtcSession.oncandidate = () => {
+            quickShare.oncandidate && quickShare.oncandidate()
+        }
         rtcSession.onrtcsession = (rtcSession, channel) => {
             quickShare.onconnection && quickShare.onconnection(rtcSession)
 
