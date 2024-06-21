@@ -110,41 +110,6 @@ export const QuickShareProvider = () => {
         return fileStream
     }
 
-    const downloadLocalQuickShareFile = (file) => {
-        const chunkSize = 163840
-        const fileReader = new FileReader()
-
-        const fileStream = streamSaver.createWriteStream(file.info.name, {
-            size: file.info.size
-        })
-        const writer = fileStream.getWriter()
-
-        let offset = 0
-        fileReader.onload = () => {
-            const data = new Uint8Array(fileReader.result)
-            console.log(data)
-            writer.write(data)
-            offset += data.byteLength;
-            if (offset < file.info.size) {
-                readSlice(offset);
-            }
-            else {
-                writer.close()
-            }
-        }
-        fileReader.onerror = e => {
-            console.error("File reader error", e)
-        }
-        fileReader.onabort = e => {
-            console.log("File reader abort", e)
-        }
-        const readSlice = o => {
-            const slice = file.nativeFile.slice(offset, o + chunkSize);
-            fileReader.readAsArrayBuffer(slice);
-        };
-        readSlice(0)
-    }
-
     const downloadQuickShare = async (k, recipientId) => {
         const key = await crypto.subtle.importKey("jwk", {
             alg: "A256GCM",

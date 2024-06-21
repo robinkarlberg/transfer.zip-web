@@ -227,7 +227,7 @@ export default function QuickShareProgress({ }) {
 
                 quickShare.oncandidate = () => {
                     waitTimer && clearTimeout(waitTimer)
-                    waitTimer = setTimeout(() => setTransferState(TRANSFER_STATE_IDLE), 10000)
+                    waitTimer = setTimeout(() => setTransferState(TRANSFER_STATE_IDLE), 14000)
                     setTransferState(TRANSFER_STATE_CONNECTING)
                 }
 

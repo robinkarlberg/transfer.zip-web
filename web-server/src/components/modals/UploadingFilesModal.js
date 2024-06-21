@@ -11,7 +11,7 @@ export default function UploadingFilesModal({ show, uploadProgress, onDone, onCa
         return (
             <div className="d-flex flex-column">
                 <div className="d-flex flex-row justify-content-between mb-1">
-                    <span>{file.name}</span>
+                    <span className="text-nowrap text-truncate">{file.name}</span>
                     <span><small className="text-secondary">{humanFileSize(file.size * progress, true)}</small></span>
                 </div>
                 <ProgressBar animated={progress > 0 && progress < 1} className="flex-grow-1" now={progress * 100} style={{ height: "8px" }} />

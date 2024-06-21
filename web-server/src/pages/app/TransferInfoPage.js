@@ -10,13 +10,14 @@ import UploadFilesModal from "../../components/modals/UploadFilesModal";
 import { humanFileSize, humanFileSizePair, copyTransferLink } from "../../utils";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 import UploadingFilesModal from "../../components/modals/UploadingFilesModal";
+import TransferNameModal from "../../components/modals/TransferNameModal";
 
 export default function TransferInfoPage({ }) {
     const { id } = useParams()
     const [transfer, setTransfer] = useState(null)
     const { rtTransfers, downloadRealtimeTransferFile, refreshApiTransfers } = useContext(ApplicationContext)
 
-    const navigate = useNavigate()
+
     const { state } = useLocation()
     const [showUploadFilesModal, setShowUploadFilesModal] = useState(state?.addFiles)
     const isRealtimeTransfer = id && id[0] == "r"
@@ -24,8 +25,25 @@ export default function TransferInfoPage({ }) {
     const [showUploadingFilesModal, setShowUploadingFilesModal] = useState(false)
     const [uploadProgress, setUploadProgress] = useState(null)
 
+    const [showTransferNameModal, setShowTransferNameModal] = useState(false)
+
+    const navigate = useNavigate()
+
     const refreshApiTransfer = () => {
         Api.getTransfer(id).then(t => setTransfer(t.transfer))
+    }
+
+    const onTransferNameModalCancel = () => {
+        showTransferNameModal(false)
+        window.location.reload()
+    }
+
+    const onTransferNameModalDone = async (name) => {
+        if(!name) return
+        await Api.setTransferName(id, name)
+        setShowTransferNameModal(false)
+        refreshApiTransfer()
+        refreshApiTransfers()
     }
 
     const onUploadFileModalDone = async (files) => {
@@ -50,6 +68,14 @@ export default function TransferInfoPage({ }) {
                 refreshApiTransfer()
             }
             setShowUploadingFilesModal(false)
+            setShowTransferNameModal(true)
+
+            if (transfer.name != null) {
+                refreshApiTransfers()
+                setTimeout(() => {
+                    setShowTransferNameModal(false)
+                }, 1500)
+            }
         }
         else {
             transfer.files.push(...files.map((x, i) => { return { nativeFile: x, id: i, info: { name: x.name, size: x.size, type: x.type } } }))
@@ -85,7 +111,7 @@ export default function TransferInfoPage({ }) {
         <nav className="d-flex flex-row align-items-center">
             <h4 className="me-2"><Link to="/transfers">Transfers</Link></h4>
             <div className="mb-1">
-                <small><i className="bi bi-caret-right-fill me-2"></i>{id}</small>
+                <small><i className="bi bi-caret-right-fill me-2"></i>{transfer ? transfer.name || id : "..."}</small>
             </div>
         </nav>
     )
@@ -146,9 +172,9 @@ export default function TransferInfoPage({ }) {
 
     return (
         <AppGenericPage titleElement={titleElement}>
+            <UploadFilesModal show={showUploadFilesModal} onCancel={() => setShowUploadFilesModal(false)} onDone={onUploadFileModalDone} />
             <UploadingFilesModal show={showUploadingFilesModal} onCancel={() => { }} uploadProgress={uploadProgress} />
-            <UploadFilesModal show={showUploadFilesModal} onCancel={() => setShowUploadFilesModal(false)}
-                onDone={onUploadFileModalDone} />
+            <TransferNameModal show={showTransferNameModal} onCancel={onTransferNameModalCancel} onDone={onTransferNameModalDone} askForName={transfer.name == null} />
             {/* <h3>{transfer.name || transfer.id}</h3> */}
             <div className="d-flex flex-row flex-wrap gap-3 mb-3">
                 <StatCard title={"Size"} stat={totalFileSizeStat()}>

@@ -72,6 +72,10 @@ export async function getAllStatistics(fromDate) {
     return await get(`/statistics/${fromDate}`)
 }
 
+export async function setTransferName(id, name) {
+    return await post(`/transfers/${id}/name`, { name })
+}
+
 export async function deleteTransfer(id) {
     return await post(`/transfers/${id}/delete`)
 }
