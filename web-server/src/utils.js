@@ -52,8 +52,8 @@ const textDec = new TextDecoder()
 export const encodeString = (str) => {
     return textEnc.encode(str)
 }
-export const decodeString = (str) => {
-    return textDec.decode(str)
+export const decodeString = (arr) => {
+    return textDec.decode(arr)
 }
 
 const __getFileIconFromExtension = (ext) => {

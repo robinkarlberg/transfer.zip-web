@@ -1,8 +1,10 @@
+import { decodeString } from "./utils";
+
 export class PeerConnectionError extends Error {
-    constructor() {
-        super("Could not connect to remote peer, check your firewall settings or try connecting to another network.");
-        this.name = "PeerConnectionError";
-    }
+	constructor() {
+		super("Could not connect to remote peer, check your firewall settings or try connecting to another network.");
+		this.name = "PeerConnectionError";
+	}
 }
 
 const RTC_CONF = {
@@ -29,11 +31,23 @@ const RTC_CONF = {
 	]
 }
 
+const CPKT_LOGOUT = -1
+const CPKT_LOGIN = 0
+const CPKT_OFFER = 1
+const CPKT_ANSWER = 2
+const CPKT_CANDIDATE = 3
+const CPKT_RELAY = 4
+
+const SPKT_OFFER = 11
+const SPKT_ANSWER = 12
+const SPKT_CANDIDATE = 13
+const SPKT_RELAY = 14
+
 let WS_URL
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-    WS_URL = "ws://localhost:9002"
+	WS_URL = "ws://localhost:9002"
 } else {
-    WS_URL = (window.location.protocol.includes("s") ? "wss://" : "ws://") + window.location.host + "/ws"
+	WS_URL = (window.location.protocol.includes("s") ? "wss://" : "ws://") + window.location.host + "/ws"
 }
 
 /**
@@ -67,7 +81,7 @@ export const newRtcListener = (sessionId) => {
 
 export const closeAndRemoveRtcSessionById = (sessionId) => {
 	const rtcSession = activeRtcSessions.find((o => o.sessionId == sessionId))
-	if(rtcSession) {
+	if (rtcSession) {
 		rtcSession.close()
 		removeRtcSession(rtcSession)
 	}
@@ -77,19 +91,17 @@ export const removeRtcSession = (rtcSession) => {
 	activeRtcSessions = activeRtcSessions.filter(o => o !== rtcSession)
 }
 
-
-
 let ws;
 let isWsSupposedToClose = false;
 
 export const createWebSocket = () => {
 	console.log("createWebSocket")
-	if(ws && !isWsSupposedToClose) return
+	if (ws && !isWsSupposedToClose) return
 	isWsSupposedToClose = false;
 	ws = new WebSocket(WS_URL)
-		
+
 	let keepAliveIntervalId = undefined
-		
+
 	ws.addEventListener("error", async e => {
 		clearInterval(keepAliveIntervalId)
 		console.error("WebSocket error: could not connect to server")
@@ -102,14 +114,14 @@ export const createWebSocket = () => {
 	ws.addEventListener("close", e => {
 		clearInterval(keepAliveIntervalId)
 		console.error("WebSocket closed! code:", e.code)
-		if(!isWsSupposedToClose) {
+		if (!isWsSupposedToClose) {
 			setTimeout(createWebSocket, 1000)
 		}
-		for(let rtcSession of activeRtcSessions) {
+		for (let rtcSession of activeRtcSessions) {
 			rtcSession.onwsclose && rtcSession.onwsclose()
 		}
 	})
-			
+
 	ws.addEventListener("open", e => {
 		console.log("WebSocket open!")
 
@@ -117,24 +129,39 @@ export const createWebSocket = () => {
 			ws.send(".")
 		}, 30000)
 
-		for(let rtcSession of activeRtcSessions) {
+		for (let rtcSession of activeRtcSessions) {
 			rtcSession.onwsopen && rtcSession.onwsopen()
 		}
-		for(let rtcSession of activeRtcSessions) {
+		for (let rtcSession of activeRtcSessions) {
 			rtcSession.onwsrestart && rtcSession.onwsrestart()
 		}
 	})
 
 	ws.addEventListener("message", e => {
-		const data = JSON.parse(e.data)
-		console.debug(data)
-		if(data.targetId == undefined) {
-			console.warn("targetId not specified: ", data)
-			return
+		if (e instanceof ArrayBuffer) {
+            const packetDataView = new DataView(e.data)
+            const packetId = packetDataView.getInt8(0)
+			if(packetId == SPKT_RELAY) {
+				const targetId = decodeString(Array.from({ length: 36 }, (_, i) => i).map(x => packetDataView.getUint8(i + 1)))
+				// const targetId = packetDataView.
+				for (let rtcSession of activeRtcSessions) {
+					if (rtcSession.sessionId === targetId) {
+						rtcSession.onbinarydata && rtcSession.onbinarydata(data)
+					}
+				}
+			}
 		}
-		for(let rtcSession of activeRtcSessions) {
-			if (rtcSession instanceof RtcListener || rtcSession.sessionId === data.targetId) {
-				rtcSession.onmessage && rtcSession.onmessage(data)
+		else if (e instanceof String) {
+			const data = JSON.parse(e.data)
+			console.debug("[WebRtc] ws text message:", data)
+			if (data.targetId == undefined) {
+				console.warn("targetId not specified: ", data)
+				return
+			}
+			for (let rtcSession of activeRtcSessions) {
+				if (/*rtcSession instanceof RtcListener || */rtcSession.sessionId === data.targetId) {
+					rtcSession.onmessage && rtcSession.onmessage(data)
+				}
 			}
 		}
 	})
@@ -145,7 +172,7 @@ export const createWebSocket = () => {
 export const closeWebSocket = () => {
 	console.log("Closing WebSocket...")
 	isWsSupposedToClose = true
-	if(ws) {
+	if (ws) {
 		ws.close()
 	}
 	else {
@@ -171,13 +198,13 @@ export class RtcListener {
 	}
 
 	try_login() {
-		if(this.closed) {
+		if (this.closed) {
 			console.warn("[RtcListener] try_login was called after close")
 			return
 		}
-		if(!this.has_logged_in) {
+		if (!this.has_logged_in) {
 			ws.send(JSON.stringify({		// login
-				type: 0,
+				type: CPKT_LOGIN,
 				id: this.sessionId
 			}))
 			this.has_logged_in = true
@@ -185,45 +212,45 @@ export class RtcListener {
 	}
 
 	async _listen() {
-		if(this.closed) {
+		if (this.closed) {
 			console.warn("[RtcListener] _recv was called after close")
 			return
 		}
 		this.try_login()
 		this.onmessage = async data => {
-			if (data.type == 11 && data.offer) {
+			if (data.type == SPKT_OFFER && data.offer) {
 				console.log("Got offer:", data.offer)
 				let recipientId = data.callerId
 
 				let entry = this.callerIdPeerConnectionEntries.find(x => x.callerId === x.callerId)
-				if(!entry) {
+				if (!entry) {
 					entry = { callerId: data.callerId, peerConnection: new RTCPeerConnection(RTC_CONF) }
-	
+
 					const icecandidatelistener = entry.peerConnection.addEventListener("icecandidate", e => {
 						if (e.candidate) {
 							console.log("peerConnection Got ICE candidate:", e.candidate)
 							ws.send(JSON.stringify({
-								type: 3, sessionId: this.sessionId, candidate: e.candidate, recipientId
+								type: CPKT_CANDIDATE, sessionId: this.sessionId, candidate: e.candidate, recipientId
 							}))
 						}
 					})
-	
+
 					const iceconnectionstatechangeListener = entry.peerConnection.addEventListener("iceconnectionstatechange", async e => {
 						console.log("RECV iceconnectionstatechange", e)
-						if(e.target.connectionState == "connected") {
+						if (e.target.connectionState == "connected") {
 							entry.peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
 							return
 						}
-						else if(e.target.connectionState == "disconnected") {
+						else if (e.target.connectionState == "disconnected") {
 							// reject(new Error("Remote peer disconnected"))
 							console.error(e)
 						}
-						else if(e.target.connectionState == "failed") {
+						else if (e.target.connectionState == "failed") {
 							console.error(e)
 							// reject(new PeerConnectionError())
 						}
 					})
-		
+
 					const datachannellistener = entry.peerConnection.addEventListener("datachannel", e => {
 						const channel = e.channel
 						console.log("[RtcListener] Got datachannel!", channel)
@@ -246,12 +273,12 @@ export class RtcListener {
 				await entry.peerConnection.setLocalDescription(answer);
 				console.log("Sending answer:", answer)
 				ws.send(JSON.stringify({
-					type: 2, sessionId: this.sessionId, answer, recipientId
+					type: CPKT_ANSWER, sessionId: this.sessionId, answer, recipientId
 				}));
 			}
-			else if (data.type == 13 && data.candidate) {
+			else if (data.type == SPKT_CANDIDATE && data.candidate) {
 				const entry = this.callerIdPeerConnectionEntries.find(x => x.callerId == x.callerId)
-				if(!entry) {
+				if (!entry) {
 					console.warn("Caller id not found in callerIdPeerConnectionEntries:", data.callerId)
 					return
 				}
@@ -264,7 +291,7 @@ export class RtcListener {
 	}
 
 	async waitForWebsocket() {
-		if(ws && ws.readyState == WebSocket.OPEN) {
+		if (ws && ws.readyState == WebSocket.OPEN) {
 			return
 		}
 		else {
@@ -292,20 +319,47 @@ export class RtcListener {
 	close() {
 		console.log("[RtcListener] close")
 		this.closed = true
-		if(ws && ws.readyState == WebSocket.OPEN && this.has_logged_in) {
+		if (ws && ws.readyState == WebSocket.OPEN && this.has_logged_in) {
 			ws.send(JSON.stringify({	// logout
-				type: 4, sessionId: this.sessionId
+				type: CPKT_LOGOUT, sessionId: this.sessionId
 			}))
 		}
 		else {
 			console.warn("[RtcListener] close was called but ws is invalid")
 		}
-		for(let entry of this.callerIdPeerConnectionEntries) {
+		for (let entry of this.callerIdPeerConnectionEntries) {
 			entry.peerConnection.close()
 		}
 		this.callerIdPeerConnectionEntries = []
 		this._onclose && this._onclose()
 		this.onclose && this.onclose()
+	}
+}
+
+/**
+ * Hack class that mimics the DataChannel class for easy integration with filetransfer.js when using signalling-server as relay
+ */
+class RelayChannel {
+	binaryType = "arraybuffer"
+	bufferedAmount = 0
+
+	messageListeners = []
+
+	constructor(rtcSession) {
+		this.rtcSession = rtcSession
+		this.rtcSession.onbinarydata = this.onmessage
+	}
+
+	onbinarydata(data) {
+
+	}
+
+	send() {
+
+	}
+
+	addEventListener(event, fn) {
+		this.messageListeners.push({ event, fn })
 	}
 }
 
@@ -325,85 +379,12 @@ export class RtcSession {
 	peerConnection = undefined
 
 	constructor(sessionId, peerConnection) {
-		// if(!ws) {
-		// 	throw "[RtcSession] RtcSession created before calling createWebSocket. WebSocket object has not yet been created."
-		// }
 		this.sessionId = sessionId
 		this.peerConnection = peerConnection
 	}
 
-	// async _recv() {
-	// 	if(this.closed) {
-	// 		console.warn("[RtcSession] _recv was called after close")
-	// 		return
-	// 	}
-	// 	console.log("rtcRecv")
-	// 	const peerConnection = new RTCPeerConnection(RTC_CONF);
-	// 	this.peerConnection = peerConnection;
-
-	// 	ws.send(JSON.stringify({
-	// 		type: 0,
-	// 		id: this.sessionId
-	// 	}))
-	// 	this.has_logged_in = true
-	
-	// 	let recipientId;
-	
-	// 	peerConnection.addEventListener("icecandidate", e => {
-	// 		console.debug(e)
-	// 		if (e.candidate) {
-	// 			console.log("peerConnection Got ICE candidate:", e.candidate)
-	// 			ws.send(JSON.stringify({
-	// 				type: 3, sessionId: this.sessionId, candidate: e.candidate, recipientId
-	// 			}))
-	// 		}
-	// 	})
-
-	// 	this.onmessage = async data => {
-	// 		if (data.type == 11 && data.offer) {
-	// 			console.log("Got offer:", data.offer)
-	// 			peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
-	// 			const answer = await peerConnection.createAnswer();
-	// 			await peerConnection.setLocalDescription(answer);
-	// 			console.log("Sending answer:", answer)
-	// 			recipientId = data.callerId
-	// 			ws.send(JSON.stringify({
-	// 				type: 2, sessionId: this.sessionId, answer, recipientId
-	// 			}));
-	// 		}
-	// 		else if (data.type == 13 && data.candidate) {
-	// 			console.log("Got candidate:", data.candidate)
-	// 			await peerConnection.addIceCandidate(data.candidate)
-	// 		}
-	// 	}
-	
-	// 	return new Promise((resolve, reject) => {
-	// 		let iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
-	// 			console.log("RECV iceconnectionstatechange", e)
-	// 			if(e.target.connectionState == "connected") {
-	// 				peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
-	// 				return
-	// 			}
-	// 			else if(e.target.connectionState == "disconnected") {
-	// 				reject(new Error("Remote peer disconnected"))
-	// 			}
-	// 			else if(e.target.connectionState == "failed") {
-	// 				reject(new PeerConnectionError())
-	// 			}
-	// 		})
-
-	// 		peerConnection.addEventListener("datachannel", e => {
-	// 			const channel = e.channel
-	// 			console.log("Got datachannel!", channel)
-	// 			channel.binaryType = "arraybuffer"
-	// 			peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
-	// 			resolve(channel)
-	// 		})
-	// 	})
-	// }
-
 	async _call(recipientId) {
-		if(this.closed) {
+		if (this.closed) {
 			console.warn("[RtcSession] _call was called after close")
 			return null
 		}
@@ -412,21 +393,21 @@ export class RtcSession {
 		this.peerConnection = peerConnection;
 
 		ws.send(JSON.stringify({	// login
-			type: 0,
+			type: CPKT_LOGIN,
 			id: this.sessionId
 		}))
 		this.has_logged_in = true
-	
+
 		const icecandidatelistener = peerConnection.addEventListener("icecandidate", e => {
 			console.log(e)
 			if (e.candidate) {
 				console.log("peerConnection Got ICE candidate:", e.candidate)
 				ws.send(JSON.stringify({
-					type: 3, candidate: e.candidate, recipientId, sessionId: this.sessionId
+					type: CPKT_CANDIDATE, candidate: e.candidate, recipientId, sessionId: this.sessionId
 				}))
 			}
 		})
-	
+
 		/*
 		* Apparently, now when not waiting for ws.open anymore, data channel needs to be
 		* created before peerConnection.setLocalDescription is called. 
@@ -435,57 +416,62 @@ export class RtcSession {
 
 		let sendChannel = peerConnection.createDataChannel("sendDataChannel")
 		sendChannel.binaryType = "arraybuffer"
-	
+
 		return new Promise(async (resolve, reject) => {
 			this.onmessage = async data => {
-				if (data.type == 12 && data.answer) {
+				if (data.type == SPKT_ANSWER && data.answer) {
 					console.log("Got answer:", data.answer)
 					const remoteDesc = data.answer;
 					await peerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc));
 				}
-				else if (data.type == 13 && data.candidate) {
+				else if (data.type == SPKT_CANDIDATE && data.candidate) {
 					console.log("Got candidate:", data.candidate)
 					await peerConnection.addIceCandidate(data.candidate)
 				}
 				else {
-					if(!data.success) {
+					if (!data.success) {
 						reject(new Error(data.msg))
 					}
 				}
 			}
-		
+
 			const iceconnectionstatechangeListener = peerConnection.addEventListener("iceconnectionstatechange", async e => {
 				console.log("CALL iceconnectionstatechange", e)
-				if(e.target.connectionState == "connected") {
+				if (e.target.connectionState == "connected") {
 					peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
 					peerConnection.removeEventListener("icecandidatelistener", icecandidatelistener)
 					return
 				}
-				else if(e.target.connectionState == "disconnected") {
+				else if (e.target.connectionState == "disconnected") {
 					reject(new Error("Remote peer disconnected"))
 				}
-				else if(e.target.connectionState == "failed") {
-					reject(new PeerConnectionError())
+				else if (e.target.connectionState == "failed") {
+					if (useFallback) {
+						resolve(new RelayChannel())
+					}
+					else {
+						reject(new PeerConnectionError())
+					}
 				}
 			})
-	
+
 			const offer = await peerConnection.createOffer();
 			await peerConnection.setLocalDescription(offer);
 			console.log("Sending offer:", offer)
 			ws.send(JSON.stringify({
-				type: 1, offer, recipientId, callerId: this.sessionId
+				type: CPKT_OFFER, offer, recipientId, callerId: this.sessionId
 			}));
 
 			sendChannel.addEventListener("open", e => {
 				console.log("datachannel open", e)
 				resolve(sendChannel)
 			})
-	
+
 			sendChannel.addEventListener("close", e => {
 				console.log("datachannel close", e)
 				reject(new Error("Data channel closed"))
 			})
-	
+
 			sendChannel.addEventListener("error", e => {
 				console.log("datachannel error", e)
 				reject(e)
@@ -494,7 +480,7 @@ export class RtcSession {
 	}
 
 	async waitForWebsocket() {
-		if(ws && ws.readyState == WebSocket.OPEN) {
+		if (ws && ws.readyState == WebSocket.OPEN) {
 			return
 		}
 		else {
@@ -506,25 +492,20 @@ export class RtcSession {
 		}
 	}
 
-	// async recv() {
-	// 	await this.waitForWebsocket()
-	// 	return this._recv()
-	// }
-	
-	async call(recipientId) {
+	async call(recipientId, useFallback) {
 		await this.waitForWebsocket()
-		return this._call(recipientId)
+		return this._call(recipientId, useFallback)
 	}
 
 	close() {
 		console.log("[RtcSession] close")
 		this.closed = true
-		if(this.peerConnection) {
+		if (this.peerConnection) {
 			this.peerConnection.close()
 		}
-		if(ws && ws.readyState == WebSocket.OPEN && this.has_logged_in) {
+		if (ws && ws.readyState == WebSocket.OPEN && this.has_logged_in) {
 			ws.send(JSON.stringify({		// logout
-				type: 4, sessionId: this.sessionId
+				type: CPKT_LOGOUT, sessionId: this.sessionId
 			}))
 		}
 		else {

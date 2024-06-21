@@ -1,5 +1,17 @@
 import { WebSocketServer } from "ws";
 
+const CPKT_LOGOUT = -1
+const CPKT_LOGIN = 0
+const CPKT_OFFER = 1
+const CPKT_ANSWER = 2
+const CPKT_CANDIDATE = 3
+const CPKT_RELAY = 4
+
+const SPKT_OFFER = 11
+const SPKT_ANSWER = 12
+const SPKT_CANDIDATE = 13
+const SPKT_RELAY = 14
+
 const wss = new WebSocketServer({
     host: "0.0.0.0",
     port: 8001,
@@ -15,9 +27,14 @@ const deleteSession = sessionId => {
 wss.on("connection", conn => {
     console.log("conn");
 
-    conn.on("message", message => {
+    conn.on("message", (data, isBinary) => {
         try {
-            handleMessage(conn, message)
+            if (!isBinary) {
+                handleTextMessage(conn, data)
+            }
+            else {
+                handleBinaryData(conn, data)
+            }
         } catch (err) {
             console.error(err);
             conn.close();
@@ -49,7 +66,7 @@ const closeConnWithReason = (conn, reason) => {
 /**
  * @param {WebSocket} conn
  */
-function handleMessage(conn, message) {
+function handleTextMessage(conn, message) {
     if (message == ".") return   // Keepalive
 
     let data;
@@ -61,7 +78,7 @@ function handleMessage(conn, message) {
     }
     //console.log(data);
 
-    if (data.type == 0) { // login
+    if (data.type == CPKT_LOGIN) { // login
 
         console.log("Login requested with session ", data.id)
         if (!data.id) return closeConnWithReason(conn, "[login] Didn't specify id");
@@ -85,7 +102,7 @@ function handleMessage(conn, message) {
 
     if (!conn._session) return conn.close(); // client has to send type 0 first >:(
 
-    if (data.type == 1) { // offer
+    if (data.type == CPKT_OFFER) { // offer
         // console.log("offer", conn._session.id + " -> " + data.recipientId, data);
         if (!data.offer) return closeConnWithReason(conn, "[offer] Didn't specify offer");
         if (!data.callerId) return closeConnWithReason(conn, "[offer] Didn't specify callerId");
@@ -94,7 +111,7 @@ function handleMessage(conn, message) {
         let recipientConn;
         if ((recipientConn = sessions.get(data.recipientId))) {
             recipientConn.send(JSON.stringify({
-                type: 11, // offer type
+                type: SPKT_OFFER, // offer type
                 targetId: data.recipientId,
                 callerId: data.callerId,
                 offer: data.offer,
@@ -109,14 +126,14 @@ function handleMessage(conn, message) {
                 msg: "Quick Share could not be found. Do not close the browser window before the transfer is complete.",
             }));
         }
-    } else if (data.type == 2) { // answer
+    } else if (data.type == CPKT_ANSWER) { // answer
         // console.log("answer", conn._session.id + " -> " + data.recipientId, data);
         if (!data.answer) return closeConnWithReason(conn, "[answer] Didn't specify answer");
 
         let recipientConn;
         if ((recipientConn = sessions.get(data.recipientId))) {
             recipientConn.send(JSON.stringify({
-                type: 12, // answer type
+                type: SPKT_ANSWER, // answer type
                 targetId: data.recipientId,
                 answer: data.answer,
             }));
@@ -130,7 +147,7 @@ function handleMessage(conn, message) {
                 msg: "recipient does not exist",
             }));
         }
-    } else if (data.type == 3) { // candidate
+    } else if (data.type == CPKT_CANDIDATE) { // candidate
         // console.log("candidate", conn._session.id + " -> " + data.recipientId, data);
         if (!data.candidate) return closeConnWithReason(conn, "[candidate] Didn't specify candidate");
         if (!data.sessionId) return closeConnWithReason(conn, "[candidate] Didn't specify sessionId");
@@ -139,11 +156,15 @@ function handleMessage(conn, message) {
         let recipientConn;
         if ((recipientConn = sessions.get(data.recipientId))) {
             recipientConn.send(JSON.stringify({
-                type: 13, // answer type
+                type: SPKT_CANDIDATE, // answer type
                 targetId: data.recipientId,
                 candidate: data.candidate,
                 callerId: data.sessionId
             }));
+
+            conn._session.hasTriedP2PWith = recipientConn
+            recipientConn._session.hasTriedP2PWith = conn
+
             return conn.send(JSON.stringify({
                 targetId: data.sessionId, success: true, type: data.type,
             }));
@@ -154,12 +175,14 @@ function handleMessage(conn, message) {
                 msg: "recipient does not exist",
             }));
         }
-    } else if (data.type == 4) { // logout
+    } else if (data.type == CPKT_LOGOUT) { // logout
         if (!data.sessionId) return closeConnWithReason(conn, "[logout] Didn't specify sessionId")
         if (!conn._session.ids.find(o => o === data.sessionId))
             return closeConnWithReason(conn, "[logout] Tried to logout id not owned by them");
 
         console.log("[logout]", data.sessionId);
         deleteSession(data.sessionId)
+    } else if (data.type == 5) { // relay data
+        // if (!data.)
     }
 }
