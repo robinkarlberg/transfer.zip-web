@@ -48,7 +48,7 @@ export const QuickShareProvider = () => {
             statistics: [],
             k,
             isRealtime: true,// || worker instanceof WebRtc.RtcSession
-            link: `${window.location.origin}#${k},${worker.sessionId},R`,
+            link: `${window.location.origin}/#${k},${worker.sessionId},R`,
             oncandidate: undefined,
             onconnection: undefined,
             onfilebegin: undefined,

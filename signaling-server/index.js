@@ -106,7 +106,7 @@ function handleMessage(conn, message) {
             console.log("Recipient did not exist:", data.recipientId)
             return conn.send(JSON.stringify({
                 targetId: data.callerId, success: false, type: data.type,
-                msg: "recipient does not exist",
+                msg: "Quick Share could not be found. Do not close the browser window before the transfer is complete.",
             }));
         }
     } else if (data.type == 2) { // answer

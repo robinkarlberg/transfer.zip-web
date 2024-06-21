@@ -12,7 +12,7 @@ export default function QRLink({ link, className, children }) {
     }
 
     return (
-        <div className={className} style={{ position: "relative", maxWidth: "380px" }}>
+        <div className={className} style={{ position: "relative", minWidth: "283px", maxWidth: "380px" }}>
             <QRCode style={{ height: "auto", maxWidth: "100%", width: "100%", padding: "24px" }}
                 className={"bg-white mb-3 rounded " + (children && "opacity-0")}
                 size={128}

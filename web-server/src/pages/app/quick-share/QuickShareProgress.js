@@ -20,6 +20,7 @@ import { QuickShareContext } from "../../../providers/QuickShareProvider"
 import * as zip from "@zip.js/zip.js";
 import PeerConnectionErrorModal from "../../../components/modals/PeerConnectionErrorModal"
 import Checkmark from "../../../components/app/Checkmark"
+import Cross from "../../../components/app/Cross"
 
 const TRANSFER_STATE_IDLE = "idle"
 const TRANSFER_STATE_CONNECTING = "connecting"
@@ -29,7 +30,7 @@ const TRANSFER_STATE_FAILED = "failed"
 
 export default function QuickShareProgress({ }) {
     const { newQuickShare, downloadQuickShare, createFileStream } = useContext(QuickShareContext)
-    const { setErrorMessage } = useContext(ApplicationContext)
+    // const { setErrorMessage } = useContext(ApplicationContext)
 
     const navigate = useNavigate()
     const { state } = useLocation()
@@ -41,6 +42,7 @@ export default function QuickShareProgress({ }) {
 
     const [quickShareLink, setQuickShareLink] = useState(null)
     const [filesProgress, setFilesProgress] = useState(null)
+    const [errorMessage, setErrorMessage] = useState(null)
 
     const [filesDone, setFilesDone] = useState(0)
     const [transferState, _setTransferState] = useState(TRANSFER_STATE_IDLE)
@@ -70,16 +72,17 @@ export default function QuickShareProgress({ }) {
                     <span className={"text-nowrap text-truncate me-1 " + (mock && "placeholder user-select-none")}>{file.name}</span>
                     <span><nobr><small className={"text-secondary " + (mock && "placeholder user-select-none")}>{humanFileSize(file.size/* * progress*/, true)}</small></nobr></span>
                 </div>
-                <ProgressBar className={"flex-grow-1 " + (mock && "placeholder placeholder-xs bg-secondary")} now={progress * 100} style={{ height: "8px" }} />
+                <ProgressBar variant={transferState != TRANSFER_STATE_TRANSFERRING && "secondary"} className={"flex-grow-1 " + (mock && "placeholder placeholder-xs bg-secondary")} now={progress * 100} style={{ height: "8px" }} />
             </div>
         )
     }
 
     const qrChildren = (
         <div className="qr-children-container bg-body rounded w-100 overflow-hidden " style={{ position: "relative", aspectRatio: "1/1" }}>
-            {transferState == TRANSFER_STATE_FINISHED && (
+            {(transferState == TRANSFER_STATE_FINISHED || transferState == TRANSFER_STATE_FAILED) && (
                 <div className="w-100 h-100 d-flex justify-content-center align-items-center z-2 shadow" style={{ position: "absolute" }}>
-                    <Checkmark className="text-success" />
+                    {transferState == TRANSFER_STATE_FAILED && <Cross className="text-danger" />}
+                    {transferState == TRANSFER_STATE_FINISHED && <Checkmark className="text-success" />}
                 </div>
             )}
             <div className="d-flex flex-column p-3" style={{ position: "relative", transform: `translate(0, ${translate}px)`, transition: "transform 0.5s" }}>
@@ -200,6 +203,7 @@ export default function QuickShareProgress({ }) {
                     setTransferState(TRANSFER_STATE_FAILED)
                     if (err instanceof WebRtc.PeerConnectionError) {
                         setShowPeerConnectionError(true)
+                        // setErrorMessage("Peer connection failed.")
                     }
                     else {
                         setErrorMessage(err.message || "Sorry an unknown error has occured! Check back later and we should hopefully have fixed it.")
@@ -270,13 +274,18 @@ export default function QuickShareProgress({ }) {
                 <div style={{ maxWidth: "520px" }}>
                     <h2 className="mb-3 d-none d-lg-block">Quick Share</h2>
                     {/* <img className="mb-2" src={logo} height={"60em"}></img> */}
-                    <ol className="ps-3">
-                        {/* <li>Choose if you want to send or receive files.</li> */}
-                        <li className={transferState == TRANSFER_STATE_IDLE || "text-body-tertiary"}>Scan the QR code or send the link to the recipient. {transferState == TRANSFER_STATE_IDLE && spinner}</li>
-                        <li className={transferState == TRANSFER_STATE_CONNECTING || "text-body-tertiary"}>Wait for your devices to establish a connection. {transferState == TRANSFER_STATE_CONNECTING && spinner}</li>
-                        <li className={transferState == TRANSFER_STATE_TRANSFERRING || "text-body-tertiary"}>Stand by while the files are being transfered. {transferState == TRANSFER_STATE_TRANSFERRING && spinner}</li>
-                        <li className={transferState == TRANSFER_STATE_FINISHED|| "text-body-tertiary"}>Done!</li>
-                    </ol>
+                    {!errorMessage ?
+                        (<ol className="ps-3">
+                            {/* <li>Choose if you want to send or receive files.</li> */}
+                            <li className={transferState == TRANSFER_STATE_IDLE || "text-body-tertiary"}>Scan the QR code or send the link to the recipient. {transferState == TRANSFER_STATE_IDLE && spinner}</li>
+                            <li className={transferState == TRANSFER_STATE_CONNECTING || "text-body-tertiary"}>Wait for your devices to establish a connection. {transferState == TRANSFER_STATE_CONNECTING && spinner}</li>
+                            <li className={transferState == TRANSFER_STATE_TRANSFERRING || "text-body-tertiary"}>Stand by while the files are being transfered. {transferState == TRANSFER_STATE_TRANSFERRING && spinner}</li>
+                            <li className={transferState == TRANSFER_STATE_FINISHED || "text-body-tertiary"}>Done!</li>
+                        </ol>)
+                        :
+                        <p className="text-danger"><b className="text-danger">Error: </b>{errorMessage}</p>
+                    }
+
                 </div>
             </div>
         </div>
