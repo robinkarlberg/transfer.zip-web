@@ -1,4 +1,4 @@
-import { decodeString } from "./utils";
+import { decodeString, encodeString } from "./utils";
 
 export class PeerConnectionError extends Error {
 	constructor() {
@@ -37,11 +37,15 @@ const CPKT_OFFER = 1
 const CPKT_ANSWER = 2
 const CPKT_CANDIDATE = 3
 const CPKT_RELAY = 4
+const CPKT_SWITCH_TO_FALLBACK = 5
+const CPKT_SWITCH_TO_FALLBACK_ACK = 6
 
 const SPKT_OFFER = 11
 const SPKT_ANSWER = 12
 const SPKT_CANDIDATE = 13
 const SPKT_RELAY = 14
+const SPKT_SWITCH_TO_FALLBACK = 15
+const SPKT_SWITCH_TO_FALLBACK_ACK = 16
 
 let WS_URL
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
@@ -99,6 +103,7 @@ export const createWebSocket = () => {
 	if (ws && !isWsSupposedToClose) return
 	isWsSupposedToClose = false;
 	ws = new WebSocket(WS_URL)
+	ws.binaryType = "arraybuffer"
 
 	let keepAliveIntervalId = undefined
 
@@ -138,20 +143,27 @@ export const createWebSocket = () => {
 	})
 
 	ws.addEventListener("message", e => {
-		if (e instanceof ArrayBuffer) {
-            const packetDataView = new DataView(e.data)
-            const packetId = packetDataView.getInt8(0)
-			if(packetId == SPKT_RELAY) {
-				const targetId = decodeString(Array.from({ length: 36 }, (_, i) => i).map(x => packetDataView.getUint8(i + 1)))
+		// console.log(typeof (e.data))
+		console.log(e)
+		if (e.data instanceof ArrayBuffer) {
+			const packet = new Uint8Array(e.data)
+			const packetDataView = new DataView(packet.buffer)
+			const packetId = packetDataView.getInt8(0)
+			if (packetId == SPKT_RELAY) {
+				const targetId = decodeString(packet.subarray(1, 1 + 36))
+				const callerId = decodeString(packet.subarray(1 + 36, 1 + 36 + 36))
 				// const targetId = packetDataView.
 				for (let rtcSession of activeRtcSessions) {
 					if (rtcSession.sessionId === targetId) {
-						rtcSession.onbinarydata && rtcSession.onbinarydata(data)
+						rtcSession.onbinarydata && rtcSession.onbinarydata(e.data.slice(1 + 36 + 36), callerId)
 					}
 				}
 			}
+			else {
+				console.warn("[WebRtc] Unknown binary packet id:", packetId)
+			}
 		}
-		else if (e instanceof String) {
+		else if (typeof (e.data) == "string") {
 			const data = JSON.parse(e.data)
 			console.debug("[WebRtc] ws text message:", data)
 			if (data.targetId == undefined) {
@@ -159,10 +171,12 @@ export const createWebSocket = () => {
 				return
 			}
 			for (let rtcSession of activeRtcSessions) {
-				if (/*rtcSession instanceof RtcListener || */rtcSession.sessionId === data.targetId) {
+				if (rtcSession.sessionId === data.targetId) {
 					rtcSession.onmessage && rtcSession.onmessage(data)
 				}
 			}
+		} else {
+			console.warn("[WebRtc] Unknown message type:", typeof (e.data))
 		}
 	})
 
@@ -180,7 +194,56 @@ export const closeWebSocket = () => {
 	}
 }
 
+/**
+ * Hack class that mimics the DataChannel class for easy integration with filetransfer.js when using signaling-server as relay
+ */
+class RelayChannel {
+	binaryType = "arraybuffer"
+	bufferedAmount = 0
+
+	constructor(rtcSession, targetId) {
+		this.rtcSession = rtcSession
+		this.targetId = targetId
+		this.messageListeners = []
+		this.rtcSession.onbinarydata = (data) => {
+			this.onbinarydata.bind(this, data)()
+		}
+	}
+
+	onbinarydata = function(data) {
+		for (const messageListener of this.messageListeners) {
+			messageListener({ data })	// Mimic Event object
+		}
+	}
+
+	send(data) {
+		if (!(data instanceof Uint8Array)) {
+			return console.error("[WebRtc] [RelayChannel] send: data is not of type Uint8Array!! Got", typeof (data), "instead:", data)
+		}
+		const packet = new Uint8Array(1 + 36 + 36 + data.byteLength)
+		const packetDataView = new DataView(packet.buffer)
+		packetDataView.setInt8(0, CPKT_RELAY)
+		// encodeString(this.targetId).forEach((byte, i) => {
+		// 	packetDataView.setUint8(1 + i, byte)
+		// })
+		// encodeString(this.rtcSession.sessionId).forEach((byte, i) => {
+		// 	packetDataView.setUint8(1 + 36 + i, byte)
+		// })
+		packet.set(encodeString(this.targetId), 1)
+		packet.set(encodeString(this.rtcSession.sessionId), 1 + 36)
+		packet.set(data, 1 + 36 + 36)
+		console.log("[WebRtc] [RelayChannel] send packet:", packet, "data:", data)
+		ws.send(packet)
+	}
+
+	addEventListener(event, fn) {
+		if(event == "message") this.messageListeners.push(fn)
+		else console.warn("[WebRtc] [RelayChannel] addEventListener: Unknown event name:", event)
+	}
+}
+
 export class RtcListener {
+	onbinarydata = undefined
 	onmessage = undefined
 	oncandidate = undefined
 	onrtcsession = undefined
@@ -211,32 +274,40 @@ export class RtcListener {
 		}
 	}
 
+	log(...o) {
+		console.log(`[WebRtc] [RtcListener(${this.sessionId})]`, ...o)
+	}
+
+	warn(...o) {
+		console.warn(`[WebRtc] [RtcListener(${this.sessionId})]`, ...o)
+	}
+
 	async _listen() {
 		if (this.closed) {
-			console.warn("[RtcListener] _recv was called after close")
+			this.warn("_recv was called after close")
 			return
 		}
 		this.try_login()
 		this.onmessage = async data => {
 			if (data.type == SPKT_OFFER && data.offer) {
-				console.log("Got offer:", data.offer)
+				this.log("Got offer:", data.offer)
 				let recipientId = data.callerId
 
 				let entry = this.callerIdPeerConnectionEntries.find(x => x.callerId === x.callerId)
 				if (!entry) {
-					entry = { callerId: data.callerId, peerConnection: new RTCPeerConnection(RTC_CONF) }
+					entry = { callerId: data.callerId, peerConnection: new RTCPeerConnection(RTC_CONF), useFallback: false }
 
 					const icecandidatelistener = entry.peerConnection.addEventListener("icecandidate", e => {
 						if (e.candidate) {
-							console.log("peerConnection Got ICE candidate:", e.candidate)
+							this.log("peerConnection Got ICE candidate:", e.candidate)
 							ws.send(JSON.stringify({
-								type: CPKT_CANDIDATE, sessionId: this.sessionId, candidate: e.candidate, recipientId
+								type: CPKT_CANDIDATE, callerId: this.sessionId, candidate: e.candidate, recipientId
 							}))
 						}
 					})
 
 					const iceconnectionstatechangeListener = entry.peerConnection.addEventListener("iceconnectionstatechange", async e => {
-						console.log("RECV iceconnectionstatechange", e)
+						this.log("RECV iceconnectionstatechange", e)
 						if (e.target.connectionState == "connected") {
 							entry.peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
 							return
@@ -252,10 +323,6 @@ export class RtcListener {
 					})
 
 					const datachannellistener = entry.peerConnection.addEventListener("datachannel", e => {
-						const channel = e.channel
-						console.log("[RtcListener] Got datachannel!", channel)
-						channel.binaryType = "arraybuffer"
-
 						entry.peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
 						entry.peerConnection.removeEventListener("icecandidate", icecandidatelistener)
 						entry.peerConnection.removeEventListener("datachannel", datachannellistener)
@@ -263,7 +330,29 @@ export class RtcListener {
 						// remove entry from entry list now that it is fully set up
 						this.callerIdPeerConnectionEntries = this.callerIdPeerConnectionEntries.filter(x => x.callerId != entry.callerId)
 
-						this.onrtcsession && this.onrtcsession(newRtcSession(this.sessionId + entry.callerId, entry.peerConnection), channel)
+						if (!e.channel) {	// got SPKT_SWITCH_TO_FALLBACK (relay request)
+							// console.log("SADDSA", e, e.channel)
+							// SPKT_SWITCH_TO_FALLBACK gives us a new sessionId for relay communication
+							const newClientRtcSession = newRtcSession(e.detail.newRtcSessionId, null)
+							newClientRtcSession.try_login()
+							
+							ws.send(JSON.stringify({
+								type: CPKT_SWITCH_TO_FALLBACK_ACK, callerId: newClientRtcSession.sessionId, recipientId: entry.callerId
+							}))
+
+							this.log("Got RelayChannel!")
+							this.onrtcsession && this.onrtcsession(newClientRtcSession, new RelayChannel(newClientRtcSession, entry.callerId))
+						}
+						else {
+							const channel = e.channel
+							this.log("Got DataChannel!", channel)
+							channel.binaryType = "arraybuffer"
+
+							// new rtc session id doesn't matter in this case, as it never logs in
+							// the RtcSession object is only created to keep track of the connection(?)
+							// idk dont remember but i think so
+							this.onrtcsession && this.onrtcsession(newRtcSession(this.sessionId + entry.callerId, entry.peerConnection), channel)
+						}
 					})
 
 					this.callerIdPeerConnectionEntries.push(entry)
@@ -271,22 +360,40 @@ export class RtcListener {
 				entry.peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
 				const answer = await entry.peerConnection.createAnswer();
 				await entry.peerConnection.setLocalDescription(answer);
-				console.log("Sending answer:", answer)
+				this.log("Sending answer:", answer)
 				ws.send(JSON.stringify({
 					type: CPKT_ANSWER, sessionId: this.sessionId, answer, recipientId
 				}));
 			}
 			else if (data.type == SPKT_CANDIDATE && data.candidate) {
-				const entry = this.callerIdPeerConnectionEntries.find(x => x.callerId == x.callerId)
+				const entry = this.callerIdPeerConnectionEntries.find(x => x.callerId == data.callerId)
 				if (!entry) {
-					console.warn("Caller id not found in callerIdPeerConnectionEntries:", data.callerId)
+					this.warn("Caller id not found in callerIdPeerConnectionEntries:", data.callerId)
 					return
 				}
 
-				console.log(`Got candidate from ${data.callerId}:`, data.candidate)
+				this.log(`Got candidate from ${data.callerId}:`, data.candidate)
 				this.oncandidate && this.oncandidate()
 				await entry.peerConnection.addIceCandidate(data.candidate)
 			}
+			else if (data.type == SPKT_SWITCH_TO_FALLBACK) {
+				let entry = this.callerIdPeerConnectionEntries.find(x => x.callerId === x.callerId)
+
+				// This is so ugly fuuuuuuuuuuck
+				entry.peerConnection.dispatchEvent(new CustomEvent("datachannel", {
+					detail: { newRtcSessionId: data.newRtcSessionId }
+				}))
+			}
+		}
+
+		this.onbinarydata = (data, callerId) => {
+			const entry = this.callerIdPeerConnectionEntries.find(x => x.callerId == data.callerId)
+			if (!entry) {
+				this.log("Got switch to fallback request, but id not found in callerIdPeerConnectionEntries:", data.callerId)
+				return
+			}
+			entry.useFallback = true
+			this.log("Switching to fallback. Request from callerId:", callerId)
 		}
 	}
 
@@ -317,7 +424,7 @@ export class RtcListener {
 	}
 
 	close() {
-		console.log("[RtcListener] close")
+		this.log("close")
 		this.closed = true
 		if (ws && ws.readyState == WebSocket.OPEN && this.has_logged_in) {
 			ws.send(JSON.stringify({	// logout
@@ -325,7 +432,7 @@ export class RtcListener {
 			}))
 		}
 		else {
-			console.warn("[RtcListener] close was called but ws is invalid")
+			this.warn("close was called but ws is invalid")
 		}
 		for (let entry of this.callerIdPeerConnectionEntries) {
 			entry.peerConnection.close()
@@ -333,33 +440,6 @@ export class RtcListener {
 		this.callerIdPeerConnectionEntries = []
 		this._onclose && this._onclose()
 		this.onclose && this.onclose()
-	}
-}
-
-/**
- * Hack class that mimics the DataChannel class for easy integration with filetransfer.js when using signalling-server as relay
- */
-class RelayChannel {
-	binaryType = "arraybuffer"
-	bufferedAmount = 0
-
-	messageListeners = []
-
-	constructor(rtcSession) {
-		this.rtcSession = rtcSession
-		this.rtcSession.onbinarydata = this.onmessage
-	}
-
-	onbinarydata(data) {
-
-	}
-
-	send() {
-
-	}
-
-	addEventListener(event, fn) {
-		this.messageListeners.push({ event, fn })
 	}
 }
 
@@ -383,7 +463,21 @@ export class RtcSession {
 		this.peerConnection = peerConnection
 	}
 
-	async _call(recipientId) {
+	try_login() {
+		if (this.closed) {
+			console.warn("[RtcSession] try_login was called after close")
+			return
+		}
+		if (!this.has_logged_in) {
+			ws.send(JSON.stringify({	// login
+				type: CPKT_LOGIN,
+				id: this.sessionId
+			}))
+			this.has_logged_in = true
+		}
+	}
+
+	async _call(recipientId, useFallback) {
 		if (this.closed) {
 			console.warn("[RtcSession] _call was called after close")
 			return null
@@ -392,18 +486,14 @@ export class RtcSession {
 		const peerConnection = new RTCPeerConnection(RTC_CONF);
 		this.peerConnection = peerConnection;
 
-		ws.send(JSON.stringify({	// login
-			type: CPKT_LOGIN,
-			id: this.sessionId
-		}))
-		this.has_logged_in = true
+		this.try_login()
 
 		const icecandidatelistener = peerConnection.addEventListener("icecandidate", e => {
 			console.log(e)
 			if (e.candidate) {
 				console.log("peerConnection Got ICE candidate:", e.candidate)
 				ws.send(JSON.stringify({
-					type: CPKT_CANDIDATE, candidate: e.candidate, recipientId, sessionId: this.sessionId
+					type: CPKT_CANDIDATE, candidate: e.candidate, recipientId, callerId: this.sessionId
 				}))
 			}
 		})
@@ -428,6 +518,9 @@ export class RtcSession {
 					console.log("Got candidate:", data.candidate)
 					await peerConnection.addIceCandidate(data.candidate)
 				}
+				else if (data.type == SPKT_SWITCH_TO_FALLBACK_ACK) {
+					resolve(new RelayChannel(this, data.callerId))
+				}
 				else {
 					if (!data.success) {
 						reject(new Error(data.msg))
@@ -447,7 +540,9 @@ export class RtcSession {
 				}
 				else if (e.target.connectionState == "failed") {
 					if (useFallback) {
-						resolve(new RelayChannel())
+						ws.send(JSON.stringify({
+							type: CPKT_SWITCH_TO_FALLBACK, recipientId, callerId: this.sessionId
+						}))
 					}
 					else {
 						reject(new PeerConnectionError())
@@ -468,6 +563,7 @@ export class RtcSession {
 			})
 
 			sendChannel.addEventListener("close", e => {
+				if (useFallback) return
 				console.log("datachannel close", e)
 				reject(new Error("Data channel closed"))
 			})

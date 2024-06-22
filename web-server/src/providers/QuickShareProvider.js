@@ -127,7 +127,7 @@ export const QuickShareProvider = () => {
             // setQuickShares(quickShares.fill(x => x.id != transfer.id))
             // updateAllTransfersList(rtTransfers.filter(x => x.id != transfer.id))
         }
-        const channel = await rtcSession.call(recipientId)
+        const channel = await rtcSession.call(recipientId, true)
         const fileTransfer = new FileTransfer(channel, key)
 
         return new Promise((resolve, reject) => {

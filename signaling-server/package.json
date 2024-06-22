@@ -10,6 +10,7 @@
   "type": "module",
   "license": "ISC",
   "dependencies": {
+    "uuid": "^10.0.0",
     "ws": "^8.13.0"
   }
 }

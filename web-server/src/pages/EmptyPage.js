@@ -7,6 +7,13 @@ export default function EmptyPage({ }) {
 
     const navigate = useNavigate()
 
+    useEffect(() => {
+        const timeoutId = setTimeout(() => navigate("/quick-share"), 5000)
+        
+        return () => {
+            clearTimeout(timeoutId)
+        }
+    }, [])
 
     useEffect(() => {
         if (window.location.hash) {  // User has been sent a link, assuming action be taken

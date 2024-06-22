@@ -19,16 +19,22 @@ export const AuthProvider = () => {
             setUserStorage(resStorage.storage)
         }
         catch (err) {
-            if(err.message == "no token provided") {
-                setUser({
-                    id: null,
-                    email: null,
-                    plan: "free"
-                })
-            }
-            else {
-                setUser(null)
-            }
+            setUser({
+                id: null,
+                email: null,
+                plan: "free"
+            })
+            // if(err.message == "no token provided") {
+            //     setUser({
+            //         id: null,
+            //         email: null,
+            //         plan: "free"
+            //     })
+            // }
+            // else {
+                
+            //     setUser(null)
+            // }
         }
     })
 

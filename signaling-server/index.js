@@ -1,4 +1,5 @@
 import { WebSocketServer } from "ws";
+import { v4 as uuidv4 } from 'uuid';
 
 const CPKT_LOGOUT = -1
 const CPKT_LOGIN = 0
@@ -6,11 +7,26 @@ const CPKT_OFFER = 1
 const CPKT_ANSWER = 2
 const CPKT_CANDIDATE = 3
 const CPKT_RELAY = 4
+const CPKT_SWITCH_TO_FALLBACK = 5
+const CPKT_SWITCH_TO_FALLBACK_ACK = 6
 
 const SPKT_OFFER = 11
 const SPKT_ANSWER = 12
 const SPKT_CANDIDATE = 13
 const SPKT_RELAY = 14
+const SPKT_SWITCH_TO_FALLBACK = 15
+const SPKT_SWITCH_TO_FALLBACK_ACK = 16
+
+const textEnc = new TextEncoder()
+const textDec = new TextDecoder()
+
+const encodeString = (str) => {
+    return textEnc.encode(str)
+}
+
+const decodeString = (arr) => {
+    return textDec.decode(arr)
+}
 
 const wss = new WebSocketServer({
     host: "0.0.0.0",
@@ -61,6 +77,31 @@ wss.on("error", e => {
 const closeConnWithReason = (conn, reason) => {
     console.log("Closing conn: " + reason)
     conn.close()
+}
+
+function handleBinaryData(conn, _data) {
+    const packet = new Uint8Array(_data)
+    const packetDataView = new DataView(packet.buffer)
+    const packetId = packetDataView.getInt8(0)
+    
+    if (packetId == CPKT_RELAY) {
+        const targetId = decodeString(packet.subarray(1, 1 + 36))
+        const callerId = decodeString(packet.subarray(1 + 36, 1 + 36 + 36))
+
+        if (!sessions.get(callerId)) return closeConnWithReason(conn, "[CPKT_RELAY] Specified callerId does not exist", callerId)
+
+        let recipientConn;
+        if((recipientConn = sessions.get(targetId))) {
+            packetDataView.setInt8(0, SPKT_RELAY)   // Change to server packet type before sending back
+            recipientConn.send(packet)
+        }
+        else {
+            return closeConnWithReason(conn, "[CPKT_RELAY] Specified targetId does not exist", targetId)
+        }
+    }
+    else {
+        console.warn("[handleBinaryData] Unknown packetId:", packetId)
+    }
 }
 
 /**
@@ -120,7 +161,7 @@ function handleTextMessage(conn, message) {
                 targetId: data.callerId, success: true, type: data.type,
             }));
         } else {
-            console.log("Recipient did not exist:", data.recipientId)
+            console.log("[CPKT_OFFER] recipient did not exist:", data.recipientId)
             return conn.send(JSON.stringify({
                 targetId: data.callerId, success: false, type: data.type,
                 msg: "Quick Share could not be found. Do not close the browser window before the transfer is complete.",
@@ -141,7 +182,7 @@ function handleTextMessage(conn, message) {
                 targetId: data.sessionId, success: true, type: data.type,
             }));
         } else {
-            console.log("Recipient did not exist!")
+            console.log("[CPKT_ANSWER] recipient does not exist!")
             return conn.send(JSON.stringify({
                 targetId: data.sessionId, success: false, type: data.type,
                 msg: "recipient does not exist",
@@ -150,8 +191,8 @@ function handleTextMessage(conn, message) {
     } else if (data.type == CPKT_CANDIDATE) { // candidate
         // console.log("candidate", conn._session.id + " -> " + data.recipientId, data);
         if (!data.candidate) return closeConnWithReason(conn, "[candidate] Didn't specify candidate");
-        if (!data.sessionId) return closeConnWithReason(conn, "[candidate] Didn't specify sessionId");
-        if (!sessions.get(data.sessionId)) return closeConnWithReason(conn, "[candidate] Specified sessionId does not exist")
+        if (!data.callerId) return closeConnWithReason(conn, "[candidate] Didn't specify callerId");
+        if (!sessions.get(data.callerId)) return closeConnWithReason(conn, "[candidate] Specified callerId does not exist")
 
         let recipientConn;
         if ((recipientConn = sessions.get(data.recipientId))) {
@@ -159,30 +200,83 @@ function handleTextMessage(conn, message) {
                 type: SPKT_CANDIDATE, // answer type
                 targetId: data.recipientId,
                 candidate: data.candidate,
-                callerId: data.sessionId
+                callerId: data.callerId
             }));
 
-            conn._session.hasTriedP2PWith = recipientConn
-            recipientConn._session.hasTriedP2PWith = conn
+            // TODO: Track who the connections can start a binary relay session with
+            // to prevent anyone from creating infinite sessions
+
+            // conn._session.hasTriedP2PWith = recipientConn
+            // recipientConn._session.hasTriedP2PWith = conn
 
             return conn.send(JSON.stringify({
-                targetId: data.sessionId, success: true, type: data.type,
+                targetId: data.callerId, success: true, type: data.type,
             }));
         } else {
-            console.log("Recipient did not exist!")
+            console.log("[CPKT_CANDIDATE] recipient does not exist!")
             return conn.send(JSON.stringify({
-                targetId: data.sessionId, success: false, type: data.type,
+                targetId: data.callerId, success: false, type: data.type,
                 msg: "recipient does not exist",
             }));
         }
     } else if (data.type == CPKT_LOGOUT) { // logout
-        if (!data.sessionId) return closeConnWithReason(conn, "[logout] Didn't specify sessionId")
+        if (!data.sessionId) return closeConnWithReason(conn, "[CPKT_LOGOUT] Didn't specify sessionId")
         if (!conn._session.ids.find(o => o === data.sessionId))
-            return closeConnWithReason(conn, "[logout] Tried to logout id not owned by them");
+            return closeConnWithReason(conn, "[CPKT_LOGOUT] Tried to logout id not owned by them");
 
-        console.log("[logout]", data.sessionId);
+        console.log("[CPKT_LOGOUT]", data.sessionId);
         deleteSession(data.sessionId)
-    } else if (data.type == 5) { // relay data
-        // if (!data.)
+    } else if (data.type == CPKT_SWITCH_TO_FALLBACK) {
+        if (!data.callerId) return closeConnWithReason(conn, "[CPKT_SWITCH_TO_FALLBACK] Didn't specify callerId")
+        if (!data.recipientId) return closeConnWithReason(conn, "[CPKT_SWITCH_TO_FALLBACK] Didn't specify recipientId")
+        if (!sessions.get(data.callerId)) return closeConnWithReason(conn, "[CPKT_SWITCH_TO_FALLBACK] Specified callerId does not exist")
+
+        console.log("[CPKT_SWITCH_TO_FALLBACK] Request from:", data.callerId, "to", data.recipientId)
+
+        let recipientConn;
+        if ((recipientConn = sessions.get(data.recipientId))) {
+            const newRtcSessionId = uuidv4()
+
+            recipientConn.send(JSON.stringify({
+                type: SPKT_SWITCH_TO_FALLBACK,
+                targetId: data.recipientId,
+                callerId: data.callerId,
+                newRtcSessionId
+            }));
+
+            return conn.send(JSON.stringify({
+                targetId: data.callerId, success: true, type: data.type,
+            }));
+        } else {
+            console.log("[CPKT_SWITCH_TO_FALLBACK] recipient does not exist!")
+            return conn.send(JSON.stringify({
+                targetId: data.callerId, success: false, type: data.type,
+                msg: "recipient does not exist",
+            }));
+        }
+    } else if(data.type == CPKT_SWITCH_TO_FALLBACK_ACK) {
+        if (!data.callerId) return closeConnWithReason(conn, "[CPKT_SWITCH_TO_FALLBACK_ACK] Didn't specify callerId")
+        if (!data.recipientId) return closeConnWithReason(conn, "[CPKT_SWITCH_TO_FALLBACK_ACK] Didn't specify recipientId")
+        if (!sessions.get(data.callerId)) return closeConnWithReason(conn, "[CPKT_SWITCH_TO_FALLBACK_ACK] Specified callerId does not exist")
+
+        let recipientConn;
+        if ((recipientConn = sessions.get(data.recipientId))) {
+            recipientConn.send(JSON.stringify({
+                type: SPKT_SWITCH_TO_FALLBACK_ACK,
+                targetId: data.recipientId,
+                callerId: data.callerId
+            }));
+
+            return conn.send(JSON.stringify({
+                targetId: data.callerId, success: true, type: data.type,
+            }));
+        } else {
+            console.log("[CPKT_SWITCH_TO_FALLBACK_ACK] recipient does not exist!")
+            return conn.send(JSON.stringify({
+                targetId: data.callerId, success: false, type: data.type,
+                msg: "recipient does not exist",
+            }));
+        }
+
     }
 }
