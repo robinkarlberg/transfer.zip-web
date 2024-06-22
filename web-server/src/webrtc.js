@@ -507,6 +507,18 @@ export class RtcSession {
 		let sendChannel = peerConnection.createDataChannel("sendDataChannel")
 		sendChannel.binaryType = "arraybuffer"
 
+		let doingFallback = false
+
+		const doFallbackTimeoutId = useFallback ? setTimeout(doFallback, 8500) : -1
+
+		const doFallback = () => {
+			clearTimeout(doFallbackTimeoutId)
+			doingFallback = true
+			ws.send(JSON.stringify({
+				type: CPKT_SWITCH_TO_FALLBACK, recipientId, callerId: this.sessionId
+			}))
+		}
+
 		return new Promise(async (resolve, reject) => {
 			this.onmessage = async data => {
 				if (data.type == SPKT_ANSWER && data.answer) {
@@ -536,13 +548,12 @@ export class RtcSession {
 					return
 				}
 				else if (e.target.connectionState == "disconnected") {
+					clearTimeout(doFallbackTimeoutId)
 					reject(new Error("Remote peer disconnected"))
 				}
 				else if (e.target.connectionState == "failed") {
 					if (useFallback) {
-						ws.send(JSON.stringify({
-							type: CPKT_SWITCH_TO_FALLBACK, recipientId, callerId: this.sessionId
-						}))
+						doFallback()
 					}
 					else {
 						reject(new PeerConnectionError())
@@ -558,6 +569,7 @@ export class RtcSession {
 			}));
 
 			sendChannel.addEventListener("open", e => {
+				clearTimeout(doFallbackTimeoutId)
 				console.log("datachannel open", e)
 				resolve(sendChannel)
 			})
@@ -569,6 +581,7 @@ export class RtcSession {
 			})
 
 			sendChannel.addEventListener("error", e => {
+				if (useFallback) return
 				console.log("datachannel error", e)
 				reject(e)
 			})
