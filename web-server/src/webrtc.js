@@ -509,14 +509,18 @@ export class RtcSession {
 
 		let doingFallback = false
 
-		const doFallbackTimeoutId = useFallback ? setTimeout(doFallback, 8500) : -1
-
-		const doFallback = () => {
-			clearTimeout(doFallbackTimeoutId)
+		const _doFallback = () => {
 			doingFallback = true
 			ws.send(JSON.stringify({
 				type: CPKT_SWITCH_TO_FALLBACK, recipientId, callerId: this.sessionId
 			}))
+		}
+
+		const doFallbackTimeoutId = useFallback ? setTimeout(_doFallback, 8500) : -1
+
+		const doFallback = () => {
+			clearTimeout(doFallbackTimeoutId)
+			_doFallback()
 		}
 
 		return new Promise(async (resolve, reject) => {
