@@ -241,7 +241,7 @@ export class FileTransfer {
             const data = JSON.parse(dataStr)
 
             if (data.type == "progress") {
-                console.log("[FileTransfer] Got progress:", data)
+                // console.log("[FileTransfer] Got progress:", data)
                 this.onprogress({ now: data.now, max: data.max, done: data.done }, this.channel.__currentFileInfo)
                 if (data.done) {
                     this.onfilefinished(this.channel.__currentFileInfo)
@@ -303,13 +303,13 @@ export class FileTransfer {
         }
 
         const onprogress = async (progress, fileInfo) => {
-            console.log("[FileTransfer] onprogress", progress, fileInfo, Math.round(progress.now / FILE_CHUNK_SIZE) % 30 == 15)
+            // console.log("[FileTransfer] onprogress", progress, fileInfo, Math.round(progress.now / FILE_CHUNK_SIZE) % 30 == 15)
             this.onprogress(progress, fileInfo)
 
             // Important: this.onprogress needs to be called before this if statement, 
             // otherwise the file will be finished before the last progress has been reported
             if (Math.round(progress.now / FILE_CHUNK_SIZE) % 30 == 15 || progress.done) {
-                console.log("[FileTransfer] send progress:", progress)
+                // console.log("[FileTransfer] send progress:", progress)
                 this.sendData(await this.encryptData(encodeString(JSON.stringify({ type: "progress", ...progress }))))
             }
         }

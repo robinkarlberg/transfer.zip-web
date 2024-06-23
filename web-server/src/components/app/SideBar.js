@@ -61,7 +61,7 @@ export default function SideBar({ className }) {
             <ul className="nav nav-pills flex-column">
                 <li>
                     <NavLink to="/account">
-                        {isGuestUser() ? (<div><small className="p-1 px-2 me-2 border rounded bg-warning text-black">NEW</small> Sign up</div>) : "Account"}
+                        {isGuestUser() ? (<div><small className="p-1 px-2 me-2 border rounded bg-warning text-black">NEW</small> Login</div>) : "Account"}
                         {/* <div className="d-flex align-items-center text-white text-decoration-none">
                             <img src="https://avatars.githubusercontent.com/u/10927692?v=4" alt="" width="32" height="32" className="rounded-circle me-2" />
                             <strong>user</strong>

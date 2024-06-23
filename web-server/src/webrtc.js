@@ -144,7 +144,7 @@ export const createWebSocket = () => {
 
 	ws.addEventListener("message", e => {
 		// console.log(typeof (e.data))
-		console.log(e)
+		// console.log(e)
 		if (e.data instanceof ArrayBuffer) {
 			const packet = new Uint8Array(e.data)
 			const packetDataView = new DataView(packet.buffer)
@@ -217,6 +217,7 @@ class RelayChannel {
 	}
 
 	send(data) {
+		this.bufferedAmount = ws.bufferedAmount
 		if (!(data instanceof Uint8Array)) {
 			return console.error("[WebRtc] [RelayChannel] send: data is not of type Uint8Array!! Got", typeof (data), "instead:", data)
 		}
@@ -232,7 +233,7 @@ class RelayChannel {
 		packet.set(encodeString(this.targetId), 1)
 		packet.set(encodeString(this.rtcSession.sessionId), 1 + 36)
 		packet.set(data, 1 + 36 + 36)
-		console.log("[WebRtc] [RelayChannel] send packet:", packet, "data:", data)
+		// console.log("[WebRtc] [RelayChannel] send packet:", packet, "data:", data)
 		ws.send(packet)
 	}
 

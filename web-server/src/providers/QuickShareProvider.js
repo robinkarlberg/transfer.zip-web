@@ -91,7 +91,7 @@ export const QuickShareProvider = () => {
             }
             fileTransfer.onprogress = (progress, fileInfo) => {
                 quickShare.onfileprogress && quickShare.onfileprogress(progress, fileInfo)
-                console.debug("[QuickShareProvider] Progress", progress, fileInfo)
+                // console.debug("[QuickShareProvider] Progress", progress, fileInfo)
             }
             fileTransfer.onfilefinished = fileInfo => {
                 quickShare.onfilefinished && quickShare.onfilefinished(fileInfo)

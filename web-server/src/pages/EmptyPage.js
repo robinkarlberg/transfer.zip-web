@@ -46,10 +46,10 @@ export default function EmptyPage({ }) {
         }
         else if (user) {
             if (user.plan == "free") {
-                navigate("/quick-share")
+                navigate("/quick-share", { replace: true })
             }
             else {
-                navigate("/dashboard")
+                navigate("/dashboard", { replace: true })
             }
         }
     }, [user])

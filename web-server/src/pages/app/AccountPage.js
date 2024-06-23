@@ -1,19 +1,24 @@
 import { useContext } from "react";
 import { AuthContext } from "../../providers/AuthProvider"
-import { API_URL } from "../../api/Api";
+import { API_URL, logout } from "../../api/Api";
 import { Link, Navigate, useNavigate } from "react-router-dom"
 import AppGenericPage from "../../components/app/AppGenericPage";
 
 const SITE_URL = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') ? "http://localhost:3001" : (process.env.REACT_APP_SITE_URL)
 
 export default function AccountPage({ }) {
-    const { user, logout, isGuestUser } = useContext(AuthContext)
+    const { user, isGuestUser, refreshUser } = useContext(AuthContext)
 
     const navigate = useNavigate()
 
     if (isGuestUser()) {
-        return window.location.href = `${SITE_URL}/signup?back=${window.location.origin}&success=${window.location}`
+        return window.location.href = `${SITE_URL}/login?back=${window.location.origin}&success=${window.location}`
         // return <Navigate to={`${SITE_URL}/signup`}/>
+    }
+
+    const doLogout = async () => {
+        await logout()
+        window.location.href = "/"
     }
 
     if (user == null) {
@@ -42,7 +47,7 @@ export default function AccountPage({ }) {
                         </div>
                     </div>
                 </div>
-                <div className="row">
+                <div className="mb-3 row">
                     <label htmlFor="staticEmail" className="col-sm-4 col-form-label"><b>Plan</b></label>
                     <div className="col-sm-8">
                         <div className="d-flex align-items-center">
@@ -65,6 +70,7 @@ export default function AccountPage({ }) {
                         <button type="submit" className="btn btn-primary mb-3">Update password</button>
                     </div>
                 </div> */}
+                <Link onClick={doLogout} className="" style={{ textDecoration: "none" }}>Log out<i className="bi bi-arrow-right-short"></i></Link>
             </AccountCard>
             <AccountCard title={"Security"}>
                 {/* <div className="mb-3 row">
@@ -84,6 +90,7 @@ export default function AccountPage({ }) {
                     </div>
                 </div>
             </AccountCard>
+            <Link onClick={doLogout} className="link-danger" style={{ textDecoration: "none" }}>Delete account<i className="bi bi-arrow-right-short"></i></Link>
         </AppGenericPage>
     )
 }

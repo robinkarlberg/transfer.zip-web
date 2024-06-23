@@ -146,12 +146,12 @@ export default function QuickShareProgress({ }) {
                     fileTransfer.onprogress = ({ now, max, done }, fileInfo) => {
                         if (_filesDone >= fileList.length) return console.warn("[QuickShareProgress] fileTransfer.onprogress called after files are done")
                         _filesProgress[_filesDone].progress = now / max
-                        console.log(now / max)
+                        // console.log(now / max)
                         setFilesProgress(_filesProgress.map(x => x))
                     }
 
                     if (doZip) {
-                        const zipStream = new zip.ZipWriterStream({ level: 0 })
+                        const zipStream = new zip.ZipWriterStream({ level: 0, zip64: true, bufferedWrite: false })
 
                         let _filesProgress = fileList.map(file => {
                             return { file: file, progress: 0 }
@@ -239,7 +239,7 @@ export default function QuickShareProgress({ }) {
                 quickShare.onfileprogress = ({ now, max }, fileInfo) => {
                     _filesProgress[_filesDone].progress = now / max
                     setFilesProgress(_filesProgress.map(x => x))
-                    console.log(_filesProgress, filesProgress)
+                    // console.log(_filesProgress, filesProgress)
                 }
 
                 quickShare.onfilefinished = (fileInfo) => {
