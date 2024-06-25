@@ -52,6 +52,14 @@ export async function register(email, password) {
     return await post("/auth/register", { email, password })
 }
 
+export async function requestPasswordReset(email) {
+    return await post("/auth/passwordreset/request", { email })
+}
+
+export async function doPasswordReset(email, token, newPass) {
+    return await post("/auth/passwordreset/do", { email, token, newPass })
+}
+
 export async function getTransfers() {
     return await get("/transfers")
 }
