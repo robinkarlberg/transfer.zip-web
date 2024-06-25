@@ -2,13 +2,14 @@ import { Link, useNavigate } from "react-router-dom";
 import AppGenericPage from "../../components/app/AppGenericPage";
 import IndexPage from "../partial/IndexPage"
 import StatCard from "../../components/app/StatCard";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 import { AuthContext } from "../../providers/AuthProvider";
-import { humanFileSize, humanFileSizePair } from "../../utils";
+import { groupStatisticsByInterval, humanFileSize, humanFileSizePair } from "../../utils";
 import StorageStatCard from "../../components/app/statcards/StorageStatCard";
 import { Pie, PieChart, ResponsiveContainer } from "recharts";
 import GraphCard from "../../components/app/GraphCard";
+import * as Api from "../../api/Api"
 
 export default function HomePage({ }) {
 
@@ -17,15 +18,16 @@ export default function HomePage({ }) {
 
     const navigate = useNavigate()
 
-    const getDownloadsCount = () => {
-        if (!hasFetched) {
-            return 0
-        }
-        let downloads = 0
-        // transfers.forEach(x => {
-        //     downloads += x.statistics.length
-        // })
-        return downloads
+    const [statistics, setStatistics] = useState([])
+
+    const getDownloadsCount = (interval) => {
+        const grouped = groupStatisticsByInterval(statistics, interval)
+        return grouped.reduce((prev, curr) => prev + curr.value, 0)
+    }
+
+    const updateStatistics = async (fromDate) => {
+        const res = await Api.getAllStatistics(0)
+        setStatistics(res.statistics)
     }
 
     const getFilesCount = () => {
@@ -45,9 +47,13 @@ export default function HomePage({ }) {
 
     useEffect(() => {
         if (user && user.plan == "free") {
-            navigate("/quick-share")
+            navigate("/quick-share", { replace: true })
         }
     }, [user])
+
+    useEffect(() => {
+        updateStatistics()
+    }, [])
 
     return (
         <AppGenericPage title={"Dashboard"} className={"HomePage"}>
@@ -69,7 +75,7 @@ export default function HomePage({ }) {
                     </StatCard>
                     <StatCard
                         title={"Downloads"}
-                        stat={getDownloadsCount()}
+                        stat={getDownloadsCount("week")}
                         subtitle={"last week"}
                     // subtitle={"in total"}
                     >

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-// import "./App.css";
+import "./App.css";
 // import "./extra.css";
 import logo from "./img/transfer-zip-logotext-cropped.png"
 

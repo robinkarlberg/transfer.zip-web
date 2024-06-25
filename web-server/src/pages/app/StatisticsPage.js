@@ -5,7 +5,7 @@ import StatCard from "../../components/app/StatCard"
 import { useContext, useEffect, useState } from "react"
 import { ApplicationContext } from "../../providers/ApplicationProvider"
 import GraphCard from "../../components/app/GraphCard"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, BarChart, Bar, Legend } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, BarChart, Bar, Legend, Label } from 'recharts'
 import * as Api from "../../api/Api"
 import StorageStatCard from "../../components/app/statcards/StorageStatCard"
 import { Tooltip } from "react-bootstrap"
@@ -24,16 +24,14 @@ export default function StatisticsPage({ }) {
         localStorage.setItem("statisticsPageInterval", _interval)
     }
 
-    const getDownloadsCount = (range) => {
-        return statistics.length
-    }
-
-
-    // Partially ChatGPT
     const groupDownloads = () => {
         return groupStatisticsByInterval(statistics, interval)
     }
 
+    const getDownloadsCount = (interval) => {
+        const grouped = groupStatisticsByInterval(statistics, interval)
+        return grouped.reduce((prev, curr) => prev + curr.value, 0)
+    }
 
     const updateStatistics = async (fromDate) => {
         const res = await Api.getAllStatistics(0)
@@ -106,17 +104,19 @@ export default function StatisticsPage({ }) {
                 </div>
                 <div className="d-flex flex-row flex-wrap gap-3">
                     <GraphCard title={"Downloads last " + interval}>
-                        <ResponsiveContainer width="90%" height={400}>
-                            <BarChart data={graphStatistics()}>
-                                <XAxis dataKey="name" />
+                        <ResponsiveContainer width="103%" height={400} style={{ position: "relative", left: "-30px" }}>
+                            <LineChart margin={{ top: 20, bottom: 40, right: 20 }} data={graphStatistics()}>
+                                <CartesianGrid stroke="var(--bs-secondary)" strokeDasharray="5 5" strokeWidth={0.2}/>
+                                <XAxis dataKey="name" interval={0} angle={-45} textAnchor="end"/>
                                 <YAxis />
                                 <Tooltip />
-                                <Bar dataKey="value" fill="var(--bs-primary)" />
-                            </BarChart>
+                                <Label />
+                                <Line isAnimationActive={false} dataKey="value" fill="var(--bs-primary)" />
+                            </LineChart>
                         </ResponsiveContainer>
                     </GraphCard>
-                    <GraphCard title="Storage (GB)">
-                        <ResponsiveContainer width="90%" height={400}>
+                    <GraphCard title="Storage">
+                        <ResponsiveContainer width="100%" height={400}>
                             <PieChart>
                                 <Pie data={getStorageData()} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius="80%" stroke="var(--bs-border-color)"
                                     labelLine={true} label={renderCustomizedLabel} />

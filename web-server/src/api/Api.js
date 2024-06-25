@@ -14,10 +14,10 @@ const get = async (endpoint) => {
     }
 }
 
-const post = async (endpoint, payload) => {
+const withBody = async (verb, endpoint, payload) => {
     const res = await (await fetch(API_URL + endpoint, {
         credentials: "include",
-        method: "post",
+        method: verb,
         body: JSON.stringify(payload),
         headers: {
             "Content-Type": "application/json"
@@ -30,6 +30,14 @@ const post = async (endpoint, payload) => {
     else {
         return res
     }
+}
+
+const post = async (endpoint, payload) => {
+    return await withBody("post", endpoint, payload)
+}
+
+const put = async (endpoint, payload) => {
+    return await withBody("put", endpoint, payload)
 }
 
 export async function getUser() {
@@ -80,8 +88,8 @@ export async function getAllStatistics(fromDate) {
     return await get(`/statistics/${fromDate}`)
 }
 
-export async function setTransferName(id, name) {
-    return await post(`/transfers/${id}/name`, { name })
+export async function updateTransfer(id, values) {
+    return await put(`/transfers/${id}`, values)
 }
 
 export async function deleteTransfer(id) {

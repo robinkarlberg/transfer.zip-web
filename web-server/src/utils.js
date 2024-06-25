@@ -87,7 +87,7 @@ export const groupStatisticsByInterval = (statistics, interval) => {
         for (let i = 0; i < 24; i++) {
             const date = new Date(today);
             date.setHours(date.getHours() - i);
-            groups.push({ name: date.toISOString().split("T")[0] + " " + String(date.getHours()).padStart(2, '0') + ":00", value: 0 });
+            groups.push({ name: date.getDate() + " " + String(date.getHours()).padStart(2, '0') + ":00", value: 0 });
         }
     } else if (interval === "week") {
         // push the last 7 days to groups
@@ -117,7 +117,7 @@ export const groupStatisticsByInterval = (statistics, interval) => {
         let key;
 
         if (interval === 'day') {
-            key = new Date(obj.time).toISOString().split("T")[0] + " " + String(new Date(obj.time).getHours()).padStart(2, '0') + ":00"; // Group by hour in the last 24 hours
+            key = new Date(obj.time).getDate() + " " + String(new Date(obj.time).getHours()).padStart(2, '0') + ":00"; // Group by hour in the last 24 hours
         } else if (interval === 'week' || interval === 'month') {
             key = new Date(obj.time).toISOString().split('T')[0]; // Group by day for week or month
         } else if (interval === 'year') {

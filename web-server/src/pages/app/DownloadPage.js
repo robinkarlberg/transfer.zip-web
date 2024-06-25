@@ -14,6 +14,7 @@ import * as WebRtc from "../../webrtc";
 import { FileTransfer } from "../../filetransfer";
 import FilePreviewModal from "../../components/modals/FilePreviewModal";
 import FilesList from "../../components/app/FilesList";
+import Adsense from "../../components/Adsense";
 
 const fileExtRe = /(?:\.([^.]+))?$/;
 
@@ -21,7 +22,7 @@ const fileExtRe = /(?:\.([^.]+))?$/;
 
 export default function DownloadPage({ }) {
     const { secretCode } = useParams()
-    const [downloadWorker, setDownloadWorker] = useState(null)
+    const [download, setDownload] = useState(null)
     const [filesList, setFilesList] = useState(null)
     const [showFilePreviewModal, setShowFilePreviewModal] = useState(false)
     // const [filePreviewFile, setFilePreviewFile] = useState(null)
@@ -61,24 +62,24 @@ export default function DownloadPage({ }) {
         else {
         }
         Api.getDownload(secretCode).then(res => {
-            setDownloadWorker(res.download)
+            setDownload(res.download)
             setFilesList(res.download.files)
         })
     }, [])
 
     const downloadFileById = (id) => {
         if (isRealtimeTransfer) {
-            downloadWorker.requestFile(id)
+            download.requestFile(id)
         }
         else {
-            console.log(downloadWorker, id)
+            console.log(download, id)
             Api.downloadDlFile(secretCode, id)
         }
     }
 
     const previewFile = (file) => {
         if (isRealtimeTransfer) {
-            downloadWorker.requestFile(file.id)
+            download.requestFile(file.id)
             // TODO: Fix preview for quick share (or disable preview, quick share is just for sharing one file fast, no clicking around and previewing shit lol)
         }
         else {
@@ -97,14 +98,14 @@ export default function DownloadPage({ }) {
     }
 
     const onFilePreviewModalAction = (action) => {
-        if(action == "prev") {
+        if (action == "prev") {
             let nextIndex = (filePreviewIndex - 1)
-            if(nextIndex < 0) {
+            if (nextIndex < 0) {
                 nextIndex = filesList.length - 1
             }
             setFilePreviewIndex(nextIndex)
         }
-        else if(action == "next") {
+        else if (action == "next") {
             setFilePreviewIndex((filePreviewIndex + 1) % filesList.length)
         }
     }
@@ -198,7 +199,7 @@ export default function DownloadPage({ }) {
     }
 
     return (
-        <div className="m-auto bg-dark-subtle min-vh-100">
+        <div className="m-auto bg-dark-subtle">
             <FilePreviewModal onAction={onFilePreviewModalAction} secretCode={secretCode} show={showFilePreviewModal} filesList={filesList} fileIndex={filePreviewIndex} onCancel={() => { setShowFilePreviewModal(false) }} />
             <div className="border-bottom mb-2 p-3 bg-body-tertiary ">
                 <div className="d-flex flex-row justify-content-between m-auto" style={{ maxWidth: "1280px" }}>
@@ -213,13 +214,35 @@ export default function DownloadPage({ }) {
                     </div>
                 </div>
             </div>
-            <div className="m-auto" style={{ maxWidth: "1280px" }}>
-                {/* <h4>Test Transfer<span className="fs-6"> by Test Testsson</span></h4> */}
-                {displayMode == "list" && <FilesList files={filesList} allowedActions={{ "preview": true, "download": true }} onAction={onFileListAction} />}
-                {/* {displayMode == "grid" && <FileGrid filesList={filesList} />} */}
+            <div className="d-flex flex-column flex-md-row justify-content-evenly">
+                <div className="flex-grow-1 d-none d-sm-inline-block" style={{ maxWidth: "300px" }}>
+                    <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" />
+                </div>
+                <div className="flex-grow-1 d-inline-block d-sm-none w-100">
+                    <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932" />
+                </div>
+                <div className="flex-grow-1 px-3 px-md-0" style={{ minHeight: "calc(100vh - 90px)", maxWidth: "1280px" }}>
+                    <div className="pt-3" style={{ maxWidth: "1180px" }}>
+                        <div className="mb-3">
+                            <h2 className="mb-3">{ download.name || "File Transfer" }</h2>
+                            <div style={{ maxWidth: "800px" }}>
+                                <p>{ download.description || "No description" }</p>
+                            </div>
+                        </div>
+                        {displayMode == "list" && <FilesList files={filesList} allowedActions={{ "preview": true, "download": true }} onAction={onFileListAction} />}
+                        {/* {displayMode == "grid" && <FileGrid filesList={filesList} />} */}
+                    </div>
+                </div>
+                <div className="flex-grow-1 d-none d-sm-inline-block" style={{ maxWidth: "300px" }}>
+                    <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" />
+                </div>
+                <div className="flex-grow-1 d-inline-block d-sm-none w-100">
+                    <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932" />
+                </div>
             </div>
-            {/* <div className="bg-dark-subtle">
-            </div> */}
+            <div>
+
+            </div>
         </div>
     )
 }

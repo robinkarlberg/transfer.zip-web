@@ -14,6 +14,14 @@ export default function FilePreviewModal({ secretCode, show, onCancel, filesList
         return file.info.size > 40e6;
     }
 
+    const imageFileTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+        "image/svg+xml",
+    ]
+
     const supportedFileTypes = [
         "text/plain",
         "text/html",
@@ -24,11 +32,6 @@ export default function FilePreviewModal({ secretCode, show, onCancel, filesList
         "application/xml",
         "application/xhtml+xml",
         "application/pdf",
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/webp",
-        "image/svg+xml",
         "audio/mpeg",
         "audio/ogg",
         // "audio/wav",
@@ -36,11 +39,16 @@ export default function FilePreviewModal({ secretCode, show, onCancel, filesList
         "video/mp4",
         "video/ogg",
         "video/webm",
+        ...imageFileTypes
     ]
+
+    const isImage = () => {
+        if (!file) return true;
+        return imageFileTypes.find(v => v == file.info.type);
+    }
 
     const isUnsupportedFileType = () => {
         if (!file) return true;
-        console.log(file.info.type)
         return !supportedFileTypes.find(v => v == file.info.type);
     }
 
@@ -55,10 +63,17 @@ export default function FilePreviewModal({ secretCode, show, onCancel, filesList
         </div>
     )
 
+    const embed = (
+        isImage() ?
+        <img className="" src={Api.getDownloadLink(secretCode, file.id) + "?preview"}/>
+        :
+        <embed className="flex-grow-1" src={Api.getDownloadLink(secretCode, file.id) + "?preview"}></embed>
+    )
+
     const FilePreview = (
         <div>
             <div style={{ minHeight: "400px" }} className="d-flex flex-column align-items-stretch justify-content-center">
-                {file && <embed className="flex-grow-1" src={Api.getDownloadLink(secretCode, file.id) + "?preview"}></embed>}
+                {file && embed}
             </div>
         </div>
     )
