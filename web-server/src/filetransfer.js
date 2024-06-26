@@ -2,10 +2,10 @@
 
 import streamSaver from "./lib/StreamSaver"
 import { decodeString, encodeString } from "./utils"
+import { RelayChannel } from "./webrtc"
 streamSaver.mitm = "/mitm.html"
 
-const FILE_CHUNK_SIZE = 16384
-const FILE_STREAM_SIZE = 32
+export const FILE_CHUNK_SIZE = 16384
 
 const PACKET_ID = {
     newFile: 0,
@@ -139,17 +139,22 @@ export class FileTransfer {
     onfilebegin = undefined
     onfiledata = undefined
 
-    packetIndex = 0
     currentFile = undefined
+
+    ///////
+
+	INTERNAL_BUFFER_MAX_SIZE = FILE_CHUNK_SIZE * 256 // Roughly 4MB
+
+    chunkMapIndex = 0
+	internalBuffer = new Uint8Array(this.INTERNAL_BUFFER_MAX_SIZE)
+	internalBufferedAmount = 0
+
+    ///////
 
     constructor(channel, key) {
         console.log("[FileTransfer] created with key ", key)
         this.channel = channel
         this.key = key
-    }
-
-    async sendData(data) {
-        this.channel.send(data)
     }
 
     async encryptData(data) {
@@ -169,8 +174,6 @@ export class FileTransfer {
         const iv = new Uint8Array(__data.slice(0, 12))
         const encryptedPacket = __data.slice(12)
 
-        // console.log(__data)
-
         const packet = new Uint8Array(await crypto.subtle.decrypt({
             "name": "AES-GCM", "iv": iv
         }, this.key, encryptedPacket));
@@ -178,23 +181,90 @@ export class FileTransfer {
         return packet
     }
 
+    async _constructFileDataPacketAndEncrypt(data, index) {
+        const packet = new Uint8Array(1 + 8 + data.byteLength)
+        const packetDataView = new DataView(packet.buffer)
+        packetDataView.setInt8(0, PACKET_ID.fileData)
+        packetDataView.setBigUint64(1, BigInt(index))
+        packet.set(new Uint8Array(data), 1 + 8)
+        const encryptedPacket = await this.encryptData(packet)
+        return encryptedPacket
+    }
+
+    /**
+     * Actually sends data
+     * @param {Uint8Array} data 
+     */
+    sendData(data) {
+        // console.log(data)
+        this.channel.send(data)
+    }
+
+	/**
+	 * Send queued data
+	 */
+	async _sendQueuedData() {
+        if(!(this.channel instanceof RelayChannel)) {
+            return
+        }
+        if(this.internalBufferedAmount == 0) return
+		this.sendData(await this._constructFileDataPacketAndEncrypt(this.internalBuffer.subarray(0, this.internalBufferedAmount), this.chunkMapIndex))
+        // console.log("_sendQueuedData, chunkMapIndex:", this.chunkMapIndex, "internalBufferedAmount:", this.internalBufferedAmount)
+        
+        this.chunkMapIndex++
+		this.internalBufferedAmount = 0
+	}
+
+	/**
+	 * 
+	 * @param {Uint8Array} data
+	 */
+	_queueData(data) {
+		if(this.internalBufferedAmount + data.byteLength > this.INTERNAL_BUFFER_MAX_SIZE) {
+			throw new Error("[FileTransfer] _queueData: BUFFER OVERFLOW")
+		}
+		this.internalBuffer.set(data, this.internalBufferedAmount)
+		this.internalBufferedAmount += data.byteLength
+	}
+
+	/**
+	 * Queue data for sending, or just send if the channel doesn't support it
+	 * @param {Uint8Array} fileData 
+	 * @returns 
+	 */
+    async queueData(fileData) {
+        if(!(this.channel instanceof RelayChannel)) {
+            return this.sendData(await this._constructFileDataPacketAndEncrypt(fileData, this.chunkMapIndex++))
+        }
+
+		if(fileData.byteLength > this.INTERNAL_BUFFER_MAX_SIZE) {       // will never happen though lmao
+            throw new Error("Asserting that this should not happen")
+			// this._sendQueuedData()
+            // this.channel.send(fileData)
+			// return ws.send(this._constructPacket(fileData))
+		}
+		if(this.internalBufferedAmount + fileData.byteLength >= this.INTERNAL_BUFFER_MAX_SIZE) {
+			await this._sendQueuedData()
+		}
+		this._queueData(fileData)
+    }
+
     sendFile(file) {
+        this.chunkMapIndex = 0
         let offset = 0
         let fileReader = new FileReader()
         fileReader.onload = async e => {
             const __data = fileReader.result
 
-            const packet = new Uint8Array(1 + 8 + __data.byteLength)
-            const packetDataView = new DataView(packet.buffer)
-            packetDataView.setInt8(0, PACKET_ID.fileData)
-            packetDataView.setBigUint64(1, BigInt(offset))
-            packet.set(new Uint8Array(__data), 1 + 8)
-
-            this.sendData(await this.encryptData(packet))
+            await this.queueData(__data)
             offset += __data.byteLength;
 
             if (offset < file.size) {
                 readSlice(offset);
+            }
+            else {
+                // flush out the last data when finished
+                await this._sendQueuedData()
             }
         }
         fileReader.onerror = e => {
@@ -204,8 +274,8 @@ export class FileTransfer {
             console.log("File reader abort", e)
         }
         const readSlice = o => {
-            this.channel.checkBufferedAmount && this.channel.checkBufferedAmount()
-            if (this.channel.bufferedAmount > 5000000) {
+            this.channel.calculateBufferedAmount && this.channel.calculateBufferedAmount()
+            if (this.channel.bufferedAmount > 5000000) {        // 5MB
                 return setTimeout(() => { readSlice(o) }, 1)
             }
             const slice = file.slice(offset, o + FILE_CHUNK_SIZE);
@@ -357,9 +427,7 @@ export class FileTransfer {
                 const offset = Number(packetDataView.getBigUint64(1))
                 const data = packet.slice(1 + 8)
 
-                const index = offset / FILE_CHUNK_SIZE
-
-                this.currentFile.setChunkMap(index, data)
+                this.currentFile.setChunkMap(offset, data)
 
                 // Commented out as this is done in queryForFiles instead
                 // if (index % 50 == 49 || this.currentFile.isFileTransferDone()) {

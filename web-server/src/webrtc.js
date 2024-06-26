@@ -1,3 +1,4 @@
+import * as FileTransfer from "./filetransfer";
 import { decodeString, encodeString } from "./utils";
 
 export class PeerConnectionError extends Error {
@@ -197,11 +198,9 @@ export const closeWebSocket = () => {
 /**
  * Hack class that mimics the DataChannel class for easy integration with filetransfer.js when using signaling-server as relay
  */
-class RelayChannel {
+export class RelayChannel {
 	binaryType = "arraybuffer"
 	bufferedAmount = 0
-
-	sendBuf
 
 	constructor(rtcSession, targetId) {
 		this.rtcSession = rtcSession
@@ -212,35 +211,33 @@ class RelayChannel {
 		}
 	}
 
+	calculateBufferedAmount() {
+		this.bufferedAmount = ws.bufferedAmount
+	}
+
 	onbinarydata = function(data) {
 		for (const messageListener of this.messageListeners) {
 			messageListener({ data })	// Mimic Event object
 		}
 	}
 
-	checkBufferedAmount() {
-		this.bufferedAmount = ws.bufferedAmount
-	}
-
-	send(data) {
-		this.checkBufferedAmount()
-		if (!(data instanceof Uint8Array)) {
-			return console.error("[WebRtc] [RelayChannel] send: data is not of type Uint8Array!! Got", typeof (data), "instead:", data)
-		}
+	_constructPacket(data) {
 		const packet = new Uint8Array(1 + 36 + 36 + data.byteLength)
 		const packetDataView = new DataView(packet.buffer)
 		packetDataView.setInt8(0, CPKT_RELAY)
-		// encodeString(this.targetId).forEach((byte, i) => {
-		// 	packetDataView.setUint8(1 + i, byte)
-		// })
-		// encodeString(this.rtcSession.sessionId).forEach((byte, i) => {
-		// 	packetDataView.setUint8(1 + 36 + i, byte)
-		// })
+
 		packet.set(encodeString(this.targetId), 1)
 		packet.set(encodeString(this.rtcSession.sessionId), 1 + 36)
 		packet.set(data, 1 + 36 + 36)
-		// console.log("[WebRtc] [RelayChannel] send packet:", packet, "data:", data)
-		ws.send(packet)
+		return packet
+	}
+
+	send(data) {
+		if (!(data instanceof Uint8Array)) {
+			return console.error("[WebRtc] [RelayChannel] send: data is not of type Uint8Array!! Got", typeof (data), "instead:", data)
+		}
+		this.calculateBufferedAmount()
+		ws.send(this._constructPacket(data))
 	}
 
 	addEventListener(event, fn) {
