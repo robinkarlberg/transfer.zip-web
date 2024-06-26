@@ -204,6 +204,7 @@ export class FileTransfer {
             console.log("File reader abort", e)
         }
         const readSlice = o => {
+            this.channel.checkBufferedAmount && this.channel.checkBufferedAmount()
             if (this.channel.bufferedAmount > 5000000) {
                 return setTimeout(() => { readSlice(o) }, 1)
             }

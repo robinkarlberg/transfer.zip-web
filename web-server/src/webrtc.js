@@ -201,6 +201,8 @@ class RelayChannel {
 	binaryType = "arraybuffer"
 	bufferedAmount = 0
 
+	sendBuf
+
 	constructor(rtcSession, targetId) {
 		this.rtcSession = rtcSession
 		this.targetId = targetId
@@ -216,8 +218,12 @@ class RelayChannel {
 		}
 	}
 
-	send(data) {
+	checkBufferedAmount() {
 		this.bufferedAmount = ws.bufferedAmount
+	}
+
+	send(data) {
+		this.checkBufferedAmount()
 		if (!(data instanceof Uint8Array)) {
 			return console.error("[WebRtc] [RelayChannel] send: data is not of type Uint8Array!! Got", typeof (data), "instead:", data)
 		}
