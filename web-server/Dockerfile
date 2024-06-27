@@ -8,6 +8,7 @@ COPY public/ public/
 
 ARG ENVIRONMENT
 COPY ${ENVIRONMENT}.env .env
+COPY ${ENVIRONMENT}.robots.txt public/robots.txt
 # COPY . .
 
 # RUN ls -alh && sleep 10
