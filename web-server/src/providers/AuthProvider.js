@@ -74,7 +74,15 @@ export const AuthProvider = () => {
     // })
 
     useEffect(() => {
-        refreshUser()
+        if(window.location.hash) {
+            let hashList = window.location.hash.slice(1).split(",")
+            if(hashList.length !== 3) {
+                refreshUser()
+            }
+        }
+        else {
+            refreshUser()
+        }
     }, [])
 
     return (
