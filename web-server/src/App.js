@@ -13,13 +13,6 @@ import { AuthProvider } from "./providers/AuthProvider";
 import Header from "./components/app/Header";
 
 function App() {
-  const { setShowContacts } = useContext(ApplicationContext)
-  const navigate = useNavigate()
-
-  const isInfoPage = window.location.href.indexOf("privacy-policy") + window.location.href.indexOf("about") > -1
-
-  const mobile = document.body.clientWidth < 576
-
   return (
     <div className={"App bg-dark-subtle vh-100 d-flex flex-column flex-md-row"}>
       <Header className="d-md-none" />
