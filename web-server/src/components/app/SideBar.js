@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import logo from "../../img/transfer-zip-logotext-cropped.png"
 import { ProgressBar } from "react-bootstrap"
 import { useContext } from "react"
@@ -10,7 +10,8 @@ export default function SideBar({ className }) {
 
     const disable = user == null || isGuestOrFreeUser()
 
-    const currentPage = window.location.pathname
+    const currentPage = useLocation().pathname
+    console.log(currentPage)
 
     const NavLink = ({ to, children, disable }) => {
         const disableClass = disable ? "disabled" : "text-white"
