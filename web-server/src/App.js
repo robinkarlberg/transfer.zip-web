@@ -21,10 +21,10 @@ function App() {
   const mobile = document.body.clientWidth < 576
 
   return (
-    <div className={"App bg-dark-subtle min-vh-100 d-flex flex-column flex-md-row"}>
+    <div className={"App bg-dark-subtle vh-100 d-flex flex-column flex-md-row"}>
       <Header className="d-md-none" />
       <SideBar className="d-none d-md-flex" />
-      <div className="d-flex flex-row flex-grow-0 flex-sm-grow-1">
+      <div className="d-flex flex-row flex-grow-0 flex-sm-grow-1 overflow-y-scroll">
         <Outlet />
       </div>
       {/* <div className="w-100">
