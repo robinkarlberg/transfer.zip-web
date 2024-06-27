@@ -27,7 +27,7 @@ export default function EmptyPage({ }) {
             // setHashList(hashList)
             // setTransferDirection(directionChar)
             const state = {
-                key: key_b,
+                k: key_b,
                 remoteSessionId: recipientId,
                 transferDirection: directionChar
             }

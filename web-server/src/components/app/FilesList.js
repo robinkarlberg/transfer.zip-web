@@ -6,7 +6,7 @@ import { Dropdown } from "react-bootstrap";
 import * as Api from "../../api/Api"
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 
-export default function FilesList({ files, onAction, allowedActions, maxWidth }) {
+export default function FilesList({ files, onAction, primaryActions, redActions, maxWidth }) {
     const { refreshApiTransfers } = useContext(ApplicationContext)
 
     const CustomToggle = forwardRef(({ children, onClick }, ref) => (
@@ -15,14 +15,16 @@ export default function FilesList({ files, onAction, allowedActions, maxWidth })
         </button>
     ))
 
+    const prettify = (str) => {
+        return str[0].toUpperCase() + str.slice(1)
+    }
+
     const FilesListEntry = ({ file }) => {
         return (
             <tr>
                 <td scope="row" style={{ padding: 0 }}>
                     <Link className="list-group-item list-group-item-action p-2" onClick={() => onAction("click", file)}>
                         {file.info.name}
-                        {/* <span className="me-2">{file.name || file.id}</span>
-                        <small className="text-body-secondary">{file.files.length} files</small> */}
                     </Link>
                 </td>
                 <td>
@@ -36,18 +38,24 @@ export default function FilesList({ files, onAction, allowedActions, maxWidth })
                 </td>
                 <td className="text-end" style={{ padding: 0 }}>
                     <Dropdown>
-                        <Dropdown.Toggle as={CustomToggle} />
+                        { (primaryActions?.length || redActions?.length) && <Dropdown.Toggle as={CustomToggle} /> }
 
                         <Dropdown.Menu className="text-small shadow">
-                            {allowedActions?.rename && <Dropdown.Item onClick={() => { onAction("rename", file) }}>Rename</Dropdown.Item>}
-                            {allowedActions?.preview && <Dropdown.Item onClick={() => { onAction("preview", file) }}>Preview</Dropdown.Item>}
-                            {allowedActions?.download && <Dropdown.Item onClick={() => { onAction("download", file) }}>Download</Dropdown.Item>}
-                            {allowedActions?.delete && (
+                            {primaryActions?.map(action => (
+                                <Dropdown.Item onClick={() => { onAction(action, file) }}>{prettify(action)}</Dropdown.Item>
+                            ))}
+
+                            {primaryActions?.length && redActions.length && (
+                                <Dropdown.Divider></Dropdown.Divider>
+                            )}
+
+                            {redActions?.length && (
                                 <>
-                                    <Dropdown.Divider></Dropdown.Divider>
-                                    <Dropdown.Item className="text-danger" onClick={() => { onAction("delete", file) }}>
-                                        Remove
-                                    </Dropdown.Item>
+                                    {redActions.map(action => (
+                                        <Dropdown.Item className="text-danger" onClick={() => { onAction(action, file) }}>
+                                            {prettify(action)}
+                                        </Dropdown.Item>
+                                    ))}
                                 </>
                             )}
 

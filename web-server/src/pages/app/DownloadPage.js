@@ -18,8 +18,6 @@ import Adsense from "../../components/Adsense";
 
 const fileExtRe = /(?:\.([^.]+))?$/;
 
-
-
 export default function DownloadPage({ }) {
     const { secretCode } = useParams()
     const [download, setDownload] = useState(null)

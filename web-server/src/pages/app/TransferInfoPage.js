@@ -227,7 +227,7 @@ export default function TransferInfoPage({ }) {
             </div>
             {/* <h4>Files</h4> */}
 
-            <FilesList files={transfer.files} onAction={onFilesListAction} allowedActions={{ "preview": false, "download": true, "rename": false, "delete": true }} maxWidth={"800px"} />
+            <FilesList files={transfer.files} onAction={onFilesListAction} primaryActions={["download"]} redActions={["delete"]} maxWidth={"800px"} />
             
             <div className="d-flex flex-row flex-wrap gap-3 mb-3">
                 <GraphCard title={"Downloads last " + interval}>

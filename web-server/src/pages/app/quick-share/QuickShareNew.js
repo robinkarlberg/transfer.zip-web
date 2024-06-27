@@ -1,25 +1,27 @@
 import { useContext, useState } from "react"
-import { Link, Outlet, useNavigate, useParams } from "react-router-dom"
-import { ApplicationContext } from "../../../providers/ApplicationProvider"
-import { AuthContext } from "../../../providers/AuthProvider"
-import { FileTransferContext } from "../../../providers/FileTransferProvider"
-
-import TransfersList from "../../../components/app/TransfersList"
-import StatCard from "../../../components/app/StatCard"
-import FilesList from "../../../components/app/FilesList"
-import UploadOrReceiveArea from "../../../components/UploadOrReceiveArea"
-
-import * as Api from "../../../api/Api"
+import { Link, Outlet, useLocation, useNavigate, useParams } from "react-router-dom"
 import { QuickShareContext } from "../../../providers/QuickShareProvider"
 import UploadFilesModal from "../../../components/modals/UploadFilesModal"
 
 export default function QuickShareNew({ }) {
     const { } = useContext(QuickShareContext)
 
-    const [showUploadFilesModal, setShowUploadFilesModal] = useState(false)
-    // const [files, setFiles] = useState([])
+    const { state } = useLocation()
+    let { k, remoteSessionId, transferDirection } = state || {}
+    const isSentLinkWithHash = !!(k && remoteSessionId && transferDirection)
+
+    const [showUploadFilesModal, setShowUploadFilesModal] = useState(isSentLinkWithHash)
 
     const navigate = useNavigate()
+
+    const onUploadFilesModalCancel = () => {
+        if(isSentLinkWithHash) {
+            navigate("/")
+        }
+        else {
+            setShowUploadFilesModal(false)
+        }
+    }
 
     const onReceiveClicked = e => {
         navigate("/quick-share/progress", {
@@ -33,25 +35,35 @@ export default function QuickShareNew({ }) {
         setShowUploadFilesModal(false)
         console.log(files)
 
-        navigate("/quick-share/progress", {
-            state: {
-                files,
-                transferDirection: "S"
-            }
-        })
+        if (isSentLinkWithHash) {
+            navigate("/quick-share/progress", {
+                state: {
+                    files,
+                    ...state
+                }
+            })
+        }
+        else {
+            navigate("/quick-share/progress", {
+                state: {
+                    files,
+                    transferDirection: "S"
+                }
+            })
+        }
     }
 
     return (
         <div className="d-flex flex-column gap-0 me-md-5">
-            <UploadFilesModal show={showUploadFilesModal} onCancel={() => setShowUploadFilesModal(false)}
-                onDone={onUploadFilesModalDone} showFilePickerOnShow={true} />
+            <UploadFilesModal show={showUploadFilesModal} onCancel={onUploadFilesModalCancel}
+                onDone={onUploadFilesModalDone}/>
             <div className="d-flex flex-column flex-wrap gap-0 justify-content-center mt-2">
                 <div style={{ maxWidth: "400px" }}>
                     <h2 className="mb-3">Quick Share</h2>
                     <p className="">
                         Quick Share is a free and open source service from transfer.zip that allows you
-                        to share files without any file size or bandwidth limitations. <Link>Read&nbsp;more...</Link>
-
+                        to share files without any file size or bandwidth limitations.
+                        {/* <Link>Read&nbsp;more...</Link> */}
                         {/* 
                         The files are end-to-end encrypted,
                         and will be transfered directly between you and the recipient, using peer-to-peer technology. 
