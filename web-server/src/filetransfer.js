@@ -283,10 +283,6 @@ export class FileTransfer {
             onData(fileSliceBuffer)
         };
 
-        const fr = new FileReader()
-        setTimeout(() => fr.abort(), 500)
-        fr.readAsArrayBuffer(file)
-
         const fileInfo = {
             name: file.name,
             size: file.size,
