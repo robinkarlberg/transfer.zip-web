@@ -37,10 +37,8 @@
 
 <body>
   <!-- Tool for debugging mobile browser, only include in dev. -->
-  <% if (process.env.ENVIRONMENT==='dev' ) { %>
-    <script src="//cdn.jsdelivr.net/npm/eruda"></script>
-    <script>eruda.init();</script>
-  <% } %>
+  <script src="//cdn.jsdelivr.net/npm/eruda"></script>
+  <script>eruda.init();</script>
 
   <noscript>You need to enable JavaScript to run transfer.zip!</noscript>
   <div id="root"></div>
