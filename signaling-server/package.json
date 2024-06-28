@@ -10,6 +10,7 @@
   "type": "module",
   "license": "ISC",
   "dependencies": {
+    "bufferutil": "^4.0.8",
     "uuid": "^10.0.0",
     "ws": "^8.13.0"
   }
