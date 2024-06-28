@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 
 export default function UploadFilesModal({ show, onDone, onCancel, showFilePickerOnShow }) {
     const [files, setFiles] = useState([])
-    const selectFilesRef = useRef(null)
 
     const onFilesSelected = (newFiles) => {
         console.log(newFiles)
@@ -53,7 +52,7 @@ export default function UploadFilesModal({ show, onDone, onCancel, showFilePicke
                         }) }
                     </div>
                     <div className="d-flex" style={{ minHeight: "200px" }}>
-                        <UploadOrReceiveArea ref={selectFilesRef} title={"Pick files"} subtitle={"Or drag files here"}
+                        <UploadOrReceiveArea title={"Pick files"} subtitle={"Or drag files here"}
                             allowReceive={false} onFilesSelected={onFilesSelected}
                         />
                     </div>

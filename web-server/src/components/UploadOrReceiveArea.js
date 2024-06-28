@@ -1,9 +1,9 @@
-import { useRef } from "react"
+import { useContext, useRef } from "react"
 import "./UploadOrReceiveArea.css"
+import { ApplicationContext } from "../providers/ApplicationProvider"
 
 export default function UploadOrReceiveArea({ title, subtitle, allowReceive, onFileSelected, onFilesSelected, onReceiveClicked, ref }) {
-
-    const fileInputRef = useRef()
+    const { fileInputRef, setOnFileInputChange } = useContext(ApplicationContext)
 
     const _onUploadClicked = e => {
         e.stopPropagation()
@@ -33,7 +33,7 @@ export default function UploadOrReceiveArea({ title, subtitle, allowReceive, onF
         }
     }
 
-    const onFileInputChange = e => {
+    setOnFileInputChange(e => {
         console.log("onFileInputChange", e)
         if(e.target.files[0]) {
             if(onFileSelected) onFileSelected(e.target.files[0])
@@ -43,7 +43,7 @@ export default function UploadOrReceiveArea({ title, subtitle, allowReceive, onF
             console.log("No file picked?")
         }
         
-    }
+    })
     
     return (
         <div ref={ref} onDragEnter={onDragEnter} onDragOver={onDragOver} onDrop={onDrop}
@@ -65,9 +65,6 @@ export default function UploadOrReceiveArea({ title, subtitle, allowReceive, onF
                     ) }
                 </div>
             </div>
-            <form style={{ display: "none" }}>
-                <input ref={fileInputRef} onChange={onFileInputChange} type="file" aria-hidden="true" multiple></input>
-            </form>
         </div>
     )
 }

@@ -8,7 +8,10 @@ export default function QuickShareNew({ }) {
 
     const navigate = useNavigate()
 
-    const [ _, setShowUploadFilesModal ] = useOutletContext()
+    const { state } = useLocation()
+    let { files, k, remoteSessionId, transferDirection } = state || {}
+    const isSentLinkWithHash = !!(k && remoteSessionId && transferDirection)
+    const [showUploadFilesModal, setShowUploadFilesModal] = useState(isSentLinkWithHash)
 
     const onReceiveClicked = e => {
         navigate("/quick-share/progress", {
@@ -18,8 +21,40 @@ export default function QuickShareNew({ }) {
         })
     }
 
+    const onUploadFilesModalCancel = () => {
+        if (isSentLinkWithHash) {
+            navigate("/")
+        }
+        else {
+            setShowUploadFilesModal(false)
+        }
+    }
+
+    const onUploadFilesModalDone = async (files) => {
+        setShowUploadFilesModal(false)
+        console.log(files)
+
+        if (isSentLinkWithHash) {
+            navigate("/quick-share/progress", {
+                state: {
+                    files,
+                    ...state
+                }
+            })
+        }
+        else {
+            navigate("/quick-share/progress", {
+                state: {
+                    files,
+                    transferDirection: "S"
+                }
+            })
+        }
+    }
+
     return (
         <div className="d-flex flex-column gap-0 me-md-5">
+            <UploadFilesModal show={showUploadFilesModal} onCancel={onUploadFilesModalCancel} onDone={onUploadFilesModalDone} />
             <div className="d-flex flex-column flex-wrap gap-0 justify-content-center mt-2">
                 <div style={{ maxWidth: "400px" }}>
                     <h2 className="mb-3">Quick Share</h2>
