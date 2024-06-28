@@ -25,7 +25,8 @@ export default function QuickShareProgress({ }) {
     const navigate = useNavigate()
     const { state } = useLocation()
 
-    const [files, _] = useOutletContext()
+    // const [files, _] = useOutletContext()
+    const files = window.uploadedFiles
 
     let { k, remoteSessionId, transferDirection } = state || {}
     const isSentLinkWithHash = k && remoteSessionId && transferDirection

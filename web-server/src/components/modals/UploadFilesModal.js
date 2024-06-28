@@ -10,10 +10,12 @@ export default function UploadFilesModal({ show, onDone, onCancel, showFilePicke
     const onFilesSelected = (newFiles) => {
         console.log(newFiles)
         setFiles([...files, ...newFiles])
+        window.uploadedFiles = [...files, ...newFiles]
     }
 
     const removeFile = (file) => {
         setFiles(files.filter(f => f != file))
+        window.uploadedFiles = window.uploadedFiles.filter(f => f != file)
     }
 
     useEffect(() => {

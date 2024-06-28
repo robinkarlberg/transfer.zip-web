@@ -8,7 +8,7 @@ export default function QuickShareNew({ }) {
 
     const navigate = useNavigate()
 
-    const [ files, setShowUploadFilesModal ] = useOutletContext()
+    const [ _, setShowUploadFilesModal ] = useOutletContext()
 
     const onReceiveClicked = e => {
         navigate("/quick-share/progress", {
