@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { Link, Outlet, useLocation, useNavigate, useParams } from "react-router-dom"
+import { Link, Outlet, useLocation, useNavigate, useOutletContext, useParams } from "react-router-dom"
 
 import * as WebRtc from "../../../webrtc"
 import QRLink from "../../../components/QRLink"
@@ -25,7 +25,9 @@ export default function QuickShareProgress({ }) {
     const navigate = useNavigate()
     const { state } = useLocation()
 
-    let { files, k, remoteSessionId, transferDirection } = state || {}
+    const [files, _] = useOutletContext()
+
+    let { k, remoteSessionId, transferDirection } = state || {}
     const isSentLinkWithHash = k && remoteSessionId && transferDirection
 
     const [showPeerConnectionError, setShowPeerConnectionError] = useState(false)
