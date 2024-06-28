@@ -275,7 +275,7 @@ export class FileTransfer {
             }
         }
         fileReader.onerror = e => {
-            console.error("File reader error", e)
+            console.error("File reader error", e.message, e)
         }
         fileReader.onabort = e => {
             console.log("File reader abort", e)
