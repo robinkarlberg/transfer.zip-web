@@ -187,7 +187,7 @@ export class FileTransfer {
         packetDataView.setInt8(0, PACKET_ID.fileData)
         packetDataView.setBigUint64(1, BigInt(index))
         packet.set(new Uint8Array(data), 1 + 8)
-        console.log("unencrypted packet: ", packet)
+        // console.log("unencrypted packet: ", packet)
         const encryptedPacket = await this.encryptData(packet)
         return encryptedPacket
     }
@@ -209,7 +209,7 @@ export class FileTransfer {
             return
         }
         if(this.internalBufferedAmount == 0) return
-        console.log("internalbuffer:", this.internalBuffer)
+        // console.log("internalbuffer:", this.internalBuffer)
 		this.sendData(await this._constructFileDataPacketAndEncrypt(this.internalBuffer.subarray(0, this.internalBufferedAmount), this.chunkMapIndex))
         // console.log("_sendQueuedData, chunkMapIndex:", this.chunkMapIndex, "internalBufferedAmount:", this.internalBufferedAmount)
         
@@ -225,7 +225,7 @@ export class FileTransfer {
 		if(this.internalBufferedAmount + data.byteLength > this.INTERNAL_BUFFER_MAX_SIZE) {
 			throw new Error("[FileTransfer] _queueData: BUFFER OVERFLOW")
 		}
-        console.log("set internalBuffer @ " + this.internalBufferedAmount + ":", data)
+        // console.log("set internalBuffer @ " + this.internalBufferedAmount + ":", data)
 		this.internalBuffer.set(data, this.internalBufferedAmount)
 		this.internalBufferedAmount += data.byteLength
 	}
@@ -282,6 +282,10 @@ export class FileTransfer {
             // console.log(fileSliceBuffer)
             onData(fileSliceBuffer)
         };
+
+        const fr = new FileReader()
+        setTimeout(() => fr.abort(), 500)
+        fr.readAsArrayBuffer(file)
 
         const fileInfo = {
             name: file.name,
