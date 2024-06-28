@@ -11,7 +11,6 @@ export default function SideBar({ className }) {
     const disable = user == null || isGuestOrFreeUser()
 
     const currentPage = useLocation().pathname
-    console.log(currentPage)
 
     const NavLink = ({ to, children, disable }) => {
         const disableClass = disable ? "disabled" : "text-white"
