@@ -259,10 +259,8 @@ export class FileTransfer {
     sendFile(file) {
         this.chunkMapIndex = 0
         let offset = 0
-        let fileReader = new FileReader()
-        fileReader.onload = async e => {
-            const __data = fileReader.result
-
+        
+        const onData = async (__data) => {
             await this.queueData(new Uint8Array(__data))
             offset += __data.byteLength;
 
@@ -274,19 +272,15 @@ export class FileTransfer {
                 await this._sendQueuedData()
             }
         }
-        fileReader.onerror = e => {
-            console.error("File reader error", fileReader.error, e.message, e)
-        }
-        fileReader.onabort = e => {
-            console.log("File reader abort", e)
-        }
-        const readSlice = o => {
+        
+        const readSlice = async o => {
             this.channel.calculateBufferedAmount && this.channel.calculateBufferedAmount()
             if (this.channel.bufferedAmount > 5000000) {        // 5MB
                 return setTimeout(() => { readSlice(o) }, 1)
             }
-            const slice = file.slice(offset, o + FILE_CHUNK_SIZE);
-            fileReader.readAsArrayBuffer(slice);
+            const fileSliceBuffer = await file.slice(offset, o + FILE_CHUNK_SIZE).arrayBuffer()
+            // console.log(fileSliceBuffer)
+            onData(fileSliceBuffer)
         };
 
         const fileInfo = {
