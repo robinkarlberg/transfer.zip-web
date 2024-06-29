@@ -86,9 +86,18 @@ function handleBinaryData(conn, _data) {
     
     if (packetId == CPKT_RELAY) {
         const targetId = decodeString(packet.subarray(1, 1 + 36))
-        const callerId = decodeString(packet.subarray(1 + 36, 1 + 36 + 36))
+        // const callerId = decodeString(packet.subarray(1 + 36, 1 + 36 + 36))
 
-        if (!sessions.get(callerId)) return closeConnWithReason(conn, "[CPKT_RELAY] Specified callerId does not exist", callerId)
+        // const callerSession = sessions.get(callerId)
+        // if (!callerSession) return closeConnWithReason(conn, "[CPKT_RELAY] Specified callerId does not exist", callerId)
+
+        if(conn._session.relayBytesTransfered == undefined) {
+            conn._session.relayBytesTransfered = 0
+        }
+        conn._session.relayBytesTransfered += packet.byteLength - 1 - 36 -36
+        if(conn._session.relayBytesTransfered > 16.2e9) {    // ~15GiB free user relay limit
+            return closeConnWithReason(conn, "[CPKT_RELAY] 15GiB quota for free user exceeded.")
+        }
 
         let recipientConn;
         if((recipientConn = sessions.get(targetId))) {
@@ -264,7 +273,8 @@ function handleTextMessage(conn, message) {
             recipientConn.send(JSON.stringify({
                 type: SPKT_SWITCH_TO_FALLBACK_ACK,
                 targetId: data.recipientId,
-                callerId: data.callerId
+                callerId: data.callerId,
+                success: data.success
             }));
 
             return conn.send(JSON.stringify({

@@ -210,6 +210,18 @@ export default function QuickShareProgress({ }) {
             }
         }
 
+        const onerror = err => {
+            console.error(err)
+            setTransferState(TRANSFER_STATE_FAILED)
+            if (err instanceof WebRtc.PeerConnectionError) {
+                setShowPeerConnectionError(true)
+                // setErrorMessage("Peer connection failed.")
+            }
+            else {
+                setErrorMessage(err.message || "Sorry an unknown error has occured! Check back later and we should hopefully have fixed it.")
+            }
+        }
+
         if (isSentLinkWithHash) {
             setTransferState(TRANSFER_STATE_CONNECTING)
             // User has been sent a link, assuming upload on behalf or receive files
@@ -219,17 +231,7 @@ export default function QuickShareProgress({ }) {
                     fileTransferGetFileList(fileTransfer).then(fileList => recvDirection(fileTransfer, fileList))
                 else
                     fileTransferServeFiles(fileTransfer, files).then(() => sendDirection(fileTransfer))
-            }).catch(err => {
-                console.error(err)
-                setTransferState(TRANSFER_STATE_FAILED)
-                if (err instanceof WebRtc.PeerConnectionError) {
-                    setShowPeerConnectionError(true)
-                    // setErrorMessage("Peer connection failed.")
-                }
-                else {
-                    setErrorMessage(err.message || "Sorry an unknown error has occured! Check back later and we should hopefully have fixed it.")
-                }
-            })
+            }).catch(onerror)
         }
         else {
             const directionCharForRecipient = transferDirection == "R" ? "S" : "R"
@@ -248,7 +250,7 @@ export default function QuickShareProgress({ }) {
                     fileTransferServeFiles(fileTransfer, files).then(() => sendDirection(fileTransfer))
                 else
                     fileTransferGetFileList(fileTransfer).then(fileList => recvDirection(fileTransfer, fileList))
-            })
+            }).catch(onerror)
         }
 
         return () => {
@@ -265,7 +267,7 @@ export default function QuickShareProgress({ }) {
             <PeerConnectionErrorModal show={showPeerConnectionError} onCancel={() => { setShowPeerConnectionError(false) }} />
             <div className="d-flex flex-column flex-lg-row gap-3 justify-content-center mt-2">
                 <div>
-                    <h1 className="mb-3 d-block d-lg-none mb-4">Quick Share</h1>
+                    <h1 className="mb-3 d-block d-lg-none mb-4">{title}</h1>
                     <div className="mx-3 mx-lg-0" style={{ maxWidth: "300px" }}>
                         <QRLink link={quickShareLink}>
                             {(hasConnected() || isSentLinkWithHash) && qrChildren}

@@ -22,7 +22,8 @@ export const QuickShareProvider = () => {
         const sessionId = crypto.randomUUID()
         const rtcSession = WebRtc.newRtcListener(sessionId)
         console.log("[QuickShareProvider] [listen]", sessionId)
-        await rtcSession.listen()
+
+        await rtcSession.listen(false)
 
         const key = await window.crypto.subtle.generateKey(
             { name: "AES-GCM", length: 256 },
@@ -41,6 +42,10 @@ export const QuickShareProvider = () => {
         }
 
         return new Promise((resolve, reject) => {
+            rtcSession.onerror = (err) => {
+                reject(err)
+            }
+
             rtcSession.onrtcsession = (rtcSession, channel) => {
                 // quickShare.onconnection && quickShare.onconnection(rtcSession)
                 resolve(new FileTransfer(channel, key))

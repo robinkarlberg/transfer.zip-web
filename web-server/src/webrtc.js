@@ -254,6 +254,7 @@ export class RtcListener {
 	_onclose = undefined
 	onclose = undefined
 	onwsopen = undefined
+	onerror = undefined
 
 	callerIdPeerConnectionEntries = []
 
@@ -286,7 +287,7 @@ export class RtcListener {
 		console.warn(`[WebRtc] [RtcListener(${this.sessionId})]`, ...o)
 	}
 
-	async _listen() {
+	async _listen(useFallback) {
 		if (this.closed) {
 			this.warn("_recv was called after close")
 			return
@@ -326,6 +327,7 @@ export class RtcListener {
 						}
 					})
 
+					// this event is also called when switching to fallback (when receiving packet SPKT_SWITCH_TO_FALLBACK)
 					const datachannellistener = entry.peerConnection.addEventListener("datachannel", e => {
 						entry.peerConnection.removeEventListener("iceconnectionstatechange", iceconnectionstatechangeListener)
 						entry.peerConnection.removeEventListener("icecandidate", icecandidatelistener)
@@ -341,7 +343,7 @@ export class RtcListener {
 							newClientRtcSession.try_login()
 							
 							ws.send(JSON.stringify({
-								type: CPKT_SWITCH_TO_FALLBACK_ACK, callerId: newClientRtcSession.sessionId, recipientId: entry.callerId
+								type: CPKT_SWITCH_TO_FALLBACK_ACK, callerId: newClientRtcSession.sessionId, recipientId: entry.callerId, success: true
 							}))
 
 							this.log("Got RelayChannel!")
@@ -383,6 +385,14 @@ export class RtcListener {
 			else if (data.type == SPKT_SWITCH_TO_FALLBACK) {
 				let entry = this.callerIdPeerConnectionEntries.find(x => x.callerId === x.callerId)
 
+				if(!useFallback) {
+					ws.send(JSON.stringify({
+						type: CPKT_SWITCH_TO_FALLBACK_ACK, callerId: this.sessionId, recipientId: entry.callerId, success: false
+					}))
+					this.onerror && this.onerror(new PeerConnectionError())
+					return
+				}
+
 				// This is so ugly fuuuuuuuuuuck
 				entry.peerConnection.dispatchEvent(new CustomEvent("datachannel", {
 					detail: { newRtcSessionId: data.newRtcSessionId }
@@ -414,9 +424,9 @@ export class RtcListener {
 		}
 	}
 
-	async listen() {
+	async listen(useFallback) {
 		await this.waitForWebsocket()
-		return this._listen()
+		return this._listen(useFallback)
 	}
 
 	onwsrestart() {
@@ -539,7 +549,12 @@ export class RtcSession {
 					await peerConnection.addIceCandidate(data.candidate)
 				}
 				else if (data.type == SPKT_SWITCH_TO_FALLBACK_ACK) {
-					resolve(new RelayChannel(this, data.callerId))
+					if(data.success) {
+						resolve(new RelayChannel(this, data.callerId))
+					}
+					else {
+						reject(new PeerConnectionError())
+					}
 				}
 				else {
 					if (!data.success) {

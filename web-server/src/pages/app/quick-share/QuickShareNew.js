@@ -59,7 +59,7 @@ export default function QuickShareNew({ }) {
                 <div style={{ maxWidth: "400px" }}>
                     <h2 className="mb-3">Quick Share</h2>
                     <p className="">
-                        Quick Share is a free and open source service from transfer.zip that allows you
+                        Quick Share is a free and open source service from <a href={process.env.REACT_APP_SITE_URL}>transfer.zip</a> that allows you
                         to share files without any file size or bandwidth limitations.
                         {/* <Link>Read&nbsp;more...</Link> */}
                         {/* 
