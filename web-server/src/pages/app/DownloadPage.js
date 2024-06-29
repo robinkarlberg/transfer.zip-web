@@ -16,6 +16,8 @@ import FilePreviewModal from "../../components/modals/FilePreviewModal";
 import FilesList from "../../components/app/FilesList";
 import Adsense from "../../components/Adsense";
 
+import { Helmet } from "react-helmet"
+
 const fileExtRe = /(?:\.([^.]+))?$/;
 
 export default function DownloadPage({ }) {
@@ -196,8 +198,21 @@ export default function DownloadPage({ }) {
         )
     }
 
+    const fileCountText = filesList.length + (filesList.length == 1 ? " File" : " Files")
+
     return (
         <div className="m-auto bg-dark-subtle">
+            <Helmet>
+                <meta property="og:type" content="website"/>
+                <meta property="og:title" content={
+                    ( download.name || fileCountText ) + " | transfer.zip"
+                }/>
+                <meta property="og:url" content="https://transfer.zip/"/>
+                <meta property="og:image" content="https://pub-9d516fbe625349fa91201a12a4724d0d.r2.dev/og.png"/>
+                <meta property="og:description" content="Transfer smarter with transfer.zip"/>
+
+                <title>{download.name || fileCountText} | transfer.zip - Transfer smarter</title>
+            </Helmet>
             <FilePreviewModal onAction={onFilePreviewModalAction} secretCode={secretCode} show={showFilePreviewModal} filesList={filesList} fileIndex={filePreviewIndex} onCancel={() => { setShowFilePreviewModal(false) }} />
             <div className="border-bottom mb-2 p-3 bg-body-tertiary ">
                 <div className="d-flex flex-row justify-content-between m-auto" style={{ maxWidth: "1280px" }}>
@@ -222,7 +237,7 @@ export default function DownloadPage({ }) {
                 <div className="flex-grow-1 px-3 px-md-0" style={{ minHeight: "calc(100vh - 90px)", maxWidth: "1280px" }}>
                     <div className="pt-3" style={{ maxWidth: "1180px" }}>
                         <div className="mb-3">
-                            <h2 className="mb-3">{ download.name || "File Transfer" }</h2>
+                            <h2 className="mb-3">{ download.name || fileCountText }</h2>
                             <div style={{ maxWidth: "800px" }}>
                                 <p>{ download.description || "No description" }</p>
                             </div>
