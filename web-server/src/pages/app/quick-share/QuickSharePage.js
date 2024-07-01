@@ -19,10 +19,10 @@ export default function QuickSharePage({ }) {
             </div>
             <div className="inline-footer d-flex flex-row gap-2">
                 <InlineLink to={"/upgrade"}>Plans</InlineLink>
-                <InlineLink to={"/upgrade"}>Features</InlineLink>
                 <InlineLink to={"/about"}>About</InlineLink>
-                <InlineLink to={"/terms"}>Terms</InlineLink>
-                <InlineLink to={"/privacy"}>Privacy</InlineLink>
+                <InlineLink to={"/terms-of-service"}>Terms</InlineLink>
+                <InlineLink to={"/privacy-policy"}>Privacy</InlineLink>
+                <InlineLink to={"https://github.com/robinkarlberg/transfer.zip-web"}>GitHub</InlineLink>
             </div>
         </div>
     )
