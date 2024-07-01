@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom"
 import AppGenericPage from "../../components/app/AppGenericPage"
-import IndexPage from "../partial/IndexPage"
 import StatCard from "../../components/app/StatCard"
 import { useContext, useEffect, useState } from "react"
 import { ApplicationContext } from "../../providers/ApplicationProvider"

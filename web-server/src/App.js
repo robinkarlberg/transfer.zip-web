@@ -5,8 +5,6 @@ import logo from "./img/transfer-zip-logotext-cropped.png"
 
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { ApplicationContext, ApplicationProvider } from "./providers/ApplicationProvider";
-import IntentDescription from "./components/IntentDescription"
-import AddContactModal from "./components/modals/AddContactModal";
 import Adsense from "./components/Adsense";
 import SideBar from "./components/app/SideBar";
 import { AuthProvider } from "./providers/AuthProvider";
@@ -17,7 +15,7 @@ function App() {
     <div className={"App bg-dark-subtle vh-100 d-flex flex-column flex-md-row"}>
       <Header className="d-md-none" />
       <SideBar className="d-none d-md-flex" />
-      <div className="d-flex flex-row flex-grow-0 flex-sm-grow-1 overflow-y-scroll">
+      <div className="d-flex flex-row flex-grow-1 flex-sm-grow-1 overflow-y-scroll">
         <Outlet />
       </div>
       {/* <div className="w-100">

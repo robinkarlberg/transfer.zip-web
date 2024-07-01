@@ -4,10 +4,6 @@ import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import * as WebRtc from "../webrtc";
-import * as Contacts from "../contacts"
-import ContactsListOffcanvas from "../components/ContactsListOffcanvas";
-import EditContactModal from "../components/modals/EditContactModal";
-import Adsense from "../components/Adsense";
 import GenericErrorModal from "../components/modals/GenericErrorModal";
 import PeerConnectionErrorModal from "../components/modals/PeerConnectionErrorModal";
 import * as Api from "../api/Api"

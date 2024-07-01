@@ -12,20 +12,11 @@ import {
 import './index.css';
 import './ubuntu.css';
 import App from './App';
-import NotFoundPage from './pages/NotFoundPage';
-import LinkPage from './pages/LinkPage';
-
-import IndexPage from "./pages/partial/IndexPage"
-import UploadPage from './pages/partial/UploadPage';
-import UploadOnBehalfPage from './pages/partial/UploadOnBehalfPage';
-import ProgressPage from './pages/partial/ProgressPage';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { ApplicationProvider } from './providers/ApplicationProvider';
 import { FileTransferProvider } from './providers/FileTransferProvider';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import AboutPage from './pages/AboutPage';
 import { AuthProvider } from './providers/AuthProvider';
 import TransfersPage from './pages/app/TransfersPage';
 import AccountPage from './pages/app/AccountPage';
@@ -36,9 +27,11 @@ import StatisticsPage from "./pages/app/StatisticsPage";
 import FilesPage from "./pages/app/FilesPage";
 import QuickSharePage from "./pages/app/quick-share/QuickSharePage";
 import QuickShareNew from "./pages/app/quick-share/QuickShareNew";
-import EmptyPage from "./pages/EmptyPage";
+import EmptyPage from "./pages/app/EmptyPage";
 import QuickShareProgress from "./pages/app/quick-share/QuickShareProgress";
 import { QuickShareProvider } from "./providers/QuickShareProvider";
+import Login from "./pages/app/Login";
+import SignUp from "./pages/app/SignUp";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -64,58 +57,13 @@ const router = createBrowserRouter(
             <Route path="/statistics" element={<StatisticsPage />} />
             <Route path="/files" element={<FilesPage />} />
           </Route>
+          <Route path="/login" element={<Login/>}/>
+          <Route path="/signup" element={<SignUp/>}/>
           <Route path="*" element={<EmptyPage />} />
         </Route>
       </Route>
     </Route >
   )
-  // [
-  // {
-  //   element: <ApplicationProvider />,
-  //   children: [
-  //     {
-  //       element: <AuthProvider />,
-  //       children: [
-  //         {
-  //           element: <FileTransferProvider />,
-  //           children: [{
-  //             element: <App />,
-  //             children: [
-  //               {
-  //                 path: "/",
-  //                 element: <IndexPage />
-  //               },
-  //               {
-  //                 path: "/transfers",
-  //                 element: <TransfersPage />
-  //               },
-  //               {
-  //                 path: "/account",
-  //                 element: <AccountPage />
-  //               },
-  //               {
-  //                 path: "/upload",
-  //                 element: <UploadPage />
-  //               },
-  //               {
-  //                 path: "/upload-on-behalf",
-  //                 element: <UploadOnBehalfPage />
-  //               },
-  //               {
-  //                 path: "/progress",
-  //                 element: <ProgressPage />
-  //               }
-  //             ]
-  //           }]
-  //         }
-  //       ]
-  //     },
-  //   ]
-  // },
-  // {
-  //   path: "*",
-  //   element: <NotFoundPage />
-  // }]
 )
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

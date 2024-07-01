@@ -2,7 +2,6 @@ import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import * as WebRtc from "../webrtc";
-import * as Contacts from "../contacts"
 import { FileTransfer } from "../filetransfer";
 
 export const FileTransferContext = createContext({})

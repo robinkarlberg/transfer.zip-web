@@ -12,8 +12,8 @@ export default function AccountPage({ }) {
     const navigate = useNavigate()
 
     if (isGuestUser()) {
-        return window.location.href = `${SITE_URL}/login?back=${window.location.origin}&success=${window.location}`
-        // return <Navigate to={`${SITE_URL}/signup`}/>
+        // return window.location.replace(`${SITE_URL}/login?back=${window.location.origin}&success=${window.location}`)
+        return <Navigate to={"/login"}/>
     }
 
     const doLogout = async () => {

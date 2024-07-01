@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Modal } from 'react-bootstrap'
 
-import ContactsListEntry from "../ContactsListEntry"
 import { ApplicationContext } from "../../providers/ApplicationProvider"
 
 export default function GenericErrorModal({ show, errorMessage, onCancel }) {

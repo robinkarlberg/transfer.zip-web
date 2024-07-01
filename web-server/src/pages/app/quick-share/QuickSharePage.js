@@ -1,5 +1,5 @@
 
-import { Outlet, useLocation, useNavigate } from "react-router-dom"
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom"
 import AppGenericPage from "../../../components/app/AppGenericPage"
 
 import "./QuickSharePage.css"
@@ -8,9 +8,22 @@ import UploadFilesModal from "../../../components/modals/UploadFilesModal"
 
 export default function QuickSharePage({ }) {
 
+    const InlineLink = ({ to, children }) => {
+        return <Link className="link-secondary link-underline link-underline-opacity-0 link-underline-opacity-100-hover" to={to}>{children}</Link>
+    }
+
     return (
-        <div className="w-100 d-flex flex-grow-1 justify-content-center align-items-center p-3">
-            <Outlet/>
+        <div className="w-100 d-flex flex-column flex-grow-1 justify-content-between align-items-center p-3">
+            <div className="flex-grow-0 flex-md-grow-1 d-flex justify-content-center justify-md-content-start align-items-center">
+                <Outlet />
+            </div>
+            <div className="inline-footer d-flex flex-row gap-2">
+                <InlineLink to={"/upgrade"}>Plans</InlineLink>
+                <InlineLink to={"/upgrade"}>Features</InlineLink>
+                <InlineLink to={"/about"}>About</InlineLink>
+                <InlineLink to={"/terms"}>Terms</InlineLink>
+                <InlineLink to={"/privacy"}>Privacy</InlineLink>
+            </div>
         </div>
     )
 }

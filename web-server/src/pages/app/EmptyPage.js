@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react"
 import { Navigate, useNavigate } from "react-router-dom"
-import { AuthContext } from "../providers/AuthProvider"
+import { AuthContext } from "../../providers/AuthProvider"
 
 export default function EmptyPage({ }) {
     const { user } = useContext(AuthContext)

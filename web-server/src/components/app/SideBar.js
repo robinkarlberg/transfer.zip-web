@@ -12,66 +12,82 @@ export default function SideBar({ className }) {
 
     const currentPage = useLocation().pathname
 
-    const NavLink = ({ to, children, disable }) => {
-        const disableClass = disable ? "disabled" : "text-white"
+    const NavLink = ({ to, children, disable, className }) => {
+        const _to = disable ? "#" : to
+        const disabledAction = () => {
+
+        }
+        const activeClass = (currentPage.startsWith(to) ? "text-white " : "text-body-secondary ")
         return (
-            <Link className={"nav-link " + (currentPage.startsWith(to) ? "active " : "") + disableClass} to={to}>
+            <Link className={"w-100 p-2 px-3 d-inline-block link-underline link-underline-opacity-0 " + activeClass + className} to={_to}>
                 {children}
             </Link>
         )
     }
 
     return (
-        <div className={"d-flex flex-column flex-shrink-0 p-3 text-bg-dark shadow bg-body-tertiary border-end " + className} style={{ minWidth: "230px" }}>
-            <Link to="/" style={{ height: "60px" }} className="d-flex align-items-center mb-0 me-md-auto text-white text-decoration-none">
-                <img className="bi" src={logo} style={{ height: "45px" }}></img>
+        <div className={"d-flex flex-column flex-shrink-0 text-bg-dark shadow bg-body border-end " + className} style={{ minWidth: "210px" }}>
+            <Link to="/" style={{ height: "60px" }} className="d-flex align-items-center m-3 mb-2 text-white text-decoration-none">
+                <img className="bi" src={logo} style={{ height: "40px" }}></img>
                 {/* <span className="fs-4">Sidebar</span> */}
             </Link>
-            <hr />
-            <ul className="nav nav-pills flex-column mb-auto">
-                <li>
-                    <NavLink to="/quick-share">
-                        {/* <small className="p-1 px-2 me-2 border rounded bg-warning text-black">NEW</small> */}
-                        <b>Quick Share</b>
-                    </NavLink>
-                </li>
-                <hr className="mx-2" />
+            {/* <hr /> */}
+            <div className="px-4 mb-3">
+                <NavLink to="/quick-share" className={"btn text-start rounded-pill border border-secondary"}>
+                    <div className="d-flex flex-row justify-content-between">
+                        Quick Share<i className="bi bi-lightning-fill"></i>
+                    </div>
+                </NavLink>
+            </div>
+            <ul className="d-flex flex-column align-items-stretch list-unstyled px-2">
                 <li>
                     <NavLink to="/dashboard" disable={disable}>
-                        Dashboard
+                        <i className="bi bi-house me-2"></i>Dashboard
                     </NavLink>
                 </li>
                 <li>
                     <NavLink to="/transfers" disable={disable}>
-                        Transfers
+                        <i className="bi bi-arrow-down-up me-2"></i>Transfers
                     </NavLink>
                 </li>
                 <li>
                     <NavLink to="/statistics" disable={disable}>
-                        Statistics
+                        <i className="bi bi-graph-up me-2"></i>Statistics
                     </NavLink>
                 </li>
                 <li>
                     <NavLink to="/files" disable={disable}>
-                        Files
+                        <i className="bi bi-file-earmark me-2"></i>Files
                     </NavLink>
                 </li>
             </ul>
+            <div className="px-3 mb-auto">
+                { user && isGuestUser() &&
+                    (
+                        <Link className="btn btn-primary rounded-pill w-100" to={"/signup"}>
+                            {!user ? ("...") : (isGuestOrFreeUser ? "Sign up" : "Upgrade")}
+                        </Link>
+                    )
+                }
+            </div>
             <hr />
             <ul className="nav nav-pills flex-column">
                 <li>
                     <NavLink to="/account">
-                        {isGuestUser() ? (<div><small className="p-1 px-2 me-2 border rounded bg-warning text-black">NEW</small> Login</div>) : "Account"}
+                        {isGuestUser() ? (<div>Login</div>) : "Account"}
                         {/* <div className="d-flex align-items-center text-white text-decoration-none">
                             <img src="https://avatars.githubusercontent.com/u/10927692?v=4" alt="" width="32" height="32" className="rounded-circle me-2" />
-                            <strong>user</strong>
+                            <strong>{user.username}</strong>
                         </div> */}
                     </NavLink>
                 </li>
             </ul>
-            <hr />
-            <div>
+            <hr className="mb-1" />
+            <div className="d-flex justify-content-between p-3">
                 <small className="text-body-secondary">&copy; 2024 Robin K</small>
+                <div>
+                    <a className="text-body-secondary" href="https://github.com/robinkarlberg/transfer.zip-web"><i className="bi bi-github"></i></a>
+                </div>
             </div>
             {/* <div>
                 <ProgressBar className="mt-1" style={{ height: "8px" }} />

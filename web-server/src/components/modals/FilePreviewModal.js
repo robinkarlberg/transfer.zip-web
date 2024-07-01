@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Modal } from 'react-bootstrap'
 
-import ContactsListEntry from "../ContactsListEntry"
 import { ApplicationContext } from "../../providers/ApplicationProvider"
 import * as Api from "../../api/Api"
 
