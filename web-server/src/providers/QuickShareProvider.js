@@ -32,7 +32,7 @@ export const QuickShareProvider = () => {
         )
         const jwk = await crypto.subtle.exportKey("jwk", key)
 
-        onLink(`${window.location.origin}#${jwk.k},${sessionId},`)
+        onLink(`${window.location.origin}/#${jwk.k},${sessionId},`)
 
         rtcSession.onclose = () => {
             console.log("[QuickShareProvider] [listen] onclose")
