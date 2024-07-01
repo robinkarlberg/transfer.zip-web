@@ -11,9 +11,11 @@ export default function QuickShareNew({ }) {
     const navigate = useNavigate()
 
     const { state } = useLocation()
-    let { files, k, remoteSessionId, transferDirection } = state || {}
+    let { k, remoteSessionId, transferDirection } = state || {}
     const isSentLinkWithHash = !!(k && remoteSessionId && transferDirection)
     const [showUploadFilesModal, setShowUploadFilesModal] = useState(isSentLinkWithHash)
+
+    const [files, setFiles] = useState([])
 
     const onReceiveClicked = e => {
         navigate("/quick-share/progress", {
@@ -21,6 +23,10 @@ export default function QuickShareNew({ }) {
                 transferDirection: "R"
             }
         })
+    }
+
+    const onFilesChange = (files) => {
+        setFiles(files)
     }
 
     const onUploadFilesModalCancel = () => {
@@ -34,7 +40,7 @@ export default function QuickShareNew({ }) {
 
     const onUploadFilesModalDone = async (files) => {
         setShowUploadFilesModal(false)
-        console.log(files)
+        // console.log(files)
 
         if (isSentLinkWithHash) {
             navigate("/quick-share/progress", {
@@ -55,43 +61,41 @@ export default function QuickShareNew({ }) {
     }
 
     return (
-        <div className="d-flex flex-column gap-0 me-md-5">
-            <UploadFilesModal show={showUploadFilesModal} onCancel={onUploadFilesModalCancel} onDone={onUploadFilesModalDone} />
-            <div className="d-flex flex-column flex-wrap gap-0 justify-content-center mt-2">
+        <div className="d-flex flex-row gap-3 me-md-5">
+            {/* <UploadFilesModal show={showUploadFilesModal} onCancel={onUploadFilesModalCancel} onDone={onUploadFilesModalDone} /> */}
+            <div className="d-flex flex-column flex-wrap gap-3 justify-content-center mt-2">
                 <div style={{ maxWidth: "400px" }}>
                     <div className="text-center">
                         <h2 className="mb-4">Quick Share</h2>
                     </div>
-                    <UploadFilesArea className="bg-body rounded-4" style={{ minWidth: "300px" }}/>
-                    <p className="text-center">
-                        {/* Quick Share is a free and open source service from transfer.zip that allows you
-                        to share files without any file size or bandwidth limitations. */}
-                        {/* <Link>Read&nbsp;more...</Link> */}
-                        {/* 
-                        The files are end-to-end encrypted,
-                        and will be transfered directly between you and the recipient, using peer-to-peer technology. 
-                        Quick Share requires your browser window to be open during the whole transfer,
-                        and a network that permits WebRTC connections.  */}
-                    </p>
+                    <UploadFilesArea onFilesChange={onFilesChange} className="bg-body rounded-4" style={{ minWidth: "300px" }} />
+                    {/* <p className="text-center">
+                        Quick Share is a free and open source service from transfer.zip that allows you
+                        to share files without any file size or bandwidth limitations.
+                    </p> */}
 
                 </div>
                 <div>
                     <div className="d-flex flex-row flex-wrap gap-3" style={{ minWidth: "283px" }}>
                         {/* <UploadOrReceiveArea allowReceive={true} onFileSelected={onFileSelected} onReceiveClicked={onReceiveClicked} /> */}
-                        {/* <button className="btn bg-primary flex-grow-1 d-flex justify-content-center align-items-center py-1 px-5"
-                            onClick={() => setShowUploadFilesModal(true)}>
-                            <div style={{ width: "40px", height: "40px" }}
-                                className="rounded-circle bg-primary-dark d-flex justify-content-center align-items-center">
-                                <i className="bi bi-arrow-up-short text-body fs-2"></i>
-                            </div> <small>Send</small>
-                        </button> */}
-                        <button className="btn w-100 bg-body flex-grow-0 d-flex justify-content-center align-items-center py-1 px-4 rounded-4"
-                            onClick={() => onReceiveClicked()}>
-                            <div style={{ width: "40px", height: "40px" }}
-                                className="rounded-circle d-flex justify-content-center align-items-center">
-                                <i className="bi bi-arrow-down-short text-body fs-2"></i>
-                            </div> <small>Receive files instead</small>
-                        </button>
+                        {
+                            files.length ?
+                                <button className="btn bg-primary flex-grow-1 d-flex justify-content-center align-items-center py-1 px-5 rounded-4"
+                                    onClick={() => onUploadFilesModalDone(files)}>
+                                    <div style={{ width: "40px", height: "40px" }}
+                                        className="rounded-circle bg-primary-dark d-flex justify-content-center align-items-center">
+                                        <i className="bi bi-arrow-up-short text-body fs-2"></i>
+                                    </div> <small>Send</small>
+                                </button>
+                                :
+                                <button className="btn w-100 bg-body flex-grow-0 d-flex justify-content-center align-items-center py-1 px-4 rounded-4"
+                                    onClick={() => onReceiveClicked()}>
+                                    <div style={{ width: "40px", height: "40px" }}
+                                        className="rounded-circle d-flex justify-content-center align-items-center">
+                                        <i className="bi bi-arrow-down-short text-body fs-2"></i>
+                                    </div> <small>Receive files instead</small>
+                                </button>
+                        }
                     </div>
                 </div>
             </div>

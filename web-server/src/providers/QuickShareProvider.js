@@ -23,7 +23,7 @@ export const QuickShareProvider = () => {
         const rtcSession = WebRtc.newRtcListener(sessionId)
         console.log("[QuickShareProvider] [listen]", sessionId)
 
-        await rtcSession.listen(false)
+        await rtcSession.listen(true)
 
         const key = await window.crypto.subtle.generateKey(
             { name: "AES-GCM", length: 256 },

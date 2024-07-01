@@ -1,19 +1,19 @@
 import { useState } from "react"
 import UploadOrReceiveArea from "../UploadOrReceiveArea"
 
-export default function UploadFilesArea({ onDone, ...props }) {
+export default function UploadFilesArea({ onDone, onFilesChange, ...props }) {
 
     const [files, setFiles] = useState([])
 
     const onFilesSelected = (newFiles) => {
         console.log(newFiles)
         setFiles([...files, ...newFiles])
-        window.uploadedFiles = [...files, ...newFiles]
+        onFilesChange && onFilesChange([...files, ...newFiles])
     }
 
     const removeFile = (file) => {
         setFiles(files.filter(f => f != file))
-        window.uploadedFiles = window.uploadedFiles.filter(f => f != file)
+        onFilesChange && onFilesChange(files.filter(f => f != file))
     }
 
     // useEffect(() => {
@@ -22,12 +22,12 @@ export default function UploadFilesArea({ onDone, ...props }) {
 
     const FileScrollerEntry = ({ file }) => {
         return (
-            <div className="d-flex flex-row bg-dark-subtle flex-shrink-0">
-                <div className="border-start border-top border-bottom rounded-start p-2 pe-1">
-                    {file.name}
+            <div className="d-flex flex-row bg-dark-subtle flex-shrink-0 rounded-4">
+                <div className="border-start border-top border-bottom rounded-start-4 p-2 pe-1">
+                    <small>{file.name}</small>
                 </div>
-                <div className="border-end  border-top border-bottom rounded-end p-2 ps-1">
-                    <a className="link-danger" href="#" onClick={() => removeFile(file)}><i className="bi bi-x-lg m-auto"></i></a>
+                <div className="border-end  border-top border-bottom rounded-end-4 p-2 ps-1">
+                    <a className="text-body" href="#" onClick={() => removeFile(file)}><i className="bi bi-x-lg m-auto"></i></a>
                 </div>
             </div>
         )
@@ -35,7 +35,7 @@ export default function UploadFilesArea({ onDone, ...props }) {
 
     return (
         <div {...props}>
-            <div className="d-flex flex-row gap-1 overflow-x-scroll">
+            <div className="d-flex flex-row gap-1 overflow-x-auto p-2">
                 {files.map(f => {
                     return <FileScrollerEntry key={f.name + f.lastmodified + f.size + f.type} file={f} />
                 })}

@@ -3,18 +3,18 @@ import UploadOrReceiveArea from "../UploadOrReceiveArea";
 import { useEffect, useRef, useState } from "react";
 
 
-export default function UploadFilesModal({ show, onDone, onCancel, showFilePickerOnShow }) {
+export default function UploadFilesModal({ show, onDone, onCancel, onFilesChange, showFilePickerOnShow }) {
     const [files, setFiles] = useState([])
 
     const onFilesSelected = (newFiles) => {
         console.log(newFiles)
         setFiles([...files, ...newFiles])
-        window.uploadedFiles = [...files, ...newFiles]
+        onFilesChange && onFilesChange([...files, ...newFiles])
     }
 
     const removeFile = (file) => {
         setFiles(files.filter(f => f != file))
-        window.uploadedFiles = window.uploadedFiles.filter(f => f != file)
+        onFilesChange && onFilesChange(files.filter(f => f != file))
     }
 
     useEffect(() => {
@@ -23,6 +23,7 @@ export default function UploadFilesModal({ show, onDone, onCancel, showFilePicke
                 // selectFilesRef.current.click()
             }
             setFiles([])
+            onFilesChange && onFilesChange([])
         }
     }, [show])
 

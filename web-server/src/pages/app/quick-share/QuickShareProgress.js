@@ -26,9 +26,8 @@ export default function QuickShareProgress({ }) {
     const { state } = useLocation()
 
     // const [files, _] = useOutletContext()
-    const files = window.uploadedFiles
 
-    let { k, remoteSessionId, transferDirection } = state || {}
+    let { files, k, remoteSessionId, transferDirection } = state || {}
     const isSentLinkWithHash = k && remoteSessionId && transferDirection
 
     const [showPeerConnectionError, setShowPeerConnectionError] = useState(false)
