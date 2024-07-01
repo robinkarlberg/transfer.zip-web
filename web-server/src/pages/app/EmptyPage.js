@@ -2,6 +2,9 @@ import { useContext, useEffect } from "react"
 import { Navigate, useNavigate } from "react-router-dom"
 import { AuthContext } from "../../providers/AuthProvider"
 
+/**
+ * Empty Page, for redirecting users to the right page. The "default" route.
+ */
 export default function EmptyPage({ }) {
     const { user } = useContext(AuthContext)
 

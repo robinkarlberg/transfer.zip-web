@@ -27,7 +27,7 @@ export default function SideBar({ className }) {
 
     return (
         <div className={"d-flex flex-column flex-shrink-0 text-bg-dark shadow bg-body border-end " + className} style={{ minWidth: "210px" }}>
-            <Link to="/" style={{ height: "60px" }} className="d-flex align-items-center m-3 mb-2 text-white text-decoration-none">
+            <Link to="/" style={{ height: "60px" }} className="d-flex align-items-center m-3 my-2 text-white text-decoration-none">
                 <img className="bi" src={logo} style={{ height: "40px" }}></img>
                 {/* <span className="fs-4">Sidebar</span> */}
             </Link>

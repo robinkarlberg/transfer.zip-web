@@ -262,7 +262,7 @@ export default function QuickShareProgress({ }) {
     const title = isSentLinkWithHash ? (transferDirection == "R" ? recvTitle : sendTitle) : (transferDirection == "S" ? sendTitle : recvTitle)
 
     return (
-        <div className="d-flex flex-column gap-0 me-md-5">
+        <div className="d-flex flex-column gap-0">
             <PeerConnectionErrorModal show={showPeerConnectionError} onCancel={() => { setShowPeerConnectionError(false) }} />
             <div className="d-flex flex-column flex-lg-row gap-3 justify-content-center mt-2">
                 <div>

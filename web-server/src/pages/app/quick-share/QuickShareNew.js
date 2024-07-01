@@ -61,7 +61,7 @@ export default function QuickShareNew({ }) {
     }
 
     return (
-        <div className="d-flex flex-row gap-3 me-md-5">
+        <div className="d-flex flex-row gap-3">
             {/* <UploadFilesModal show={showUploadFilesModal} onCancel={onUploadFilesModalCancel} onDone={onUploadFilesModalDone} /> */}
             <div className="d-flex flex-column flex-wrap gap-3 justify-content-center mt-2">
                 <div style={{ maxWidth: "400px" }}>
