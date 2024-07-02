@@ -20,6 +20,7 @@ export default function TransferInfoPage({ }) {
     const { id } = useParams()
     const [transfer, setTransfer] = useState(null)
     const { rtTransfers, downloadRealtimeTransferFile, refreshApiTransfers } = useContext(ApplicationContext)
+    const { userStorage } = useContext(AuthContext)
 
     const { state } = useLocation()
 
@@ -77,37 +78,38 @@ export default function TransferInfoPage({ }) {
 
     const onUploadFileModalDone = async (files) => {
         setShowUploadFilesModal(false)
-        console.log(files)
 
-        if (!transfer.isRealtime) {
-            setShowUploadFilesModal(false)
-
-            const progressObjectList = files.map(file => {
-                return { file, progress: 0 }
-            })
-
-            setShowUploadingFilesModal(true)
-            setUploadProgress(progressObjectList)
-            for (let file of files) {
-                const upload = await Api.uploadTransferFile(file, id, progress => {
-                    progressObjectList.find(x => x.file == file).progress = progress
-                    // setUploadProgress([])
-                    setUploadProgress(progressObjectList.map(x => x))
-                })
-                refreshApiTransfer()
-            }
-            setShowUploadingFilesModal(false)
-            setShowTransferNameModal(true)
-
-            if (transfer.name != null) {
-                refreshApiTransfers()
-                setTimeout(() => {
-                    setShowTransferNameModal(false)
-                }, 1500)
-            }
+        let totalBytes = 0
+        for (let file of files) {
+            totalBytes += file.size
         }
-        else {
-            transfer.files.push(...files.map((x, i) => { return { nativeFile: x, id: i, info: { name: x.name, size: x.size, type: x.type } } }))
+
+        if(userStorage.usedBytes + totalBytes > userStorage.maxBytes) {
+            throw new Error("Not enough storage: Files too large.")
+        }
+
+        const progressObjectList = files.map(file => {
+            return { file, progress: 0 }
+        })
+
+        setShowUploadingFilesModal(true)
+        setUploadProgress(progressObjectList)
+        for (let file of files) {
+            const upload = await Api.uploadTransferFile(file, id, progress => {
+                progressObjectList.find(x => x.file == file).progress = progress
+                // setUploadProgress([])
+                setUploadProgress(progressObjectList.map(x => x))
+            })
+            refreshApiTransfer()
+        }
+        setShowUploadingFilesModal(false)
+        setShowTransferNameModal(true)
+
+        if (transfer.name != null) {
+            refreshApiTransfers()
+            setTimeout(() => {
+                setShowTransferNameModal(false)
+            }, 1500)
         }
     }
 
