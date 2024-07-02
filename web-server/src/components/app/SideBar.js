@@ -3,28 +3,33 @@ import logo from "../../img/transfer-zip-logotext-cropped.png"
 import { ProgressBar } from "react-bootstrap"
 import { useContext } from "react"
 import { AuthContext } from "../../providers/AuthProvider"
+import { ApplicationContext } from "../../providers/ApplicationProvider"
 
 export default function SideBar({ className }) {
 
-    const { user, isGuestOrFreeUser, isGuestUser } = useContext(AuthContext)
+    const { setShowUnlockFeatureModal } = useContext(ApplicationContext)
+    const { user, isGuestOrFreeUser, isGuestUser, isFreeUser } = useContext(AuthContext)
 
-    const disable = user == null || isGuestOrFreeUser()
+    const disable = user == null || isGuestUser()
 
     const currentPage = useLocation().pathname
 
     const NavLink = ({ to, children, disable, className, override }) => {
         let _to = disable ? "#" : to
         const activeClass = (currentPage.startsWith(to) ? "text-white " : "text-body-secondary ")
+        let onClick = undefined
         if(!override && user) {
             if(isGuestUser()) {
-                _to = `${window.origin}/signup`
+                // _to = `${window.origin}/signup`
+                _to = "#"
+                onClick = () => setShowUnlockFeatureModal(true)
             }
-            else if(isGuestOrFreeUser()) {
-                _to = `${window.origin}/upgrade`
-            }
+            // else if(isGuestOrFreeUser()) {
+            //     _to = `${window.origin}/upgrade`
+            // }
         }
         return (
-            <Link className={"w-100 p-2 px-3 d-inline-block link-underline link-underline-opacity-0 " + activeClass + className} to={_to}>
+            <Link onClick={onClick} className={"w-100 p-2 px-3 d-inline-block link-underline link-underline-opacity-0 " + activeClass + className} to={_to}>
                 {children}
             </Link>
         )
@@ -66,20 +71,27 @@ export default function SideBar({ className }) {
                     </NavLink>
                 </li>
             </ul>
-            <div className="px-3 mb-auto">
-                { user && isGuestUser() &&
+            <div className="px-3 mb-auto d-flex flex-column gap-2">
+                { user && isGuestOrFreeUser() &&
                     (
                         <Link className="btn btn-primary rounded-pill w-100" to={"/signup"}>
-                            {!user ? ("...") : (isGuestOrFreeUser ? "Sign up" : "Upgrade")}
+                            {!user ? ("...") : (isGuestUser() ? "Sign up" : "Upgrade")}
+                        </Link>
+                    )
+                }
+                { user && isGuestUser() &&
+                    (
+                        <Link className="btn btn-outline-primary rounded-pill w-100" to={"/login"}>
+                            Login
                         </Link>
                     )
                 }
             </div>
             <hr />
-            <ul className="nav nav-pills flex-column">
+            <ul className="nav nav-pills flex-column px-2">
                 <li>
                     <NavLink to="/account" override={true}>
-                        {isGuestUser() ? (<div>Login</div>) : "Account"}
+                        <i className="bi bi-person-fill me-2"></i>Account
                         {/* <div className="d-flex align-items-center text-white text-decoration-none">
                             <img src="https://avatars.githubusercontent.com/u/10927692?v=4" alt="" width="32" height="32" className="rounded-circle me-2" />
                             <strong>{user.username}</strong>

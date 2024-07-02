@@ -44,11 +44,11 @@ export default function HomePage({ }) {
         return apiTransfers.length
     }
 
-    useEffect(() => {
-        if (user && user.plan == "free") {
-            navigate("/quick-share", { replace: true })
-        }
-    }, [user])
+    // useEffect(() => {
+    //     if (user && user.plan == "free") {
+    //         navigate("/quick-share", { replace: true })
+    //     }
+    // }, [user])
 
     useEffect(() => {
         updateStatistics()
@@ -85,8 +85,8 @@ export default function HomePage({ }) {
                 <div className="d-flex flex-row flex-wrap gap-3 order-0 order-sm-2">
                     {/* <div className="bg-body rounded p-5 border" style={{ maxWidth: "300px" }}>
                     </div> */}
-                    <button onClick={newApiTransferAndNavigate} style={{ minWidth: "180px" }} className="btn btn-lg bg-body rounded border-primary p-3 pb-3 flex-grow-1 flex-md-grow-0">New Transfer<i className="bi bi-arrow-right-short"></i></button>
-                    <button onClick={() => navigate("/quick-share")} style={{ minWidth: "180px" }} className="btn btn-lg bg-body rounded border p-3 pb-3 flex-grow-1 flex-md-grow-0">Quick Share<i className="bi bi-arrow-right-short"></i></button>
+                    <button onClick={newApiTransferAndNavigate} style={{ minWidth: "172px" }} className="btn bg-body border rounded-4 p-3 pb-3 flex-grow-1 flex-md-grow-0">New Transfer<i className="bi bi-arrow-right-short"></i></button>
+                    <button onClick={() => navigate("/quick-share")} style={{ minWidth: "172px" }} className="btn bg-body border rounded-4 p-3 pb-3 flex-grow-1 flex-md-grow-0">Quick Share<i className="bi bi-arrow-right-short"></i></button>
                 </div>
             </div>
         </AppGenericPage>

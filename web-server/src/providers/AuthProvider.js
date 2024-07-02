@@ -42,8 +42,12 @@ export const AuthProvider = () => {
         return user && user.id == null
     }
 
+    const isFreeUser = () => {
+        return user && user.plan == "free"
+    }
+
     const isGuestOrFreeUser = () => {
-        return isGuestUser() || user.plan == "free"
+        return isGuestUser() || isFreeUser()
     }
 
     const login = useCallback(async (email, password) => {
@@ -87,7 +91,7 @@ export const AuthProvider = () => {
 
     return (
         <AuthContext.Provider value={{
-            user, refreshUser, isGuestOrFreeUser, isGuestUser,
+            user, refreshUser, isGuestOrFreeUser, isGuestUser, isFreeUser,
             userStorage,
             login,
             logout,

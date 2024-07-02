@@ -20,7 +20,6 @@ import { FileTransferProvider } from './providers/FileTransferProvider';
 import { AuthProvider } from './providers/AuthProvider';
 import TransfersPage from './pages/app/TransfersPage';
 import AccountPage from './pages/app/AccountPage';
-import HomePage from "./pages/app/HomePage";
 import TransferInfoPage from "./pages/app/TransferInfoPage";
 import DownloadPage from "./pages/app/DownloadPage";
 import StatisticsPage from "./pages/app/StatisticsPage";
@@ -32,11 +31,22 @@ import QuickShareProgress from "./pages/app/quick-share/QuickShareProgress";
 import { QuickShareProvider } from "./providers/QuickShareProvider";
 import Login from "./pages/app/Login";
 import SignUp from "./pages/app/SignUp";
+import Site from "./pages/site/Site";
+import AboutPage from "./pages/site/AboutPage";
+import HomePage from "./pages/app/HomePage";
+import PrivacyPolicyPage from "./pages/site/legal/PrivacyPolicyPage";
+import TermsOfConditionsPage from "./pages/site/legal/TermsOfConditionsPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
       <Route path="/transfer/:secretCode" element={<DownloadPage />} />
+      <Route path="/about" element={<Site />}>
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="legal/privacy-policy" element={<PrivacyPolicyPage/>}/>
+        <Route path="legal/terms-and-conditions" element={<TermsOfConditionsPage/>}/>
+        <Route path="*" element={<Navigate to={"/about"} replace={true}/>} />
+      </Route>
       <Route element={<ApplicationProvider />}>
         <Route element={<AuthProvider />}>
           <Route element={<App />}>
@@ -57,8 +67,8 @@ const router = createBrowserRouter(
             <Route path="/statistics" element={<StatisticsPage />} />
             <Route path="/files" element={<FilesPage />} />
           </Route>
-          <Route path="/login" element={<Login/>}/>
-          <Route path="/signup" element={<SignUp/>}/>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route path="*" element={<EmptyPage />} />
         </Route>
       </Route>

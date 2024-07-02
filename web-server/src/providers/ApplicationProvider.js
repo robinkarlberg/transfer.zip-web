@@ -8,6 +8,7 @@ import GenericErrorModal from "../components/modals/GenericErrorModal";
 import PeerConnectionErrorModal from "../components/modals/PeerConnectionErrorModal";
 import * as Api from "../api/Api"
 import { FileTransfer } from "../filetransfer";
+import UnlockFeatureModal from "../components/modals/UnlockFeatureModal";
 
 
 export const ApplicationContext = createContext({})
@@ -18,6 +19,7 @@ export const ApplicationProvider = () => {
     const [apiTransfers, setApiTransfers] = useState([])
     // const [transfers, setTransfers] = useState([])
     const [hasFetched, setHasFetched] = useState(false)
+    const [showUnlockFeatureModal, setShowUnlockFeatureModal] = useState(false)
 
     const navigate = useNavigate()
 
@@ -86,9 +88,11 @@ export const ApplicationProvider = () => {
             hasFetched,
             newApiTransferAndNavigate,
             setOnFileInputChange,
-            fileInputRef
+            fileInputRef,
+            setShowUnlockFeatureModal
         }}>
             <GenericErrorModal show={errorMessage != null} errorMessage={errorMessage} onCancel={() => { setErrorMessage(null) }} />
+            <UnlockFeatureModal show={showUnlockFeatureModal}/>
             {/* {!isInfoPage && <Adsense className={"mobile-banner-ad"} data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932" />} */}
             <Outlet />
             <form style={{ display: "none" }}>

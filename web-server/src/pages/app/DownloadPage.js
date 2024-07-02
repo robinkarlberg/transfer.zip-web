@@ -17,6 +17,7 @@ import FilesList from "../../components/app/FilesList";
 import Adsense from "../../components/Adsense";
 
 import { Helmet } from "react-helmet"
+import InlineFooter from "../../components/app/InlineFooter";
 
 const fileExtRe = /(?:\.([^.]+))?$/;
 
@@ -203,13 +204,13 @@ export default function DownloadPage({ }) {
     return (
         <div className="m-auto bg-dark-subtle">
             <Helmet>
-                <meta property="og:type" content="website"/>
+                <meta property="og:type" content="website" />
                 <meta property="og:title" content={
-                    ( download.name || fileCountText ) + " | transfer.zip"
-                }/>
-                <meta property="og:url" content="https://transfer.zip/"/>
-                <meta property="og:image" content="https://pub-9d516fbe625349fa91201a12a4724d0d.r2.dev/og.png"/>
-                <meta property="og:description" content="Transfer smarter with transfer.zip"/>
+                    (download.name || fileCountText) + " | transfer.zip"
+                } />
+                <meta property="og:url" content="https://transfer.zip/" />
+                <meta property="og:image" content="https://pub-9d516fbe625349fa91201a12a4724d0d.r2.dev/og.png" />
+                <meta property="og:description" content="Transfer smarter with transfer.zip" />
 
                 <title>{download.name || fileCountText} | transfer.zip - Transfer smarter</title>
             </Helmet>
@@ -234,12 +235,12 @@ export default function DownloadPage({ }) {
                 <div className="flex-grow-1 d-inline-block d-sm-none w-100">
                     <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932" />
                 </div>
-                <div className="flex-grow-1 px-3 px-md-0" style={{ minHeight: "calc(100vh - 90px)", maxWidth: "1280px" }}>
+                <div className="flex-grow-1 px-3 px-md-0" style={{ minHeight: "calc(100vh - 90px - 3em)", maxWidth: "1280px" }}>
                     <div className="pt-3" style={{ maxWidth: "1180px" }}>
                         <div className="mb-3">
-                            <h2 className="mb-3">{ download.name || fileCountText }</h2>
+                            <h2 className="mb-3">{download.name || fileCountText}</h2>
                             <div style={{ maxWidth: "800px" }}>
-                                <p>{ download.description || "No description" }</p>
+                                <p>{download.description || "No description"}</p>
                             </div>
                         </div>
                         {displayMode == "list" && <FilesList files={filesList} allowedActions={{ "preview": true, "download": true }} onAction={onFileListAction} />}
@@ -253,8 +254,9 @@ export default function DownloadPage({ }) {
                     <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932" />
                 </div>
             </div>
-            <div>
-
+            <div className="d-flex flex-column align-items-center gap-0">
+                <a style={{ textDecoration: "none" }} href="/about"><span className="text-body-secondary">Made with <small><i className="bi bi-heart-fill text-danger"></i></small> in 🇸🇪</span></a>
+                <InlineFooter />
             </div>
         </div>
     )

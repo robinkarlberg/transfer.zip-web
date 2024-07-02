@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import MaxWidthContainer from "./MaxWidthContainer";
+import MaxWidthContainer from "../MaxWidthContainer";
 
 import logo from "../../img/transfer-zip-logotext-cropped.png"
 

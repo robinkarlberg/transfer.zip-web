@@ -27,7 +27,7 @@ export default function AccountPage({ }) {
 
     const AccountCard = ({ children, title }) => {
         return (
-            <div style={{ maxWidth: "700px" }} className="bg-body rounded p-4 border mb-3">
+            <div style={{ maxWidth: "700px" }} className="bg-body rounded-4 p-4 mb-3">
                 <h4 className="mb-3">{title}</h4>
                 {children}
             </div>
