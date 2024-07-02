@@ -14,9 +14,6 @@ export default function SideBar({ className }) {
 
     const NavLink = ({ to, children, disable, className }) => {
         const _to = disable ? "#" : to
-        const disabledAction = () => {
-
-        }
         const activeClass = (currentPage.startsWith(to) ? "text-white " : "text-body-secondary ")
         return (
             <Link className={"w-100 p-2 px-3 d-inline-block link-underline link-underline-opacity-0 " + activeClass + className} to={_to}>
@@ -83,7 +80,7 @@ export default function SideBar({ className }) {
                 </li>
             </ul>
             <hr className="mb-1" />
-            <div className="d-flex justify-content-between p-3 pb-0">
+            <div className="d-flex justify-content-between p-3">
                 <small className="text-body-secondary">&copy; 2024 Robin K</small>
                 <div>
                     <a className="text-body-secondary" href="https://github.com/robinkarlberg/transfer.zip-web"><i className="bi bi-github"></i></a>
