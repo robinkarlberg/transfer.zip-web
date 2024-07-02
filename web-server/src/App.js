@@ -28,13 +28,13 @@ function App() {
       </div>
       {
         user != null && isGuestOrFreeUser() &&
-        <div className="flex-grow-1 d-none d-lg-inline-block d-flex flex-column justify-content-center align-items-center" style={{ minWidth: "300px" }}>
+        <div className="d-none d-xl-inline-block d-flex flex-column justify-content-center align-items-center" style={{ width: "300px" }}>
           <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" className="" />
         </div>
       }
       {
         user != null && isGuestOrFreeUser() &&
-        <div className="flex-grow-1 d-none d-sm-inline-block d-flex flex-column justify-content-center align-items-center" style={{ minWidth: "300px" }}>
+        <div className="d-none d-sm-inline-block d-flex flex-column justify-content-center align-items-center" style={{ width: "300px" }}>
           <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" className="" />
         </div>
       }

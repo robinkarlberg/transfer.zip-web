@@ -12,9 +12,17 @@ export default function SideBar({ className }) {
 
     const currentPage = useLocation().pathname
 
-    const NavLink = ({ to, children, disable, className }) => {
-        const _to = disable ? "#" : to
+    const NavLink = ({ to, children, disable, className, override }) => {
+        let _to = disable ? "#" : to
         const activeClass = (currentPage.startsWith(to) ? "text-white " : "text-body-secondary ")
+        if(!override && user) {
+            if(isGuestUser()) {
+                _to = `${window.origin}/signup`
+            }
+            else if(isGuestOrFreeUser()) {
+                _to = `${window.origin}/upgrade`
+            }
+        }
         return (
             <Link className={"w-100 p-2 px-3 d-inline-block link-underline link-underline-opacity-0 " + activeClass + className} to={_to}>
                 {children}
@@ -30,7 +38,7 @@ export default function SideBar({ className }) {
             </Link>
             {/* <hr /> */}
             <div className="px-4 mb-3">
-                <NavLink to="/quick-share" className={"btn text-start rounded-pill border border-secondary"}>
+                <NavLink to="/quick-share" className={"btn text-start rounded-pill border border-secondary"} override={true}>
                     <div className="d-flex flex-row justify-content-between">
                         Quick Share<i className="bi bi-lightning-fill"></i>
                     </div>
@@ -70,7 +78,7 @@ export default function SideBar({ className }) {
             <hr />
             <ul className="nav nav-pills flex-column">
                 <li>
-                    <NavLink to="/account">
+                    <NavLink to="/account" override={true}>
                         {isGuestUser() ? (<div>Login</div>) : "Account"}
                         {/* <div className="d-flex align-items-center text-white text-decoration-none">
                             <img src="https://avatars.githubusercontent.com/u/10927692?v=4" alt="" width="32" height="32" className="rounded-circle me-2" />
