@@ -36,7 +36,7 @@ import SignUp from "./pages/app/SignUp";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
-      <Route path="/dl/:secretCode" element={<DownloadPage />} />
+      <Route path="/transfer/:secretCode" element={<DownloadPage />} />
       <Route element={<ApplicationProvider />}>
         <Route element={<AuthProvider />}>
           <Route element={<App />}>

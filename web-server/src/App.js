@@ -13,6 +13,25 @@ import Header from "./components/app/Header";
 function App() {
   const { user, isGuestOrFreeUser } = useContext(AuthContext)
 
+  const adsDiv = (
+    <div>
+      <div className="d-flex flex-row gap-1">
+        <div className="d-none d-xl-block" style={{ width: "300px" }}>
+          <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" className="" />
+        </div>
+        <div className="d-none d-sm-block" style={{ width: "300px" }}>
+          <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" className="" />
+        </div>
+      </div>
+      <div className="d-none d-sm-block mt-1">
+        <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" className="" />
+      </div>
+      <div className="d-block d-xl-none mt-1">
+        <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" className="" />
+      </div>
+    </div>
+  )
+
   return (
     <div className="d-flex flex-row">
       <div className={"App flex-grow-1 bg-dark-subtle vh-100 d-flex flex-column flex-md-row"}>
@@ -26,18 +45,8 @@ function App() {
         </div>
       </div> */}
       </div>
-      {
-        user != null && isGuestOrFreeUser() &&
-        <div className="d-none d-xl-inline-block d-flex flex-column justify-content-center align-items-center" style={{ width: "300px" }}>
-          <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" className="" />
-        </div>
-      }
-      {
-        user != null && isGuestOrFreeUser() &&
-        <div className="d-none d-sm-inline-block d-flex flex-column justify-content-center align-items-center" style={{ width: "300px" }}>
-          <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" className="" />
-        </div>
-      }
+
+      { user != null && isGuestOrFreeUser() && adsDiv }
     </div>
   );
 }

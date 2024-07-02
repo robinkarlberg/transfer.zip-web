@@ -38,8 +38,8 @@ export function humanFileSizePair(bytes, si = false, dp = 1) {
 }
 
 export const getTransferLink = (transfer) => {
-    const k = transfer.k || ""
-    return `${window.location.origin}/dl/${transfer.secretCode}#${k}`
+    const k = `#transfer.k` || ""
+    return `${window.location.origin}/transfer/${transfer.secretCode}${k}`
 }
 
 export const copyTransferLink = async (transfer) => {
