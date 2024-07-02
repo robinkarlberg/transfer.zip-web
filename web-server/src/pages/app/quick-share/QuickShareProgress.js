@@ -261,13 +261,15 @@ export default function QuickShareProgress({ }) {
     const recvTitle = "Receive Files"
     const title = isSentLinkWithHash ? (transferDirection == "R" ? recvTitle : sendTitle) : (transferDirection == "S" ? sendTitle : recvTitle)
 
+    const breakpoint = "xxl"
+
     return (
         <div className="d-flex flex-column gap-0">
             <PeerConnectionErrorModal show={showPeerConnectionError} onCancel={() => { setShowPeerConnectionError(false) }} />
-            <div className="d-flex flex-column flex-lg-row gap-3 justify-content-center mt-2">
+            <div className={`d-flex flex-column flex-${breakpoint}-row gap-3 justify-content-center mt-2`}>
                 <div>
-                    <h1 className="mb-3 d-block d-lg-none mb-4">{title}</h1>
-                    <div className="mx-3 mx-lg-0" style={{ maxWidth: "300px" }}>
+                    <h1 className={`mb-3 d-block d-${breakpoint}-none mb-4`}>{title}</h1>
+                    <div className={`mx-3 mx-${breakpoint}-0`} style={{ maxWidth: "300px" }}>
                         <QRLink link={quickShareLink}>
                             {(hasConnected() || isSentLinkWithHash) && qrChildren}
                         </QRLink>
@@ -277,7 +279,7 @@ export default function QuickShareProgress({ }) {
                     </div>
                 </div>
                 <div style={{ maxWidth: "520px" }}>
-                    <h2 className="mb-3 d-none d-lg-block">{title}</h2>
+                    <h2 className={`mb-3 d-none d-${breakpoint}-block`}>{title}</h2>
                     {/* <img className="mb-2" src={logo} height={"60em"}></img> */}
                     {!errorMessage ?
                         (<ol className="ps-3">

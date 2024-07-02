@@ -88,13 +88,14 @@ export default function QuickShareNew({ }) {
                                     </div> <small>Send</small>
                                 </button>
                                 :
-                                <button className="btn w-100 bg-body flex-grow-0 d-flex justify-content-center align-items-center py-1 px-4 rounded-4"
-                                    onClick={() => onReceiveClicked()}>
-                                    <div style={{ width: "40px", height: "40px" }}
-                                        className="rounded-circle d-flex justify-content-center align-items-center">
-                                        <i className="bi bi-arrow-down-short text-body fs-2"></i>
-                                    </div> <small>Receive files instead</small>
-                                </button>
+                                (!isSentLinkWithHash &&
+                                    <button className="btn w-100 bg-body flex-grow-0 d-flex justify-content-center align-items-center py-1 px-4 rounded-4"
+                                        onClick={() => onReceiveClicked()}>
+                                        <div style={{ width: "40px", height: "40px" }}
+                                            className="rounded-circle d-flex justify-content-center align-items-center">
+                                            <i className="bi bi-arrow-down-short text-body fs-2"></i>
+                                        </div> <small>Receive files instead</small>
+                                    </button>)
                         }
                     </div>
                 </div>

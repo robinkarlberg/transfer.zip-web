@@ -16,7 +16,7 @@ function App() {
   const adsDiv = (
     <div>
       <div className="d-flex flex-row gap-1">
-        <div className="d-none d-xl-block" style={{ width: "300px" }}>
+        <div className="d-none d-xxl-block" style={{ width: "160px" }}>
           <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" className="" />
         </div>
         <div className="d-none d-sm-block" style={{ width: "300px" }}>
@@ -26,7 +26,7 @@ function App() {
       <div className="d-none d-sm-block mt-1">
         <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" className="" />
       </div>
-      <div className="d-block d-xl-none mt-1">
+      <div className="d-block d-xxl-none mt-1">
         <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" className="" />
       </div>
     </div>

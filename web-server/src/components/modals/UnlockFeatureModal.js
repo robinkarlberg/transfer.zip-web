@@ -19,13 +19,15 @@ export default function UnlockFeatureModal({ show }) {
                         <h3 className="text-center mb-3">Unlock all features of transfer.zip</h3>
                         <div className="mb-4">
                             <ul className="text-body-secondary">
-                                <li>Use Quick Share even when peer-to-peer doesn't work</li>
-                                <li>Transfer files even when the browser window is closed</li>
+                                <li><b>Relay</b> - Use Quick Share even when peer-to-peer is blocked</li>
+                                <li><b>Transfers</b> - Store files permanently and share them</li>
                                 <li>Customize your transfers</li>
+                                <li>Remove all ads</li>
+                                <li><Link to={"/about"}>Much more...</Link></li>
                             </ul>
                         </div>
                         <div className="d-flex flex-row gap-2 justify-content-center">
-                            <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/signup"} className="btn btn-primary rounded-pill px-5">Signup</Link>
+                            <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/signup"} className="btn btn-primary rounded-pill px-5">Sign up</Link>
                             <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/login"} className="btn btn-outline-primary rounded-pill px-5">Login</Link>
                         </div>
                     </div>
