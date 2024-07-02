@@ -89,9 +89,6 @@ export default function SideBar({ className }) {
                     <a className="text-body-secondary" href="https://github.com/robinkarlberg/transfer.zip-web"><i className="bi bi-github"></i></a>
                 </div>
             </div>
-            <div className="text-center">
-                <a href="javascript:googlefc.callbackQueue.push(googlefc.showRevocationMessage)">Privacy and cookie settings</a>
-            </div>
             {/* <div>
                 <ProgressBar className="mt-1" style={{ height: "8px" }} />
                 <small className="text-body-secondary">1/200GB</small>
