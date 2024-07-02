@@ -83,11 +83,14 @@ export default function SideBar({ className }) {
                 </li>
             </ul>
             <hr className="mb-1" />
-            <div className="d-flex justify-content-between p-3">
+            <div className="d-flex justify-content-between p-3 pb-0">
                 <small className="text-body-secondary">&copy; 2024 Robin K</small>
                 <div>
                     <a className="text-body-secondary" href="https://github.com/robinkarlberg/transfer.zip-web"><i className="bi bi-github"></i></a>
                 </div>
+            </div>
+            <div className="text-center">
+                <a href="javascript:googlefc.callbackQueue.push(googlefc.showRevocationMessage)">Privacy and cookie settings</a>
             </div>
             {/* <div>
                 <ProgressBar className="mt-1" style={{ height: "8px" }} />

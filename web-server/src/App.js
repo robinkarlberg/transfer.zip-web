@@ -26,11 +26,8 @@ function App() {
       </div>
       <div className="flex-grow-1 d-none d-sm-inline-block" style={{ maxWidth: "300px" }}>
         <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" className="m-auto" />
-        <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" className="m-auto" />
+        {/* <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" className="m-auto" /> */}
         {/* <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" /> */}
-      </div>
-      <div>
-        <a href="javascript:googlefc.callbackQueue.push(googlefc.showRevocationMessage)">Privacy and cookie settings</a>.
       </div>
     </div>
   );
