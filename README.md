@@ -21,7 +21,7 @@ Transfer.zip also supports permanent file transfers, but currently not on the se
 
 On Firefox mobile, sending files using Quick Share does not work at the moment. This could have something to do with the path being changed after the file has been chosen in the file picker, but not been read yet. This is under investigation.
 
-## Self-Hosting Local Development
+## Self-Hosting and Local Development
 
 Transfer.zip is easy to set up locally, to self-host or contribute to the codebase.
 
