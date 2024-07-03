@@ -67,7 +67,7 @@ export default function QuickShareNew({ }) {
                 {/* SEO: Canonical page, /quick-share should index as / in search engines. */}
                 <link rel="canonical" href={`${window.origin}/`}/>
             </Helmet>
-            {/* <UploadFilesModal show={showUploadFilesModal} onCancel={onUploadFilesModalCancel} onDone={onUploadFilesModalDone} /> */}
+            <UploadFilesModal show={showUploadFilesModal} onCancel={onUploadFilesModalCancel} onDone={onUploadFilesModalDone} />
             <div className="d-flex flex-column flex-wrap gap-3 justify-content-center mt-2">
                 <div style={{ maxWidth: "400px" }}>
                     <div className="text-center">

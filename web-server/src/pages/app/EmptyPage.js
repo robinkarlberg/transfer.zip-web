@@ -53,7 +53,7 @@ export default function EmptyPage({ }) {
         }
 
         window.location.hash = ""
-        let newLocation = directionChar == "R" ? "/quick-share/progress" : "/"
+        let newLocation = directionChar == "R" ? "/quick-share/progress" : "/quick-share"
         return <Navigate to={newLocation} state={state} replace={true}/>
 
         // if (directionChar == "R") {
