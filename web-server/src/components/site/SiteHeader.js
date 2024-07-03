@@ -33,7 +33,7 @@ export default function SiteHeader({ }) {
 
     const openApp = (
         <div>
-            <Link to={`/account`} className="btn btn-outline-primary me-2">Sign up</Link>
+            <Link to={`/signup`} className="btn btn-outline-primary me-2">Sign up</Link>
             <Link to={"/"} className="btn btn-primary">Try transfer.zip</Link>
         </div>
     )

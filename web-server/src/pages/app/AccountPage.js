@@ -13,7 +13,7 @@ export default function AccountPage({ }) {
 
     if (isGuestUser()) {
         // return window.location.replace(`${SITE_URL}/login?back=${window.location.origin}&success=${window.location}`)
-        return <Navigate to={"/login"}/>
+        return <Navigate to={"/login"} replace={true}/>
     }
 
     const doLogout = async () => {

@@ -9,6 +9,7 @@ import StorageStatCard from "../../components/app/statcards/StorageStatCard";
 import { Pie, PieChart, ResponsiveContainer } from "recharts";
 import GraphCard from "../../components/app/GraphCard";
 import * as Api from "../../api/Api"
+import InlineFooter from "../../components/app/InlineFooter";
 
 export default function HomePage({ }) {
 

@@ -136,7 +136,7 @@ export default function TransferInfoPage({ }) {
     }, [])
 
     if (!id) {
-        return <Navigate to={"/transfers"} />
+        return <Navigate to={"/transfers"} replace={true}/>
     }
 
     const titleElement = (

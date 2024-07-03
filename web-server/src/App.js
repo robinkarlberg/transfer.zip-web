@@ -9,6 +9,7 @@ import Adsense from "./components/Adsense";
 import SideBar from "./components/app/SideBar";
 import { AuthContext, AuthProvider } from "./providers/AuthProvider";
 import Header from "./components/app/Header";
+import { Helmet } from "react-helmet";
 
 function App() {
   const { user, isGuestOrFreeUser } = useContext(AuthContext)
@@ -34,6 +35,9 @@ function App() {
 
   return (
     <div className="d-flex flex-row">
+      <Helmet>
+        <title>Send large files | transfer.zip</title>
+      </Helmet>
       <div className={"App flex-grow-1 bg-dark-subtle vh-100 d-flex flex-column flex-md-row"}>
         <Header className="d-md-none" />
         <SideBar className="d-none d-md-flex" />

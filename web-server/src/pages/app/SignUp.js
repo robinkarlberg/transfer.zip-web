@@ -27,7 +27,7 @@ export default function SignUp({ }) {
         try {
             const res = await Api.register(emailFieldRef.current.value, passwordFieldRef.current.value)
             if(res.success) {
-                navigate(getParams.get("success") || "/pricing", {
+                navigate(getParams.get("success") || "/about/pricing", {
                     state: {
                         newSignUp: true
                     }

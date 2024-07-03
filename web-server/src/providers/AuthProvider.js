@@ -11,10 +11,10 @@ export const AuthProvider = () => {
 
     const refreshUser = useCallback(async () => {
         try {
-            const [ resUser, resStorage ] = await Promise.all([
+            const [resUser, resStorage] = await Promise.all([
                 Api.getUser(), Api.getUserStorage()
             ])
-            
+
             setUser(resUser.user)
             setUserStorage(resStorage.storage)
         }
@@ -32,7 +32,7 @@ export const AuthProvider = () => {
             //     })
             // }
             // else {
-                
+
             //     setUser(null)
             // }
         }
@@ -78,9 +78,9 @@ export const AuthProvider = () => {
     // })
 
     useEffect(() => {
-        if(window.location.hash) {
+        if (window.location.hash) {
             let hashList = window.location.hash.slice(1).split(",")
-            if(hashList.length !== 3) {
+            if (hashList.length !== 3) {
                 refreshUser()
             }
         }

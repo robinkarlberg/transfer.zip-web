@@ -4,6 +4,7 @@ import { QuickShareContext } from "../../../providers/QuickShareProvider"
 import UploadFilesModal from "../../../components/modals/UploadFilesModal"
 import UploadOrReceiveArea from "../../../components/UploadOrReceiveArea"
 import UploadFilesArea from "../../../components/app/UploadFilesArea"
+import { Helmet } from "react-helmet"
 
 export default function QuickShareNew({ }) {
     const { } = useContext(QuickShareContext)
@@ -62,6 +63,10 @@ export default function QuickShareNew({ }) {
 
     return (
         <div className="d-flex flex-row gap-3">
+            <Helmet>
+                {/* SEO: Canonical page, /quick-share should index as / in search engines. */}
+                <link rel="canonical" href={`${window.origin}/`}/>
+            </Helmet>
             {/* <UploadFilesModal show={showUploadFilesModal} onCancel={onUploadFilesModalCancel} onDone={onUploadFilesModalDone} /> */}
             <div className="d-flex flex-column flex-wrap gap-3 justify-content-center mt-2">
                 <div style={{ maxWidth: "400px" }}>

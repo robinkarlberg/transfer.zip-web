@@ -8,6 +8,24 @@ import { Link } from "react-router-dom";
 export default function UnlockFeatureModal({ show }) {
     const { setShowUnlockFeatureModal } = useContext(ApplicationContext)
 
+    const freeIcon = (
+        <small className="ms-2 bg-primary rounded-1 fw-bold" style={{ fontSize: "0.7em", padding: "0.2em" }}>FREE</small>
+    )
+
+    const proIcon = (
+        <small className="ms-2 bg-body-secondary rounded-1 fw-bold" style={{ fontSize: "0.7em", padding: "0.2em" }}>PRO</small>
+    )
+
+    const suppIcon = (
+        <small className="ms-2 bg-body-secondary rounded-1 fw-bold" style={{ fontSize: "0.7em", padding: "0.2em" }}>PRO</small>
+    )
+
+    const ListItem = ({ children, ...props }) => {
+        return (
+            <li className="d-flex flex-row justify-content-between align-items-center" {...props}>{children}</li>
+        )
+    }
+
     return (
         <>
             <Modal animation={show} className="UnlockFeatureModal" show={show} centered onHide={() => setShowUnlockFeatureModal(false)}>
@@ -15,15 +33,18 @@ export default function UnlockFeatureModal({ show }) {
                     <Modal.Title>Login to unlock more features.</Modal.Title>
                 </Modal.Header> */}
                 <Modal.Body>
-                    <div className="px-5 py-3 pb-2">
-                        <h3 className="text-center mb-3">Unlock all features of transfer.zip</h3>
-                        <div className="mb-4">
-                            <ul className="text-body-secondary">
-                                <li><b>Relay</b> - Use Quick Share even when peer-to-peer is blocked</li>
-                                <li><b>Transfers</b> - Store files permanently and share them</li>
-                                <li>Customize your transfers</li>
-                                <li>Remove all ads</li>
-                                <li><Link to={"/about"}>Much more...</Link></li>
+                    <div className="py-3 pb-2">
+                        <h2 className="text-center mb-4">Unlock all features of transfer.zip</h2>
+                        <div className="mb-4 m-auto" style={{ maxWidth: "510px" }}>
+                            <ul className="text-body-secondary list-unstyled ms-2 me-1">
+                                <ListItem><div><i className="bi bi-reception-4 me-2 text-primary-emphasis"></i><b>Relay</b> - Use Quick Share even when peer-to-peer is blocked</div>{freeIcon}</ListItem>
+                                <ListItem><div><i className="bi bi-server me-2 text-primary-emphasis"></i><b>Transfers</b> - Store files permanently and share them</div>{freeIcon}</ListItem>
+                                <ListItem><div><i className="bi bi-lock-fill me-2 text-body"></i>Password-protect transfers</div>{proIcon}</ListItem>
+                                <ListItem><div><i className="bi bi-sliders me-2 text-body"></i>Customize your transfers</div>{proIcon}</ListItem>
+                                <ListItem><div><i className="bi bi-envelope-fill me-2 text-body"></i>Transfer files by email</div>{proIcon}</ListItem>
+                                <ListItem><div className="text-success-emphasis"><i className="bi bi-shield-fill-check me-2 text-success-emphasis"></i>Remove ads forever</div>{proIcon}</ListItem>
+                                {/* <ListItem><div><i className="bi bi-heart-fill me-2 text-danger"></i>Support the developers</div>{suppIcon}</ListItem> */}
+                                {/* <li><Link to={"/about"}>Much more...</Link></li> */}
                             </ul>
                         </div>
                         <div className="d-flex flex-row gap-2 justify-content-center">

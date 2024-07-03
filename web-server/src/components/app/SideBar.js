@@ -16,7 +16,7 @@ export default function SideBar({ className }) {
 
     const NavLink = ({ to, children, disable, className, override }) => {
         let _to = disable ? "#" : to
-        const activeClass = (currentPage.startsWith(to) ? "text-white " : "text-body-secondary ")
+        const activeClass = to == "/" ? (currentPage == "/" ? "text-white " : "text-body-secondary ") : (currentPage.startsWith(to) ? "text-white " : "text-body-secondary ")
         let onClick = undefined
         if(!override && user) {
             if(isGuestUser()) {
