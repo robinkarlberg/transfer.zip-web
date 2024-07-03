@@ -36,6 +36,8 @@ import AboutPage from "./pages/site/AboutPage";
 import HomePage from "./pages/app/HomePage";
 import PrivacyPolicyPage from "./pages/site/legal/PrivacyPolicyPage";
 import TermsOfConditionsPage from "./pages/site/legal/TermsOfConditionsPage";
+import ResetPasswordRequest from "./pages/app/PasswordResetRequest";
+import ChangePassword from "./pages/app/ChangePassword";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -69,6 +71,8 @@ const router = createBrowserRouter(
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/reset-password" element={<ResetPasswordRequest />} />
+          <Route path="/change-password" element={<ChangePassword />} />
           <Route path="*" element={<EmptyPage />} />
         </Route>
       </Route>

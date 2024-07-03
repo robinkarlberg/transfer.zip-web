@@ -1,6 +1,6 @@
 import { useContext, useRef, useState } from "react";
 import OnePageForm from "../../components/app/OnePageForm";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import * as Api from "../../api/Api";
 
@@ -10,7 +10,7 @@ export default function Login({ }) {
 
     const emailFieldRef = useRef()
     const passwordFieldRef = useRef()
-    
+
     const getParams = new URLSearchParams(window.location.search)
 
     function sleep(ms) {
@@ -23,7 +23,7 @@ export default function Login({ }) {
         await sleep(1000)
         try {
             const res = await Api.login(emailFieldRef.current.value, passwordFieldRef.current.value)
-            if(res.success) {
+            if (res.success) {
                 window.location.href = (getParams.get("success") || "/")
             }
         }
@@ -35,8 +35,10 @@ export default function Login({ }) {
         }
     }
 
+    const additionalFooter = <Link to={"/reset-password"}>Forgot password?</Link>
+
     return (
-        <OnePageForm errorMsg={errorMsg} buttonText="Sign in" loading={loading} onSubmit={onSubmit} back={getParams.get("back")} >
+        <OnePageForm errorMsg={errorMsg} buttonText="Sign in" loading={loading} onSubmit={onSubmit} back={getParams.get("back")} additionalFooter={additionalFooter} >
             <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
 
             <div className="form-floating">

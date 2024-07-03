@@ -1,6 +1,6 @@
 import { useContext, useRef, useState } from "react";
 import OnePageForm from "../../components/app/OnePageForm";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import * as Api from "../../api/Api";
 
@@ -42,8 +42,10 @@ export default function SignUp({ }) {
         }
     }
 
+    const additionalFooter = <Link to={"/login"}>Have an account?</Link>
+
     return (
-        <OnePageForm errorMsg={errorMsg} buttonText="Sign up" loading={loading} onSubmit={onSubmit} back={getParams.get("back")}>
+        <OnePageForm errorMsg={errorMsg} buttonText="Sign up" loading={loading} onSubmit={onSubmit} back={getParams.get("back")} additionalFooter={additionalFooter}>
             <h1 className="h3 mb-3 fw-normal">Create an account</h1>
 
             <div className="form-floating">

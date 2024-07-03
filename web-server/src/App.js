@@ -36,7 +36,7 @@ function App() {
   return (
     <div className="d-flex flex-row">
       <Helmet>
-        <title>Send large files | transfer.zip</title>
+        <title>transfer.zip - Send large files with no signup, no size limit, for free</title>
       </Helmet>
       <div className={"App flex-grow-1 bg-dark-subtle vh-100 d-flex flex-column flex-md-row"}>
         <Header className="d-md-none" />

@@ -15,18 +15,11 @@ export default function SideBar({ className }) {
     const currentPage = useLocation().pathname
 
     const NavLink = ({ to, children, disable, className, override }) => {
-        let _to = disable ? "#" : to
+        let _to = to
         const activeClass = to == "/" ? (currentPage == "/" ? "text-white " : "text-body-secondary ") : (currentPage.startsWith(to) ? "text-white " : "text-body-secondary ")
         let onClick = undefined
-        if(!override && user) {
-            if(isGuestUser()) {
-                // _to = `${window.origin}/signup`
-                _to = "#"
-                onClick = () => setShowUnlockFeatureModal(true)
-            }
-            // else if(isGuestOrFreeUser()) {
-            //     _to = `${window.origin}/upgrade`
-            // }
+        if(!override && disable) {
+            onClick = (e) => { e.preventDefault(); setShowUnlockFeatureModal(true) }
         }
         return (
             <Link onClick={onClick} className={"w-100 p-2 px-3 d-inline-block link-underline link-underline-opacity-0 " + activeClass + className} to={_to}>

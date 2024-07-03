@@ -3,7 +3,7 @@ import MaxWidthContainer from "../MaxWidthContainer";
 
 import logo from "../../img/transfer-zip-logotext-cropped.png"
 
-export default function OnePageForm({ children, errorMsg, buttonText, loading, onSubmit, back }) {
+export default function OnePageForm({ children, errorMsg, buttonText, loading, onSubmit, back, additionalFooter }) {
 
     const _onSubmit = async (e) => {
         e.preventDefault()
@@ -36,7 +36,7 @@ export default function OnePageForm({ children, errorMsg, buttonText, loading, o
                             </Link>
                             <img className="me-4" style={{ maxWidth: "220px" }} src={logo} alt="transfer.zip logo" />
                         </div>
-                        { children }
+                        {children}
 
                         {/* <div className="form-check text-start my-3">
                                 <input className="form-check-input" type="checkbox" value="remember-me" />
@@ -48,7 +48,11 @@ export default function OnePageForm({ children, errorMsg, buttonText, loading, o
                         <button className="btn btn-primary w-100 py-2 mt-1" type="submit" disabled={loading}>
                             {buttonText} {loading && spinner}
                         </button>
-                        <p className="mt-5 mb-3 text-body-secondary">&copy; 2024 Robin K</p>
+
+                        <div className="mt-4 d-flex flex-row justify-content-between">
+                            <p className="mb-3 text-body-secondary">&copy; 2024 Robin K</p>
+                            {additionalFooter}
+                        </div>
                     </form>
                 </main>
             </MaxWidthContainer>

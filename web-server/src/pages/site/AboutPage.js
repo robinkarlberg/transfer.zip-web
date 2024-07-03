@@ -24,7 +24,7 @@ export default function AboutPage({ }) {
     return (
         <div>
             <Helmet>
-                <title>About</title>
+                <title>About | transfer.zip</title>
                 <meta name="description" content="Quickly send large files! No signup, no size limit, with end-to-end encryption, all for free."/>
             </Helmet>
             <div className="Landing-div d-flex" style={
