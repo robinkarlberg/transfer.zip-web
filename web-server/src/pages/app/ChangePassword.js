@@ -3,10 +3,13 @@ import OnePageForm from "../../components/app/OnePageForm";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 
 import * as Api from "../../api/Api";
+import MaxWidthContainer from "../../components/MaxWidthContainer";
+import Checkmark from "../../components/app/Checkmark";
 
 export default function ChangePassword({ }) {
     const [loading, setLoading] = useState(false)
     const [errorMsg, setErrorMsg] = useState(null)
+    const [success, setSuccess] = useState(false)
 
     const passwordFieldRef = useRef()
     const passwordConfirmFieldRef = useRef()
@@ -23,16 +26,16 @@ export default function ChangePassword({ }) {
         await sleep(300)
         try {
             const [email, token] = atob(encodedToken).split(" ")
-            if(passwordFieldRef.current.value.length < 8) {
+            if (passwordFieldRef.current.value.length < 8) {
                 throw new Error("Password needs to be at least 8 characters long!")
             }
-            if(passwordFieldRef.current.value !== passwordConfirmFieldRef.current.value) {
+            if (passwordFieldRef.current.value !== passwordConfirmFieldRef.current.value) {
                 throw new Error("Passwords do not match!")
             }
             await sleep(700)
             const res = await Api.doPasswordReset(email, token, passwordFieldRef.current.value)
-            if(res.success) {
-                window.location.href = "/login"
+            if (res.success) {
+                setSuccess(true)
             }
         }
         catch (err) {
@@ -45,9 +48,21 @@ export default function ChangePassword({ }) {
 
     // const additionalFooter = <Link to={"/reset-password"}>Forgot password?</Link>
 
-    if(!encodedToken) return <Navigate to={"/"}/>
+    if (!encodedToken) return <Navigate to={"/"} />
 
-    return (
+    const successPage = (
+        <div className="min-vh-100 d-flex flex-column bg-body-tertiary justify-content-center">
+            <MaxWidthContainer className="" maxWidth={"500px"}>
+                <main className="w-100 m-auto p-3 text-center">
+                    <Checkmark className={"text-success mb-4"} />
+                    <p className="fs-5">Your password has been changed.</p>
+                    <p className="text-center text-body-secondary"><a href="/login">Click here to sign in.</a></p>
+                </main>
+            </MaxWidthContainer>
+        </div>
+    )
+
+    return (!success ? (
         <OnePageForm errorMsg={errorMsg} buttonText="Change" loading={loading} onSubmit={onSubmit} back={"#"}>
             <h1 className="h3 mb-3 fw-normal">Change password</h1>
 
@@ -68,5 +83,5 @@ export default function ChangePassword({ }) {
                 <label htmlFor="floatingPassword">Confirm password</label>
             </div>
         </OnePageForm>
-    )
+    ) : successPage)
 }
