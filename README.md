@@ -38,4 +38,4 @@ To build and deploy transfer.zip, use docker compose.
 ENVIRONMENT=dev docker compose build && docker compose up
 ENVIRONMENT=prod docker compose build && docker compose up
 ```
-This will listen for connections on `localhost:9001`. The signaling server will be proxied through the web-server on the `/ws` endpoint (`localhost:9001/ws`).
+This will listen for connections on `localhost:9001`. The signaling server will be proxied through the web-server on the `/ws` endpoint (`localhost:9001/ws`). When self-hosting, it is recommended to put transfer.zip behind a reverse-proxy with https.
