@@ -46,12 +46,14 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
       <Route path="/transfer/:secretCode" element={<DownloadPage />} />
-      <Route path="/about" element={<Site />}>
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="pricing" element={<PricingPage />} />
-        <Route path="legal/privacy-policy" element={<PrivacyPolicyPage />} />
-        <Route path="legal/terms-and-conditions" element={<TermsOfConditionsPage />} />
-        <Route path="*" element={<Navigate to={"/about"} replace={true} />} />
+      <Route element={<AuthProvider />}>
+        <Route path="/about" element={<Site />}>
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="pricing" element={<PricingPage />} />
+          <Route path="legal/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="legal/terms-and-conditions" element={<TermsOfConditionsPage />} />
+          <Route path="*" element={<Navigate to={"/about"} replace={true} />} />
+        </Route>
       </Route>
       <Route element={<ApplicationProvider />}>
         <Route element={<AuthProvider />}>
@@ -77,6 +79,7 @@ const router = createBrowserRouter(
           <Route path="/signup" element={<SignUp />} />
           <Route path="/reset-password" element={<ResetPasswordRequest />} />
           <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/upgrade" element={<Navigate to={"/about/pricing"} replace={true} />} />
           <Route path="*" element={<EmptyPage />} />
         </Route>
       </Route>

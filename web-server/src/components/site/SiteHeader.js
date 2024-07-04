@@ -52,14 +52,17 @@ export default function SiteHeader({ }) {
                 <div className={"collapse navbar-collapse " + (navbarExpanded ? "show" : "")}>
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
-                            <Link className="nav-link active" to="/">App</Link>
+                            <Link className="nav-link active" to="/"><i className="bi bi-arrow-left-short"></i>App</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="features">Features</Link>
+                            <Link className="nav-link" to="/about">About</Link>
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" to="pricing">Pricing</Link>
                         </li>
+                        {/* <li className="nav-item">
+                            <Link className="nav-link" to="/blog">Blog</Link>
+                        </li> */}
                         <li className="nav-item">
                             <Link className="nav-link" to="pricing#faq">FAQ</Link>
                         </li>

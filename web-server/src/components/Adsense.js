@@ -1,9 +1,9 @@
-import { useEffect } from "react"
+import { useContext, useEffect } from "react"
 import { isSelfHosted } from "../utils"
 
 export default function Adsense({ data_ad_client, data_ad_slot, className }) {
-    const ads = !isSelfHosted() && (process.env.REACT_APP_ADSENSE && process.env.REACT_APP_ADSENSE == "true")
-    
+    let ads = !isSelfHosted() && (process.env.REACT_APP_ADSENSE && process.env.REACT_APP_ADSENSE == "true")
+
     useEffect(() => {
         if(!ads) {
             return

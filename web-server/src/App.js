@@ -50,7 +50,7 @@ function App() {
       </div> */}
       </div>
 
-      { user != null && isGuestOrFreeUser() && adsDiv }
+      { user != null && isGuestOrFreeUser() && !user.hasPaidOnce && adsDiv }
     </div>
   );
 }

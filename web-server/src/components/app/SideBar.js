@@ -70,7 +70,7 @@ export default function SideBar({ className }) {
             <div className="px-3 mb-auto d-flex flex-column gap-2">
                 {!isSelfHosted() && user && isGuestOrFreeUser() &&
                     (
-                        <Link className="btn btn-primary rounded-pill w-100" to={"/signup"}>
+                        <Link className="btn btn-primary rounded-pill w-100" to={(isGuestUser() ? "/signup" : "/upgrade")}>
                             {!user ? ("...") : (isGuestUser() ? "Sign up" : "Upgrade")}
                         </Link>
                     )
@@ -83,7 +83,7 @@ export default function SideBar({ className }) {
                     )
                 }
             </div>
-            {!isSelfHosted && (
+            {!isSelfHosted() && (
                 <div>
                     <hr />
                     <ul className="nav nav-pills flex-column px-2">

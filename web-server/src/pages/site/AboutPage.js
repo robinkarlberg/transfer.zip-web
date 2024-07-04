@@ -108,7 +108,7 @@ export default function AboutPage({ }) {
                 </div>
                 <div className="d-flex flex-row flex-wrap py-4 gap-3">
                     <div className="flex-grow-1 bg-body text-center p-3 py-5 rounded">
-                        <h2 className="fw-bold"><i className="bi bi-file-earmark-arrow-up me-2"></i>No file size limit</h2>
+                        <h2 className="fw-bold"><i className="bi bi-ban me-2"></i>No file size limit</h2>
                         <p style={{ maxWidth: "300px" }} className="m-auto">When the file is transfered using Quick Share, there are no file size or bandwidth limitations.</p>
                     </div>
                     <div className="flex-grow-1 bg-body text-center p-3 py-5 rounded">

@@ -54,7 +54,7 @@ export default function AccountPage({ }) {
                             <input type="text" readOnly={true} className="form-control-plaintext" value={user.plan} />
                             {
                                 user.plan == "free" ? (
-                                    <button className="btn btn-link" type="submit" onClick={() => { navigate("/pricing") }}>Upgrade</button>
+                                    <Link className="btn btn-link" type="submit" to={"/about/pricing"}>Upgrade</Link>
                                 ) : (
                                     <form action={API_URL + "/create-customer-portal-session"} method="POST">
                                         <button className="btn btn-link" type="submit">Manage</button>

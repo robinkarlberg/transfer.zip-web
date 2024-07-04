@@ -12,6 +12,7 @@ export const AuthProvider = () => {
 
     const refreshUser = useCallback(async () => {
         if(isSelfHosted()) return setUser({ id: null, email: "self@host", plan: "Self Hosting" })
+        
         try {
             const [resUser, resStorage] = await Promise.all([
                 Api.getUser(), Api.getUserStorage()

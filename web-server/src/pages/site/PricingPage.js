@@ -4,6 +4,7 @@ import { AuthContext } from "../../providers/AuthProvider"
 import MaxWidthContainer from "../../components/MaxWidthContainer"
 import { Accordion } from "react-bootstrap"
 import { API_URL } from "../../api/Api"
+import QuestionMark from "../../components/QuestionMark"
 
 
 export default function PricingPage({ }) {
@@ -17,12 +18,40 @@ export default function PricingPage({ }) {
     const isFree = user?.plan == "free"
     const isPro = user?.plan == "pro"
     const isPremium = user?.plan == "premium"
-    const hasPlan = isPro || isPremium
+    const hasPlan = isFree || isPro || isPremium
 
     const buttonText = user || newSignUp ? (hasPlan ? (isPremium ? "Change" : "Upgrade") : "Upgrade") : "Sign up"
-    const formUrl = API_URL + (hasPlan ? "/create-customer-portal-session" : "/create-checkout-session")
+    const formUrl = API_URL + ((isPro || isPremium) ? "/create-customer-portal-session" : "/create-checkout-session")
 
     const mark = <small className="ms-1 bg-warning-subtle rounded border border-warning p-1 text-warning fs-5">Current</small>
+
+    const noSizeLimitTooltip = (
+        <span>When using Quick Share, there is no file size limit. The files are sent directly between your devices without being stored anywhere on our servers.</span>
+    )
+
+    const oneTbStorageTooltip = (
+        <span>Initially, the max storage is 1TB. If you reach the limit, you can contact us and request to expand your storage. We make decisions on a case-by-case basis.</span>
+    )
+
+    const quickShareTooltip = (
+        <span>
+            Send files in realtime, with no file size limit. The files are end-to-end encrypted, and will be transfered directly
+            between you and the recipient, using peer-to-peer technology.
+            Quick Share is completely private and open source.
+        </span>
+    )
+
+    const e2eEncryptionTooltip = (
+        <span>When using Quick Share, your files are end-to-end encrypted using AES-GCM with a 256 bit key.</span>
+    )
+
+    const statisticsTooltip = (
+        <span>View comprehensive statistics on your transfers. See if your recipients have downloaded your files.</span>
+    )
+
+    const endWorldHungerTooltip = (
+        <span>Unfortunately transfer.zip can't end world hunger with the resources we have now, but in the future that could change.</span>
+    )
 
     const cards = (
         <main>
@@ -55,11 +84,11 @@ export default function PricingPage({ }) {
                         <div className="card-body">
                             <h1 className="card-title pricing-card-title">$0<small className="text-body-secondary fw-light">/mo</small></h1>
                             <ul className="list-unstyled mt-3 mb-4">
-                                <li>No file size limit<i className="ms-1 bi bi-question-circle"></i></li>
+                                <li>No file size limit<QuestionMark>{noSizeLimitTooltip}</QuestionMark></li>
                                 {/* <li>Progressive Web App for mobile</li> */}
                                 {/* <li>Transfer files in realtime</li> */}
                                 <li>Share by QR code or link</li>
-                                <li><u>No account required</u></li>
+                                <li>1GB storage</li>
                             </ul>
                             <a type="button" href={process.env.REACT_APP_APP_URL} className="w-100 btn btn-lg btn-outline-primary">Open app</a>
                         </div>
@@ -73,7 +102,7 @@ export default function PricingPage({ }) {
                         <div className="card-body">
                             <h1 className="card-title pricing-card-title">$6<small className="text-body-secondary fw-light">/mo</small></h1>
                             <ul className="list-unstyled mt-3 mb-4">
-                                <li>No file size limit<i className="ms-1 bi bi-question-circle"></i></li>
+                                <li>No file size limit<QuestionMark>{noSizeLimitTooltip}</QuestionMark></li>
                                 <li>Transfer statistics</li>
                                 <li>200GB storage</li>
                                 {/* <li>Email support</li> */}
@@ -92,9 +121,9 @@ export default function PricingPage({ }) {
                         <div className="card-body">
                             <h1 className="card-title pricing-card-title">$20<small className="text-body-secondary fw-light">/mo</small></h1>
                             <ul className="list-unstyled mt-3 mb-4">
-                                <li>No file size limit<i className="ms-1 bi bi-question-circle"></i></li>
+                                <li>No file size limit<QuestionMark>{noSizeLimitTooltip}</QuestionMark></li>
                                 <li>Priority support</li>
-                                <li>1TB+ storage<i className="ms-1 bi bi-question-circle"></i></li>
+                                <li>1TB+ storage<QuestionMark>{oneTbStorageTooltip}</QuestionMark></li>
                                 {/* <li>Priority email support</li> */}
                             </ul>
                             <form action={formUrl + "?plan=premium"} method="POST">
@@ -120,13 +149,13 @@ export default function PricingPage({ }) {
                         </thead>
                         <tbody>
                             <tr>
-                                <th scope="row" className="text-start">Quick Share<i className="ms-1 bi bi-question-circle"></i></th>
+                                <th scope="row" className="text-start">Quick Share<QuestionMark>{quickShareTooltip}</QuestionMark></th>
                                 <td>{checkMark}</td>
                                 <td>{checkMark}</td>
                                 <td>{checkMark}</td>
                             </tr>
                             <tr>
-                                <th scope="row" className="text-start">End-to-end encryption<i className="ms-1 bi bi-question-circle"></i></th>
+                                <th scope="row" className="text-start">End-to-end encryption<QuestionMark>{e2eEncryptionTooltip}</QuestionMark></th>
                                 <td>{checkMark}</td>
                                 <td>{checkMark}</td>
                                 <td>{checkMark}</td>
@@ -144,7 +173,7 @@ export default function PricingPage({ }) {
                                 <td>{checkMark}</td>
                             </tr>
                             <tr>
-                                <th scope="row" className="text-start">Statistics<i className="ms-1 bi bi-question-circle"></i></th>
+                                <th scope="row" className="text-start">Statistics<QuestionMark>{statisticsTooltip}</QuestionMark></th>
                                 <td></td>
                                 <td>{checkMark}</td>
                                 <td>{checkMark}</td>
@@ -180,7 +209,7 @@ export default function PricingPage({ }) {
                                 <td>{checkMark}</td>
                             </tr>
                             <tr>
-                                <th scope="row" className="text-start">End world hunger</th>
+                                <th scope="row" className="text-start">End world hunger<QuestionMark>{endWorldHungerTooltip}</QuestionMark></th>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -211,22 +240,22 @@ export default function PricingPage({ }) {
                         <Accordion.Item eventKey="0">
                             <Accordion.Header>Is there really no file size limit?</Accordion.Header>
                             <Accordion.Body>
-                                There is no file size limit when using Quick Share, because the file is never stored on our servers. 
+                                There is no file size limit when using Quick Share, because the file is never stored on our servers.
                                 For transfers there are limits determined by your plan, because they will be stored on our servers.
                             </Accordion.Body>
                         </Accordion.Item>
                         <Accordion.Item eventKey="1">
                             <Accordion.Header>How does quick share work?</Accordion.Header>
                             <Accordion.Body>
-                                It uses <a href="https://webrtc.org">WebRTC</a> for peer-to-peer data transfer, meaning the files are streamed 
-                                directly between peers and not stored anywhere in the process, not even on transfer.zip 
-                                servers. To let peers initially discover each other, a signaling server is implemented 
-                                in NodeJS using WebSockets, which importantly no sensitive data is sent through. 
-                                In addition, the file data is end-to-end encrypted 
-                                using <a href="https://en.wikipedia.org/wiki/Galois/Counter_Mode">AES-GCM</a> with a client-side 
-                                256 bit generated key, meaning if someone could impersonate a peer or capture the 
-                                traffic, they would not be able to decrypt the file without knowing the key. 
-                                Because the file is streamed directly between peers, there are no file size or 
+                                It uses <a href="https://webrtc.org">WebRTC</a> for peer-to-peer data transfer, meaning the files are streamed
+                                directly between peers and not stored anywhere in the process, not even on transfer.zip
+                                servers. To let peers initially discover each other, a signaling server is implemented
+                                in NodeJS using WebSockets, which importantly no sensitive data is sent through.
+                                In addition, the file data is end-to-end encrypted
+                                using <a href="https://en.wikipedia.org/wiki/Galois/Counter_Mode">AES-GCM</a> with a client-side
+                                256 bit generated key, meaning if someone could impersonate a peer or capture the
+                                traffic, they would not be able to decrypt the file without knowing the key.
+                                Because the file is streamed directly between peers, there are no file size or
                                 bandwidth limitations.
                             </Accordion.Body>
                         </Accordion.Item>

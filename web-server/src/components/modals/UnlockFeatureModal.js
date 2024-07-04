@@ -4,6 +4,7 @@ import { ApplicationContext } from "../../providers/ApplicationProvider";
 
 import "./UnlockFeatureModal.css"
 import { Link } from "react-router-dom";
+import QuestionMark from "../QuestionMark";
 
 export default function UnlockFeatureModal({ show }) {
     const { setShowUnlockFeatureModal } = useContext(ApplicationContext)
@@ -26,6 +27,10 @@ export default function UnlockFeatureModal({ show }) {
         )
     }
 
+    const removeAdsForeverTooltip = (
+        <span>If you purchase a plan, your account will <b>never-ever</b> see ads again, even if you cancel your subscription.</span>
+    )
+
     return (
         <>
             <Modal animation={show} className="UnlockFeatureModal" show={show} centered onHide={() => setShowUnlockFeatureModal(false)}>
@@ -42,7 +47,7 @@ export default function UnlockFeatureModal({ show }) {
                                 <ListItem><div><i className="bi bi-lock-fill me-2 text-body"></i>Password-protect transfers</div>{proIcon}</ListItem>
                                 <ListItem><div><i className="bi bi-sliders me-2 text-body"></i>Customize your transfers</div>{proIcon}</ListItem>
                                 <ListItem><div><i className="bi bi-envelope-fill me-2 text-body"></i>Transfer files by email</div>{proIcon}</ListItem>
-                                <ListItem><div className="text-success-emphasis"><i className="bi bi-shield-fill-check me-2 text-success-emphasis"></i>Remove ads forever</div>{proIcon}</ListItem>
+                                <ListItem><div className="text-success-emphasis"><i className="bi bi-shield-fill-check me-2 text-success-emphasis"></i>Remove ads forever<QuestionMark placement={"top"}>{removeAdsForeverTooltip}</QuestionMark></div>{proIcon}</ListItem>
                                 {/* <ListItem><div><i className="bi bi-heart-fill me-2 text-danger"></i>Support the developers</div>{suppIcon}</ListItem> */}
                                 {/* <li><Link to={"/about"}>Much more...</Link></li> */}
                             </ul>
