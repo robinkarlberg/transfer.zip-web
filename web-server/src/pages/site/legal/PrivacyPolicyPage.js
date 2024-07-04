@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage({ }) {
                     <p><strong>Purpose of Data Collection</strong></p>
                     <p>Your email is used for account recovery, to prevent spam, and to inform you about special offers and updates. The data related to files is used solely to facilitate secure file transfers between users.</p>
                     <p><strong>Data Sharing</strong></p>
-                    <p>We do not share your personal information with third-party providers, except for displaying advertisements to users without a paid plan. Google AdSense is used for this purpose, which may collect certain information as described in their privacy policy.</p>
+                    <p>We do not share any of your personal information with third-party providers, this is against our core values. We keep the site running using Google Adsense and subscriptions, not your data.</p>
                     <p><strong>Data Retention</strong></p>
                     <p>We store your data until you request its removal. You can request data deletion by sending an email to privacy@transfer.zip or by deleting your account via the account page.</p>
                     <p><strong>Data Security</strong></p>

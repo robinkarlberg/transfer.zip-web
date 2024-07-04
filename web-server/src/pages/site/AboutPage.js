@@ -121,7 +121,7 @@ export default function AboutPage({ }) {
                     </div>
                     <div className="flex-grow-1 bg-body text-center p-3 py-5 rounded">
                         <h2 className="fw-bold"><i className="bi bi-piggy-bank-fill me-2"></i>Fair price</h2>
-                        <p style={{ maxWidth: "300px" }} className="m-auto">Our <Link to="/pricing">plans</Link> are some of the most competitive in the business.</p>
+                        <p style={{ maxWidth: "300px" }} className="m-auto">Our <Link to="pricing">plans</Link> are some of the most competitive in the business.</p>
                     </div>
                     <div className="flex-grow-1 bg-body text-center p-3 py-5 rounded">
                         <h2 className="fw-bold"><i className="bi bi-cpu-fill me-2"></i>Cross-platform</h2>

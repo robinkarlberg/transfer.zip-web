@@ -7,6 +7,7 @@ import {
   Navigate,
   Route,
   RouterProvider,
+  ScrollRestoration,
 } from "react-router-dom";
 
 import './index.css';
@@ -39,6 +40,7 @@ import TermsOfConditionsPage from "./pages/site/legal/TermsOfConditionsPage";
 import ResetPasswordRequest from "./pages/app/PasswordResetRequest";
 import ChangePassword from "./pages/app/ChangePassword";
 import { isSelfHosted } from "./utils";
+import PricingPage from "./pages/site/PricingPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -46,9 +48,10 @@ const router = createBrowserRouter(
       <Route path="/transfer/:secretCode" element={<DownloadPage />} />
       <Route path="/about" element={<Site />}>
         <Route path="/about" element={<AboutPage />} />
-        <Route path="legal/privacy-policy" element={<PrivacyPolicyPage/>}/>
-        <Route path="legal/terms-and-conditions" element={<TermsOfConditionsPage/>}/>
-        <Route path="*" element={<Navigate to={"/about"} replace={true}/>} />
+        <Route path="pricing" element={<PricingPage />} />
+        <Route path="legal/privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="legal/terms-and-conditions" element={<TermsOfConditionsPage />} />
+        <Route path="*" element={<Navigate to={"/about"} replace={true} />} />
       </Route>
       <Route element={<ApplicationProvider />}>
         <Route element={<AuthProvider />}>

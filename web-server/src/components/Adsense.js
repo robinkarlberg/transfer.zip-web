@@ -1,7 +1,8 @@
 import { useEffect } from "react"
+import { isSelfHosted } from "../utils"
 
 export default function Adsense({ data_ad_client, data_ad_slot, className }) {
-    const ads = process.env.NODE_ENV == "development" || process.env.REACT_APP_ADSENSE && process.env.REACT_APP_ADSENSE == "true"
+    const ads = !isSelfHosted() && (process.env.REACT_APP_ADSENSE && process.env.REACT_APP_ADSENSE == "true")
     
     useEffect(() => {
         if(!ads) {
@@ -12,7 +13,6 @@ export default function Adsense({ data_ad_client, data_ad_slot, className }) {
         scriptElement.async = true
         scriptElement.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + data_ad_client
         scriptElement.crossorigin = "anonymous"
-
 
         document.body.appendChild(scriptElement)
 
