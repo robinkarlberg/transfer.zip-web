@@ -2,6 +2,7 @@ import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import * as Api from "../api/Api";
+import { isSelfHosted } from "../utils";
 
 export const AuthContext = createContext({})
 
@@ -10,6 +11,7 @@ export const AuthProvider = () => {
     const [userStorage, setUserStorage] = useState(null)
 
     const refreshUser = useCallback(async () => {
+        if(isSelfHosted()) return setUser({ id: null, email: "self@host", plan: "Self Hosting" })
         try {
             const [resUser, resStorage] = await Promise.all([
                 Api.getUser(), Api.getUserStorage()

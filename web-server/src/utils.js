@@ -133,3 +133,7 @@ export const groupStatisticsByInterval = (statistics, interval) => {
 
     return groups.reverse();
 }
+
+export const isSelfHosted = () => {
+    return process.env.REACT_APP_SELFHOST && process.env.REACT_APP_SELFHOST == "true"
+}

@@ -9,7 +9,7 @@ import PeerConnectionErrorModal from "../components/modals/PeerConnectionErrorMo
 import * as Api from "../api/Api"
 import { FileTransfer } from "../filetransfer";
 import UnlockFeatureModal from "../components/modals/UnlockFeatureModal";
-
+import { isSelfHosted } from "../utils";
 
 export const ApplicationContext = createContext({})
 
@@ -57,8 +57,9 @@ export const ApplicationProvider = () => {
 
     useEffect(() => {
         // WebRtc.createWebSocket()
-        
-        refreshApiTransfers()
+        if(!isSelfHosted()) {
+            refreshApiTransfers()
+        }
         // for(let contact of contactsList) {
         //     createContactRtcSession(contact)
         // }

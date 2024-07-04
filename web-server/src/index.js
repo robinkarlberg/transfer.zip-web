@@ -38,6 +38,7 @@ import PrivacyPolicyPage from "./pages/site/legal/PrivacyPolicyPage";
 import TermsOfConditionsPage from "./pages/site/legal/TermsOfConditionsPage";
 import ResetPasswordRequest from "./pages/app/PasswordResetRequest";
 import ChangePassword from "./pages/app/ChangePassword";
+import { isSelfHosted } from "./utils";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -80,9 +81,31 @@ const router = createBrowserRouter(
   )
 )
 
+const selfHostRouter = createBrowserRouter(
+  createRoutesFromElements(
+    <Route>
+      <Route element={<ApplicationProvider />}>
+        <Route element={<AuthProvider />}>
+          <Route element={<App />}>
+            <Route element={<QuickShareProvider />}>
+              <Route path="/quick-share" element={<QuickSharePage />}>
+                <Route path="/quick-share" element={<QuickShareNew />} />
+                <Route path="progress" element={<QuickShareProgress />} />
+                {/* <Route path="progress" element={<TransfersPage />} /> */}
+                {/* <Route path=":id" element={<TransferInfoPage />} /> */}
+              </Route>
+            </Route>
+          </Route>
+          <Route path="*" element={<EmptyPage />} />
+        </Route>
+      </Route>
+    </Route >
+  )
+)
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <React.StrictMode>
-  <RouterProvider router={router} />
+  <RouterProvider router={isSelfHosted() ? selfHostRouter : router} />
   // </React.StrictMode>
 );

@@ -1,6 +1,9 @@
+import { isSelfHosted } from "../utils"
+
 export const API_URL = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') ? "http://localhost:8001" : (process.env.REACT_APP_API_URL)
 
 const get = async (endpoint) => {
+    if(isSelfHosted()) throw new Error("Tried to make an API call, but is Self Hosting", endpoint)
     const res = await (await fetch(API_URL + endpoint, {
         credentials: "include"
     })).json()
@@ -15,6 +18,7 @@ const get = async (endpoint) => {
 }
 
 const withBody = async (verb, endpoint, payload) => {
+    if(isSelfHosted()) throw new Error("Tried to make an API call, but is Self Hosting", endpoint)
     const res = await (await fetch(API_URL + endpoint, {
         credentials: "include",
         method: verb,

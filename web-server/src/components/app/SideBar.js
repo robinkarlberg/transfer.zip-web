@@ -4,6 +4,7 @@ import { ProgressBar } from "react-bootstrap"
 import { useContext } from "react"
 import { AuthContext } from "../../providers/AuthProvider"
 import { ApplicationContext } from "../../providers/ApplicationProvider"
+import { isSelfHosted } from "../../utils"
 
 export default function SideBar({ className }) {
 
@@ -18,7 +19,7 @@ export default function SideBar({ className }) {
         let _to = to
         const activeClass = to == "/" ? (currentPage == "/" ? "text-white " : "text-body-secondary ") : (currentPage.startsWith(to) ? "text-white " : "text-body-secondary ")
         let onClick = undefined
-        if(!override && disable) {
+        if (!override && disable) {
             onClick = (e) => { e.preventDefault(); setShowUnlockFeatureModal(true) }
         }
         return (
@@ -42,37 +43,39 @@ export default function SideBar({ className }) {
                     </div>
                 </NavLink>
             </div>
-            <ul className="d-flex flex-column align-items-stretch list-unstyled px-2">
-                <li>
-                    <NavLink to="/dashboard" disable={disable}>
-                        <i className="bi bi-house me-2"></i>Dashboard
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to="/transfers" disable={disable}>
-                        <i className="bi bi-arrow-down-up me-2"></i>Transfers
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to="/statistics" disable={disable}>
-                        <i className="bi bi-graph-up me-2"></i>Statistics
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink to="/files" disable={disable}>
-                        <i className="bi bi-file-earmark me-2"></i>Files
-                    </NavLink>
-                </li>
-            </ul>
+            {!isSelfHosted() && (
+                <ul className="d-flex flex-column align-items-stretch list-unstyled px-2">
+                    <li>
+                        <NavLink to="/dashboard" disable={disable}>
+                            <i className="bi bi-house me-2"></i>Dashboard
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/transfers" disable={disable}>
+                            <i className="bi bi-arrow-down-up me-2"></i>Transfers
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/statistics" disable={disable}>
+                            <i className="bi bi-graph-up me-2"></i>Statistics
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/files" disable={disable}>
+                            <i className="bi bi-file-earmark me-2"></i>Files
+                        </NavLink>
+                    </li>
+                </ul>
+            )}
             <div className="px-3 mb-auto d-flex flex-column gap-2">
-                { user && isGuestOrFreeUser() &&
+                {!isSelfHosted() && user && isGuestOrFreeUser() &&
                     (
                         <Link className="btn btn-primary rounded-pill w-100" to={"/signup"}>
                             {!user ? ("...") : (isGuestUser() ? "Sign up" : "Upgrade")}
                         </Link>
                     )
                 }
-                { user && isGuestUser() &&
+                {!isSelfHosted() && user && isGuestUser() &&
                     (
                         <Link className="btn btn-outline-primary rounded-pill w-100" to={"/login"}>
                             Login
@@ -80,18 +83,22 @@ export default function SideBar({ className }) {
                     )
                 }
             </div>
-            <hr />
-            <ul className="nav nav-pills flex-column px-2">
-                <li>
-                    <NavLink to="/account" override={true}>
-                        <i className="bi bi-person-fill me-2"></i>Account
-                        {/* <div className="d-flex align-items-center text-white text-decoration-none">
-                            <img src="https://avatars.githubusercontent.com/u/10927692?v=4" alt="" width="32" height="32" className="rounded-circle me-2" />
-                            <strong>{user.username}</strong>
-                        </div> */}
-                    </NavLink>
-                </li>
-            </ul>
+            {!isSelfHosted && (
+                <div>
+                    <hr />
+                    <ul className="nav nav-pills flex-column px-2">
+                        <li>
+                            <NavLink to="/account" override={true}>
+                                <i className="bi bi-person-fill me-2"></i>Account
+                                {/* <div className="d-flex align-items-center text-white text-decoration-none">
+                                <img src="https://avatars.githubusercontent.com/u/10927692?v=4" alt="" width="32" height="32" className="rounded-circle me-2" />
+                                <strong>{user.username}</strong>
+                            </div> */}
+                            </NavLink>
+                        </li>
+                    </ul>
+                </div>
+            )}
             <hr className="mb-1" />
             <div className="d-flex justify-content-between p-3">
                 <small className="text-body-secondary">&copy; 2024 Robin K</small>
