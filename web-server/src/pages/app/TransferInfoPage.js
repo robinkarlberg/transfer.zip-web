@@ -14,7 +14,8 @@ import TransferNameModal from "../../components/modals/TransferNameModal";
 import EditTransferMetaModal from "../../components/modals/EditTransferMetaModal";
 import GraphCard from "../../components/app/GraphCard";
 import { CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
-import { Tooltip } from "react-bootstrap";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import SetTransferPasswordModal from "../../components/modals/SetTransferPasswordModal";
 
 export default function TransferInfoPage({ }) {
     const { id } = useParams()
@@ -32,6 +33,8 @@ export default function TransferInfoPage({ }) {
 
     const [showTransferNameModal, setShowTransferNameModal] = useState(false)
     const [showEditTransferMetaModal, setShowEditTransferMetaModal] = useState(false)
+
+    const [showSetTransferPasswordModal, setShowSetTransferPasswordModal] = useState(false)
 
     const interval = "month"
     const [statistics, setStatistics] = useState([])
@@ -72,6 +75,18 @@ export default function TransferInfoPage({ }) {
     const onEditTransferMetaModalDone = async (meta) => {
         await Api.updateTransfer(id, meta)
         setShowEditTransferMetaModal(false)
+        refreshApiTransfer()
+        refreshApiTransfers()
+    }
+
+    const onSetTransferPasswordModalDone = async (password) => {
+        if(password == null) {
+            await Api.clearTransferPassword(id)
+        }
+        else {
+            await Api.setTransferPassword(id, password)
+        }
+        setShowSetTransferPasswordModal(false)
         refreshApiTransfer()
         refreshApiTransfers()
     }
@@ -202,14 +217,36 @@ export default function TransferInfoPage({ }) {
         }
     }
 
+    const lockClass = transfer.hasPassword ? "bi-lock-fill" : "bi-unlock-fill"
+
+    // const lockTooltip = (props) => {
+    //     return (
+    //         <Tooltip className="bg-body border rounded" {...props}>
+    //             {transfer.hasPassword ? "Transfer is password protected" : "Not password protected"}
+    //         </Tooltip>
+    //     )
+    // }
+
+    const onLockClicked = (e) => {
+        setShowSetTransferPasswordModal(true)
+    }
+
+    const lockElement = (
+        <Link onClick={onLockClicked}><i className={`bi ${lockClass} fs-4 ms-2 ` + (transfer.hasPassword ? "text-body" : "text-secondary")}></i></Link>
+
+        // <OverlayTrigger placement={"bottom"} overlay={lockTooltip}>
+        // </OverlayTrigger>
+    )
+
     return (
         <AppGenericPage titleElement={titleElement}>
             <UploadFilesModal show={showUploadFilesModal} onCancel={() => setShowUploadFilesModal(false)} onDone={onUploadFileModalDone} />
             <UploadingFilesModal show={showUploadingFilesModal} onCancel={() => { }} uploadProgress={uploadProgress} />
             <TransferNameModal show={showTransferNameModal} onCancel={onTransferNameModalCancel} onDone={onTransferNameModalDone} askForName={transfer.name == null} />
             <EditTransferMetaModal show={showEditTransferMetaModal} onCancel={onEditTransferMetaModalCancel} onDone={onEditTransferMetaModalDone} transfer={transfer} />
+            <SetTransferPasswordModal show={showSetTransferPasswordModal} onCancel={() => setShowSetTransferPasswordModal(false)} onDone={onSetTransferPasswordModalDone}/>
 
-            <h2 className="mb-3">{transfer.name || transfer.id}</h2>
+            <h2 className="mb-3">{transfer.name || transfer.id}{lockElement}</h2>
             <div style={{ maxWidth: "800px" }}>
                 <p className="text-body-secondary">
                     {transfer.description || "No description"}

@@ -96,6 +96,14 @@ export async function updateTransfer(id, values) {
     return await put(`/transfers/${id}`, values)
 }
 
+export async function setTransferPassword(id, pass) {
+    return await post(`/transfers/${id}/setpassword`, { pass })
+}
+
+export async function clearTransferPassword(id) {
+    return await post(`/transfers/${id}/setpassword`, { pass: undefined })
+}
+
 export async function deleteTransfer(id) {
     return await post(`/transfers/${id}/delete`)
 }
@@ -142,12 +150,10 @@ export async function deleteTransferFile(transferId, fileId) {
 }
 
 export async function getDownload(secretCode) {
-    if(secretCode[0] == "r") throw "can't download a realtime transfer"
     return await get(`/download/${secretCode}`)
 }
 
 export async function downloadAll(secretCode) {
-    if(secretCode[0] == "r") throw "can't download a realtime transfer"
     // return await get(`/transfers/${transferId}/files/${fileId}/download`)
     window.location.href = `${API_URL}/download/${secretCode}/zip`
 }

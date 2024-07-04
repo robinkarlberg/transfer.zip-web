@@ -20,7 +20,7 @@ export default function EditTransferMetaModal({ transfer, show, onDone, onCancel
 
     return (
         <>
-            <Modal show={show} backdrop="static" centered onHide={onCancel}>
+            <Modal show={show} centered onHide={onCancel}>
                 <Modal.Header closeButton>
                     <Modal.Title>Edit Transfer</Modal.Title>
                 </Modal.Header>

@@ -18,6 +18,7 @@ import Adsense from "../../components/Adsense";
 
 import { Helmet } from "react-helmet"
 import InlineFooter from "../../components/app/InlineFooter";
+import DownloadPasswordModal from "../../components/modals/DownloadPasswordModal";
 
 const fileExtRe = /(?:\.([^.]+))?$/;
 
@@ -28,7 +29,8 @@ export default function DownloadPage({ }) {
     const [showFilePreviewModal, setShowFilePreviewModal] = useState(false)
     // const [filePreviewFile, setFilePreviewFile] = useState(null)
     const [filePreviewIndex, setFilePreviewIndex] = useState(0)
-    const [cachedFileData, setCachedFileData] = useState([])
+
+    const [showDownloadPasswordModal, setShowDownloadPasswordModa] = useState(false)
 
     const [displayMode, setDisplayMode] = useState("list")
 
@@ -37,56 +39,29 @@ export default function DownloadPage({ }) {
     const TRANSFER_STATE_FINISHED = "finished"
     const TRANSFER_STATE_FAILED = "failed"
 
-    const isRealtimeTransfer = false//secretCode[0] == "r"
+    const onDownloadPasswordModalDone = (password) => {
+        Api.getDownload(secretCode, )
+    }
 
     useEffect(() => {
-        if (isRealtimeTransfer) {
-            // const recipientId = secretCode.slice(1)
-            // // const rtTransferObj = rtTransfers.find(x => x.secretCode == secretCode)
-            // const keyBase64 = window.location.hash.slice(1)
-
-            // WebRtc.createWebSocket()
-
-            // downloadRealtimeTransfer(keyBase64, recipientId).then(({ fileTransfer, fileList }) => {
-            //     setDownloadWorker(fileTransfer)
-            //     setFilesList(fileList)
-
-            //     fileTransfer.onprogress = (progress, fileInfo) => {
-
-            //     }
-
-            //     fileTransfer.onfilefinished = (fileInfo) => {
-
-            //     }
-            // })
-        }
-        else {
-        }
         Api.getDownload(secretCode).then(res => {
-            setDownload(res.download)
-            setFilesList(res.download.files)
+            if (res.hasPassword) {
+                setShowDownloadPasswordModa(true)
+            }
+            else {
+                setDownload(res.download)
+                setFilesList(res.download.files)
+            }
         })
     }, [])
 
     const downloadFileById = (id) => {
-        if (isRealtimeTransfer) {
-            download.requestFile(id)
-        }
-        else {
-            console.log(download, id)
-            Api.downloadDlFile(secretCode, id)
-        }
+        Api.downloadDlFile(secretCode, id)
     }
 
     const previewFile = (file) => {
-        if (isRealtimeTransfer) {
-            download.requestFile(file.id)
-            // TODO: Fix preview for quick share (or disable preview, quick share is just for sharing one file fast, no clicking around and previewing shit lol)
-        }
-        else {
-            setFilePreviewIndex(filesList.indexOf(file))
-            setShowFilePreviewModal(true)
-        }
+        setFilePreviewIndex(filesList.indexOf(file))
+        setShowFilePreviewModal(true)
     }
 
     const onFileListAction = (action, file) => {
@@ -112,18 +87,16 @@ export default function DownloadPage({ }) {
     }
 
     const downloadAll = () => {
-        if (isRealtimeTransfer) {
-
-        }
-        else {
-            Api.downloadAll(secretCode)
-        }
+        Api.downloadAll(secretCode)
     }
 
     if (filesList == null) {
         return (
-            <div className="spinner-border" role="status">
-                <span className="visually-hidden">Loading...</span>
+            <div>
+                <DownloadPasswordModal show={showDownloadPasswordModal} onDone={onDownloadPasswordModalDone} />
+                <div className="spinner-border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
             </div>
         )
     }
@@ -224,7 +197,7 @@ export default function DownloadPage({ }) {
                             {/* <button className="btn" onClick={() => setDisplayMode("grid")}><i className="bi bi-grid"></i></button> */}
                         </div>
                         {/* {!isRealtimeTransfer && <button className="btn disabled btn-outline-primary me-2" onClick={downloadAll}>Download selected</button>} */}
-                        {!isRealtimeTransfer && <button className="btn btn-primary text-truncate" onClick={downloadAll}>Download all</button>}
+                        <button className="btn btn-primary text-truncate" onClick={downloadAll}>Download all</button>
                     </div>
                 </div>
             </div>
