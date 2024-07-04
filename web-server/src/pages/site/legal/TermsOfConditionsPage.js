@@ -29,7 +29,7 @@ export default function TermsOfConditionsPage({ }) {
                     <p><strong>9. Governing Law</strong></p>
                     <p>These terms and conditions are governed by and construed in accordance with the laws of the kingdom of Sweden. Any disputes arising from these terms will be resolved in the courts of the kingdom of Sweden.</p>
                     <p><strong>10. Modifications</strong></p>
-                    <p>transfer.zip reserves the right to modify these terms and conditions at any time without prior notice. Users are encouraged to review these terms periodically to stay informed of any changes.</p>
+                    <p>transfer.zip reserves the right to modify these terms and conditions at any time without prior notice, including the terms regarding individual plans and their limits. Users are encouraged to review these terms periodically to stay informed of any changes. If the terms and limits regarding plans are changed, users will be informed 1 month in advance, and have the right to cancel their subscription before the changes take into effect.</p>
                     <p><strong>11. Contact Information</strong></p>
                     <p>For any questions or concerns regarding these terms and conditions, please contact us at support@transfer.zip.</p>
                     <p>By using transfer.zip, you agree to these terms and conditions. If you do not agree, please discontinue the use of our services.</p>
