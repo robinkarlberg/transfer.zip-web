@@ -14,7 +14,7 @@ export default function QuickShareNew({ }) {
     const { state } = useLocation()
     let { k, remoteSessionId, transferDirection } = state || {}
     const isSentLinkWithHash = !!(k && remoteSessionId && transferDirection)
-    const [showUploadFilesModal, setShowUploadFilesModal] = useState(isSentLinkWithHash)
+    const [showUploadFilesModal, setShowUploadFilesModal] = useState(false)
 
     const [files, setFiles] = useState([])
 
@@ -67,7 +67,9 @@ export default function QuickShareNew({ }) {
                 {/* SEO: Canonical page, /quick-share should index as / in search engines. */}
                 <link rel="canonical" href={`${window.origin}/`}/>
             </Helmet>
-            <UploadFilesModal onFilesChange={onFilesChange}  show={showUploadFilesModal} onCancel={onUploadFilesModalCancel} onDone={onUploadFilesModalDone} />
+
+            {/* this fucking modal shit doesn't work anymore for some reason */}
+            {/* <UploadFilesModal onFilesChange={onFilesChange} show={showUploadFilesModal} onCancel={onUploadFilesModalCancel} onDone={() => onUploadFilesModalDone(files)} /> */}
             <div className="d-flex flex-column flex-wrap gap-3 justify-content-center mt-2">
                 <div style={{ maxWidth: "400px" }}>
                     <div className="text-center">
