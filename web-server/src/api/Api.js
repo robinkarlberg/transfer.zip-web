@@ -1,13 +1,16 @@
 import { isSelfHosted } from "../utils"
+import streamSaver from "../lib/StreamSaver"
+streamSaver.mitm = "/mitm.html"
 
 export const API_URL = (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') ? "http://localhost:8001" : (process.env.REACT_APP_API_URL)
 
-const get = async (endpoint) => {
-    if(isSelfHosted()) throw new Error("Tried to make an API call, but is Self Hosting", endpoint)
+const get = async (endpoint, extraHeaders) => {
+    if (isSelfHosted()) throw new Error("Tried to make an API call, but is Self Hosting", endpoint)
     const res = await (await fetch(API_URL + endpoint, {
-        credentials: "include"
+        credentials: "include",
+        headers: extraHeaders
     })).json()
-    
+
     if (!res.success) {
         console.log(res)
         throw new Error(res.msg ? res.msg : "Unknown error")
@@ -18,7 +21,7 @@ const get = async (endpoint) => {
 }
 
 const withBody = async (verb, endpoint, payload) => {
-    if(isSelfHosted()) throw new Error("Tried to make an API call, but is Self Hosting", endpoint)
+    if (isSelfHosted()) throw new Error("Tried to make an API call, but is Self Hosting", endpoint)
     const res = await (await fetch(API_URL + endpoint, {
         credentials: "include",
         method: verb,
@@ -149,21 +152,63 @@ export async function deleteTransferFile(transferId, fileId) {
     return await post(`/transfers/${transferId}/files/${fileId}/delete`)
 }
 
-export async function getDownload(secretCode) {
-    return await get(`/download/${secretCode}`)
+export async function getDownload(secretCode, password) {
+    const extraHeaders = password ? { "X-Transfer-Password": password } : {}
+    return await get(`/download/${secretCode}`, extraHeaders)
 }
 
-export async function downloadAll(secretCode) {
-    // return await get(`/transfers/${transferId}/files/${fileId}/download`)
-    window.location.href = `${API_URL}/download/${secretCode}/zip`
+export async function downloadAll(secretCode, password) {
+    const extraHeaders = password ? { "X-Transfer-Password": password } : {}
+
+    // TODO: zip files client-side instead of on the server if files are small enough
+    // TODO: if zip lib bug is fixed, zip everything client side
+    const res = await fetch(`${API_URL}/download/${secretCode}/zip`, {
+        headers: extraHeaders
+    })
+
+    const fileStream = streamSaver.createWriteStream("transfer.zip", {
+        type: res.headers["content-type"]
+    })
+
+    res.body.pipeTo(fileStream)
 }
 
 export function getDownloadLink(secretCode, fileId) {
-    // return await get(`/transfers/${transferId}/files/${fileId}/download`)
     return `${API_URL}/download/${secretCode}/${fileId}`
 }
 
-export function downloadDlFile(secretCode, fileId) {
-    // return await get(`/transfers/${transferId}/files/${fileId}/download`)
-    window.location.href = getDownloadLink(secretCode, fileId)
+export async function downloadDlFile(secretCode, fileId, password) {
+    const extraHeaders = password ? { "X-Transfer-Password": password } : {}
+
+    // TODO: streamsaver fetch stream (for password as header)
+    // TODO: zip files client-side instead of on the server if files are small enough
+    // TODO: if zip lib bug is fixed, zip everything client side
+    const res = await fetch(getDownloadLink(secretCode, fileId), {
+        headers: extraHeaders
+    })
+
+    const re = /filename[^;\n]*=(UTF-\d['"]*)?((['"]).*?[.]$\2|[^;\n]*)?/
+    const filename = re.exec(res.headers.get(["Content-Disposition"]))
+    console.log(filename)
+    
+    const fileStream = streamSaver.createWriteStream("transfer.zip", {
+        type: res.headers["content-type"]
+    })
+
+    res.body.pipeTo(fileStream)
+    
+}
+
+export async function previewDlFileRawResponse(secretCode, fileId, password) {
+    const extraHeaders = password ? { "X-Transfer-Password": password } : {}
+    extraHeaders["X-Preview"] = true
+
+    // TODO: streamsaver fetch stream (for password as header)
+    // TODO: zip files client-side instead of on the server if files are small enough
+    // TODO: if zip lib bug is fixed, zip everything client side
+    const res = await fetch(getDownloadLink(secretCode, fileId), {
+        headers: extraHeaders
+    })
+
+    return res
 }

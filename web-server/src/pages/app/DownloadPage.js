@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
 
 // import * as Zip from "@zip.js/zip.js";
@@ -30,7 +30,8 @@ export default function DownloadPage({ }) {
     // const [filePreviewFile, setFilePreviewFile] = useState(null)
     const [filePreviewIndex, setFilePreviewIndex] = useState(0)
 
-    const [showDownloadPasswordModal, setShowDownloadPasswordModa] = useState(false)
+    const [transferPassword, setTransferPassword] = useState(undefined)
+    const [showDownloadPasswordModal, setShowDownloadPasswordModal] = useState(false)
 
     const [displayMode, setDisplayMode] = useState("list")
 
@@ -40,13 +41,20 @@ export default function DownloadPage({ }) {
     const TRANSFER_STATE_FAILED = "failed"
 
     const onDownloadPasswordModalDone = (password) => {
-        Api.getDownload(secretCode, )
+        Api.getDownload(secretCode, password).then(res => {
+            setDownload(res.download)
+            setFilesList(res.download.files)
+            setTransferPassword(password)
+        }).catch(err => {
+            // TODO: if err is 401, then show password modal, otherwise show error
+            setShowDownloadPasswordModal(true)
+        })
     }
 
     useEffect(() => {
         Api.getDownload(secretCode).then(res => {
             if (res.hasPassword) {
-                setShowDownloadPasswordModa(true)
+                setShowDownloadPasswordModal(true)
             }
             else {
                 setDownload(res.download)
@@ -56,7 +64,7 @@ export default function DownloadPage({ }) {
     }, [])
 
     const downloadFileById = (id) => {
-        Api.downloadDlFile(secretCode, id)
+        Api.downloadDlFile(secretCode, id, transferPassword)
     }
 
     const previewFile = (file) => {
@@ -87,7 +95,7 @@ export default function DownloadPage({ }) {
     }
 
     const downloadAll = () => {
-        Api.downloadAll(secretCode)
+        Api.downloadAll(secretCode, transferPassword)
     }
 
     if (filesList == null) {
@@ -187,7 +195,9 @@ export default function DownloadPage({ }) {
 
                 <title>{download.name || fileCountText} | transfer.zip - Transfer smarter</title>
             </Helmet>
-            <FilePreviewModal onAction={onFilePreviewModalAction} secretCode={secretCode} show={showFilePreviewModal} filesList={filesList} fileIndex={filePreviewIndex} onCancel={() => { setShowFilePreviewModal(false) }} />
+            <FilePreviewModal onAction={onFilePreviewModalAction} secretCode={secretCode} show={showFilePreviewModal} 
+                filesList={filesList} fileIndex={filePreviewIndex} onCancel={() => { setShowFilePreviewModal(false) }}
+                transferPassword={transferPassword} />
             <div className="border-bottom mb-2 p-3 bg-body-tertiary ">
                 <div className="d-flex flex-row justify-content-between m-auto" style={{ maxWidth: "1280px" }}>
                     <img width="160" src={logo}></img>
