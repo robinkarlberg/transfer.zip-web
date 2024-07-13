@@ -8,6 +8,7 @@ export default function FilePreviewModal({ secretCode, show, onCancel, filesList
 
     const file = filesList[fileIndex]
     const [previewURL, setPreviewURL] = useState(null)
+    const [previewText, setPreviewText] = useState(null)
 
     const isFileTooBig = () => {
         if (!file) return false;
@@ -22,15 +23,19 @@ export default function FilePreviewModal({ secretCode, show, onCancel, filesList
         "image/svg+xml",
     ]
 
-    const supportedFileTypes = [
+    const textFileTypes = [
         "text/plain",
         "text/html",
         "text/css",
         "text/javascript",
         "application/javascript",
+        "application/x-javascript",
         "application/json",
         "application/xml",
         "application/xhtml+xml",
+    ]
+
+    const supportedFileTypes = [
         "application/pdf",
         "audio/mpeg",
         "audio/ogg",
@@ -40,12 +45,19 @@ export default function FilePreviewModal({ secretCode, show, onCancel, filesList
         "video/mp4",
         "video/ogg",
         "video/webm",
-        ...imageFileTypes
+        ...imageFileTypes,
+        ...textFileTypes
     ]
 
     const isImage = () => {
         if (!file) return true;
         return imageFileTypes.find(v => v == file.info.type);
+    }
+
+    // SECURITY: This is required to stop XSS attacks by embedding HTML file on preview
+    const isText = () => {
+        if (!file) return true;
+        return textFileTypes.find(v => v == file.info.type)
     }
 
     const isWav = () => {
@@ -70,19 +82,26 @@ export default function FilePreviewModal({ secretCode, show, onCancel, filesList
     )
 
     const embed = (
-        previewURL == null ?
+        previewURL == null && previewText == null ?
             <div className="spinner-border m-auto" role="status">
                 <span className="visually-hidden">Loading...</span>
             </div>
             :
-            isWav() ?
-                <audio src={previewURL} controls>
-                </audio>
+            isText() ?
+                <pre className="p-3 m-0">
+                    {previewText}
+                </pre>
                 :
-                isImage() ?
-                    <img className="" src={previewURL} />
+                isWav() ?
+                    <audio src={previewURL} controls>
+                    </audio>
                     :
-                    <embed className="flex-grow-1" src={previewURL}></embed>
+                    isImage() ?
+                        <img className="" src={previewURL} />
+                        :
+                        // SECURITY: Embed type has to be explicitly set to avoid XSS vulnerabilities by spoofing file type on upload
+                        // If type is not set, the browser could guess the MIME type and lead to XSS
+                        <embed className="flex-grow-1" src={previewURL} type={file.info.type}></embed>
     )
 
     const FilePreview = (
@@ -95,38 +114,45 @@ export default function FilePreviewModal({ secretCode, show, onCancel, filesList
 
     useEffect(() => {
         setPreviewURL(null)
+        setPreviewText(null)
         Api.previewDlFileRawResponse(secretCode, file.id, transferPassword).then(res => res.blob()).then(blob => {
-            const url = URL.createObjectURL(blob)
-            setPreviewURL(url)
+            if (isText()) {
+                blob.text().then(text => {
+                    setPreviewText(text)
+                })
+            }
+            else {
+                const url = URL.createObjectURL(blob)
+                setPreviewURL(url)
+            }
         })
     }, [show, fileIndex])
 
     return (
         <>
-            <Modal size="lg" show={show} centered onHide={onCancel}>
+            <Modal scrollable={true} size="lg" show={show} centered onHide={onCancel}>
                 <Modal.Header closeButton>
                     <Modal.Title>{file?.info.name}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="p-0">
                     <div>
                         {isFileTooBig() ? FileNotSupported("File too large to preview") : (isUnsupportedFileType() ? FileNotSupported("File preview not supported") : FilePreview)}
-                        <div className="w-100 d-flex flex-row justify-content-center">
-                            {onAction && (
-                                <>
-                                    <button className="btn btn-lg" onClick={() => onAction("prev")}><i className="bi bi-arrow-left-circle-fill"></i></button>
-                                    <div className="d-flex flex-column justify-content-center">
-                                        <button onClick={() => Api.downloadDlFile(secretCode, file.id, transferPassword)} className="btn btn-sm btn-primary">Download</button>
-                                    </div>
-                                    <button className="btn btn-lg" onClick={() => onAction("next")}><i className="bi bi-arrow-right-circle-fill"></i></button>
-                                </>
-                            )}
-
-                        </div>
                     </div>
                 </Modal.Body>
-                {/* <Modal.Footer>
-                    <button onClick={onCancel} className="btn btn-primary">Ok</button>
-                </Modal.Footer> */}
+                <Modal.Footer className="p-0">
+                    <div className="w-100 d-flex flex-row justify-content-center">
+                        {onAction && (
+                            <>
+                                <button className="btn btn-lg" onClick={() => onAction("prev")}><i className="bi bi-arrow-left-circle-fill"></i></button>
+                                <div className="d-flex flex-column justify-content-center">
+                                    <button onClick={() => Api.downloadDlFile(secretCode, file.id, transferPassword)} className="btn btn-sm btn-primary">Download</button>
+                                </div>
+                                <button className="btn btn-lg" onClick={() => onAction("next")}><i className="bi bi-arrow-right-circle-fill"></i></button>
+                            </>
+                        )}
+
+                    </div>
+                </Modal.Footer>
             </Modal>
         </>
 

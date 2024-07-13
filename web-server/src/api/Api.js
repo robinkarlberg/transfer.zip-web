@@ -107,6 +107,10 @@ export async function clearTransferPassword(id) {
     return await post(`/transfers/${id}/setpassword`, { pass: undefined })
 }
 
+export async function sendTransferLink(id, email) {
+    return await post(`/transfers/${id}/sendlink`, { email })
+}
+
 export async function deleteTransfer(id) {
     return await post(`/transfers/${id}/delete`)
 }

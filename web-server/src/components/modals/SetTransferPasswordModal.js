@@ -6,7 +6,7 @@ import { humanFileSize } from "../../utils";
 import Checkmark from "../app/Checkmark";
 import { Link } from "react-router-dom";
 
-export default function SetTransferPasswordModal({ transfer, show, onDone, onCancel }) {
+export default function SetTransferPasswordModal({ show, onDone, onCancel }) {
     const passwordRef = useRef()
 
     const onSubmit = e => {
@@ -23,13 +23,13 @@ export default function SetTransferPasswordModal({ transfer, show, onDone, onCan
         <>
             <Modal show={show} centered onHide={onCancel}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Password protect transfer</Modal.Title>
+                    <Modal.Title>Set transfer password</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form onSubmit={onSubmit} className="w-100">
                         <div className="mb-3" style={{ maxWidth: "300px" }}>
                             <label htmlFor="titleInput" className="form-label">Password</label>
-                            <input autoFocus ref={passwordRef} defaultValue={transfer?.name} type="password" className="form-control" id="passwordInput" placeholder="" />
+                            <input autoFocus ref={passwordRef} type="password" className="form-control" id="passwordInput" placeholder="" />
                         </div>
                     </form>
                 </Modal.Body>

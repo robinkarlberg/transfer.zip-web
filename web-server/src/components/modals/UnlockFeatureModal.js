@@ -5,9 +5,11 @@ import { ApplicationContext } from "../../providers/ApplicationProvider";
 import "./UnlockFeatureModal.css"
 import { Link } from "react-router-dom";
 import QuestionMark from "../QuestionMark";
+import { AuthContext } from "../../providers/AuthProvider";
 
 export default function UnlockFeatureModal({ show }) {
     const { setShowUnlockFeatureModal } = useContext(ApplicationContext)
+    const { user, isGuestUser } = useContext(AuthContext)
 
     const freeIcon = (
         <small className="ms-2 bg-primary rounded-1 fw-bold" style={{ fontSize: "0.7em", padding: "0.2em" }}>FREE</small>
@@ -52,10 +54,21 @@ export default function UnlockFeatureModal({ show }) {
                                 {/* <li><Link to={"/about"}>Much more...</Link></li> */}
                             </ul>
                         </div>
-                        <div className="d-flex flex-row gap-2 justify-content-center">
-                            <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/signup"} className="btn btn-primary rounded-pill px-5">Sign up</Link>
-                            <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/login"} className="btn btn-outline-primary rounded-pill px-5">Login</Link>
-                        </div>
+                        {isGuestUser() ?
+                            (
+                                <div className="d-flex flex-row gap-2 justify-content-center">
+                                    <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/signup"} className="btn btn-primary rounded-pill px-5">Sign up</Link>
+                                    <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/login"} className="btn btn-outline-primary rounded-pill px-5">Login</Link>
+                                </div>
+                            )
+                            :
+                            (
+                                <div className="d-flex flex-row gap-2 justify-content-center">
+                                    <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/upgrade"} className="btn btn-primary rounded-pill px-5">Upgrade</Link>
+                                    {/* <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/login"} className="btn btn-outline-primary rounded-pill px-5">Login</Link> */}
+                                </div>
+                            )
+                        }
                     </div>
                 </Modal.Body>
                 {/* <Modal.Footer>

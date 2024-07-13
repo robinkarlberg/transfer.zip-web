@@ -143,7 +143,7 @@ export class FileTransfer {
 
     ///////
 
-	INTERNAL_BUFFER_MAX_SIZE = FILE_CHUNK_SIZE * 256 // Roughly 4MB
+	INTERNAL_BUFFER_MAX_SIZE = FILE_CHUNK_SIZE * 32 // Roughly 500Kb
 
     chunkMapIndex = 0
 	internalBuffer = new Uint8Array(this.INTERNAL_BUFFER_MAX_SIZE)

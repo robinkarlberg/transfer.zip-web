@@ -63,7 +63,7 @@ export default function ChangePassword({ }) {
     )
 
     return (!success ? (
-        <OnePageForm errorMsg={errorMsg} buttonText="Change" loading={loading} onSubmit={onSubmit} back={"#"}>
+        <OnePageForm errorMsg={errorMsg} buttonText="Change" loading={loading} onSubmit={onSubmit} back={"/"}>
             <h1 className="h3 mb-3 fw-normal">Change password</h1>
 
             <div className="form-floating">

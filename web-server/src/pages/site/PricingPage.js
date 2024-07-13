@@ -21,7 +21,12 @@ export default function PricingPage({ }) {
     const hasPlan = isFree || isPro || isPremium
 
     const buttonText = user || newSignUp ? (hasPlan ? (isPremium ? "Change" : "Upgrade") : "Upgrade") : "Sign up"
-    const formUrl = API_URL + ((isPro || isPremium) ? "/create-customer-portal-session" : "/create-checkout-session")
+
+    const proButtonText = isPro ? "Manage" : (isPremium ? "Change" : "Upgrade")
+    const premiumButtonText = isPremium ? "Manage" : "Upgrade"
+
+    const proFormUrl = API_URL + ((isPro) ? "/create-customer-portal-session" : "/create-checkout-session")
+    const premiumFormUrl = API_URL + ((isPremium) ? "/create-customer-portal-session" : "/create-checkout-session")
 
     const mark = <small className="ms-1 bg-warning-subtle rounded border border-warning p-1 text-warning fs-5">Current</small>
 
@@ -51,6 +56,10 @@ export default function PricingPage({ }) {
 
     const endWorldHungerTooltip = (
         <span>Unfortunately transfer.zip can't end world hunger with the resources we have now, but in the future that could change.</span>
+    )
+
+    const removeAdsForeverTooltip = (
+        <span>If you purchase a plan, your account will <b>never-ever</b> see ads again, even if you cancel your subscription.</span>
     )
 
     const cards = (
@@ -107,14 +116,14 @@ export default function PricingPage({ }) {
                                 <li>200GB storage</li>
                                 {/* <li>Email support</li> */}
                             </ul>
-                            <form action={formUrl + "?plan=pro"} method="POST">
-                                <button type="submit" className="w-100 btn btn-lg btn-primary">{buttonText}</button>
+                            <form action={proFormUrl + "?plan=pro"} method="POST">
+                                <button type="submit" className="w-100 btn btn-lg btn-primary">{proButtonText}</button>
                             </form>
                         </div>
                     </div>
                 </div>
                 <div className="col">
-                    <div className="card mb-4 rounded-3 shadow-sm border-primary">
+                    <div className="card mb-4 rounded-3 shadow-lg border-primary">
                         <div className="card-header py-3 text-bg-primary border-primary">
                             <h4 className="my-0 fw-normal">Premium {isPremium && mark}</h4>
                         </div>
@@ -126,8 +135,8 @@ export default function PricingPage({ }) {
                                 <li>1TB+ storage<QuestionMark>{oneTbStorageTooltip}</QuestionMark></li>
                                 {/* <li>Priority email support</li> */}
                             </ul>
-                            <form action={formUrl + "?plan=premium"} method="POST">
-                                <button type="submit" className="w-100 btn btn-lg btn-primary">{buttonText}</button>
+                            <form action={premiumFormUrl + "?plan=premium"} method="POST">
+                                <button type="submit" className="w-100 btn btn-lg btn-primary">{premiumButtonText}</button>
                             </form>
                         </div>
                     </div>
@@ -185,7 +194,7 @@ export default function PricingPage({ }) {
                                 <td>{checkMark}</td>
                             </tr>
                             <tr>
-                                <th scope="row" className="text-start">Ad-free</th>
+                                <th scope="row" className="text-start">Ad-free forever<QuestionMark>{removeAdsForeverTooltip}</QuestionMark></th>
                                 <td></td>
                                 <td>{checkMark}</td>
                                 <td>{checkMark}</td>

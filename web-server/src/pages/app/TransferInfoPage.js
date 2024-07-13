@@ -1,6 +1,6 @@
 import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import AppGenericPage from "../../components/app/AppGenericPage";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
 
 import * as Api from "../../api/Api"
@@ -14,14 +14,15 @@ import TransferNameModal from "../../components/modals/TransferNameModal";
 import EditTransferMetaModal from "../../components/modals/EditTransferMetaModal";
 import GraphCard from "../../components/app/GraphCard";
 import { CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Overlay, OverlayTrigger, Tooltip } from "react-bootstrap";
 import SetTransferPasswordModal from "../../components/modals/SetTransferPasswordModal";
+import SendByEmailModal from "../../components/modals/SendByEmailModal";
 
 export default function TransferInfoPage({ }) {
     const { id } = useParams()
     const [transfer, setTransfer] = useState(null)
-    const { rtTransfers, downloadRealtimeTransferFile, refreshApiTransfers } = useContext(ApplicationContext)
-    const { userStorage } = useContext(AuthContext)
+    const { apiTransfers, refreshApiTransfers, hasFetched, setShowUnlockFeatureModal } = useContext(ApplicationContext)
+    const { userStorage, isFreeUser } = useContext(AuthContext)
 
     const { state } = useLocation()
 
@@ -33,8 +34,11 @@ export default function TransferInfoPage({ }) {
 
     const [showTransferNameModal, setShowTransferNameModal] = useState(false)
     const [showEditTransferMetaModal, setShowEditTransferMetaModal] = useState(false)
-
     const [showSetTransferPasswordModal, setShowSetTransferPasswordModal] = useState(false)
+    const [showSendByEmailModal, setShowSendByEmailModal] = useState(false)
+
+    const [showCopiedLink, setShowCopiedLink] = useState(false)
+    const copiedLinkTooltipTarget = useRef(null)
 
     const interval = "month"
     const [statistics, setStatistics] = useState([])
@@ -80,7 +84,7 @@ export default function TransferInfoPage({ }) {
     }
 
     const onSetTransferPasswordModalDone = async (password) => {
-        if(password == null) {
+        if (password == null) {
             await Api.clearTransferPassword(id)
         }
         else {
@@ -91,6 +95,12 @@ export default function TransferInfoPage({ }) {
         refreshApiTransfers()
     }
 
+    const onSendByEmailModalDone = (success) => {
+        if(success) {
+            setShowSendByEmailModal(false)
+        }
+    }
+
     const onUploadFileModalDone = async (files) => {
         setShowUploadFilesModal(false)
 
@@ -99,7 +109,7 @@ export default function TransferInfoPage({ }) {
             totalBytes += file.size
         }
 
-        if(userStorage.usedBytes + totalBytes > userStorage.maxBytes) {
+        if (userStorage.usedBytes + totalBytes > userStorage.maxBytes) {
             throw new Error("Not enough storage: Files too large.")
         }
 
@@ -135,23 +145,12 @@ export default function TransferInfoPage({ }) {
     }
 
     useEffect(() => {
-        if (isRealtimeTransfer) {
-            const rtTransfer = rtTransfers.find(x => x.id == id)
-            if (!rtTransfer) {
-                navigate("/transfers")
-            }
-            else {
-                setTransfer(rtTransfer)
-            }
-        }
-        else {
-            updateStatistics()
-            refreshApiTransfer()
-        }
+        updateStatistics()
+        refreshApiTransfer()
     }, [])
 
     if (!id) {
-        return <Navigate to={"/transfers"} replace={true}/>
+        return <Navigate to={"/transfers"} replace={true} />
     }
 
     const titleElement = (
@@ -190,53 +189,50 @@ export default function TransferInfoPage({ }) {
     }
 
     const onFilesListAction = (action, file) => {
-        if (isRealtimeTransfer) {
-            if (action == "rename") {
+        if (action == "rename") {
 
-            }
-            else if (action == "preview" || action == "click") {
-
-            }
-            else if (action == "download") {
-                downloadRealtimeTransferFile(file)
-            }
         }
-        else {
-            if (action == "rename") {
+        else if (action == "preview" || action == "click") {
 
-            }
-            else if (action == "preview" || action == "click") {
-
-            }
-            else if (action == "download") {
-                Api.downloadTransferFile(transfer.id, file.id)
-            }
-            else if (action == "delete") {
-                onDeleteFile(file)
-            }
+        }
+        else if (action == "download") {
+            Api.downloadTransferFile(transfer.id, file.id)
+        }
+        else if (action == "delete") {
+            onDeleteFile(file)
         }
     }
 
-    const lockClass = transfer.hasPassword ? "bi-lock-fill" : "bi-unlock-fill"
-
-    // const lockTooltip = (props) => {
-    //     return (
-    //         <Tooltip className="bg-body border rounded" {...props}>
-    //             {transfer.hasPassword ? "Transfer is password protected" : "Not password protected"}
-    //         </Tooltip>
-    //     )
-    // }
-
-    const onLockClicked = (e) => {
-        setShowSetTransferPasswordModal(true)
+    const lockTooltip = (props) => {
+        return (
+            <Tooltip className="bg-body border rounded" {...props}>
+                {transfer.hasPassword ? "Transfer is password protected and encrypted using AES-256" : "Transfer is encrypted using AES-256"}
+            </Tooltip>
+        )
     }
 
     const lockElement = (
-        <Link onClick={onLockClicked}><i className={`bi ${lockClass} fs-4 ms-2 ` + (transfer.hasPassword ? "text-body" : "text-secondary")}></i></Link>
-
-        // <OverlayTrigger placement={"bottom"} overlay={lockTooltip}>
-        // </OverlayTrigger>
+        <OverlayTrigger placement={"bottom"} overlay={lockTooltip}>
+            {/* <Link onClick={onLockClicked}><i className={`bi ${lockClass} fs-4 ms-2 ` + (transfer.hasPassword ? "text-body" : "text-secondary")}></i></Link> */}
+            <i className={`bi bi-lock-fill fs-4 ms-2 ` + (transfer.hasPassword ? "text-body" : "text-secondary")}></i>
+        </OverlayTrigger>
     )
+
+    const copyLinkButtonClicked = () => {
+        copyTransferLink(transfer)
+        setShowCopiedLink(true)
+        setTimeout(() => { setShowCopiedLink(false) }, 1000)
+    }
+
+    const sendByEmailButtonClicked = () => {
+        if(isFreeUser()) setShowUnlockFeatureModal(true)
+        else setShowSendByEmailModal(true)
+    }
+
+    const transferPasswordButtonClicked = () => {
+        if(isFreeUser()) setShowUnlockFeatureModal(true)
+        else setShowSetTransferPasswordModal(true)
+    }
 
     return (
         <AppGenericPage titleElement={titleElement}>
@@ -244,30 +240,46 @@ export default function TransferInfoPage({ }) {
             <UploadingFilesModal show={showUploadingFilesModal} onCancel={() => { }} uploadProgress={uploadProgress} />
             <TransferNameModal show={showTransferNameModal} onCancel={onTransferNameModalCancel} onDone={onTransferNameModalDone} askForName={transfer.name == null} />
             <EditTransferMetaModal show={showEditTransferMetaModal} onCancel={onEditTransferMetaModalCancel} onDone={onEditTransferMetaModalDone} transfer={transfer} />
-            <SetTransferPasswordModal show={showSetTransferPasswordModal} onCancel={() => setShowSetTransferPasswordModal(false)} onDone={onSetTransferPasswordModalDone}/>
+            <SetTransferPasswordModal show={showSetTransferPasswordModal} onCancel={() => setShowSetTransferPasswordModal(false)} onDone={onSetTransferPasswordModalDone} />
+            <SendByEmailModal transfer={transfer} show={showSendByEmailModal} onCancel={() => setShowSendByEmailModal(false)} onDone={onSendByEmailModalDone}/>
 
             <h2 className="mb-3">{transfer.name || transfer.id}{lockElement}</h2>
             <div style={{ maxWidth: "800px" }}>
                 <p className="text-body-secondary">
-                    {transfer.description || "No description"}
+                    {transfer.description || "No description provided."}
                     <a className="ms-2 link-underline link-underline-opacity-0" href="#" onClick={() => setShowEditTransferMetaModal(true)}>Edit <i className="bi bi-pencil-square"></i></a>
                 </p>
             </div>
+            <div className="d-flex flex-row flex-wrap gap-2 mb-3">
+                <button className="btn btn-primary rounded-4 py-1 px-3" onClick={() => setShowUploadFilesModal(true)}><span>Add files</span><i className="bi bi-arrow-right-short"></i></button>
+                <button ref={copiedLinkTooltipTarget} className="btn bg-body-secondary rounded-4 py-1 px-3" onClick={copyLinkButtonClicked}><span>Copy link</span><i className="bi bi-arrow-right-short"></i></button>
+                <button className="btn border-0 bg-body-secondary rounded-4 py-1 px-3" onClick={sendByEmailButtonClicked}><span>Send by email</span><i className="bi bi-arrow-right-short"></i></button>
+                <button className="btn bg-body rounded-4 py-1 px-3" onClick={transferPasswordButtonClicked}><span>Password</span><i className="bi bi-arrow-right-short"></i></button>
+                {/* <button className="btn bg-body rounded-4 py-1 px-3"><span>...</span></button> */}
+                <Overlay target={copiedLinkTooltipTarget.current} show={showCopiedLink} placement="top">
+                    {({ ...props }) => (
+                        <Tooltip className="bg-body border rounded" {...props}>
+                            Link copied to clipboard<i className="bi bi-check"></i>
+                        </Tooltip>
+                    )}
+                </Overlay>
+            </div>
             <div className="d-flex flex-row flex-wrap gap-3 mb-3">
                 <StatCard title={"Size"} stat={totalFileSizeStat()}>
-                    <a href="#" style={{ textDecoration: "none" }}>Sort by size<i className="bi bi-arrow-right-short"></i></a>
+                    <Link to={"/upgrade"} style={{ textDecoration: "none" }}>Upgrade plan<i className="bi bi-arrow-right-short"></i></Link>
                 </StatCard>
                 <StatCard title={"Files"} stat={transfer.files.length}>
                     <a href="#" onClick={() => setShowUploadFilesModal(true)} style={{ textDecoration: "none" }}>Add files<i className="bi bi-arrow-right-short"></i></a>
                 </StatCard>
                 <StatCard title={"Downloads"} stat={getDownloadsCount()}>
-                    <a href="#" style={{ textDecoration: "none" }} onClick={() => copyTransferLink(transfer)}>Copy link<i className="bi bi-arrow-right-short"></i></a>
+                    <h6 className="text-body-secondary mb-0">all time</h6>
                 </StatCard>
             </div>
+
             {/* <h4>Files</h4> */}
 
             <FilesList files={transfer.files} onAction={onFilesListAction} primaryActions={["download"]} redActions={["delete"]} maxWidth={"800px"} />
-            
+
             <div className="d-flex flex-row flex-wrap gap-3 mb-3">
                 <GraphCard title={"Downloads last " + interval}>
                     <ResponsiveContainer width="103%" height={400} style={{ position: "relative", left: "-30px" }}>

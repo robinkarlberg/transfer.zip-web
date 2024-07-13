@@ -53,6 +53,7 @@ export default function DownloadPage({ }) {
 
     useEffect(() => {
         Api.getDownload(secretCode).then(res => {
+            console.log(res.download)
             if (res.hasPassword) {
                 setShowDownloadPasswordModal(true)
             }
@@ -182,6 +183,8 @@ export default function DownloadPage({ }) {
 
     const fileCountText = filesList.length + (filesList.length == 1 ? " File" : " Files")
 
+    const displayAds = download.displayAds && (process.env.REACT_APP_ADSENSE && process.env.REACT_APP_ADSENSE == "true")
+
     return (
         <div className="m-auto bg-dark-subtle">
             <Helmet>
@@ -212,30 +215,30 @@ export default function DownloadPage({ }) {
                 </div>
             </div>
             <div className="d-flex flex-column flex-md-row justify-content-evenly">
-                <div className="flex-grow-1 d-none d-sm-inline-block" style={{ maxWidth: "300px" }}>
+                {displayAds && ( <div className="flex-grow-1 d-none d-sm-inline-block" style={{ maxWidth: "300px" }}>
                     <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" />
-                </div>
-                <div className="flex-grow-1 d-inline-block d-sm-none w-100">
+                </div>) }
+                {displayAds && ( <div className="flex-grow-1 d-inline-block d-sm-none w-100">
                     <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932" />
-                </div>
+                </div>) }
                 <div className="flex-grow-1 px-3 px-md-0" style={{ minHeight: "calc(100vh - 90px - 3em)", maxWidth: "1280px" }}>
                     <div className="pt-3" style={{ maxWidth: "1180px" }}>
                         <div className="mb-3">
                             <h2 className="mb-3">{download.name || fileCountText}</h2>
                             <div style={{ maxWidth: "800px" }}>
-                                <p>{download.description || "No description"}</p>
+                                <p>{download.description || "No description provided."}</p>
                             </div>
                         </div>
                         {displayMode == "list" && <FilesList files={filesList} allowedActions={{ "preview": true, "download": true }} onAction={onFileListAction} />}
                         {/* {displayMode == "grid" && <FileGrid filesList={filesList} />} */}
                     </div>
                 </div>
-                <div className="flex-grow-1 d-none d-sm-inline-block" style={{ maxWidth: "300px" }}>
+                {displayAds && (<div className="flex-grow-1 d-none d-sm-inline-block" style={{ maxWidth: "300px" }}>
                     <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="5132630574" />
-                </div>
-                <div className="flex-grow-1 d-inline-block d-sm-none w-100">
+                </div>) }
+                {displayAds && (<div className="flex-grow-1 d-inline-block d-sm-none w-100">
                     <Adsense data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932" />
-                </div>
+                </div>) }
             </div>
             <div className="d-flex flex-column align-items-center gap-0">
                 <a style={{ textDecoration: "none" }} href="/about"><span className="text-body-secondary">Made with <small><i className="bi bi-heart-fill text-danger"></i></small> in 🇸🇪</span></a>

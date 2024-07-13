@@ -10,7 +10,7 @@
  * 
  * @return Formatted string.
  */
-export function humanFileSize(bytes, si = false, dp = 1) {
+export function humanFileSize(bytes, si = false, dp = 0) {
     const thresh = si ? 1000 : 1024;
 
     if (Math.abs(bytes) < thresh) {
@@ -32,7 +32,7 @@ export function humanFileSize(bytes, si = false, dp = 1) {
     return bytes.toFixed(dp) + ' ' + units[u];
 }
 
-export function humanFileSizePair(bytes, si = false, dp = 1) {
+export function humanFileSizePair(bytes, si = false, dp = 0) {
     const [ amount, unit ] = humanFileSize(bytes, si, dp).split(" ")
     return { amount, unit }
 }

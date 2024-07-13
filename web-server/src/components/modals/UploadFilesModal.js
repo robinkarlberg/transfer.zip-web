@@ -22,7 +22,7 @@ export default function UploadFilesModal({ show, onDone, onCancel, onFilesChange
             if(showFilePickerOnShow) {
                 // selectFilesRef.current.click()
             }
-            // setFiles([])
+            setFiles([])
             onFilesChange && onFilesChange([])
         }
     }, [show])

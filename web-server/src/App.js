@@ -10,9 +10,13 @@ import SideBar from "./components/app/SideBar";
 import { AuthContext, AuthProvider } from "./providers/AuthProvider";
 import Header from "./components/app/Header";
 import { Helmet } from "react-helmet";
+import { isSelfHosted } from "./utils";
+
 
 function App() {
-  const { user, isGuestOrFreeUser } = useContext(AuthContext)
+  const { user, isGuestUser } = useContext(AuthContext)
+  let ads = (process.env.REACT_APP_ADSENSE && process.env.REACT_APP_ADSENSE == "true") && !isSelfHosted() && user && !user.hasPaidOnce
+  // let extraAds = user && isGuestUser()
 
   const adsDiv = (
     <div>
@@ -50,7 +54,7 @@ function App() {
       </div> */}
       </div>
 
-      { user != null && isGuestOrFreeUser() && !user.hasPaidOnce && adsDiv }
+      { ads && adsDiv }
     </div>
   );
 }

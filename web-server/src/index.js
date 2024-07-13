@@ -55,8 +55,8 @@ const router = createBrowserRouter(
           <Route path="*" element={<Navigate to={"/about"} replace={true} />} />
         </Route>
       </Route>
-      <Route element={<ApplicationProvider />}>
-        <Route element={<AuthProvider />}>
+      <Route element={<AuthProvider />}>
+        <Route element={<ApplicationProvider />}>
           <Route element={<App />}>
             <Route element={<QuickShareProvider />}>
               <Route path="/quick-share" element={<QuickSharePage />}>
