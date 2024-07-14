@@ -137,3 +137,7 @@ export const groupStatisticsByInterval = (statistics, interval) => {
 export const isSelfHosted = () => {
     return process.env.REACT_APP_SELFHOST && process.env.REACT_APP_SELFHOST == "true"
 }
+
+export function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

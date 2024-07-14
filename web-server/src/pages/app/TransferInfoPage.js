@@ -206,7 +206,7 @@ export default function TransferInfoPage({ }) {
     const lockTooltip = (props) => {
         return (
             <Tooltip className="bg-body border rounded" {...props}>
-                {transfer.hasPassword ? "Transfer is password protected and encrypted using AES-256" : "Transfer is encrypted using AES-256"}
+                {transfer.hasPassword ? "Transfer is password protected and encrypted using AES-256" : "Files are encrypted using AES-256"}
             </Tooltip>
         )
     }

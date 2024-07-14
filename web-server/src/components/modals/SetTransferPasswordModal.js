@@ -23,20 +23,18 @@ export default function SetTransferPasswordModal({ show, onDone, onCancel }) {
         <>
             <Modal show={show} centered onHide={onCancel}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Set transfer password</Modal.Title>
+                    <Modal.Title>Password-protect transfer</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                    <p>Add an extra layer of protection to your transfer, so only the intended people can download your files.</p>
                     <form onSubmit={onSubmit} className="w-100">
-                        <div className="mb-3" style={{ maxWidth: "300px" }}>
-                            <label htmlFor="titleInput" className="form-label">Password</label>
-                            <input autoFocus ref={passwordRef} type="password" className="form-control" id="passwordInput" placeholder="" />
+                        <div className="d-flex flex-row w-100 gap-3 mb-2">
+                            <input autoFocus ref={passwordRef} id="passwordInput" type="password" className="form-control" />
+                            <button type="submit" className="btn btn-primary">Done</button>
                         </div>
+                        <Link onClick={() => onSubmit()} className="link-danger me-3">Remove password</Link>
                     </form>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Link onClick={() => onSubmit()} className="link-danger me-3">Remove password</Link>
-                    <button onClick={onSubmit} className="btn btn-primary">Done</button>
-                </Modal.Footer>
             </Modal>
         </>
     )
