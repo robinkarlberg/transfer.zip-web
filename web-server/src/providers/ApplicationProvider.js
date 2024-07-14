@@ -75,6 +75,7 @@ export const ApplicationProvider = () => {
         onFileInputChangeFn && onFileInputChangeFn(e)
     }
     const fileInputRef = useRef()
+    const folderInputRef = useRef()
     const setOnFileInputChange = (fn) => {
         onFileInputChangeFn = fn
     }
@@ -90,6 +91,7 @@ export const ApplicationProvider = () => {
             newApiTransferAndNavigate,
             setOnFileInputChange,
             fileInputRef,
+            folderInputRef,
             setShowUnlockFeatureModal
         }}>
             <GenericErrorModal show={errorMessage != null} errorMessage={errorMessage} onCancel={() => { setErrorMessage(null) }} />
@@ -98,6 +100,7 @@ export const ApplicationProvider = () => {
             <Outlet />
             <form style={{ display: "none" }}>
                 <input ref={fileInputRef} onChange={onFileInputChange} type="file" aria-hidden="true" multiple></input>
+                <input ref={folderInputRef} onChange={onFileInputChange} type="file" aria-hidden="true" webkitdirectory="true"></input>
             </form>
         </ApplicationContext.Provider>
     )

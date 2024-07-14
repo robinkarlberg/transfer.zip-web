@@ -2,13 +2,19 @@ import { useContext, useRef } from "react"
 import "./UploadOrReceiveArea.css"
 import { ApplicationContext } from "../providers/ApplicationProvider"
 
-export default function UploadOrReceiveArea({ title, subtitle, allowReceive, onFileSelected, onFilesSelected, onReceiveClicked, ref }) {
-    const { fileInputRef, setOnFileInputChange } = useContext(ApplicationContext)
+export default function UploadOrReceiveArea({ title, subtitle, allowReceive, allowFolders, onFileSelected, onFilesSelected, onReceiveClicked, ref }) {
+    const { fileInputRef, folderInputRef, setOnFileInputChange } = useContext(ApplicationContext)
 
     const _onUploadClicked = e => {
         e.stopPropagation()
         console.log("_onUploadClicked")
         fileInputRef.current.click()
+    }
+
+    const _onFolderUploadClicked = e => {
+        e.stopPropagation()
+        console.log("_onFolderUploadClicked")
+        folderInputRef.current.click()
     }
 
     const _onReceiveClicked = e => {
@@ -34,7 +40,7 @@ export default function UploadOrReceiveArea({ title, subtitle, allowReceive, onF
     }
 
     setOnFileInputChange(e => {
-        console.log("onFileInputChange", e)
+        console.log("onFileInputChange", e.target.files)
         if(e.target.files[0]) {
             if(onFileSelected) onFileSelected(e.target.files[0])
             else if(onFilesSelected) onFilesSelected(e.target.files)
@@ -59,6 +65,9 @@ export default function UploadOrReceiveArea({ title, subtitle, allowReceive, onF
 
                     { allowReceive && (
                         <small><a onClick={_onReceiveClicked} href="#">Or receive a file instead</a></small>
+                    ) }
+                    { allowFolders && (
+                        <small className="text-secondary"><a onClick={_onFolderUploadClicked} href="#">or select a folder</a></small>
                     ) }
                     { subtitle && (
                         <small className="text-secondary">{subtitle}</small>

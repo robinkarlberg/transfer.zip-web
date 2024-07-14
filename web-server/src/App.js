@@ -54,7 +54,7 @@ function App() {
       </div> */}
       </div>
 
-      { ads && adsDiv }
+      {ads && adsDiv}
     </div>
   );
 }

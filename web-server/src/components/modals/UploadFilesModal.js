@@ -53,7 +53,7 @@ export default function UploadFilesModal({ show, onDone, onCancel, onFilesChange
                         }) }
                     </div>
                     <div className="d-flex" style={{ minHeight: "200px" }}>
-                        <UploadOrReceiveArea title={"Pick files"} subtitle={"Or drag files here"}
+                        <UploadOrReceiveArea title={"Pick files"} allowFolders={true}
                             allowReceive={false} onFilesSelected={onFilesSelected}
                         />
                     </div>
