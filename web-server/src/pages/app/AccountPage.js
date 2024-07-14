@@ -86,7 +86,7 @@ export default function AccountPage({ }) {
                 <div className="row">
                     <div className="col-auto">
                         {/* <button type="submit" className="btn btn-primary mb-3">Change password</button> */}
-                        <Link to="/" style={{ textDecoration: "none" }}>Change password<i className="bi bi-arrow-right-short"></i></Link>
+                        <Link to="/reset-password" style={{ textDecoration: "none" }}>Change password<i className="bi bi-arrow-right-short"></i></Link>
                     </div>
                 </div>
             </AccountCard>
