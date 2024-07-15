@@ -10,6 +10,7 @@ import StorageStatCard from "../../components/app/statcards/StorageStatCard"
 import { Tooltip } from "react-bootstrap"
 import { AuthContext } from "../../providers/AuthProvider"
 import { groupStatisticsByInterval, humanFileSize } from "../../utils"
+import StatisticsGraphCard from "../../components/app/StatisticsGraphCard"
 
 export default function StatisticsPage({ }) {
 
@@ -17,15 +18,6 @@ export default function StatisticsPage({ }) {
     const { userStorage } = useContext(AuthContext)
 
     const [statistics, setStatistics] = useState([])
-    const [interval, _setInterval] = useState(localStorage.getItem("statisticsPageInterval") || "week")
-    const setInterval = (_interval) => {
-        _setInterval(_interval)
-        localStorage.setItem("statisticsPageInterval", _interval)
-    }
-
-    const groupDownloads = () => {
-        return groupStatisticsByInterval(statistics, interval)
-    }
 
     const getDownloadsCount = (interval) => {
         const grouped = groupStatisticsByInterval(statistics, interval)
@@ -35,11 +27,6 @@ export default function StatisticsPage({ }) {
     const updateStatistics = async (fromDate) => {
         const res = await Api.getAllStatistics(0)
         setStatistics(res.statistics)
-    }
-
-    const graphStatistics = () => {
-        console.log(groupDownloads())
-        return groupDownloads()
     }
 
     const getStorageData = () => {
@@ -102,18 +89,7 @@ export default function StatisticsPage({ }) {
                     <StorageStatCard />
                 </div>
                 <div className="d-flex flex-row flex-wrap gap-3">
-                    <GraphCard title={"Downloads last " + interval}>
-                        <ResponsiveContainer width="103%" height={400} style={{ position: "relative", left: "-30px" }}>
-                            <LineChart margin={{ top: 20, bottom: 40, right: 20 }} data={graphStatistics()}>
-                                <CartesianGrid stroke="var(--bs-secondary)" strokeDasharray="5 5" strokeWidth={0.2}/>
-                                <XAxis dataKey="name" interval={0} angle={-45} textAnchor="end"/>
-                                <YAxis />
-                                <Tooltip />
-                                <Label />
-                                <Line isAnimationActive={false} dataKey="value" fill="var(--bs-primary)" />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </GraphCard>
+                    <StatisticsGraphCard statistics={statistics}/>
                     <GraphCard title="Storage">
                         <ResponsiveContainer width="100%" height={400}>
                             <PieChart>

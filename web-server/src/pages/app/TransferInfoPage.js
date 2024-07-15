@@ -17,6 +17,7 @@ import { CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxi
 import { Overlay, OverlayTrigger, Tooltip } from "react-bootstrap";
 import SetTransferPasswordModal from "../../components/modals/SetTransferPasswordModal";
 import SendByEmailModal from "../../components/modals/SendByEmailModal";
+import StatisticsGraphCard from "../../components/app/StatisticsGraphCard";
 
 export default function TransferInfoPage({ }) {
     const { id } = useParams()
@@ -281,18 +282,7 @@ export default function TransferInfoPage({ }) {
             <FilesList files={transfer.files} onAction={onFilesListAction} primaryActions={["download"]} redActions={["delete"]} maxWidth={"800px"} />
 
             <div className="d-flex flex-row flex-wrap gap-3 mb-3">
-                <GraphCard title={"Downloads last " + interval}>
-                    <ResponsiveContainer width="103%" height={400} style={{ position: "relative", left: "-30px" }}>
-                        <LineChart margin={{ top: 20, bottom: 40, right: 20 }} data={groupStatisticsByInterval(statistics, interval)}>
-                            <CartesianGrid stroke="var(--bs-secondary)" strokeDasharray="5 5" strokeWidth={0.2} />
-                            <XAxis dataKey="name" interval={0} angle={-45} textAnchor="end" />
-                            <YAxis />
-                            <Tooltip />
-                            <Label />
-                            <Line isAnimationActive={false} dataKey="value" fill="var(--bs-primary)" />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </GraphCard>
+                <StatisticsGraphCard statistics={statistics}/>
             </div>
         </AppGenericPage>
     )
