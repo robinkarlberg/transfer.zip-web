@@ -33,7 +33,7 @@ export function humanFileSize(bytes, si = false, dp = 0) {
 }
 
 export function humanFileSizePair(bytes, si = false, dp = 0) {
-    const [ amount, unit ] = humanFileSize(bytes, si, dp).split(" ")
+    const [amount, unit] = humanFileSize(bytes, si, dp).split(" ")
     return { amount, unit }
 }
 
@@ -57,21 +57,21 @@ export const decodeString = (arr) => {
 }
 
 const __getFileIconFromExtension = (ext) => {
-    if(ext == "exe") return "filetype-exe"
-    if(ext == "zip" || ext == "tar" || ext == "gz" || ext == "gzip" || ext == "rar") return "file-earmark-zip"
-    if(ext == "bin" || ext == "img" || ext == "iso") return "file-earmark-binary"
-    if(ext == "js" || ext == "c" || ext == "cpp" || ext == "py" || ext == "java" || ext == "css" || ext == "html" || ext == "xml") return "file-earmark-code"
-    if(ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "bmp" || ext == "dng" || ext == "webp") return "file-earmark-image"
-    if(ext == "wav" || ext == "mp3" || ext == "flac") return "file-earmark-music"
-    if(ext == "pdf") return "file-earmark-pdf"
-    if(ext == "mov" || ext == "mp4" || ext == "mkv") return "file-earmark-play"
-    if(ext == "docx" || ext == "doc") return "file-earmark-word"
-    if(ext == "txt" || ext == "tex") return "file-earmark-text"
+    if (ext == "exe") return "filetype-exe"
+    if (ext == "zip" || ext == "tar" || ext == "gz" || ext == "gzip" || ext == "rar") return "file-earmark-zip"
+    if (ext == "bin" || ext == "img" || ext == "iso") return "file-earmark-binary"
+    if (ext == "js" || ext == "c" || ext == "cpp" || ext == "py" || ext == "java" || ext == "css" || ext == "html" || ext == "xml") return "file-earmark-code"
+    if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "bmp" || ext == "dng" || ext == "webp") return "file-earmark-image"
+    if (ext == "wav" || ext == "mp3" || ext == "flac") return "file-earmark-music"
+    if (ext == "pdf") return "file-earmark-pdf"
+    if (ext == "mov" || ext == "mp4" || ext == "mkv") return "file-earmark-play"
+    if (ext == "docx" || ext == "doc") return "file-earmark-word"
+    if (ext == "txt" || ext == "tex") return "file-earmark-text"
 }
 
 export const getFileIconFromExtension = (ext) => {
     const bi_ext = __getFileIconFromExtension(ext)
-    if(!bi_ext) return null
+    if (!bi_ext) return null
     else return "bi-" + bi_ext
 }
 
@@ -140,4 +140,33 @@ export const isSelfHosted = () => {
 
 export function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export async function pollForConditionOrThrow(predicateFn, ms, throwAfterMs) {
+    console.log("[pollForConditionOrThrow] Start polling...")
+    return new Promise((resolve, reject) => {
+        let timeoutId = -1
+        let thrown = false
+        const throwTimeoutId = setTimeout(() => {
+            console.log("[pollForConditionOrThrow] throw!")
+            thrown = true
+            clearInterval(timeoutId)
+            reject()
+        }, throwAfterMs)
+        const pollingFn = () => {
+            if(thrown) {
+                return
+            }
+            if (predicateFn()) {
+                console.log("[pollForConditionOrThrow] resolve!")
+                clearTimeout(throwTimeoutId)
+                clearInterval(timeoutId)
+                resolve()
+            }
+            else {
+                timeoutId = setTimeout(pollingFn, ms)
+            }
+        }
+        pollingFn()
+    })
 }

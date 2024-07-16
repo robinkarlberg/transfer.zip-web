@@ -21,7 +21,7 @@ export default function UploadingFilesModal({ show, uploadProgress, onDone, onCa
 
     return (
         <>
-            <Modal show={show} backdrop="static" centered onHide={onCancel}>
+            <Modal show={show} scrollable backdrop="static" centered onHide={onCancel}>
                 <Modal.Header>
                     <Modal.Title>Uploading files...</Modal.Title>
                 </Modal.Header>

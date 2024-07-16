@@ -40,6 +40,7 @@ const CPKT_CANDIDATE = 3
 const CPKT_RELAY = 4
 const CPKT_SWITCH_TO_FALLBACK = 5
 const CPKT_SWITCH_TO_FALLBACK_ACK = 6
+const CPKT_P2P_FAILED = 7
 
 const SPKT_OFFER = 11
 const SPKT_ANSWER = 12
@@ -47,6 +48,7 @@ const SPKT_CANDIDATE = 13
 const SPKT_RELAY = 14
 const SPKT_SWITCH_TO_FALLBACK = 15
 const SPKT_SWITCH_TO_FALLBACK_ACK = 16
+const SPKT_P2P_FAILED = 17
 
 let WS_URL
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
@@ -215,7 +217,7 @@ export class RelayChannel {
 		this.bufferedAmount = ws.bufferedAmount
 	}
 
-	onbinarydata = function(data) {
+	onbinarydata = function (data) {
 		for (const messageListener of this.messageListeners) {
 			messageListener({ data })	// Mimic Event object
 		}
@@ -241,7 +243,7 @@ export class RelayChannel {
 	}
 
 	addEventListener(event, fn) {
-		if(event == "message") this.messageListeners.push(fn)
+		if (event == "message") this.messageListeners.push(fn)
 		else console.warn("[WebRtc] [RelayChannel] addEventListener: Unknown event name:", event)
 	}
 }
@@ -287,7 +289,8 @@ export class RtcListener {
 		console.warn(`[WebRtc] [RtcListener(${this.sessionId})]`, ...o)
 	}
 
-	async _listen(useFallback) {
+	async _listen(currentUserCanFallback) {
+		this.log("_listen, currentUserCanFallback:", currentUserCanFallback)
 		if (this.closed) {
 			this.warn("_recv was called after close")
 			return
@@ -341,7 +344,7 @@ export class RtcListener {
 							// SPKT_SWITCH_TO_FALLBACK gives us a new sessionId for relay communication
 							const newClientRtcSession = newRtcSession(e.detail.newRtcSessionId, null)
 							newClientRtcSession.try_login()
-							
+
 							ws.send(JSON.stringify({
 								type: CPKT_SWITCH_TO_FALLBACK_ACK, callerId: newClientRtcSession.sessionId, recipientId: entry.callerId, success: true
 							}))
@@ -368,7 +371,7 @@ export class RtcListener {
 				await entry.peerConnection.setLocalDescription(answer);
 				this.log("Sending answer:", answer)
 				ws.send(JSON.stringify({
-					type: CPKT_ANSWER, sessionId: this.sessionId, answer, recipientId
+					type: CPKT_ANSWER, sessionId: this.sessionId, answer, recipientId, currentUserCanFallback
 				}));
 			}
 			else if (data.type == SPKT_CANDIDATE && data.candidate) {
@@ -385,18 +388,21 @@ export class RtcListener {
 			else if (data.type == SPKT_SWITCH_TO_FALLBACK) {
 				let entry = this.callerIdPeerConnectionEntries.find(x => x.callerId === x.callerId)
 
-				if(!useFallback) {
-					ws.send(JSON.stringify({
-						type: CPKT_SWITCH_TO_FALLBACK_ACK, callerId: this.sessionId, recipientId: entry.callerId, success: false
-					}))
-					this.onerror && this.onerror(new PeerConnectionError())
-					return
-				}
+				// if(!currentUserCanFallback) {
+				// 	ws.send(JSON.stringify({
+				// 		type: CPKT_SWITCH_TO_FALLBACK_ACK, callerId: this.sessionId, recipientId: entry.callerId, success: false
+				// 	}))
+				// 	this.onerror && this.onerror(new PeerConnectionError())
+				// 	return
+				// }
 
 				// This is so ugly fuuuuuuuuuuck
 				entry.peerConnection.dispatchEvent(new CustomEvent("datachannel", {
 					detail: { newRtcSessionId: data.newRtcSessionId }
 				}))
+			}
+			else if (data.type == SPKT_P2P_FAILED) {
+				this.onerror && this.onerror(new PeerConnectionError())
 			}
 		}
 
@@ -424,9 +430,9 @@ export class RtcListener {
 		}
 	}
 
-	async listen(useFallback) {
+	async listen(currentUserCanFallback) {
 		await this.waitForWebsocket()
-		return this._listen(useFallback)
+		return this._listen(currentUserCanFallback)
 	}
 
 	onwsrestart() {
@@ -491,12 +497,12 @@ export class RtcSession {
 		}
 	}
 
-	async _call(recipientId, useFallback) {
+	async _call(recipientId, currentUserCanFallback) {
 		if (this.closed) {
 			console.warn("[RtcSession] _call was called after close")
 			return null
 		}
-		console.log("rtcCall")
+		console.log("[RtcSession] _call, currentUserCanFallback:", currentUserCanFallback)
 		const peerConnection = new RTCPeerConnection(RTC_CONF);
 		this.peerConnection = peerConnection;
 
@@ -530,7 +536,10 @@ export class RtcSession {
 			}))
 		}
 
-		const doFallbackTimeoutId = useFallback ? setTimeout(_doFallback, 8500) : -1
+		let doFallbackTimeoutId = -1//canUseFallback ? setTimeout(_doFallback, 8500) : -1
+		let peerConnectionFailedTimeoutId = -1
+
+		let useFallback = currentUserCanFallback
 
 		const doFallback = () => {
 			clearTimeout(doFallbackTimeoutId)
@@ -541,6 +550,21 @@ export class RtcSession {
 			this.onmessage = async data => {
 				if (data.type == SPKT_ANSWER && data.answer) {
 					console.log("Got answer:", data.answer)
+					if (data.currentUserCanFallback || currentUserCanFallback) {
+						useFallback = true
+						console.log("useFallback:", true)
+						doFallbackTimeoutId = setTimeout(_doFallback, 8200)
+					}
+					else {
+						console.log("useFallback:", false)
+						peerConnectionFailedTimeoutId = setTimeout(() => {
+							// TODO: Make sending P2P failed and throwing PeerConnectionError a function, it is used 3 times
+							ws.send(JSON.stringify({
+								type: CPKT_P2P_FAILED, callerId: this.sessionId, recipientId
+							}))
+							reject(new PeerConnectionError())
+						}, 8200)
+					}
 					const remoteDesc = data.answer;
 					await peerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc));
 				}
@@ -549,15 +573,21 @@ export class RtcSession {
 					await peerConnection.addIceCandidate(data.candidate)
 				}
 				else if (data.type == SPKT_SWITCH_TO_FALLBACK_ACK) {
-					if(data.success) {
+					if (data.success) {
+						clearTimeout(peerConnectionFailedTimeoutId)
 						resolve(new RelayChannel(this, data.callerId))
 					}
 					else {
+						clearTimeout(peerConnectionFailedTimeoutId)
+						ws.send(JSON.stringify({
+							type: CPKT_P2P_FAILED, callerId: this.sessionId, recipientId
+						}))
 						reject(new PeerConnectionError())
 					}
 				}
 				else {
 					if (!data.success) {
+						clearTimeout(peerConnectionFailedTimeoutId)
 						reject(new Error(data.msg))
 					}
 				}
@@ -572,6 +602,7 @@ export class RtcSession {
 				}
 				else if (e.target.connectionState == "disconnected") {
 					clearTimeout(doFallbackTimeoutId)
+					clearTimeout(peerConnectionFailedTimeoutId)
 					reject(new Error("Remote peer disconnected"))
 				}
 				else if (e.target.connectionState == "failed") {
@@ -579,6 +610,10 @@ export class RtcSession {
 						doFallback()
 					}
 					else {
+						clearTimeout(peerConnectionFailedTimeoutId)
+						ws.send(JSON.stringify({
+							type: CPKT_P2P_FAILED, callerId: this.sessionId, recipientId
+						}))
 						reject(new PeerConnectionError())
 					}
 				}
@@ -594,18 +629,21 @@ export class RtcSession {
 			sendChannel.addEventListener("open", e => {
 				clearTimeout(doFallbackTimeoutId)
 				console.log("datachannel open", e)
+				clearTimeout(peerConnectionFailedTimeoutId)
 				resolve(sendChannel)
 			})
 
 			sendChannel.addEventListener("close", e => {
 				if (useFallback) return
 				console.log("datachannel close", e)
+				clearTimeout(peerConnectionFailedTimeoutId)
 				reject(new Error("Data channel closed"))
 			})
 
 			sendChannel.addEventListener("error", e => {
 				if (useFallback) return
 				console.log("datachannel error", e)
+				clearTimeout(peerConnectionFailedTimeoutId)
 				reject(e)
 			})
 		})
@@ -624,9 +662,9 @@ export class RtcSession {
 		}
 	}
 
-	async call(recipientId, useFallback) {
+	async call(recipientId, currentUserCanFallback) {
 		await this.waitForWebsocket()
-		return this._call(recipientId, useFallback)
+		return this._call(recipientId, currentUserCanFallback)
 	}
 
 	close() {

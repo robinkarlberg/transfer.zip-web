@@ -1,4 +1,4 @@
-import { createContext, useCallback, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import * as Api from "../api/Api";
@@ -6,11 +6,15 @@ import * as WebRtc from "../webrtc"
 import { FileTransfer } from "../filetransfer";
 
 import streamSaver from "../lib/StreamSaver"
+import { AuthContext } from "./AuthProvider";
+import { isSelfHosted, pollForConditionOrThrow } from "../utils";
 streamSaver.mitm = "/mitm.html"
 
 export const QuickShareContext = createContext({})
 
 export const QuickShareProvider = () => {
+    const { user, isGuestUser, didSetUser } = useContext(AuthContext)
+
     const createFileStream = (fileName, size) => {
         const fileStream = streamSaver.createWriteStream(fileName, {
             size
@@ -23,7 +27,13 @@ export const QuickShareProvider = () => {
         const rtcSession = WebRtc.newRtcListener(sessionId)
         console.log("[QuickShareProvider] [listen]", sessionId)
 
-        await rtcSession.listen(true)
+        if(!isSelfHosted()) {
+            if(user == null) {
+                throw "Quick Share was started, but user is not set. Please ensure user is set before calling."
+            }
+        }
+
+        await rtcSession.listen(isSelfHosted() || !isGuestUser())
 
         const key = await window.crypto.subtle.generateKey(
             { name: "AES-GCM", length: 256 },
@@ -73,7 +83,14 @@ export const QuickShareProvider = () => {
         rtcSession.onclose = () => {
             console.log("[QuickShareProvider] [call] onclose")
         }
-        const channel = await rtcSession.call(recipientId, true)
+
+        if(!isSelfHosted()) {
+            if(user == null) {
+                throw "Quick Share was started, but user is not set. Please ensure user is set before calling."
+            }
+        }
+
+        const channel = await rtcSession.call(recipientId, isSelfHosted() || !isGuestUser())
         return new FileTransfer(channel, key)
     }
 

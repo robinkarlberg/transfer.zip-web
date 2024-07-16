@@ -6,6 +6,8 @@ import { isSelfHosted } from "../utils";
 
 export const AuthContext = createContext({})
 
+const userFetchListeners = []
+
 export const AuthProvider = () => {
     const [user, setUser] = useState(null)
     const [userStorage, setUserStorage] = useState(null)
@@ -22,6 +24,7 @@ export const AuthProvider = () => {
             setUserStorage(resStorage.storage)
         }
         catch (err) {
+            console.log("Set user to mock object (guest)")
             setUser({
                 id: null,
                 email: null,
@@ -98,7 +101,7 @@ export const AuthProvider = () => {
             userStorage,
             login,
             logout,
-            register,
+            register
         }}>
             <Outlet />
         </AuthContext.Provider>

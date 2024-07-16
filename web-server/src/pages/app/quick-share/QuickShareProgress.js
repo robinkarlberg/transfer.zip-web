@@ -3,7 +3,7 @@ import { Link, Outlet, useLocation, useNavigate, useOutletContext, useParams } f
 
 import * as WebRtc from "../../../webrtc"
 import QRLink from "../../../components/QRLink"
-import { humanFileSize } from "../../../utils"
+import { humanFileSize, isSelfHosted } from "../../../utils"
 import { ProgressBar } from "react-bootstrap"
 import { QuickShareContext } from "../../../providers/QuickShareProvider"
 
@@ -11,16 +11,19 @@ import * as zip from "@zip.js/zip.js";
 import PeerConnectionErrorModal from "../../../components/modals/PeerConnectionErrorModal"
 import Checkmark from "../../../components/app/Checkmark"
 import Cross from "../../../components/app/Cross"
+import { AuthContext } from "../../../providers/AuthProvider"
 
+const TRANSFER_STATE_WAIT_FOR_USER = "wait_for_user"
 const TRANSFER_STATE_IDLE = "idle"
 const TRANSFER_STATE_CONNECTING = "connecting"
 const TRANSFER_STATE_TRANSFERRING = "transferring"
 const TRANSFER_STATE_FINISHED = "finished"
 const TRANSFER_STATE_FAILED = "failed"
 
+let hasStarted = false
 export default function QuickShareProgress({ }) {
     const { listen, call, fileTransferGetFileList, fileTransferServeFiles, createFileStream } = useContext(QuickShareContext)
-    // const { setErrorMessage } = useContext(ApplicationContext)
+    const { user } = useContext(AuthContext)
 
     const navigate = useNavigate()
     const { state } = useLocation()
@@ -37,7 +40,7 @@ export default function QuickShareProgress({ }) {
     const [errorMessage, setErrorMessage] = useState(null)
 
     const [filesDone, setFilesDone] = useState(0)
-    const [transferState, _setTransferState] = useState(TRANSFER_STATE_IDLE)
+    const [transferState, _setTransferState] = useState(TRANSFER_STATE_WAIT_FOR_USER)
     const setTransferState = (ts) => {
         console.log("[QuickShareProgress] setTransferState", ts)
         _setTransferState(ts)
@@ -106,16 +109,13 @@ export default function QuickShareProgress({ }) {
         fileTransfer.requestFile(index)
     }
 
-    useEffect(() => {
-        if (!state) {
-            console.log("state is null, go back to /")
-            navigate("/")
-            return
+    const start = () => {
+        if(hasStarted) {
+            return console.warn("[QuickShareProgress] start was called twice!")
         }
-
-        WebRtc.createWebSocket()
-        console.log("isSentLinkWithHash:", isSentLinkWithHash)
-
+        console.log("[QuickShareProgress] start!")
+        hasStarted = true
+        setTransferState(TRANSFER_STATE_IDLE)
         let _filesDone = 0
 
         const recvDirection = (fileTransfer, fileList) => {
@@ -237,7 +237,11 @@ export default function QuickShareProgress({ }) {
 
             const oncandidate = (candidate) => {
                 waitTimer && clearTimeout(waitTimer)
-                waitTimer = setTimeout(() => setTransferState(TRANSFER_STATE_IDLE), 15000)
+                waitTimer = setTimeout(() => {
+                    if(transferState != TRANSFER_STATE_FAILED) {
+                        setTransferState(TRANSFER_STATE_IDLE)
+                    }
+                }, 15000)
                 setTransferState(TRANSFER_STATE_CONNECTING)
             }
 
@@ -251,11 +255,31 @@ export default function QuickShareProgress({ }) {
                     fileTransferGetFileList(fileTransfer).then(fileList => recvDirection(fileTransfer, fileList))
             }).catch(onerror)
         }
+    }
+
+    useEffect(() => {
+        hasStarted = false
+        if (!state) {
+            console.log("state is null, go back to /")
+            navigate("/")
+            return
+        }
+
+        WebRtc.createWebSocket()
+        console.log("isSentLinkWithHash:", isSentLinkWithHash)
+
+        if(isSelfHosted() || user != null) {
+            start()
+        }
 
         return () => {
             WebRtc.closeWebSocket()
         }
     }, [])
+
+    useEffect(() => {
+        if(!hasStarted && user != null) start()
+    }, [user])
 
     const sendTitle = "Send Files"
     const recvTitle = "Receive Files"

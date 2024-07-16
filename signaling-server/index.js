@@ -9,6 +9,7 @@ const CPKT_CANDIDATE = 3
 const CPKT_RELAY = 4
 const CPKT_SWITCH_TO_FALLBACK = 5
 const CPKT_SWITCH_TO_FALLBACK_ACK = 6
+const CPKT_P2P_FAILED = 7
 
 const SPKT_OFFER = 11
 const SPKT_ANSWER = 12
@@ -16,6 +17,7 @@ const SPKT_CANDIDATE = 13
 const SPKT_RELAY = 14
 const SPKT_SWITCH_TO_FALLBACK = 15
 const SPKT_SWITCH_TO_FALLBACK_ACK = 16
+const SPKT_P2P_FAILED = 17
 
 const textEnc = new TextEncoder()
 const textDec = new TextDecoder()
@@ -83,7 +85,7 @@ function handleBinaryData(conn, _data) {
     const packet = new Uint8Array(_data)
     const packetDataView = new DataView(packet.buffer)
     const packetId = packetDataView.getInt8(0)
-    
+
     if (packetId == CPKT_RELAY) {
         const targetId = decodeString(packet.subarray(1, 1 + 36))
         // const callerId = decodeString(packet.subarray(1 + 36, 1 + 36 + 36))
@@ -100,7 +102,7 @@ function handleBinaryData(conn, _data) {
         // }
 
         let recipientConn;
-        if((recipientConn = sessions.get(targetId))) {
+        if ((recipientConn = sessions.get(targetId))) {
             packetDataView.setInt8(0, SPKT_RELAY)   // Change to server packet type before sending back
             recipientConn.send(packet)
         }
@@ -186,12 +188,13 @@ function handleTextMessage(conn, message) {
                 type: SPKT_ANSWER, // answer type
                 targetId: data.recipientId,
                 answer: data.answer,
+                currentUserCanFallback: data.currentUserCanFallback
             }));
             return conn.send(JSON.stringify({
                 targetId: data.sessionId, success: true, type: data.type,
             }));
         } else {
-            console.log("[CPKT_ANSWER] recipient does not exist!")
+            console.log("[CPKT_ANSWER] recipient does not exist:", data.recipientId)
             return conn.send(JSON.stringify({
                 targetId: data.sessionId, success: false, type: data.type,
                 msg: "recipient does not exist",
@@ -263,7 +266,7 @@ function handleTextMessage(conn, message) {
                 msg: "recipient does not exist",
             }));
         }
-    } else if(data.type == CPKT_SWITCH_TO_FALLBACK_ACK) {
+    } else if (data.type == CPKT_SWITCH_TO_FALLBACK_ACK) {
         if (!data.callerId) return closeConnWithReason(conn, "[CPKT_SWITCH_TO_FALLBACK_ACK] Didn't specify callerId")
         if (!data.recipientId) return closeConnWithReason(conn, "[CPKT_SWITCH_TO_FALLBACK_ACK] Didn't specify recipientId")
         if (!sessions.get(data.callerId)) return closeConnWithReason(conn, "[CPKT_SWITCH_TO_FALLBACK_ACK] Specified callerId does not exist")
@@ -288,5 +291,28 @@ function handleTextMessage(conn, message) {
             }));
         }
 
+    } else if (data.type == CPKT_P2P_FAILED) {
+        if (!data.callerId) return closeConnWithReason(conn, "[CPKT_P2P_FAILED] Didn't specify callerId")
+        if (!data.recipientId) return closeConnWithReason(conn, "[CPKT_P2P_FAILED] Didn't specify recipientId")
+        if (!sessions.get(data.callerId)) return closeConnWithReason(conn, "[CPKT_P2P_FAILED] Specified callerId does not exist")
+
+        let recipientConn;
+        if ((recipientConn = sessions.get(data.recipientId))) {
+            recipientConn.send(JSON.stringify({
+                type: SPKT_P2P_FAILED,
+                targetId: data.recipientId,
+                callerId: data.callerId
+            }));
+
+            return conn.send(JSON.stringify({
+                targetId: data.callerId, success: true, type: data.type,
+            }));
+        } else {
+            console.log("[CPKT_P2P_FAILED] recipient does not exist!")
+            return conn.send(JSON.stringify({
+                targetId: data.callerId, success: false, type: data.type,
+                msg: "recipient does not exist",
+            }));
+        }
     }
 }
