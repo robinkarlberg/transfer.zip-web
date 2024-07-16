@@ -33,7 +33,7 @@ export const QuickShareProvider = () => {
             }
         }
 
-        await rtcSession.listen(isSelfHosted() || !isGuestUser())
+        await rtcSession.listen(true || isSelfHosted() || !isGuestUser())
 
         const key = await window.crypto.subtle.generateKey(
             { name: "AES-GCM", length: 256 },
@@ -90,7 +90,7 @@ export const QuickShareProvider = () => {
             }
         }
 
-        const channel = await rtcSession.call(recipientId, isSelfHosted() || !isGuestUser())
+        const channel = await rtcSession.call(recipientId, true || isSelfHosted() || !isGuestUser())
         return new FileTransfer(channel, key)
     }
 

@@ -15,14 +15,18 @@ export default function PeerConnectionErrorModal({ show, onCancel }) {
                 </Modal.Header>
                 <Modal.Body>
                     <div className="ErrorModal flex-grow-1">
-                        <p>Could not connect to remote peer, check your firewall settings or try connecting to another network.</p>
+                        <p>
+                            Your devices could not connect to each other, check your firewall settings or try connecting to another network.
+                            To bypass this limitation, <Link to={"/signup"}>sign up</Link> for a free account at transfer.zip, to use our server
+                            as a relay.
+                        </p>
                         <div className="p-1 pt-0">
                             <small className="text-body-secondary">
-                                Quick Share uses WebRTC for peer-to-peer data 
-                                transfer, meaning the files are streamed directly between peers and not stored anywhere in the process. 
-                                However, some some network firewalls may not allow direct connections between devices. 
-                                To bypass your network limitations, consider <Link to="/signup"><nobr>signing up for a plan</nobr></Link> at
-                                transfer.zip, making file sharing easier than ever.
+                                Quick Share uses WebRTC for peer-to-peer data
+                                transfer, meaning the files are streamed directly between peers and not stored anywhere in the process.
+                                However, some some network firewalls may not allow direct connections between devices.
+                                To bypass your network limitations, transfer.zip offers a relay server that removes the need 
+                                for direct connections, making file sharing easier than ever.
                             </small>
                         </div>
                     </div>

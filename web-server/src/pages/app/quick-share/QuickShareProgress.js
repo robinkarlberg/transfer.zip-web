@@ -24,11 +24,10 @@ let hasStarted = false
 export default function QuickShareProgress({ }) {
     const { listen, call, fileTransferGetFileList, fileTransferServeFiles, createFileStream } = useContext(QuickShareContext)
     const { user } = useContext(AuthContext)
+    const [ isUsingRelay, setIsUsingRelay ] = useState(false)
 
     const navigate = useNavigate()
     const { state } = useLocation()
-
-    // const [files, _] = useOutletContext()
 
     let { files, k, remoteSessionId, transferDirection } = state || {}
     const isSentLinkWithHash = k && remoteSessionId && transferDirection
@@ -119,6 +118,10 @@ export default function QuickShareProgress({ }) {
         let _filesDone = 0
 
         const recvDirection = (fileTransfer, fileList) => {
+            if(fileTransfer.isUsingRelayChannel()) {
+                setIsUsingRelay(true)
+            }
+
             setTransferState(TRANSFER_STATE_TRANSFERRING)
             const doZip = fileList.length > 1
             console.log("[QuickShareProgress] [recvDirection] File list query has been received", fileList, "doZip:", doZip)
@@ -186,6 +189,10 @@ export default function QuickShareProgress({ }) {
         let waitTimer = null
 
         const sendDirection = (fileTransfer) => {
+            if(fileTransfer.isUsingRelayChannel()) {
+                setIsUsingRelay(true)
+            }
+
             let _filesProgress = files.map(file => {
                 return { file: file, progress: 0 }
             })
