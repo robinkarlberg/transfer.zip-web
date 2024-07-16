@@ -18,6 +18,7 @@ import { Overlay, OverlayTrigger, Tooltip } from "react-bootstrap";
 import SetTransferPasswordModal from "../../components/modals/SetTransferPasswordModal";
 import SendByEmailModal from "../../components/modals/SendByEmailModal";
 import StatisticsGraphCard from "../../components/app/StatisticsGraphCard";
+import StorageFullError from "../../errors/StorageFullError";
 
 export default function TransferInfoPage({ }) {
     const { id } = useParams()
@@ -111,7 +112,7 @@ export default function TransferInfoPage({ }) {
         }
 
         if (userStorage.usedBytes + totalBytes > userStorage.maxBytes) {
-            throw new Error("Not enough storage: Files too large.")
+            throw new StorageFullError()
         }
 
         const progressObjectList = files.map(file => {
@@ -241,7 +242,7 @@ export default function TransferInfoPage({ }) {
             <UploadingFilesModal show={showUploadingFilesModal} onCancel={() => { }} uploadProgress={uploadProgress} />
             <TransferNameModal show={showTransferNameModal} onCancel={onTransferNameModalCancel} onDone={onTransferNameModalDone} askForName={transfer.name == null} />
             <EditTransferMetaModal show={showEditTransferMetaModal} onCancel={onEditTransferMetaModalCancel} onDone={onEditTransferMetaModalDone} transfer={transfer} />
-            <SetTransferPasswordModal show={showSetTransferPasswordModal} onCancel={() => setShowSetTransferPasswordModal(false)} onDone={onSetTransferPasswordModalDone} />
+            <SetTransferPasswordModal show={showSetTransferPasswordModal} password={transfer.password} onCancel={() => setShowSetTransferPasswordModal(false)} onDone={onSetTransferPasswordModalDone} />
             <SendByEmailModal transfer={transfer} show={showSendByEmailModal} onCancel={() => setShowSendByEmailModal(false)} onDone={onSendByEmailModalDone}/>
 
             <h2 className="mb-3">{transfer.name || transfer.id}{lockElement}</h2>
@@ -281,9 +282,10 @@ export default function TransferInfoPage({ }) {
 
             <FilesList files={transfer.files} onAction={onFilesListAction} primaryActions={["download"]} redActions={["delete"]} maxWidth={"800px"} />
 
-            <div className="d-flex flex-row flex-wrap gap-3 mb-3">
+            {/* // TODO: Show a mock-up statistics box for free users, instead of just removing it alltogether */}
+            {!isFreeUser() && (<div className="d-flex flex-row flex-wrap gap-3 mb-3">
                 <StatisticsGraphCard statistics={statistics}/>
-            </div>
+            </div>)}
         </AppGenericPage>
     )
 }

@@ -12,6 +12,7 @@ export default function SideBar({ className }) {
     const { user, isGuestOrFreeUser, isGuestUser, isFreeUser } = useContext(AuthContext)
 
     const disable = user == null || isGuestUser()
+    const disableStatistics = user == null || isGuestOrFreeUser()
 
     const currentPage = useLocation().pathname
 
@@ -56,7 +57,7 @@ export default function SideBar({ className }) {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/statistics" disable={disable}>
+                        <NavLink to="/statistics" disable={disableStatistics}>
                             <i className="bi bi-graph-up me-2"></i>Statistics
                         </NavLink>
                     </li>

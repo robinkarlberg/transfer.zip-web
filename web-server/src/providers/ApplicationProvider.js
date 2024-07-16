@@ -10,6 +10,7 @@ import * as Api from "../api/Api"
 import { FileTransfer } from "../filetransfer";
 import UnlockFeatureModal from "../components/modals/UnlockFeatureModal";
 import { isSelfHosted } from "../utils";
+import StorageFullModal from "../components/modals/StorageFullModal";
 
 export const ApplicationContext = createContext({})
 
@@ -20,6 +21,7 @@ export const ApplicationProvider = () => {
     // const [transfers, setTransfers] = useState([])
     const [hasFetched, setHasFetched] = useState(false)
     const [showUnlockFeatureModal, setShowUnlockFeatureModal] = useState(false)
+    const [showStorageFullModal, setShowStorageFullModal] = useState(false)
 
     const navigate = useNavigate()
 
@@ -92,10 +94,12 @@ export const ApplicationProvider = () => {
             setOnFileInputChange,
             fileInputRef,
             folderInputRef,
-            setShowUnlockFeatureModal
+            setShowUnlockFeatureModal,
+            setShowStorageFullModal
         }}>
             <GenericErrorModal show={errorMessage != null} errorMessage={errorMessage} onCancel={() => { setErrorMessage(null) }} />
             <UnlockFeatureModal show={showUnlockFeatureModal}/>
+            <StorageFullModal show={showStorageFullModal}/>
             {/* {!isInfoPage && <Adsense className={"mobile-banner-ad"} data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932" />} */}
             <Outlet />
             <form style={{ display: "none" }}>

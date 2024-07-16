@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, Navigate } from "react-router-dom"
 import AppGenericPage from "../../components/app/AppGenericPage"
 import StatCard from "../../components/app/StatCard"
 import { useContext, useEffect, useState } from "react"
@@ -15,9 +15,10 @@ import StatisticsGraphCard from "../../components/app/StatisticsGraphCard"
 export default function StatisticsPage({ }) {
 
     const { transfers, apiTransfers, hasFetched } = useContext(ApplicationContext)
-    const { userStorage } = useContext(AuthContext)
+    const { userStorage, user, isFreeUser } = useContext(AuthContext)
 
     const [statistics, setStatistics] = useState([])
+    const [customInterval, setCustomInterval] = useState(localStorage.getItem("statisticsGraphCardInterval"))
 
     const getDownloadsCount = (interval) => {
         const grouped = groupStatisticsByInterval(statistics, interval)
@@ -54,6 +55,10 @@ export default function StatisticsPage({ }) {
         updateStatistics()
     }, [])
 
+    if(!user || isFreeUser()) {
+        return <Navigate to={"/"} replace={true}/>
+    }
+
     return (
         <AppGenericPage title={"Statistics"} className={"StatisticsPage"}>
             <div className="d-flex flex-column gap-3">
@@ -63,33 +68,33 @@ export default function StatisticsPage({ }) {
                         stat={getDownloadsCount("day")}
                         subtitle={"downloads"}
                     >
-                        <Link onClick={() => { setInterval("day") }} style={{ textDecoration: "none" }}>See today<i className="bi bi-arrow-right-short"></i></Link>
+                        <Link onClick={() => { setCustomInterval("day") }} style={{ textDecoration: "none" }}>See today<i className="bi bi-arrow-right-short"></i></Link>
                     </StatCard>
                     <StatCard
                         title={"Last week"}
                         stat={getDownloadsCount("week")}
                         subtitle={"downloads"}
                     >
-                        <Link onClick={() => { setInterval("week") }} style={{ textDecoration: "none" }}>See week<i className="bi bi-arrow-right-short"></i></Link>
+                        <Link onClick={() => { setCustomInterval("week") }} style={{ textDecoration: "none" }}>See week<i className="bi bi-arrow-right-short"></i></Link>
                     </StatCard>
                     <StatCard
                         title={"Last month"}
                         stat={getDownloadsCount("month")}
                         subtitle={"downloads"}
                     >
-                        <Link onClick={() => { setInterval("month") }} style={{ textDecoration: "none" }}>See month<i className="bi bi-arrow-right-short"></i></Link>
+                        <Link onClick={() => { setCustomInterval("month") }} style={{ textDecoration: "none" }}>See month<i className="bi bi-arrow-right-short"></i></Link>
                     </StatCard>
                     <StatCard
                         title={"Last year"}
                         stat={getDownloadsCount("year")}
                         subtitle={"downloads"}
                     >
-                        <Link onClick={() => { setInterval("year") }} style={{ textDecoration: "none" }}>See year<i className="bi bi-arrow-right-short"></i></Link>
+                        <Link onClick={() => { setCustomInterval("year") }} style={{ textDecoration: "none" }}>See year<i className="bi bi-arrow-right-short"></i></Link>
                     </StatCard>
                     <StorageStatCard />
                 </div>
                 <div className="d-flex flex-row flex-wrap gap-3">
-                    <StatisticsGraphCard statistics={statistics}/>
+                    <StatisticsGraphCard statistics={statistics} customInterval={customInterval}/>
                     <GraphCard title="Storage">
                         <ResponsiveContainer width="100%" height={400}>
                             <PieChart>

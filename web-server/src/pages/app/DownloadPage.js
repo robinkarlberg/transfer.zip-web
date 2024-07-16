@@ -40,15 +40,10 @@ export default function DownloadPage({ }) {
     const TRANSFER_STATE_FINISHED = "finished"
     const TRANSFER_STATE_FAILED = "failed"
 
-    const onDownloadPasswordModalDone = (password) => {
-        Api.getDownload(secretCode, password).then(res => {
-            setDownload(res.download)
-            setFilesList(res.download.files)
-            setTransferPassword(password)
-        }).catch(err => {
-            // TODO: if err is 401, then show password modal, otherwise show error
-            setShowDownloadPasswordModal(true)
-        })
+    const onDownloadPasswordModalDone = (download, password) => {
+        setDownload(download)
+        setFilesList(download.files)
+        setTransferPassword(password)
     }
 
     useEffect(() => {
@@ -102,7 +97,7 @@ export default function DownloadPage({ }) {
     if (filesList == null) {
         return (
             <div>
-                <DownloadPasswordModal show={showDownloadPasswordModal} onDone={onDownloadPasswordModalDone} />
+                <DownloadPasswordModal secretCode={secretCode} show={showDownloadPasswordModal} onDone={onDownloadPasswordModalDone} />
                 <div className="spinner-border" role="status">
                     <span className="visually-hidden">Loading...</span>
                 </div>

@@ -100,11 +100,11 @@ export async function updateTransfer(id, values) {
 }
 
 export async function setTransferPassword(id, pass) {
-    return await post(`/transfers/${id}/setpassword`, { pass })
+    return await post(`/transfers/${id}/password`, { pass })
 }
 
 export async function clearTransferPassword(id) {
-    return await post(`/transfers/${id}/setpassword`, { pass: undefined })
+    return await post(`/transfers/${id}/password`, { pass: undefined })
 }
 
 export async function sendTransferLink(id, email) {

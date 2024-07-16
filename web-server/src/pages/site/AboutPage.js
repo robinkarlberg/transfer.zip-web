@@ -113,7 +113,7 @@ export default function AboutPage({ }) {
                     </div>
                     <div className="flex-grow-1 bg-body text-center p-3 py-5 rounded">
                         <h2 className="fw-bold"><i className="bi bi-file-earmark-lock2 me-2"></i>Encryption</h2>
-                        <p style={{ maxWidth: "300px" }} className="m-auto">With Quick Share, all file data is end-to-end encrypted using AES-GCM with a client-side generated 256 bit key.</p>
+                        <p style={{ maxWidth: "300px" }} className="m-auto">Transfers are encrypted using AES-256. <nobr>Quick Share</nobr> is end-to-end encrypted using a client-side generated key.</p>
                     </div>
                     <div className="flex-grow-1 bg-body text-center p-3 py-5 rounded">
                         <h2 className="fw-bold"><i className="bi bi-bar-chart-fill me-2"></i>Statistics</h2>

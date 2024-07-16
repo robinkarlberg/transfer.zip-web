@@ -1,10 +1,10 @@
 import { Dropdown, Tooltip } from "react-bootstrap";
 import { CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import GraphCard from "./GraphCard";
-import { forwardRef, useState } from "react";
+import { forwardRef, useState, useEffect } from "react";
 import { groupStatisticsByInterval } from "../../utils";
 
-export default function StatisticsGraphCard({ title, statistics }) {
+export default function StatisticsGraphCard({ title, statistics, customInterval }) {
     const [interval, _setInterval] = useState(localStorage.getItem("statisticsGraphCardInterval") || "week")
     const setInterval = (_interval) => {
         _setInterval(_interval)
@@ -50,6 +50,10 @@ export default function StatisticsGraphCard({ title, statistics }) {
     )
 
     const titleElement = <span className="d-flex flex-row">Downloads last {dropdown}</span>
+
+    useEffect(() => {
+        if(customInterval) setInterval(customInterval)
+    }, [customInterval])
 
     return (
         <GraphCard title={titleElement}>

@@ -50,6 +50,10 @@ export default function PricingPage({ }) {
         <span>When using Quick Share, your files are end-to-end encrypted using AES-GCM with a 256 bit key.</span>
     )
 
+    const encryptionTooltip = (
+        <span>All transfers are encrypted at-rest using AES-256.</span>
+    )
+
     const statisticsTooltip = (
         <span>View comprehensive statistics on your transfers. See if your recipients have downloaded your files.</span>
     )
@@ -112,8 +116,12 @@ export default function PricingPage({ }) {
                             <h1 className="card-title pricing-card-title">$6<small className="text-body-secondary fw-light">/mo</small></h1>
                             <ul className="list-unstyled mt-3 mb-4">
                                 <li>No file size limit<QuestionMark>{noSizeLimitTooltip}</QuestionMark></li>
-                                <li>Transfer statistics</li>
+                                <li>Share by QR code or link</li>
                                 <li>200GB storage</li>
+                                <li>Password protect files</li>
+                                <li><b>Ad-free forever</b><QuestionMark>{removeAdsForeverTooltip}</QuestionMark></li>
+                                <li><b>Share by email</b></li>
+                                <li><b>Transfer statistics</b></li>
                                 {/* <li>Email support</li> */}
                             </ul>
                             <form action={proFormUrl + "?plan=pro"} method="POST">
@@ -131,8 +139,13 @@ export default function PricingPage({ }) {
                             <h1 className="card-title pricing-card-title">$20<small className="text-body-secondary fw-light">/mo</small></h1>
                             <ul className="list-unstyled mt-3 mb-4">
                                 <li>No file size limit<QuestionMark>{noSizeLimitTooltip}</QuestionMark></li>
-                                <li>Priority support</li>
-                                <li>1TB+ storage<QuestionMark>{oneTbStorageTooltip}</QuestionMark></li>
+                                <li>Share by QR code or link</li>
+                                <li><b>1TB+ storage</b><QuestionMark>{oneTbStorageTooltip}</QuestionMark></li>
+                                <li>Password protect files</li>
+                                <li><b>Ad-free forever</b><QuestionMark>{removeAdsForeverTooltip}</QuestionMark></li>
+                                <li>Share by email</li>
+                                <li>Transfer statistics</li>
+                                <li><b>Priority support</b></li>
                                 {/* <li>Priority email support</li> */}
                             </ul>
                             <form action={premiumFormUrl + "?plan=premium"} method="POST">
@@ -188,6 +201,12 @@ export default function PricingPage({ }) {
                                 <td>{checkMark}</td>
                             </tr>
                             <tr>
+                                <th scope="row" className="text-start">Password-protect files</th>
+                                <td></td>
+                                <td>{checkMark}</td>
+                                <td>{checkMark}</td>
+                            </tr>
+                            <tr>
                                 <th scope="row" className="text-start">Share by email</th>
                                 <td></td>
                                 <td>{checkMark}</td>
@@ -199,12 +218,12 @@ export default function PricingPage({ }) {
                                 <td>{checkMark}</td>
                                 <td>{checkMark}</td>
                             </tr>
-                            {/* <tr>
-                                <th scope="row" className="text-start">Compress files</th>
-                                <td></td>
+                            <tr>
+                                <th scope="row" className="text-start">File encryption<QuestionMark>{encryptionTooltip}</QuestionMark></th>
                                 <td></td>
                                 <td>{checkMark}</td>
-                            </tr> */}
+                                <td>{checkMark}</td>
+                            </tr>
                             <tr>
                                 <th scope="row" className="text-start">Most storage</th>
                                 <td></td>

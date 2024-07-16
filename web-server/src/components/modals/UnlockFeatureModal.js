@@ -12,15 +12,15 @@ export default function UnlockFeatureModal({ show }) {
     const { user, isGuestUser } = useContext(AuthContext)
 
     const freeIcon = (
-        <small className="ms-2 bg-primary rounded-1 fw-bold" style={{ fontSize: "0.7em", padding: "0.2em" }}>FREE</small>
+        <small className="ms-2 bg-body-secondary rounded-1 fw-bold" style={{ fontSize: "0.7em", padding: "0.2em" }}>FREE</small>
     )
 
     const proIcon = (
-        <small className="ms-2 bg-body-secondary rounded-1 fw-bold" style={{ fontSize: "0.7em", padding: "0.2em" }}>PRO</small>
+        <small className="ms-2 bg-primary rounded-1 fw-bold" style={{ fontSize: "0.7em", padding: "0.2em" }}>PRO</small>
     )
 
-    const suppIcon = (
-        <small className="ms-2 bg-body-secondary rounded-1 fw-bold" style={{ fontSize: "0.7em", padding: "0.2em" }}>PRO</small>
+    const premIcon = (
+        <small className="ms-2 bg-primary rounded-1 fw-bold" style={{ fontSize: "0.7em", padding: "0.2em" }}>PREMIUM</small>
     )
 
     const ListItem = ({ children, ...props }) => {
@@ -46,8 +46,8 @@ export default function UnlockFeatureModal({ show }) {
                             <ul className="text-body-secondary list-unstyled ms-2 me-1">
                                 <ListItem><div><i className="bi bi-reception-4 me-2 text-primary-emphasis"></i><b>Relay</b> - Use Quick Share even when peer-to-peer is blocked</div>{freeIcon}</ListItem>
                                 <ListItem><div><i className="bi bi-server me-2 text-primary-emphasis"></i><b>Transfers</b> - Store files permanently and share them</div>{freeIcon}</ListItem>
+                                <ListItem><div><i className="bi bi-graph-up me-2 text-body"></i><b>Statistics</b> - Count downloads over time</div>{proIcon}</ListItem>
                                 <ListItem><div><i className="bi bi-lock-fill me-2 text-body"></i>Password-protect transfers</div>{proIcon}</ListItem>
-                                <ListItem><div><i className="bi bi-sliders me-2 text-body"></i>Customize your transfers</div>{proIcon}</ListItem>
                                 <ListItem><div><i className="bi bi-envelope-fill me-2 text-body"></i>Transfer files by email</div>{proIcon}</ListItem>
                                 <ListItem><div className="text-success-emphasis"><i className="bi bi-shield-fill-check me-2 text-success-emphasis"></i>Remove ads forever<QuestionMark placement={"top"}>{removeAdsForeverTooltip}</QuestionMark></div>{proIcon}</ListItem>
                                 {/* <ListItem><div><i className="bi bi-heart-fill me-2 text-danger"></i>Support the developers</div>{suppIcon}</ListItem> */}

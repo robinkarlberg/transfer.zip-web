@@ -1,10 +1,13 @@
 import { Modal } from "react-bootstrap";
 import UploadOrReceiveArea from "../UploadOrReceiveArea";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
+import StorageFullError from "../../errors/StorageFullError";
+import { ApplicationContext } from "../../providers/ApplicationProvider";
 
 
 export default function UploadFilesModal({ show, onDone, onCancel, onFilesChange, showFilePickerOnShow }) {
     const [files, setFiles] = useState([])
+    const { setShowStorageFullModal } = useContext(ApplicationContext)
 
     const onFilesSelected = (newFiles) => {
         console.log(newFiles)
@@ -40,6 +43,17 @@ export default function UploadFilesModal({ show, onDone, onCancel, onFilesChange
         )
     }
 
+    const onDoneClicked = () => {
+        onDone(files).then(() => {
+            
+        }).catch(err => {
+            console.log(err)
+            if(err instanceof StorageFullError) {
+                setShowStorageFullModal(true)
+            }
+        })
+    }
+
     return (
         <>
             <Modal show={show} backdrop="static" centered onHide={onCancel}>
@@ -59,7 +73,7 @@ export default function UploadFilesModal({ show, onDone, onCancel, onFilesChange
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <button onClick={() => onDone(files)} className="btn btn-primary">Done</button>
+                    <button onClick={onDoneClicked} className="btn btn-primary">Done</button>
                 </Modal.Footer>
             </Modal>
         </>

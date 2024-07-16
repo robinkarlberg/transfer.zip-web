@@ -43,7 +43,7 @@ export default function AccountPage({ }) {
                         <div className="d-flex align-items-center">
                             {/* <input type="email" readOnly={true} className="form-control" defaultValue={user.email} /> */}
                             <input type="text" readOnly={true} className="form-control-plaintext" value={user.email} />
-                            <button className="btn btn-link" type="submit" onClick={() => { navigate("/pricing") }}>Change</button>
+                            <a className="btn btn-link" type="submit" href="mailto:support@transfer.zip">Change</a>
                         </div>
                     </div>
                 </div>
@@ -54,7 +54,7 @@ export default function AccountPage({ }) {
                             <input type="text" readOnly={true} className="form-control-plaintext" value={user.plan} />
                             {
                                 user.plan == "free" ? (
-                                    <Link className="btn btn-link" type="submit" to={"/about/pricing"}>Upgrade</Link>
+                                    <Link className="btn btn-link" type="submit" to={"/upgrade"}>Upgrade</Link>
                                 ) : (
                                     <form action={API_URL + "/create-customer-portal-session"} method="POST">
                                         <button className="btn btn-link" type="submit">Manage</button>
@@ -90,7 +90,7 @@ export default function AccountPage({ }) {
                     </div>
                 </div>
             </AccountCard>
-            <Link onClick={doLogout} className="link-danger" style={{ textDecoration: "none" }}>Delete account<i className="bi bi-arrow-right-short"></i></Link>
+            {/* <Link onClick={doLogout} className="link-danger" style={{ textDecoration: "none" }}>Delete account<i className="bi bi-arrow-right-short"></i></Link> */}
         </AppGenericPage>
     )
 }
