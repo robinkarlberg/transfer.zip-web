@@ -4,7 +4,7 @@ import { isSelfHosted } from "../../utils"
 export default function InlineFooter() {
 
     const InlineLink = ({ to, children }) => {
-        return <Link className="link-secondary link-underline link-underline-opacity-0 link-underline-opacity-100-hover" to={to}>{children}</Link>
+        return <Link className="link-secondary link-underline link-underline-opacity-0 link-underline-opacity-100-hover" to={to} reloadDocument>{children}</Link>
     }
 
     if (isSelfHosted()) {

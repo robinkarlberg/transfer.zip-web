@@ -16,7 +16,7 @@ export default function SideBar({ className }) {
 
     const currentPage = useLocation().pathname
 
-    const NavLink = ({ to, children, disable, className, override }) => {
+    const NavLink = ({ to, children, disable, className, override, reloadDocument }) => {
         let _to = to
         const activeClass = to == "/" ? (currentPage == "/" ? "text-white " : "text-body-secondary ") : (currentPage.startsWith(to) ? "text-white " : "text-body-secondary ")
         let onClick = undefined
@@ -24,7 +24,7 @@ export default function SideBar({ className }) {
             onClick = (e) => { e.preventDefault(); setShowUnlockFeatureModal(true) }
         }
         return (
-            <Link onClick={onClick} className={"w-100 p-2 px-3 d-inline-block link-underline link-underline-opacity-0 " + activeClass + className} to={_to}>
+            <Link onClick={onClick} reloadDocument={reloadDocument} className={"w-100 p-2 px-3 d-inline-block link-underline link-underline-opacity-0 " + activeClass + className} to={_to}>
                 {children}
             </Link>
         )
@@ -71,14 +71,14 @@ export default function SideBar({ className }) {
             <div className="px-3 mb-auto d-flex flex-column gap-2">
                 {!isSelfHosted() && user && isGuestOrFreeUser() &&
                     (
-                        <Link className="btn btn-primary rounded-pill w-100" to={(isGuestUser() ? "/signup" : "/upgrade")}>
+                        <Link className="btn btn-primary rounded-pill w-100" to={(isGuestUser() ? "/signup" : "/upgrade")} reloadDocument>
                             {!user ? ("...") : (isGuestUser() ? "Sign up" : "Upgrade")}
                         </Link>
                     )
                 }
                 {!isSelfHosted() && user && isGuestUser() &&
                     (
-                        <Link className="btn btn-outline-primary rounded-pill w-100" to={"/login"}>
+                        <Link className="btn btn-outline-primary rounded-pill w-100" to={"/login"} reloadDocument>
                             Login
                         </Link>
                     )
@@ -89,7 +89,7 @@ export default function SideBar({ className }) {
                     <hr />
                     <ul className="nav nav-pills flex-column px-2">
                         <li>
-                            <NavLink to="/account" override={true}>
+                            <NavLink to={isGuestUser() ? "/signup" : "/account"} reloadDocument={isGuestUser()} override={true}>
                                 <i className="bi bi-person-fill me-2"></i>Account
                                 {/* <div className="d-flex align-items-center text-white text-decoration-none">
                                 <img src="https://avatars.githubusercontent.com/u/10927692?v=4" alt="" width="32" height="32" className="rounded-circle me-2" />

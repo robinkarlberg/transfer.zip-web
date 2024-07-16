@@ -57,14 +57,14 @@ export default function UnlockFeatureModal({ show }) {
                         {isGuestUser() ?
                             (
                                 <div className="d-flex flex-row gap-2 justify-content-center">
-                                    <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/signup"} className="btn btn-primary rounded-pill px-5">Sign up</Link>
-                                    <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/login"} className="btn btn-outline-primary rounded-pill px-5">Login</Link>
+                                    <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/signup"} reloadDocument className="btn btn-primary rounded-pill px-5">Sign up</Link>
+                                    <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/login"} reloadDocument className="btn btn-outline-primary rounded-pill px-5">Login</Link>
                                 </div>
                             )
                             :
                             (
                                 <div className="d-flex flex-row gap-2 justify-content-center">
-                                    <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/upgrade"} className="btn btn-primary rounded-pill px-5">Upgrade</Link>
+                                    <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/upgrade"} reloadDocument className="btn btn-primary rounded-pill px-5">Upgrade</Link>
                                     {/* <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/login"} className="btn btn-outline-primary rounded-pill px-5">Login</Link> */}
                                 </div>
                             )

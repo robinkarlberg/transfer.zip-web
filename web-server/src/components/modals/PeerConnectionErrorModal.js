@@ -17,7 +17,7 @@ export default function PeerConnectionErrorModal({ show, onCancel }) {
                     <div className="ErrorModal flex-grow-1">
                         <p>
                             Your devices could not connect to each other, check your firewall settings or try connecting to another network.
-                            To bypass this limitation, <Link to={"/signup"}>sign up</Link> for a free account at transfer.zip, to use our server
+                            To bypass this limitation, <Link to={"/signup"} reloadDocument>sign up</Link> for a free account at transfer.zip, to use our server
                             as a relay.
                         </p>
                         <div className="p-1 pt-0">
