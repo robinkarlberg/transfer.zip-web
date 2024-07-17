@@ -192,10 +192,9 @@ export async function downloadDlFile(secretCode, fileId, password) {
     })
 
     const re = /filename[^;\n]*=(UTF-\d['"]*)?((['"]).*?[.]$\2|[^;\n]*)?/
-    const filename = re.exec(res.headers.get(["Content-Disposition"]))
+    const filename = re.exec(res.headers.get(["Content-Disposition"]))[2].replaceAll("\"", "").trim()
     console.log(filename)
-    
-    const fileStream = streamSaver.createWriteStream("transfer.zip", {
+    const fileStream = streamSaver.createWriteStream(filename, {
         type: res.headers["content-type"]
     })
 

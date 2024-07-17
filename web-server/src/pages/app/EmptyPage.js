@@ -30,7 +30,7 @@ export default function EmptyPage({ }) {
     useEffect(() => {
         if (willRedirectToQuickShare) return
         if (user) {
-            if (isGuestOrFreeUser()) {
+            if (true || isGuestOrFreeUser()) {
                 navigate("/quick-share", { replace: true })
             }
             else {
