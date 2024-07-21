@@ -245,7 +245,7 @@ export default function QuickShareProgress({ }) {
             const oncandidate = (candidate) => {
                 waitTimer && clearTimeout(waitTimer)
                 waitTimer = setTimeout(() => {
-                    if(transferState == TRANSFER_STATE_WAIT_FOR_USER) {
+                    if(transferState == TRANSFER_STATE_WAIT_FOR_USER || transferState == TRANSFER_STATE_CONNECTING) {
                         setTransferState(TRANSFER_STATE_IDLE)
                     }
                 }, 15000)
