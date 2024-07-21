@@ -11,6 +11,7 @@ export default function SendByEmailModal({ transfer, show, onDone, onCancel }) {
     const onSubmit = async e => {
         e.preventDefault()
         setLoading(true)
+
         await sleep(1000)
 
         try {
@@ -18,7 +19,7 @@ export default function SendByEmailModal({ transfer, show, onDone, onCancel }) {
             setMessage("Email has been sent!")
             setTimeout(() => { onDone(true); setLoading(false); setMessage(null) }, 1000)
         }
-        catch {
+        catch(err) {
             setLoading(false)
         }
     }

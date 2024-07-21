@@ -86,8 +86,18 @@ export default function HomePage({ }) {
                 <div className="d-flex flex-row flex-wrap gap-3 order-0 order-sm-2">
                     {/* <div className="bg-body rounded p-5 border" style={{ maxWidth: "300px" }}>
                     </div> */}
-                    <button onClick={newApiTransferAndNavigate} style={{ minWidth: "172px" }} className="btn bg-body border rounded-4 p-3 pb-3 flex-grow-1 flex-md-grow-0">New Transfer<i className="bi bi-arrow-right-short"></i></button>
-                    <button onClick={() => navigate("/quick-share")} style={{ minWidth: "172px" }} className="btn bg-body border rounded-4 p-3 pb-3 flex-grow-1 flex-md-grow-0">Quick Share<i className="bi bi-arrow-right-short"></i></button>
+                    <button onClick={() => navigate("/quick-share")} className="btn bg-body border rounded-4 p-3 flex-grow-1 flex-md-grow-0">
+                        <div className="text-start d-flex flex-column">
+                            <span className="text-primary-emphasis">Quick Share<i className="bi bi-arrow-right-short"></i></span>
+                            <small><span className="text-body-secondary">Share files as long as browser is open, <b>no size limit</b>.</span></small>
+                        </div>
+                    </button>
+                    <button onClick={newApiTransferAndNavigate} className="btn bg-body border rounded-4 p-3 flex-grow-1 flex-md-grow-0">
+                        <div className="text-start d-flex flex-column">
+                            <span className="text-primary-emphasis">Transfer<i className="bi bi-arrow-right-short"></i></span>
+                            <small><span className="text-body-secondary">Upload files and share them, <b>stored permanently</b>.</span></small>
+                        </div>
+                    </button>
                 </div>
             </div>
         </AppGenericPage>

@@ -95,14 +95,14 @@ export default function StatisticsPage({ }) {
                 </div>
                 <div className="d-flex flex-row flex-wrap gap-3">
                     <StatisticsGraphCard statistics={statistics} customInterval={customInterval}/>
-                    <GraphCard title="Storage">
+                    {/* <GraphCard title="Storage">
                         <ResponsiveContainer width="100%" height={400}>
                             <PieChart>
                                 <Pie data={getStorageData()} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius="80%" stroke="var(--bs-border-color)"
                                     labelLine={true} label={renderCustomizedLabel} />
                             </PieChart>
                         </ResponsiveContainer>
-                    </GraphCard>
+                    </GraphCard> */}
                 </div>
                 {/* <div className="d-flex flex-row flex-wrap gap-3">
                 </div> */}

@@ -19,6 +19,7 @@ import SetTransferPasswordModal from "../../components/modals/SetTransferPasswor
 import SendByEmailModal from "../../components/modals/SendByEmailModal";
 import StatisticsGraphCard from "../../components/app/StatisticsGraphCard";
 import StorageFullError from "../../errors/StorageFullError";
+import SentToList from "../../components/app/SentToList";
 
 export default function TransferInfoPage({ }) {
     const { id } = useParams()
@@ -29,7 +30,6 @@ export default function TransferInfoPage({ }) {
     const { state } = useLocation()
 
     const [showUploadFilesModal, setShowUploadFilesModal] = useState(state?.addFiles)
-    const isRealtimeTransfer = id && id[0] == "r"
 
     const [showUploadingFilesModal, setShowUploadingFilesModal] = useState(false)
     const [uploadProgress, setUploadProgress] = useState(null)
@@ -98,8 +98,10 @@ export default function TransferInfoPage({ }) {
     }
 
     const onSendByEmailModalDone = (success) => {
-        if(success) {
+        if (success) {
             setShowSendByEmailModal(false)
+            refreshApiTransfer()
+            refreshApiTransfers()
         }
     }
 
@@ -227,12 +229,12 @@ export default function TransferInfoPage({ }) {
     }
 
     const sendByEmailButtonClicked = () => {
-        if(isFreeUser()) setShowUnlockFeatureModal(true)
+        if (isFreeUser()) setShowUnlockFeatureModal(true)
         else setShowSendByEmailModal(true)
     }
 
     const transferPasswordButtonClicked = () => {
-        if(isFreeUser()) setShowUnlockFeatureModal(true)
+        if (isFreeUser()) setShowUnlockFeatureModal(true)
         else setShowSetTransferPasswordModal(true)
     }
 
@@ -243,7 +245,7 @@ export default function TransferInfoPage({ }) {
             <TransferNameModal show={showTransferNameModal} onCancel={onTransferNameModalCancel} onDone={onTransferNameModalDone} askForName={transfer.name == null} />
             <EditTransferMetaModal show={showEditTransferMetaModal} onCancel={onEditTransferMetaModalCancel} onDone={onEditTransferMetaModalDone} transfer={transfer} />
             <SetTransferPasswordModal show={showSetTransferPasswordModal} password={transfer.password} onCancel={() => setShowSetTransferPasswordModal(false)} onDone={onSetTransferPasswordModalDone} />
-            <SendByEmailModal transfer={transfer} show={showSendByEmailModal} onCancel={() => setShowSendByEmailModal(false)} onDone={onSendByEmailModalDone}/>
+            <SendByEmailModal transfer={transfer} show={showSendByEmailModal} onCancel={() => setShowSendByEmailModal(false)} onDone={onSendByEmailModalDone} />
 
             <h2 className="mb-3">{transfer.name || transfer.id}{lockElement}</h2>
             <div style={{ maxWidth: "800px" }}>
@@ -273,6 +275,11 @@ export default function TransferInfoPage({ }) {
                 <StatCard title={"Files"} stat={transfer.files.length}>
                     <a href="#" onClick={() => setShowUploadFilesModal(true)} style={{ textDecoration: "none" }}>Add files<i className="bi bi-arrow-right-short"></i></a>
                 </StatCard>
+                {!isFreeUser() && (
+                    <StatCard title={"Shared With"} stat={transfer.emailsSharedWith?.length}>
+                        <h6 className="text-body-secondary mb-0">{transfer.emailsSharedWith?.length == 1 ? "person" : "people"}</h6>
+                    </StatCard>
+                )}
                 <StatCard title={"Downloads"} stat={getDownloadsCount()}>
                     <h6 className="text-body-secondary mb-0">all time</h6>
                 </StatCard>
@@ -284,8 +291,11 @@ export default function TransferInfoPage({ }) {
 
             {/* // TODO: Show a mock-up statistics box for free users, instead of just removing it alltogether */}
             {!isFreeUser() && (<div className="d-flex flex-row flex-wrap gap-3 mb-3">
-                <StatisticsGraphCard statistics={statistics}/>
+                <StatisticsGraphCard statistics={statistics} />
             </div>)}
+
+            {!isFreeUser() && <h4>Shared With</h4>}
+            {!isFreeUser() && (<SentToList sentTo={transfer.emailsSharedWith} style={{ maxWidth: "800px" }} />)}
         </AppGenericPage>
     )
 }
