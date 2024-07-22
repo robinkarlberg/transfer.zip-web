@@ -14,13 +14,13 @@ export default function PrivacyPolicyPage({ }) {
                     <p><strong>Company Information</strong></p>
                     <p>transfer.zip is dedicated to ensuring your privacy. If you have any questions or concerns, please contact us at support@transfer.zip. For privacy-related inquiries, reach out to privacy@transfer.zip.</p>
                     <p><strong>Types of Data Collected</strong></p>
-                    <p>We collect personal information, specifically your email, to help recover accounts, prevent spam, and send special offers. We do not collect any usage data. Regarding files, we collect information on the file name, file size, and file type, all of which are encrypted using AES256 bit encryption to ensure your privacy and security.</p>
+                    <p>If using an account, we collect your email, to help recover accounts, prevent spam, and send special offers. We do not collect any usage data. When using Quick Share, no file data at all is shared with transfer.zip, everything is end-to-end encrypted, and such it is impossible for us to track file information. When using normal transfers with a transfer.zip account, we store information on the file name, file size, and file type, to facilitate easier and more user-friendly file transfers. Data is never stored to track you or sell your data. File data is always encrypted using AES 256-bit encryption to ensure your privacy and security.</p>
                     <p><strong>Purpose of Data Collection</strong></p>
-                    <p>Your email is used for account recovery, to prevent spam, and to inform you about special offers and updates. The data related to files is used solely to facilitate secure file transfers between users.</p>
+                    <p>If using an account, your email is used for account recovery, to prevent spam, and to inform you about special offers and updates. If using an accouint, data related to files is used solely to facilitate secure file transfers between users.</p>
                     <p><strong>Data Sharing</strong></p>
-                    <p>We do not share any of your personal information with third-party providers, this is against our core values. We keep the site running using Google Adsense and subscriptions, not your data.</p>
+                    <p>We do not share any of your personal information with third-party providers, this is against our core values. We keep the site running using Google Adsense and subscriptions, not your data. If you do not have a transfer.zip account, we are unable to store any of your data.</p>
                     <p><strong>Data Retention</strong></p>
-                    <p>We store your data until you request its removal. You can request data deletion by sending an email to privacy@transfer.zip or by deleting your account via the account page.</p>
+                    <p>If using an account, we store your data until you request its removal. You can request data deletion by sending an email to privacy@transfer.zip or by deleting your account via the account page.</p>
                     <p><strong>Data Security</strong></p>
                     <p>We prioritize the security of your data. The &quot;Quick Share&quot; feature ensures that files are never stored on our servers but are streamed directly between devices using WebRTC peer-to-peer technology with end-to-end encryption using an AES-GCM 256-bit key. For normal file transfers, files are stored encrypted at rest using AES256 bit encryption.</p>
                     <p><strong>User Rights</strong></p>

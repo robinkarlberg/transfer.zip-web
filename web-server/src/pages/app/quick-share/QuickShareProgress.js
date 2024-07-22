@@ -39,7 +39,7 @@ export default function QuickShareProgress({ }) {
     const [errorMessage, setErrorMessage] = useState(null)
 
     const [filesDone, setFilesDone] = useState(0)
-    const [transferState, _setTransferState] = useState(TRANSFER_STATE_WAIT_FOR_USER)
+    const [transferState, _setTransferState] = useState(isSentLinkWithHash ? TRANSFER_STATE_IDLE : TRANSFER_STATE_WAIT_FOR_USER)
     const setTransferState = (ts) => {
         console.log("[QuickShareProgress] setTransferState", ts)
         _setTransferState(ts)
@@ -49,7 +49,7 @@ export default function QuickShareProgress({ }) {
         return transferState == TRANSFER_STATE_TRANSFERRING || transferState == TRANSFER_STATE_FINISHED
     }
 
-    let translate = -52 * Math.max(filesDone - 5, 0)
+    let translate = -52 * Math.max(filesDone - 3, 0)
 
     const spinner = (
         <div className="spinner-border" role="status" style={{ width: "1em", height: "1em" }}>
@@ -315,7 +315,7 @@ export default function QuickShareProgress({ }) {
                     {!errorMessage ?
                         (<ol className="ps-3">
                             {/* <li>Choose if you want to send or receive files.</li> */}
-                            <li className={transferState == TRANSFER_STATE_IDLE || "text-body-tertiary"}>Scan the QR code or send the link to the recipient. {transferState == TRANSFER_STATE_IDLE && spinner}</li>
+                            <li className={transferState == TRANSFER_STATE_IDLE || "text-body-tertiary"}>{isSentLinkWithHash ? "Connecting to API server..." : "Scan the QR code or send the link to the recipient."} {transferState == TRANSFER_STATE_IDLE && spinner}</li>
                             <li className={transferState == TRANSFER_STATE_CONNECTING || "text-body-tertiary"}>Wait for your devices to establish a connection. {transferState == TRANSFER_STATE_CONNECTING && spinner}</li>
                             <li className={transferState == TRANSFER_STATE_TRANSFERRING || "text-body-tertiary"}>Stand by while the files are being transfered. {transferState == TRANSFER_STATE_TRANSFERRING && spinner}</li>
                             <li className={transferState == TRANSFER_STATE_FINISHED || "text-body-tertiary"}>Done!</li>

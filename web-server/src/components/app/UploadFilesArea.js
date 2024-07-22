@@ -1,7 +1,7 @@
 import { useState } from "react"
 import UploadOrReceiveArea from "../UploadOrReceiveArea"
 
-export default function UploadFilesArea({ onDone, onFilesChange, ...props }) {
+export default function UploadFilesArea({ onDone, onFilesChange, allowFolders, ...props }) {
 
     const [files, setFiles] = useState([])
 
@@ -41,8 +41,8 @@ export default function UploadFilesArea({ onDone, onFilesChange, ...props }) {
                 })}
             </div>
             <div className="d-flex" style={{ minHeight: "200px" }}>
-                <UploadOrReceiveArea title={"Pick files"} subtitle={"Or drag files here"}
-                    allowReceive={false} onFilesSelected={onFilesSelected}
+                <UploadOrReceiveArea title={"Pick files"}
+                    allowReceive={false} allowFolders={allowFolders} onFilesSelected={onFilesSelected}
                 />
             </div>
         </div>

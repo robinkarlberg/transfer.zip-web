@@ -10,6 +10,8 @@ export default function FilePreviewModal({ secretCode, show, onCancel, filesList
     const [previewURL, setPreviewURL] = useState(null)
     const [previewText, setPreviewText] = useState(null)
 
+    const [loadingDownload, setLoadingDownload] = useState(false)
+
     const isFileTooBig = () => {
         if (!file) return false;
         return file.info.size > 40e6;
@@ -70,14 +72,26 @@ export default function FilePreviewModal({ secretCode, show, onCancel, filesList
         return !supportedFileTypes.find(v => v == file.info.type);
     }
 
+    const downloadFile = async () => {
+        setLoadingDownload(true)
+        await Api.downloadDlFile(secretCode, file.id, transferPassword)
+        setLoadingDownload(false)
+    }
+
     const FileNotSupported = (reason) => (
         <div>
             <div style={{ minHeight: "400px" }} className="d-flex flex-column align-items-center justify-content-center">
                 <i className="h1 bi bi-file-earmark-x-fill"></i>
                 <span className="">{reason}</span>
-                <button className="btn btn-primary btn-sm position-relative" style={{ top: "12px" }}
-                    onClick={() => Api.downloadDlFile(secretCode, file.id, transferPassword)}>Download</button>
+                <button disabled={loadingDownload} className="btn btn-primary btn-sm position-relative" style={{ top: "12px" }}
+                    onClick={downloadFile} >{loadingDownload ? smallSpinner : "Download"}</button>
             </div>
+        </div>
+    )
+
+    const smallSpinner = (
+        <div className="spinner-border spinner-border-sm m-auto" role="status">
+            <span className="visually-hidden">Loading...</span>
         </div>
     )
 
@@ -145,7 +159,9 @@ export default function FilePreviewModal({ secretCode, show, onCancel, filesList
                             <>
                                 <button className="btn btn-lg" onClick={() => onAction("prev")}><i className="bi bi-arrow-left-circle-fill"></i></button>
                                 <div className="d-flex flex-column justify-content-center">
-                                    <button onClick={() => Api.downloadDlFile(secretCode, file.id, transferPassword)} className="btn btn-sm btn-primary">Download</button>
+                                    <button disabled={loadingDownload} onClick={downloadFile} className="btn btn-sm btn-primary">
+                                        {loadingDownload ? smallSpinner : "Download"}
+                                    </button>
                                 </div>
                                 <button className="btn btn-lg" onClick={() => onAction("next")}><i className="bi bi-arrow-right-circle-fill"></i></button>
                             </>
