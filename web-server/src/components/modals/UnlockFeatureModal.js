@@ -44,6 +44,7 @@ export default function UnlockFeatureModal({ show }) {
                         <h2 className="text-center mb-4">Unlock all features of transfer.zip</h2>
                         <div className="mb-4 m-auto" style={{ maxWidth: "510px" }}>
                             <ul className="text-body-secondary list-unstyled ms-2 me-1">
+                                {/* <ListItem><div><b>Create an account to:</b></div></ListItem> */}
                                 {/* <ListItem><div><i className="bi bi-reception-4 me-2 text-primary-emphasis"></i><b>Relay</b> - Use Quick Share even when peer-to-peer is blocked</div>{freeIcon}</ListItem> */}
                                 <ListItem><div><i className="bi bi-server me-2 text-primary-emphasis"></i><b>Transfers</b> - Store files permanently and share them</div>{freeIcon}</ListItem>
                                 <ListItem><div><i className="bi bi-graph-up me-2 text-body"></i><b>Statistics</b> - Count downloads over time</div>{proIcon}</ListItem>

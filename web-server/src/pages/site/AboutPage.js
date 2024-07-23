@@ -1,4 +1,4 @@
-import test_img from "../../img/test.png"
+import test_img from "../../img/test-cropped.png"
 import promo_1 from "../../img/promo_1.png"
 import promo_2 from "../../img/promo_2.png"
 import { useEffect, useState } from "react"
@@ -58,12 +58,12 @@ export default function AboutPage({ }) {
                             </a>
                         </div>
                     </div>
-                    <div className=" d-none d-md-inline-block">
-                        <img src={test_img} width="500"></img>
+                    <div className="d-none d-md-inline-block">
+                        <img className="rounded-3" src={test_img} width="500"></img>
                     </div>
                 </div>
             </div>
-            <div className="bg-body clip overflow-hidden px-3 px-sm-5" data-bs-theme="dark" style={{ clipPath: "margin-box" }}>
+            <div className="clip overflow-hidden px-3 px-sm-5" data-bs-theme="dark" style={{ clipPath: "margin-box", backgroundColor: "#16181a" }}>
                 <div className="m-auto" style={{ maxWidth: "1200px" }}>
                     <div className="d-flex flex-column flex-md-row-reverse pt-5" style={{ height: "400px" }}>
                         <div style={{ maxWidth: "31.2vw" }} className="flex-shrink-1 d-none d-md-inline-block">
