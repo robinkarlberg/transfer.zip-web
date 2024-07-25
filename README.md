@@ -23,13 +23,13 @@ Transfer.zip also supports permanent file transfers, but currently not on the se
 On Firefox mobile, sending files using Quick Share does not work at the moment. This could have something to do with the path being changed after the file has been chosen in the file picker, but not been read yet. This is under investigation.
 
 ## Self-Hosting
-To setup self-hosting, change the line `REACT_APP_SELFHOST=false` to `true`, in all the `.env` files. This will enable only the core features for Quick Share to function.
+To setup self-hosting, change the line `REACT_APP_SELFHOST=false` to `true`, in the `web-server/.env` file. This will enable only the core features for Quick Share and the relay to function.
 
-To build and deploy transfer.zip, use docker compose.
+Then, to build and deploy transfer.zip, use docker compose.
 ```
-ENVIRONMENT=dev docker compose build && docker compose up
+docker compose build && docker compose up
 ```
-This will listen for connections on `localhost:9001`. The signaling server will be proxied through the web-server on the `/ws` endpoint (`localhost:9001/ws`). When self-hosting, it is recommended to put transfer.zip behind a reverse-proxy with https.
+This will listen for connections on `localhost:9001`, the signaling server will be proxied through the web-server on the `/ws` endpoint on the same port. When self-hosting, it is recommended to put transfer.zip behind a reverse-proxy with https.
 For Apache, the configuration needs to include these lines for the reverse proxy to function:
 ```
 ProxyPass /ws ws://localhost:9001/ws
@@ -38,14 +38,12 @@ ProxyPassReverse /ws ws://localhost:9001/ws
 ProxyPass / http://localhost:9001/
 ProxyPassReverse / http://localhost:9001/
 ```
-> [!TIP]
-> Different files get used depending on what value the `ENVIRONMENT` env-variable has in your terminal. For supplying environment variables to the docker instance, a file called `$ENVIRONMENT.env` should be used. For example, `dev.env` will be copied over to the docker instance as `.env` if the env-variable `ENVIRONMENT` is set to `dev`. To set environment variables for local development using `npm start`, the `.env` file should be used.
 
 ## Local Development and Contributing
 > [!NOTE]
 > This project is tested with Docker Compose V2. Docker Compose V1 will most likely fail to build.
 
-When developing, run the `dev.sh` script. It will start the signalling server and the web server for you, with `ENVIRONMENT=dev` set.
+When developing, run the `dev.sh` script. It will start the signalling server and the web server for you.
 ```
 ./dev.sh
 ```
