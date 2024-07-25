@@ -41,6 +41,7 @@ import ResetPasswordRequest from "./pages/app/PasswordResetRequest";
 import ChangePassword from "./pages/app/ChangePassword";
 import { isSelfHosted } from "./utils";
 import PricingPage from "./pages/site/PricingPage";
+import VerifyAccount from "./pages/app/VerifyAccount";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -75,14 +76,15 @@ const router = createBrowserRouter(
             <Route path="/statistics" element={<StatisticsPage />} />
             <Route path="/files" element={<FilesPage />} />
           </Route>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/reset-password" element={<ResetPasswordRequest />} />
-          <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/upgrade" element={<Navigate to={"/about/pricing"} replace={true} />} />
           <Route path="*" element={<EmptyPage />} />
         </Route>
       </Route>
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/verify-account" element={<VerifyAccount />} />
+      <Route path="/reset-password" element={<ResetPasswordRequest />} />
+      <Route path="/change-password" element={<ChangePassword />} />
     </Route >
   )
 )

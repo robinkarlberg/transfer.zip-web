@@ -3,6 +3,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 
 import * as Api from "../api/Api";
 import { isSelfHosted } from "../utils";
+import VerifyAccountModal from "../components/modals/VerifyAccountModal";
 
 export const AuthContext = createContext({})
 
@@ -11,6 +12,7 @@ const userFetchListeners = []
 export const AuthProvider = () => {
     const [user, setUser] = useState(null)
     const [userStorage, setUserStorage] = useState(null)
+    const [showVerifyAccountModal, setShowVerifyAccountModal] = useState(false)
 
     const refreshUser = useCallback(async () => {
         if(isSelfHosted()) return setUser({ id: null, email: "self@host", plan: "Self Hosting" })
@@ -22,13 +24,15 @@ export const AuthProvider = () => {
 
             setUser(resUser.user)
             setUserStorage(resStorage.storage)
+            setShowVerifyAccountModal(!resUser.user.verified)
         }
         catch (err) {
             console.log("Set user to mock object (guest)")
             setUser({
                 id: null,
                 email: null,
-                plan: "free"
+                plan: "free",
+                verified: true
             })
             // if(err.message == "no token provided") {
             //     setUser({
@@ -103,6 +107,7 @@ export const AuthProvider = () => {
             logout,
             register
         }}>
+            <VerifyAccountModal show={showVerifyAccountModal} user={user}/>
             <Outlet />
         </AuthContext.Provider>
     )

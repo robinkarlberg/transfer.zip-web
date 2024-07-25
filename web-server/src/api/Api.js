@@ -75,6 +75,14 @@ export async function doPasswordReset(email, token, newPass) {
     return await post("/auth/passwordreset/do", { email, token, newPass })
 }
 
+export async function requestVerification() {
+    return await post("/auth/verification/request", {  })
+}
+
+export async function doVerification(email, token) {
+    return await post("/auth/verification/do", { email, token })
+}
+
 export async function getTransfers() {
     return await get("/transfers")
 }
