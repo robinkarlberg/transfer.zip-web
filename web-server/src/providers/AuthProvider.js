@@ -9,7 +9,7 @@ export const AuthContext = createContext({})
 
 const userFetchListeners = []
 
-export const AuthProvider = () => {
+export const AuthProvider = ({ ignoreVerification }) => {
     const [user, setUser] = useState(null)
     const [userStorage, setUserStorage] = useState(null)
     const [showVerifyAccountModal, setShowVerifyAccountModal] = useState(false)
@@ -24,7 +24,9 @@ export const AuthProvider = () => {
 
             setUser(resUser.user)
             setUserStorage(resStorage.storage)
-            setShowVerifyAccountModal(!resUser.user.verified)
+            if(!ignoreVerification) {
+                setShowVerifyAccountModal(!resUser.user.verified)
+            }
         }
         catch (err) {
             console.log("Set user to mock object (guest)")

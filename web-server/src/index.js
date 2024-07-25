@@ -47,7 +47,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
       <Route path="/transfer/:secretCode" element={<DownloadPage />} />
-      <Route element={<AuthProvider />}>
+      <Route element={<AuthProvider ignoreVerification={true} />}>
         <Route path="/about" element={<Site />}>
           <Route path="/about" element={<AboutPage />} />
           <Route path="pricing" element={<PricingPage />} />
