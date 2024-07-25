@@ -6,9 +6,7 @@ COPY package.json package-lock.json ./
 COPY src/ src/
 COPY public/ public/
 
-ARG ENVIRONMENT
-COPY ${ENVIRONMENT}.env .env
-COPY ${ENVIRONMENT}.robots.txt public/robots.txt
+COPY .env .env
 # COPY . .
 
 # RUN ls -alh && sleep 10

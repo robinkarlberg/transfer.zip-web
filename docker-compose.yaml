@@ -2,8 +2,6 @@ services:
   web-server:
     build:
       context: web-server
-      args:
-        - ENVIRONMENT=${ENVIRONMENT}
     ports:
       - 127.0.0.1:9002:80
     restart: unless-stopped
