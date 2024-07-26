@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react"
 import { isSelfHosted } from "../utils"
 import { AuthContext } from "../providers/AuthProvider"
 
-export default function Adsense({ data_ad_client, data_ad_slot, className }) {
+export default function Adsense({ data_ad_client, data_ad_slot, className, staticAd, width, height }) {
     let ads = (process.env.REACT_APP_ADSENSE && process.env.REACT_APP_ADSENSE == "true")
 
     useEffect(() => {
@@ -37,11 +37,18 @@ export default function Adsense({ data_ad_client, data_ad_slot, className }) {
     if(!ads) return <></>
 
     return (
-        <ins className={"adsbygoogle " + className}
+        staticAd ? (
+            <ins className={"adsbygoogle " + className}
+            style={{ display: "inline-block", width, height }}
+            data-ad-client={data_ad_client}
+            data-ad-slot={data_ad_slot}></ins>
+        ) : (
+            <ins className={"adsbygoogle " + className}
             style={{ display: "block" }}
             data-ad-client={data_ad_client}
             data-ad-slot={data_ad_slot}
             data-ad-format="auto"
             data-full-width-responsive="true"></ins>
+        )
     )
 }

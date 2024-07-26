@@ -315,7 +315,7 @@ export default function QuickShareProgress({ }) {
                     {!errorMessage ?
                         (<ol className="ps-3">
                             {/* <li>Choose if you want to send or receive files.</li> */}
-                            <li className={transferState == TRANSFER_STATE_IDLE || "text-body-tertiary"}>{isSentLinkWithHash ? "Connecting to API server..." : "Scan the QR code or send the link to the recipient."} {transferState == TRANSFER_STATE_IDLE && spinner}</li>
+                            <li className={transferState == TRANSFER_STATE_IDLE || "text-body-tertiary"}>{(isSentLinkWithHash && !isSelfHosted()) ? "Connecting to server..." : "Scan the QR code or send the link to the recipient."} {transferState == TRANSFER_STATE_IDLE && spinner}</li>
                             <li className={transferState == TRANSFER_STATE_CONNECTING || "text-body-tertiary"}>Wait for your devices to establish a connection. {transferState == TRANSFER_STATE_CONNECTING && spinner}</li>
                             <li className={transferState == TRANSFER_STATE_TRANSFERRING || "text-body-tertiary"}>Stand by while the files are being transfered. {transferState == TRANSFER_STATE_TRANSFERRING && spinner}</li>
                             <li className={transferState == TRANSFER_STATE_FINISHED || "text-body-tertiary"}>Done!</li>
