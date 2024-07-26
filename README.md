@@ -23,7 +23,7 @@ Transfer.zip also supports permanent file transfers, but currently not on the se
 On Firefox mobile, sending files using Quick Share does not work at the moment. This could have something to do with the path being changed after the file has been chosen in the file picker, but not been read yet. This is under investigation.
 
 ## Self-Hosting
-To setup self-hosting, change the line `REACT_APP_SELFHOST=false` to `true`, in the `web-server/.env` file. This will enable only the core features for Quick Share and the relay to function.
+To setup self-hosting, copy the file `web-server/example.env` to `web-server/.env`. This will enable only the core features for Quick Share and the relay to function.
 
 Then, to build and deploy transfer.zip, use docker compose.
 ```
