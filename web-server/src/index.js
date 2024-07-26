@@ -42,10 +42,11 @@ import ChangePassword from "./pages/app/ChangePassword";
 import { isSelfHosted } from "./utils";
 import PricingPage from "./pages/site/PricingPage";
 import VerifyAccount from "./pages/app/VerifyAccount";
+import AnalyticsHelmet from "./components/AnalyticsHelmet";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route>
+    <Route element={<AnalyticsHelmet/>}>
       <Route path="/transfer/:secretCode" element={<DownloadPage />} />
       <Route element={<AuthProvider ignoreVerification={true} />}>
         <Route path="/about" element={<Site />}>
@@ -93,7 +94,7 @@ const selfHostRouter = createBrowserRouter(
   createRoutesFromElements(
     <Route>
       <Route element={<ApplicationProvider />}>
-        <Route element={<AuthProvider />}>
+        <Route element={<AuthProvider ignoreVerification={true} />}>
           <Route element={<App />}>
             <Route element={<QuickShareProvider />}>
               <Route path="/quick-share" element={<QuickSharePage />}>

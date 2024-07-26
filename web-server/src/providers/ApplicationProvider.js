@@ -98,7 +98,7 @@ export const ApplicationProvider = () => {
             setShowStorageFullModal
         }}>
             <GenericErrorModal show={errorMessage != null} errorMessage={errorMessage} onCancel={() => { setErrorMessage(null) }} />
-            <UnlockFeatureModal show={showUnlockFeatureModal}/>
+            { !isSelfHosted() && <UnlockFeatureModal show={showUnlockFeatureModal}/> }
             <StorageFullModal show={showStorageFullModal}/>
             {/* {!isInfoPage && <Adsense className={"mobile-banner-ad"} data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932" />} */}
             <Outlet />
