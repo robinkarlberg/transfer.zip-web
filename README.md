@@ -34,6 +34,8 @@ docker compose build && docker compose up
 This will listen for connections on `localhost:9001`, the signaling server will be proxied through the web-server on the `/ws` endpoint on the same port. When self-hosting, it is recommended to put transfer.zip behind a reverse-proxy with https.
 For Apache, the configuration needs to include these lines for the reverse proxy to function:
 ```
+ProxyPreserveHost On
+
 ProxyPass /ws ws://localhost:9001/ws
 ProxyPassReverse /ws ws://localhost:9001/ws
 
