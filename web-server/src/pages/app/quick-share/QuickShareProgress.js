@@ -150,7 +150,7 @@ export default function QuickShareProgress({ }) {
 
                 // zipStream.readable.pipeTo(fileStream)
                 // console.log(fileList[0].name)
-                let currentZipWriter = zipStream.writable(fileList[0].name).getWriter()
+                let currentZipWriter = zipStream.writable(fileList[0].relativePath).getWriter()
                 zipStream.readable.pipeTo(fileStream)
 
                 fileTransfer.onfiledata = (data, fileInfo) => {
@@ -167,7 +167,7 @@ export default function QuickShareProgress({ }) {
                         return
                     }
 
-                    currentZipWriter = zipStream.writable(fileList[_filesDone].name).getWriter()
+                    currentZipWriter = zipStream.writable(fileList[_filesDone].relativePath).getWriter()
                     requestFile(fileTransfer, fileList, _filesDone)
                 }
             }

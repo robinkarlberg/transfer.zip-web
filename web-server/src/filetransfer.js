@@ -284,6 +284,7 @@ export class FileTransfer {
         };
 
         const fileInfo = {
+            relativePath: file.webkitRelativePath || file.name,
             name: file.name,
             size: file.size,
             type: file.type
@@ -330,7 +331,7 @@ export class FileTransfer {
             else if (data.type == "list") {
                 console.log("[FileTransfer] Got list file request:", data)
                 const fileList = files.map(x => {
-                    return { name: x.name, size: x.size, type: x.type }
+                    return { relativePath: x.webkitRelativePath || x.name, name: x.name, size: x.size, type: x.type }
                 })
 
                 const fileListBytes = encodeString(JSON.stringify(fileList))

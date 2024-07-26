@@ -170,3 +170,10 @@ export async function pollForConditionOrThrow(predicateFn, ms, throwAfterMs) {
         pollingFn()
     })
 }
+
+export function parsePathWithDepth(absolutePath) {
+    const parts = absolutePath.replace(/^\//, "").split("/")
+    const filename = parts.pop()
+    const directories  = parts.map((dir, index) => ({ name: dir, depth: index + 1 }))
+    return { directories, filename }
+}
