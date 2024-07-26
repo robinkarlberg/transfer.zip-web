@@ -22,6 +22,8 @@ Transfer.zip also supports permanent file transfers, but currently not on the se
 
 On Firefox mobile, sending files using Quick Share does not work at the moment. This could have something to do with the path being changed after the file has been chosen in the file picker, but not been read yet. This is under investigation.
 
+Sending files from some Safari browsers is buggy at the moment, it has something to do with Safari terminating the WebSocket connection when unfocusing the window.
+
 ## Self-Hosting
 To setup self-hosting, copy the file `web-server/example.env` to `web-server/.env`. This will enable only the core features for Quick Share and the relay to function.
 
