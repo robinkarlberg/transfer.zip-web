@@ -124,8 +124,8 @@ export default function AboutPage({ }) {
                         <p style={{ maxWidth: "300px" }} className="m-auto">Our <Link to="pricing">plans</Link> are some of the most competitive in the business.</p>
                     </div>
                     <div className="flex-grow-1 bg-body text-center p-3 py-5 rounded">
-                        <h2 className="fw-bold"><i className="bi bi-cpu-fill me-2"></i>Cross-platform</h2>
-                        <p style={{ maxWidth: "300px" }} className="m-auto">File transfers work across all platforms. Everything is handled in the browser.</p>
+                        <h2 className="fw-bold"><i className="bi bi-cpu-fill me-2"></i>Self-Hostable</h2>
+                        <p style={{ maxWidth: "300px" }} className="m-auto">For ultimate trust, transfer.zip is easy to <a href="https://github.com/robinkarlberg/transfer.zip-web/tree/main?tab=readme-ov-file#self-hosting">setup locally to self-host.</a></p>
                     </div>
                     <div className="flex-grow-1 bg-body text-center p-3 py-5 rounded">
                         <h2 className="fw-bold"><i className="bi bi-github me-2"></i>Open source</h2>
