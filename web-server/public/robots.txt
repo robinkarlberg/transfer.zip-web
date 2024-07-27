@@ -1,3 +1,4 @@
 User-agent: *
 Disallow: /change-password
 Disallow: /password-reset
+Disallow: /reset-password
