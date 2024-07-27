@@ -1,5 +1,5 @@
 # transfer.zip
-A self-hostable web application that allows you to easily and securely transfer files between devices **with no size limit**. Also available on, you guessed it, [https://transfer.zip](https://transfer.zip/).
+#### A self-hostable web application that allows you to easily and securely transfer files between devices **with no size limit**. Also available on, you guessed it, [https://transfer.zip](https://transfer.zip/).
 
 As a hobby music producer, I often needed to share large WAVs, but existing services didn't really do it for me. Discord's 50MB limit was frustrating, and Google Drive, MEGA, Dropbox etc. felt cumbersome, so I started making transfer.zip. I rarely need to save my transfered files permanently, I just want to transfer them, and I think many others do too. Because the Quick Share feature never stores the files anywhere, there are **no file size or bandwidth limitations**!
 
@@ -22,6 +22,8 @@ Transfer.zip also supports permanent file transfers, but currently not on the se
 
 On Firefox mobile, sending files using Quick Share does not work at the moment. This could have something to do with the path being changed after the file has been chosen in the file picker, but not been read yet. This is under investigation.
 
+Sending files from some Safari browsers is buggy at the moment, it has something to do with Safari terminating the WebSocket connection when unfocusing the window.
+
 ## Self-Hosting
 To setup self-hosting, copy the file `web-server/example.env` to `web-server/.env`. This will enable only the core features for Quick Share and the relay to function.
 
@@ -32,6 +34,8 @@ docker compose build && docker compose up
 This will listen for connections on `localhost:9001`, the signaling server will be proxied through the web-server on the `/ws` endpoint on the same port. When self-hosting, it is recommended to put transfer.zip behind a reverse-proxy with https.
 For Apache, the configuration needs to include these lines for the reverse proxy to function:
 ```
+ProxyPreserveHost On
+
 ProxyPass /ws ws://localhost:9001/ws
 ProxyPassReverse /ws ws://localhost:9001/ws
 
