@@ -60,9 +60,9 @@ export default function SiteHeader({ }) {
                         <li className="nav-item">
                             <Link className="nav-link" to="pricing">Pricing</Link>
                         </li>
-                        {/* <li className="nav-item">
-                            <Link className="nav-link" to="/blog">Blog</Link>
-                        </li> */}
+                        <li className="nav-item">
+                            <Link className="nav-link" to="https://blog.transfer.zip/">Blog</Link>
+                        </li>
                         <li className="nav-item">
                             <Link className="nav-link" to="pricing#faq">FAQ</Link>
                         </li>
