@@ -5,6 +5,7 @@ import MaxWidthContainer from "../../components/MaxWidthContainer"
 import { Accordion } from "react-bootstrap"
 import { API_URL } from "../../api/Api"
 import QuestionMark from "../../components/QuestionMark"
+import { Helmet } from "react-helmet"
 
 
 export default function PricingPage({ }) {
@@ -252,6 +253,10 @@ export default function PricingPage({ }) {
 
     return (
         <div className="PricingPage">
+            <Helmet>
+                <title>Pricing | transfer.zip</title>
+                {/* <meta name="description" content="Quickly send large files! No signup, no size limit, with end-to-end encryption, all for free." /> */}
+            </Helmet>
             <MaxWidthContainer maxWidth={"1100px"}>
                 <MaxWidthContainer className="container py-3" maxWidth={"950px"}>
                     {cards}

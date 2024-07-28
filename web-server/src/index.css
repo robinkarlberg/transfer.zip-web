@@ -27,3 +27,7 @@
   flex-direction: row;
   justify-content: center;
 }
+
+:root {
+  scroll-behavior: smooth;
+}

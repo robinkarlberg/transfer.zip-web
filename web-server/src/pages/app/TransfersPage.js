@@ -23,7 +23,7 @@ export default function TransfersPage({ }) {
     }
 
     return (
-        <AppGenericPage title={"Transfers"} className={"TransfersPage"}>
+        <AppGenericPage requireAuth={true} title={"Transfers"} className={"TransfersPage"}>
             <div className="d-flex flex-row flex-wrap gap-3 mb-3">
                 <StatCard title={"Transfers"} stat={apiTransfers.length}>
                     <a href="#" style={{ textDecoration: "none" }} onClick={() => newApiTransferAndNavigate()}>New transfer<i className="bi bi-arrow-right-short"></i></a>

@@ -55,12 +55,8 @@ export default function StatisticsPage({ }) {
         updateStatistics()
     }, [])
 
-    if(!user || isFreeUser()) {
-        return <Navigate to={"/"} replace={true}/>
-    }
-
     return (
-        <AppGenericPage title={"Statistics"} className={"StatisticsPage"}>
+        <AppGenericPage requireAuth={true} requirePlan={true} title={"Statistics"} className={"StatisticsPage"}>
             <div className="d-flex flex-column gap-3">
                 <div className="d-flex flex-row flex-wrap gap-3">
                     <StatCard
@@ -94,7 +90,7 @@ export default function StatisticsPage({ }) {
                     <StorageStatCard />
                 </div>
                 <div className="d-flex flex-row flex-wrap gap-3">
-                    <StatisticsGraphCard statistics={statistics} customInterval={customInterval}/>
+                    <StatisticsGraphCard statistics={statistics} customInterval={customInterval} />
                     {/* <GraphCard title="Storage">
                         <ResponsiveContainer width="100%" height={400}>
                             <PieChart>

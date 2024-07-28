@@ -21,17 +21,14 @@ export default function OnePageForm({ children, errorMsg, buttonText, loading, o
             {errorMsg}
         </div>
     )
-
-    const _back = back || "/"
-    // const
-
+    
     return (
         <div className="OnePageForm min-vh-100 d-flex flex-column bg-body-tertiary justify-content-center">
             <MaxWidthContainer className="" maxWidth={"330px"}>
                 <main className="form-signin w-100 m-auto p-3">
                     <form onSubmit={_onSubmit}>
                         <div className="d-flex flex-row justify-content-between align-items-center mb-4">
-                            <Link to={_back} >
+                            <Link onClick={!back && (() => window.history.back())} to={back}>
                                 <i style={{ fontSize: "25px" }} className="btn bi bi-arrow-left-circle-fill"></i>
                             </Link>
                             <img className="me-4" style={{ maxWidth: "220px" }} src={logo} alt="transfer.zip logo" />

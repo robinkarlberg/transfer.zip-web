@@ -17,12 +17,12 @@ export default function InlineFooter() {
 
     return (
         <div className="inline-footer d-flex flex-row gap-2">
-            <InlineLink to={"/upgrade"}>Plans</InlineLink>
             <InlineLink to={"/about"}>About</InlineLink>
             <InlineLink to={"https://blog.transfer.zip/"}>Blog</InlineLink>
-            <InlineLink to={"/about/legal/terms-and-conditions"}>Terms</InlineLink>
-            <InlineLink to={"/about/legal/privacy-policy"}>Privacy</InlineLink>
-            <InlineLink to={"https://github.com/robinkarlberg/transfer.zip-web"}>GitHub</InlineLink>
+            <InlineLink to={"/legal/terms-and-conditions"}>Terms</InlineLink>
+            <InlineLink to={"/legal/privacy-policy"}>Privacy</InlineLink>
+            {/* <InlineLink to={"/upgrade"}>Plans</InlineLink> */}
+            <InlineLink to={"https://github.com/robinkarlberg/transfer.zip-web"}>View on GitHub</InlineLink>
         </div>
     )
 }

@@ -53,7 +53,7 @@ export default function FilesPage({ }) {
 
     if (!apiTransfers) {
         return (
-            <AppGenericPage title={"Transfers"} className={"TransfersPage"}>
+            <AppGenericPage title={"Files"} className={"FilesPage"}>
                 <div className="spinner-border" role="status">
                     <span className="visually-hidden">Loading...</span>
                 </div>
@@ -61,7 +61,7 @@ export default function FilesPage({ }) {
     }
 
     return (
-        <AppGenericPage title={"Files"} className={"FilesPage"}>
+        <AppGenericPage requireAuth={true} title={"Files"} className={"FilesPage"}>
             <div className="d-flex flex-row flex-wrap gap-3 mb-3">
                 <StatCard title={"Files"} stat={getFilesCount()} subtitle={`in ${getApiTransfersCount()} transfers`}>
                     <Link to="/transfers" style={{ textDecoration: "none" }}>View transfers<i className="bi bi-arrow-right-short"></i></Link>

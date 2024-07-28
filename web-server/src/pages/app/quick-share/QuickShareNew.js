@@ -19,7 +19,7 @@ export default function QuickShareNew({ }) {
     const [files, setFiles] = useState([])
 
     const onReceiveClicked = e => {
-        navigate("/quick-share/progress", {
+        navigate("/app/quick-share/progress", {
             state: {
                 transferDirection: "R"
             }
@@ -32,7 +32,7 @@ export default function QuickShareNew({ }) {
 
     const onUploadFilesModalCancel = () => {
         if (isSentLinkWithHash) {
-            navigate("/")
+            navigate("/app")
         }
         else {
             setShowUploadFilesModal(false)
@@ -44,7 +44,7 @@ export default function QuickShareNew({ }) {
         // console.log(files)
 
         if (isSentLinkWithHash) {
-            navigate("/quick-share/progress", {
+            navigate("/app/quick-share/progress", {
                 state: {
                     files,
                     ...state
@@ -52,7 +52,7 @@ export default function QuickShareNew({ }) {
             })
         }
         else {
-            navigate("/quick-share/progress", {
+            navigate("/app/quick-share/progress", {
                 state: {
                     files,
                     transferDirection: "S"

@@ -34,14 +34,14 @@ export default function SiteHeader({ }) {
     const openApp = (
         <div>
             <Link to={`/signup`} className="btn btn-outline-primary me-2">Sign up</Link>
-            <Link to={"/"} className="btn btn-primary">Try transfer.zip</Link>
+            <Link to={"/app"} className="btn btn-primary">Open app</Link>
         </div>
     )
 
     let headerCallToAction = openApp
 
     return (
-        <nav className="navbar navbar-expand-lg bg-body py-3" /* position-fixed w-100 z-2 */>
+        <nav className="navbar navbar-expand-lg bg-body py-3 shadow-sm" /* position-fixed w-100 z-2 */>
             <div style={{ maxWidth: "1300px" }} className="container-fluid px-sm-3">
                 <a className="navbar-brand" href="#">
                     <img style={{ width: "140px" }} onClick={() => { navigate("/") }} className="" src={logo} />
@@ -52,10 +52,10 @@ export default function SiteHeader({ }) {
                 <div className={"collapse navbar-collapse " + (navbarExpanded ? "show" : "")}>
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
-                            <Link className="nav-link active" to="/"><i className="bi bi-arrow-left-short"></i>App</Link>
+                            <Link className="nav-link active" to="/app"><i className="bi bi-arrow-left-short"></i>App</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/about">About</Link>
+                            <Link className="nav-link" to="/#about">About</Link>
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" to="pricing">Pricing</Link>

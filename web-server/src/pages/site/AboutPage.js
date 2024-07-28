@@ -1,16 +1,28 @@
 import test_img from "../../img/test-cropped.png"
 import promo_1 from "../../img/promo_1.png"
 import promo_2 from "../../img/promo_2.png"
+import landing_bg from "../../img/landing_background.png"
+import landing_bg_dark from "../../img/landing_background_dark.png"
 import { useEffect, useState } from "react"
 import MaxWidthContainer from "../../components/MaxWidthContainer"
-import { Link } from "react-router-dom"
+import { Link, Navigate, useNavigate } from "react-router-dom"
 import { Helmet } from "react-helmet"
+import UploadFilesArea from "../../components/app/UploadFilesArea"
 
 export default function AboutPage({ }) {
 
+    let willRedirectToQuickShare = false
+    let hashList = null
+    if (window.location.hash) {
+        hashList = window.location.hash.slice(1).split(",")
+        willRedirectToQuickShare = hashList.length === 3
+    }
+
+    const navigate = useNavigate()
     const [stars, setStars] = useState(null)
 
     useEffect(() => {
+        if (willRedirectToQuickShare) return
         fetch("https://api.github.com/repos/robinkarlberg/transfer.zip-web", {
             "credentials": "omit",
             "method": "GET"
@@ -21,49 +33,119 @@ export default function AboutPage({ }) {
         })
     }, [])
 
+    const [files, setFiles] = useState([])
+
+    const onReceiveClicked = e => {
+        navigate("/app/quick-share/progress", {
+            state: {
+                transferDirection: "R"
+            }
+        })
+    }
+
+    const onFilesChange = (files) => {
+        setFiles(files)
+    }
+
+    const onUploadFilesModalDone = async (files) => {
+        navigate("/app/quick-share/progress", {
+            state: {
+                files,
+                transferDirection: "S"
+            }
+        })
+    }
+
+    if (willRedirectToQuickShare) {
+        const [key_b, recipientId, directionChar] = hashList
+
+        if (recipientId.length !== 36 && (directionChar !== "R" && directionChar !== "S")) {
+            throw "The URL parameters are malformed. Did you copy the URL correctly?"
+        }
+
+        const state = {
+            k: key_b,
+            remoteSessionId: recipientId,
+            transferDirection: directionChar
+        }
+
+        window.location.hash = ""
+        let newLocation = directionChar == "R" ? "/app/quick-share/progress" : "/app/quick-share"
+        return <Navigate to={newLocation} state={state} replace={true}/>
+    }
+
     return (
         <div>
             <Helmet>
                 <title>About | transfer.zip</title>
-                <meta name="description" content="Quickly send large files! No signup, no size limit, with end-to-end encryption, all for free."/>
+                {/* <meta name="description" content="Quickly send large files! No signup, no size limit, with end-to-end encryption, all for free."/> */}
             </Helmet>
             <div className="Landing-div d-flex" style={
                 {
-                    height: "80vh",
-                    // backgroundImage: "url(" + bg_logo + ")",
-                    // backgroundRepeat: "repeat",
-                    // backgroundSize: "60px",
-                    // backgroundPosition: "center"
+                    minHeight: "max(80vh, 700px)",
+                    backgroundImage: "url(" + landing_bg + ")",
+                    backgroundPosition: "center",
+                    backgroundSize: "cover"
                 }}>
-                <div className="flex-grow-1 d-flex flex-row justify-content-center align-items-start p-2 px-3 px-sm-5 m-auto gap-5" style={{ maxWidth: "1300px" }}>
+                <div className="flex-grow-1 d-flex flex-row flex-wrap flex-md-nowrap justify-content-center align-items-start p-2 px-3 px-sm-5 m-auto gap-5" style={{ maxWidth: "1300px" }}>
                     <div className="d-flex flex-column justfiy-content-start align-items-start flex-wrap" style={{ minWidth: "300px", maxWidth: "700px" }}>
                         <h1 className="display-5 fw-bold mb-2">The <span className="text-primary">universal</span> file transfer solution.</h1>
                         <p className="text-body-secondary fs-5 d-flex flex-column mb-3">
                             {/* transfer.zip is <b>free</b>, <b>fast</b> and <b>encrypted</b>, all while being open-source.  */}
                             {/* Wether you want to send a 4K movie, share a screenshot or collaborate on creative projects, use transfer.zip to
               send files <b>without size limits</b>, even for free, using WebRTC technology. */}
-                            <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Unlimited </b>1TB+ file size with Quick Share</div>
-                            <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Statistics</b> for your transfers</div>
-                            <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Customize</b> download pages</div>
+                            <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Unlimited file size with Quick Share</b></div>
+                            {/* <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Statistics</b> for your transfers</div> */}
+                            {/* <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Customize</b> download pages</div> */}
                             {/* <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Fast</b> download speeds</div> */}
                             <div><i className="bi bi-caret-right-fill fs-6"></i> No account required</div>
+                            <div><i className="bi bi-caret-right-fill fs-6"></i> Open source</div>
                             {/* <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Branded</b> download pages</div> */}
                         </p>
                         <div className="ms-1">
                             {/* <Link className="btn btn-primary me-2 px-3" to="/signup">Sign up</Link> */}
-                            <a className="btn btn-primary me-2" href={process.env.REACT_APP_APP_URL}>Open app</a>
+                            <a className="btn btn-primary me-2" href={process.env.REACT_APP_APP_URL + "/app"}>Open app</a>
                             {/* <Link className="btn btn-outline-primary px-3" to="/signup">Sign up</Link> */}
                             <a className="btn btn-sm btn-link" target="_blank" href="https://github.com/robinkarlberg/transfer.zip-web">
                                 <i className="bi bi-star"></i> Star on GitHub {stars && `(${stars})`}
                             </a>
                         </div>
                     </div>
-                    <div className="d-none d-md-inline-block">
-                        <img className="rounded-3" src={test_img} width="500"></img>
+                    <div className="xd-none xd-md-inline-block bg-body-tertiary shadow-lg rounded-4">
+                        <div className="d-flex flex-column flex-wrap gap-3 justify-content-center mt-2 p-md-4">
+                            <div style={{ maxWidth: "400px" }}>
+                                {/* <div className="text-center">
+                                    <h2 className="mb-4 fw-bold">Try it out:</h2>
+                                </div> */}
+                                <UploadFilesArea allowFolders={true} onFilesChange={onFilesChange} className="bg-body rounded-4" style={{ minWidth: "300px" }} />
+                            </div>
+                            <div>
+                                <div className="d-flex flex-row flex-wrap gap-3" style={{ minWidth: "283px" }}>
+                                    {
+                                        files.length ?
+                                            <button className="btn bg-primary flex-grow-1 d-flex justify-content-center align-items-center py-1 px-5 rounded-4"
+                                                onClick={() => onUploadFilesModalDone(files)}>
+                                                <div style={{ width: "40px", height: "40px" }}
+                                                    className="rounded-circle bg-primary-dark d-flex justify-content-center align-items-center">
+                                                    <i className="bi bi-arrow-up-short text-light fs-2"></i>
+                                                </div> <small className="text-light">Send</small>
+                                            </button>
+                                            :
+                                            <button className="btn w-100 bg-body flex-grow-0 d-flex justify-content-center align-items-center py-1 px-4 rounded-4"
+                                                onClick={() => onReceiveClicked()}>
+                                                <div style={{ width: "40px", height: "40px" }}
+                                                    className="rounded-circle d-flex justify-content-center align-items-center">
+                                                    <i className="bi bi-arrow-down-short text-body fs-2"></i>
+                                                </div> <small>Receive files instead</small>
+                                            </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div className="clip overflow-hidden px-3 px-sm-5" data-bs-theme="dark" style={{ clipPath: "margin-box", backgroundColor: "#16181a" }}>
+            <div id="about" className="clip overflow-hidden px-3 px-sm-5" data-bs-theme="dark" style={{ clipPath: "margin-box", backgroundColor: "#16181a" }}>
                 <div className="m-auto" style={{ maxWidth: "1200px" }}>
                     <div className="d-flex flex-column flex-md-row-reverse pt-5" style={{ height: "400px" }}>
                         <div style={{ maxWidth: "31.2vw" }} className="flex-shrink-1 d-none d-md-inline-block">
@@ -94,7 +176,7 @@ export default function AboutPage({ }) {
                                 between you and the recipient, using peer-to-peer technology.
                                 Quick Share is completely private and <a href="https://github.com/robinkarlberg/transfer.zip-web/">open source.</a>
                             </p>
-                            <a className="btn btn-primary" href={process.env.REACT_APP_APP_URL + "/quick-share"}>Try now, no account required</a>
+                            <a className="btn btn-primary" href={process.env.REACT_APP_APP_URL + "/app"}>Try now, no account required</a>
                         </div>
                     </div>
                 </div>
@@ -137,7 +219,7 @@ export default function AboutPage({ }) {
                 <div className="text-center">
                     <h2 className="display-6 fw-bold">Try it today!</h2>
                     <p>No account or credit card required.</p>
-                    <a className="btn btn-primary py-2 px-3" href={process.env.REACT_APP_APP_URL + "/"}>Open app</a>
+                    <a className="btn btn-primary py-2 px-3" href={process.env.REACT_APP_APP_URL + "/app"}>Open app</a>
                 </div>
             </MaxWidthContainer>
         </div>

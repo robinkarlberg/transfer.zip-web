@@ -159,7 +159,7 @@ export default function TransferInfoPage({ }) {
 
     const titleElement = (
         <nav className="d-flex flex-row align-items-center">
-            <h4 className="me-2"><Link className="link-secondary" to="/transfers">Transfers</Link></h4>
+            <h4 className="me-2"><Link className="link-secondary" to="/app/transfers">Transfers</Link></h4>
             <div className="mb-1 text-secondary">
                 <small><i className="bi bi-caret-right-fill me-2"></i>{transfer ? transfer.name || id : "..."}</small>
             </div>

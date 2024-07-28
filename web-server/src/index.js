@@ -44,50 +44,55 @@ import PricingPage from "./pages/site/PricingPage";
 import VerifyAccount from "./pages/app/VerifyAccount";
 import AnalyticsHelmet from "./components/AnalyticsHelmet";
 import JoinWaitlistPage from "./pages/app/JoinWaitlistPage";
+import { FilePickerProvider } from "./providers/FilePickerProvider";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route element={<AnalyticsHelmet/>}>
-      <Route path="/transfer/:secretCode" element={<DownloadPage />} />
-      <Route element={<AuthProvider ignoreVerification={true} />}>
-        <Route path="/about" element={<Site />}>
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="pricing" element={<PricingPage />} />
-          <Route path="legal/privacy-policy" element={<PrivacyPolicyPage />} />
-          <Route path="legal/terms-and-conditions" element={<TermsOfConditionsPage />} />
-          <Route path="*" element={<Navigate to={"/about"} replace={true} />} />
+    <Route element={<AnalyticsHelmet />}>
+      <Route element={<FilePickerProvider />}>
+        <Route path="/transfer/:secretCode" element={<DownloadPage />} />
+        <Route element={<AuthProvider ignoreVerification={true} />}>
+          <Route path="/" element={<Site />}>
+            <Route path="/" element={<AboutPage />} />
+            <Route path="pricing" element={<PricingPage />} />
+            <Route path="legal/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="legal/terms-and-conditions" element={<TermsOfConditionsPage />} />
+            <Route path="*" element={<Navigate to={"/"} replace={true} />} />
+          </Route>
         </Route>
-      </Route>
-      <Route element={<AuthProvider />}>
-        <Route element={<ApplicationProvider />}>
-          <Route element={<App />}>
-            <Route element={<QuickShareProvider />}>
-              <Route path="/quick-share" element={<QuickSharePage />}>
-                <Route path="/quick-share" element={<QuickShareNew />} />
-                <Route path="progress" element={<QuickShareProgress />} />
-                {/* <Route path="progress" element={<TransfersPage />} /> */}
-                {/* <Route path=":id" element={<TransferInfoPage />} /> */}
+        <Route element={<AuthProvider />}>
+          <Route element={<ApplicationProvider />}>
+            <Route element={<App />}>
+              <Route path="/app">
+                <Route element={<QuickShareProvider />}>
+                  <Route path="quick-share" element={<QuickSharePage />}>
+                    <Route path="" element={<QuickShareNew />} />
+                    <Route path="progress" element={<QuickShareProgress />} />
+                    {/* <Route path="progress" element={<TransfersPage />} /> */}
+                    {/* <Route path=":id" element={<TransferInfoPage />} /> */}
+                  </Route>
+                </Route>
+                <Route path="dashboard" element={<HomePage />} />
+                <Route path="transfers">
+                  <Route path="" element={<TransfersPage />} />
+                  <Route path=":id" element={<TransferInfoPage />} />
+                </Route>
+                <Route path="statistics" element={<StatisticsPage />} />
+                <Route path="files" element={<FilesPage />} />
+                <Route path="account" element={<AccountPage />} />
+                <Route path="" element={<EmptyPage />} />
               </Route>
             </Route>
-            <Route path="/dashboard" element={<HomePage />} />
-            <Route path="/transfers">
-              <Route path="/transfers" element={<TransfersPage />} />
-              <Route path=":id" element={<TransferInfoPage />} />
-            </Route>
-            <Route path="/account" element={<AccountPage />} />
-            <Route path="/statistics" element={<StatisticsPage />} />
-            <Route path="/files" element={<FilesPage />} />
           </Route>
-          <Route path="/upgrade" element={<Navigate to={"/about/pricing"} replace={true} />} />
-          <Route path="*" element={<EmptyPage />} />
         </Route>
+        <Route path="/upgrade" element={<Navigate to={"/pricing"} replace={true} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/verify-account" element={<VerifyAccount />} />
+        <Route path="/reset-password" element={<ResetPasswordRequest />} />
+        <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/join-waitlist" element={<JoinWaitlistPage />} />
       </Route>
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<SignUp />} />
-      <Route path="/verify-account" element={<VerifyAccount />} />
-      <Route path="/reset-password" element={<ResetPasswordRequest />} />
-      <Route path="/change-password" element={<ChangePassword />} />
-      <Route path="/join-waitlist" element={<JoinWaitlistPage/>}/>
     </Route >
   )
 )

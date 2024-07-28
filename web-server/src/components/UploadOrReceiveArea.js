@@ -1,9 +1,9 @@
 import { useContext, useRef } from "react"
 import "./UploadOrReceiveArea.css"
-import { ApplicationContext } from "../providers/ApplicationProvider"
+import { FilePickerContext } from "../providers/FilePickerProvider"
 
 export default function UploadOrReceiveArea({ title, subtitle, allowReceive, allowFolders, onFileSelected, onFilesSelected, onReceiveClicked, ref }) {
-    const { fileInputRef, folderInputRef, setOnFileInputChange } = useContext(ApplicationContext)
+    const { fileInputRef, folderInputRef, setOnFileInputChange } = useContext(FilePickerContext)
 
     const _onUploadClicked = e => {
         e.stopPropagation()
@@ -54,7 +54,7 @@ export default function UploadOrReceiveArea({ title, subtitle, allowReceive, all
     return (
         <div ref={ref} onDragEnter={onDragEnter} onDragOver={onDragOver} onDrop={onDrop}
             onClick={_onUploadClicked} className="Upload d-flex flex-column justify-content-center gap-3 flex-grow-1">
-            <div className="send d-flex flex-column align-items-center justify-content-center btn flex-grow-1">
+            <div className="send d-flex flex-column align-items-center justify-content-center btn text-body flex-grow-1">
                 <div className="mb-3">
                     <div className="circle bg-primary">
                         <i className="bi bi-plus text-light"></i>

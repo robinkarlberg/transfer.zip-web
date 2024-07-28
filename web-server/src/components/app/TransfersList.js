@@ -31,7 +31,7 @@ export default function TransfersList({ transfers, maxWidth }) {
         return (
             <tr>
                 <td scope="row" style={{ padding: 0 }}>
-                    <Link to={"/transfers/" + transfer.id} className="list-group-item list-group-item-action p-2">
+                    <Link to={"" + transfer.id} className="list-group-item list-group-item-action p-2">
                         { transfer.isRealtime && <small className="me-2 bg-dark-subtle text-body-secondary rounded border p-1">{spinner}QUICK SHARE</small> }
                         <span className="me-2">{transfer.name || transfer.id}</span>
                         <small className="text-body-secondary">{transfer.files.length} files</small>

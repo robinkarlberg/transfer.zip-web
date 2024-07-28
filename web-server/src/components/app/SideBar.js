@@ -38,7 +38,7 @@ export default function SideBar({ className }) {
             </Link>
             {/* <hr /> */}
             <div className="px-4 mb-3">
-                <NavLink to="/quick-share" className={"btn text-start rounded-pill border border-secondary"} override={true}>
+                <NavLink to="/app/quick-share" className={"btn text-start rounded-pill border border-secondary"} override={true}>
                     <div className="d-flex flex-row justify-content-between">
                         Quick Share<i className="bi bi-lightning-fill"></i>
                     </div>
@@ -47,22 +47,22 @@ export default function SideBar({ className }) {
             {!isSelfHosted() && (
                 <ul className="d-flex flex-column align-items-stretch list-unstyled px-2">
                     <li>
-                        <NavLink to="/dashboard" disable={disable}>
+                        <NavLink to="/app/dashboard" disable={disable}>
                             <i className="bi bi-house me-2"></i>Dashboard
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/transfers" disable={disable}>
+                        <NavLink to="/app/transfers" disable={disable}>
                             <i className="bi bi-arrow-down-up me-2"></i>Transfers
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/statistics" disable={disableStatistics}>
+                        <NavLink to="/app/statistics" disable={disableStatistics}>
                             <i className="bi bi-graph-up me-2"></i>Statistics
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/files" disable={disable}>
+                        <NavLink to="/app/files" disable={disable}>
                             <i className="bi bi-file-earmark me-2"></i>Files
                         </NavLink>
                     </li>
@@ -89,7 +89,7 @@ export default function SideBar({ className }) {
                     <hr />
                     <ul className="nav nav-pills flex-column px-2">
                         <li>
-                            <NavLink to={isGuestUser() ? "/signup" : "/account"} reloadDocument={isGuestUser()} override={true}>
+                            <NavLink to={isGuestUser() ? "/signup" : "/app/account"} reloadDocument={isGuestUser()} override={true}>
                                 <i className="bi bi-person-fill me-2"></i>Account
                                 {/* <div className="d-flex align-items-center text-white text-decoration-none">
                                 <img src="https://avatars.githubusercontent.com/u/10927692?v=4" alt="" width="32" height="32" className="rounded-circle me-2" />

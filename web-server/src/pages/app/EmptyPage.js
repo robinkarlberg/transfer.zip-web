@@ -11,16 +11,8 @@ export default function EmptyPage({ }) {
 
     const navigate = useNavigate()
 
-    let willRedirectToQuickShare = false
-    let hashList = null
-    if (window.location.hash) {
-        hashList = window.location.hash.slice(1).split(",")
-        willRedirectToQuickShare = hashList.length === 3
-    }
-
     useEffect(() => {
-        if (willRedirectToQuickShare) return
-        const timeoutId = setTimeout(() => navigate("/quick-share"), 5000)
+        const timeoutId = setTimeout(() => navigate("/app/quick-share"), 5000)
 
         return () => {
             clearTimeout(timeoutId)
@@ -28,46 +20,16 @@ export default function EmptyPage({ }) {
     }, [])
 
     useEffect(() => {
-        if (willRedirectToQuickShare) return
         if (user) {
             if (true || isGuestOrFreeUser()) {
-                navigate("/quick-share", { replace: true })
+                navigate("/app/quick-share", { replace: true })
             }
             else {
-                navigate("/dashboard", { replace: true })
+                navigate("/app/dashboard", { replace: true })
             }
         }
     }, [user])
 
-    if (willRedirectToQuickShare) {
-        const [key_b, recipientId, directionChar] = hashList
-
-        if (recipientId.length !== 36 && (directionChar !== "R" && directionChar !== "S")) {
-            throw "The URL parameters are malformed. Did you copy the URL correctly?"
-        }
-
-        const state = {
-            k: key_b,
-            remoteSessionId: recipientId,
-            transferDirection: directionChar
-        }
-
-        window.location.hash = ""
-        let newLocation = directionChar == "R" ? "/quick-share/progress" : "/quick-share"
-        return <Navigate to={newLocation} state={state} replace={true}/>
-
-        // if (directionChar == "R") {
-        //     navigate("/quick-share/progress", {
-        //         state
-        //     })
-        // }
-        // else if (directionChar == "S") {
-        //     navigate("/quick-share", {
-        //         state
-        //     })
-        // }
-    }
-    
     return (
         <div className="d-flex flex-column justify-content-center align-items-center vh-100 overflow-hidden">
             <Helmet>

@@ -10,6 +10,7 @@ import { Pie, PieChart, ResponsiveContainer } from "recharts";
 import GraphCard from "../../components/app/GraphCard";
 import * as Api from "../../api/Api"
 import InlineFooter from "../../components/app/InlineFooter";
+import { Helmet } from "react-helmet";
 
 export default function HomePage({ }) {
 
@@ -47,7 +48,7 @@ export default function HomePage({ }) {
 
     // useEffect(() => {
     //     if (user && user.plan == "free") {
-    //         navigate("/quick-share", { replace: true })
+    //         navigate("/app/quick-share", { replace: true })
     //     }
     // }, [user])
 
@@ -56,7 +57,7 @@ export default function HomePage({ }) {
     }, [])
 
     return (
-        <AppGenericPage title={"Dashboard"} className={"HomePage"}>
+        <AppGenericPage requireAuth={true} title={"Dashboard"} className={"HomePage"}>
             <div className="d-flex flex-column gap-3">
                 <div className="d-flex flex-row flex-wrap gap-3 order-1">
                     <StatCard
@@ -86,7 +87,7 @@ export default function HomePage({ }) {
                 <div className="d-flex flex-row flex-wrap gap-3 order-0 order-sm-2">
                     {/* <div className="bg-body rounded p-5 border" style={{ maxWidth: "300px" }}>
                     </div> */}
-                    <button onClick={() => navigate("/quick-share")} className="btn bg-body border rounded-4 p-3 flex-grow-1 flex-md-grow-0">
+                    <button onClick={() => navigate("/app/quick-share")} className="btn bg-body border rounded-4 p-3 flex-grow-1 flex-md-grow-0">
                         <div className="text-start d-flex flex-column">
                             <span className="text-primary-emphasis">Quick Share<i className="bi bi-arrow-right-short"></i></span>
                             <small><span className="text-body-secondary">Share files as long as browser is open, <b>no size limit</b>.</span></small>
