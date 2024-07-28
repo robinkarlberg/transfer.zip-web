@@ -71,13 +71,13 @@ export default function AboutPage({ }) {
 
         window.location.hash = ""
         let newLocation = directionChar == "R" ? "/app/quick-share/progress" : "/app/quick-share"
-        return <Navigate to={newLocation} state={state} replace={true}/>
+        return <Navigate to={newLocation} state={state} replace={true} />
     }
 
     return (
         <div>
             <Helmet>
-                <title>About | transfer.zip</title>
+                <title>transfer.zip - Send large files with no signup, no size limit, for free</title>
                 {/* <meta name="description" content="Quickly send large files! No signup, no size limit, with end-to-end encryption, all for free."/> */}
             </Helmet>
             <div className="Landing-div d-flex" style={
