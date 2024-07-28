@@ -51,7 +51,11 @@ export default function UnlockFeatureModal({ show }) {
                         <div className="mb-4 m-auto" style={{ maxWidth: "450px" }}>
                             <ul className="text-body-secondary list-unstyled ms-2 me-1 d-flex flex-column gap-2">
                                 {isGuestUser() && <ListItem icon={"bi-server"} title={"Transfers"} subtitle={"Store files permanently and share them."} plan={"FREE"} />}
-                                <ListItem icon={"bi-graph-up"} title={"Statistics"} subtitle={"See downloads and views over time"} plan={"COMING SOON"} />
+                                {isGuestUser() ? (
+                                    <ListItem icon={"bi-graph-up"} title={"Statistics"} plan={"COMING SOON"} />
+                                ) : (
+                                    <ListItem icon={"bi-graph-up"} title={"Statistics"} subtitle={"See downloads and views over time"} plan={"COMING SOON"} />
+                                )}
                                 <ListItem icon={"bi-lock-fill"} title={"Password protection"} plan={"COMING SOON"} />
                                 <ListItem icon={"bi-envelope-fill"} title={"Send by email"} plan={"COMING SOON"} />
                                 <ListItem icon={"bi-database-fill-add"} title={"1TB permanent storage"} plan={"COMING SOON"} />

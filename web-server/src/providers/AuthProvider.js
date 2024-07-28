@@ -55,7 +55,7 @@ export const AuthProvider = ({ ignoreVerification }) => {
     }
 
     const isFreeUser = () => {
-        return user && user.plan == "free"
+        return user && user.id != null && user.plan == "free"
     }
 
     const isGuestOrFreeUser = () => {
