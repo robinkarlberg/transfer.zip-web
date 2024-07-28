@@ -43,6 +43,7 @@ import { isSelfHosted } from "./utils";
 import PricingPage from "./pages/site/PricingPage";
 import VerifyAccount from "./pages/app/VerifyAccount";
 import AnalyticsHelmet from "./components/AnalyticsHelmet";
+import JoinWaitlistPage from "./pages/app/JoinWaitlistPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -86,6 +87,7 @@ const router = createBrowserRouter(
       <Route path="/verify-account" element={<VerifyAccount />} />
       <Route path="/reset-password" element={<ResetPasswordRequest />} />
       <Route path="/change-password" element={<ChangePassword />} />
+      <Route path="/join-waitlist" element={<JoinWaitlistPage/>}/>
     </Route >
   )
 )

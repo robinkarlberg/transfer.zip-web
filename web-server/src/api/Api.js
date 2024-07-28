@@ -223,3 +223,7 @@ export async function previewDlFileRawResponse(secretCode, fileId, password) {
 
     return res
 }
+
+export async function joinWaitlist(email) {
+    return await post(`/waitlist/join`, { email })
+}

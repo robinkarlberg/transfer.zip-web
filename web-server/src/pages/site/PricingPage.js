@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { useLocation } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import { AuthContext } from "../../providers/AuthProvider"
 import MaxWidthContainer from "../../components/MaxWidthContainer"
 import { Accordion } from "react-bootstrap"
@@ -20,13 +20,11 @@ export default function PricingPage({ }) {
     const isPremium = user?.plan == "premium"
     const hasPlan = isFree || isPro || isPremium
 
-    const buttonText = user || newSignUp ? (hasPlan ? (isPremium ? "Change" : "Upgrade") : "Upgrade") : "Sign up"
+    const proButtonText = "Join Waitlist" //isPro ? "Manage" : (isPremium ? "Change" : "Upgrade")
+    const premiumButtonText = "Join Waitlist" //isPremium ? "Manage" : "Upgrade"
 
-    const proButtonText = isPro ? "Manage" : (isPremium ? "Change" : "Upgrade")
-    const premiumButtonText = isPremium ? "Manage" : "Upgrade"
-
-    const proFormUrl = API_URL + ((isPro) ? "/create-customer-portal-session" : "/create-checkout-session")
-    const premiumFormUrl = API_URL + ((isPremium) ? "/create-customer-portal-session" : "/create-checkout-session")
+    const proFormUrl = "/join-waitlist" //API_URL + ((isPro) ? "/create-customer-portal-session" : "/create-checkout-session")
+    const premiumFormUrl = "/join-waitlist" //API_URL + ((isPremium) ? "/create-customer-portal-session" : "/create-checkout-session")
 
     const mark = <small className="ms-1 bg-warning-subtle rounded border border-warning p-1 text-warning fs-5">Current</small>
 
@@ -124,9 +122,7 @@ export default function PricingPage({ }) {
                                 <li><b>Transfer statistics</b></li>
                                 {/* <li>Email support</li> */}
                             </ul>
-                            <form action={proFormUrl + "?plan=pro"} method="POST">
-                                <button type="submit" className="w-100 btn btn-lg btn-primary">{proButtonText}</button>
-                            </form>
+                            <Link to={proFormUrl} className="w-100 btn btn-lg btn-primary">{proButtonText}</Link>
                         </div>
                     </div>
                 </div>
@@ -148,9 +144,7 @@ export default function PricingPage({ }) {
                                 <li><b>Priority support</b></li>
                                 {/* <li>Priority email support</li> */}
                             </ul>
-                            <form action={premiumFormUrl + "?plan=premium"} method="POST">
-                                <button type="submit" className="w-100 btn btn-lg btn-primary">{premiumButtonText}</button>
-                            </form>
+                            <Link to={premiumFormUrl} className="w-100 btn btn-lg btn-primary">{premiumButtonText}</Link>
                         </div>
                     </div>
                 </div>
