@@ -102,7 +102,7 @@ export default function PricingPage({ }) {
                                 <li>Share by QR code or link</li>
                                 <li>1GB storage</li>
                             </ul>
-                            <a type="button" href="/" className="w-100 btn btn-lg btn-outline-primary">Open app</a>
+                            <a type="button" href="/app" className="w-100 btn btn-lg btn-outline-primary">Open app</a>
                         </div>
                     </div>
                 </div>
