@@ -47,7 +47,7 @@ ProxyPassReverse / http://localhost:9001/
 > [!NOTE]
 > This project is tested with Docker Compose V2. Docker Compose V1 will most likely fail to build.
 
-When developing, run the `dev.sh` script. It will start the signalling server and the web server for you.
+When developing, install all dependencies with `cd web-server && npm i`, then run the `dev.sh` script. It will start the signalling server and the web server for you.
 ```
 ./dev.sh
 ```
