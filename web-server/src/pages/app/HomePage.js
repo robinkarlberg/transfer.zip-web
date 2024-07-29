@@ -65,7 +65,7 @@ export default function HomePage({ }) {
                         stat={getTransfersCount()}
                         subtitle={"active now"}
                     >
-                        <Link to="/transfers" style={{ textDecoration: "none" }}>View transfers<i className="bi bi-arrow-right-short"></i></Link>
+                        <Link to="/app/transfers" style={{ textDecoration: "none" }}>View transfers<i className="bi bi-arrow-right-short"></i></Link>
                     </StatCard>
                     <StatCard
                         title={"Files"}

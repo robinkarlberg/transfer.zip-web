@@ -1,14 +1,29 @@
+import { useRef, useState } from "react"
+import { Overlay, OverlayTrigger, Tooltip } from "react-bootstrap"
 import QRCode from "react-qr-code"
 
 export default function QRLink({ link, className, children }) {
 
+    const copiedLinkTooltipTarget = useRef(null)
+    const [showCopiedLink, setShowCopiedLink] = useState(false)
+
     const copyLink = (overrideLink = null) => {
+        setShowCopiedLink(true)
+        setTimeout(() => { setShowCopiedLink(false) }, 2000)
         const linkToCopy = overrideLink ? overrideLink : link
         navigator.clipboard.writeText(linkToCopy).then(() => {
             console.log("Successfully copied ", linkToCopy)
         }).catch(() => {
             console.log("Couldn't copy ", linkToCopy)
         })
+    }
+
+    const renderTooltipCopyHover = (props) => {
+        return (
+            <Tooltip className="border rounded" {...props}>
+                <span>Copy link</span>
+            </Tooltip>
+        )
     }
 
     return (
@@ -21,7 +36,16 @@ export default function QRLink({ link, className, children }) {
             <div className={"input-group mb-0 " + (!!children && "opacity-0 pe-none d-none d-lg-flex")} >
                 <input readOnly className="form-control text-body-tertiary border-0 me-1 rounded " type="url" value={link} />
                 <div className="input-group-append">
-                    <button onClick={() => { copyLink() }} disabled={!link} className="btn bg-body btn-outline-primary border-0" type="button"><i className="bi bi-clipboard"></i></button>
+                    <OverlayTrigger placement="top" overlay={renderTooltipCopyHover}>
+                        <button ref={copiedLinkTooltipTarget} onClick={() => { copyLink() }} disabled={!link} className="btn bg-body btn-outline-primary border-0" type="button"><i className="bi bi-clipboard"></i></button>
+                    </OverlayTrigger>
+                    <Overlay target={copiedLinkTooltipTarget.current} show={showCopiedLink} placement="top">
+                        {({ ...props }) => (
+                            <Tooltip className="border rounded" {...props}>
+                                <span className="fw-bold">Link copied to clipboard<i className="bi bi-check"></i></span>
+                            </Tooltip>
+                        )}
+                    </Overlay>
                 </div>
             </div>
             {!children && link == null && (

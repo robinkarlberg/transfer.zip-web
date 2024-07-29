@@ -54,7 +54,7 @@ export const ApplicationProvider = () => {
 
     const newApiTransferAndNavigate = async () => {
         const newTransfer = await newApiTransfer()
-        navigate("/transfers/" + newTransfer.id, { state: { addFiles: true } })
+        navigate("/app/transfers/" + newTransfer.id, { state: { addFiles: true } })
     }
 
     useEffect(() => {
