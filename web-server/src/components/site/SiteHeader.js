@@ -1,5 +1,6 @@
 import { forwardRef, useContext, useState } from "react"
 import logo from "../../img/transfer-zip-logotext-cropped.png"
+import logo_small from "../../img/transfer-zip-logo-transparent-nopadding.png"
 
 import { Link, useNavigate } from "react-router-dom"
 

@@ -43,7 +43,7 @@ export default function FilesPage({ }) {
 
     const onFilesListAction = (action, file) => {
         if (action == "click") {
-            navigate("/transfers/" + file.transferId)
+            navigate("/app/transfers/" + file.transferId)
         }
     }
 
@@ -64,7 +64,7 @@ export default function FilesPage({ }) {
         <AppGenericPage requireAuth={true} title={"Files"} className={"FilesPage"}>
             <div className="d-flex flex-row flex-wrap gap-3 mb-3">
                 <StatCard title={"Files"} stat={getFilesCount()} subtitle={`in ${getApiTransfersCount()} transfers`}>
-                    <Link to="/transfers" style={{ textDecoration: "none" }}>View transfers<i className="bi bi-arrow-right-short"></i></Link>
+                    <Link to="/app/transfers" style={{ textDecoration: "none" }}>View transfers<i className="bi bi-arrow-right-short"></i></Link>
                 </StatCard>
                 <StorageStatCard />
             </div>

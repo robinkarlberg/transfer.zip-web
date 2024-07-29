@@ -323,7 +323,13 @@ export default function QuickShareProgress({ }) {
                         :
                         <p className="text-danger"><b className="text-danger">Error: </b>{errorMessage}</p>
                     }
-
+                    { !errorMessage && (transferState == TRANSFER_STATE_CONNECTING || transferState == TRANSFER_STATE_TRANSFERRING) && (
+                        <div className="d-none d-md-block">
+                            <div className="py-1 px-2 border border-secondary bg-secondary-subtle rounded-4 d-inline-block">
+                                <i className="bi bi-exclamation-circle text-secondary-emphasis me-2"></i><span className="text-secondary-emphasis me-1">Keep your browser window open</span>
+                            </div>
+                        </div>
+                    ) }
                 </div>
             </div>
         </div>

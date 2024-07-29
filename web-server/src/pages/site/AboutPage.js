@@ -95,11 +95,12 @@ export default function AboutPage({ }) {
                             {/* Wether you want to send a 4K movie, share a screenshot or collaborate on creative projects, use transfer.zip to
               send files <b>without size limits</b>, even for free, using WebRTC technology. */}
                             <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Unlimited file size with Quick Share</b></div>
+                            <div><i className="bi bi-caret-right-fill fs-6"></i> End-to-end encryption</div>
                             {/* <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Statistics</b> for your transfers</div> */}
                             {/* <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Customize</b> download pages</div> */}
                             {/* <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Fast</b> download speeds</div> */}
+                            {/* <div><i className="bi bi-caret-right-fill fs-6"></i> Open source</div> */}
                             <div><i className="bi bi-caret-right-fill fs-6"></i> No account required</div>
-                            <div><i className="bi bi-caret-right-fill fs-6"></i> Open source</div>
                             {/* <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Branded</b> download pages</div> */}
                         </p>
                         <div className="ms-1">
