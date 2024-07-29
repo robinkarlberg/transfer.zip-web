@@ -9,5 +9,5 @@ services:
   signaling-server:
     build: signaling-server
     restart: unless-stopped
-      #ports:
-      #  - 127.0.0.1:9002:8001
+    #ports:
+    #  - 127.0.0.1:9002:8001
