@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import "./App.css";
 // import "./extra.css";
 import logo from "./img/transfer-zip-logotext-cropped.png"
+import app_bg_dark from "./img/app_background_dark.png"
 
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { ApplicationContext, ApplicationProvider } from "./providers/ApplicationProvider";

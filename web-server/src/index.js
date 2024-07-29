@@ -103,12 +103,14 @@ const selfHostRouter = createBrowserRouter(
       <Route element={<ApplicationProvider />}>
         <Route element={<AuthProvider ignoreVerification={true} />}>
           <Route element={<App />}>
-            <Route element={<QuickShareProvider />}>
-              <Route path="/quick-share" element={<QuickSharePage />}>
-                <Route path="/quick-share" element={<QuickShareNew />} />
-                <Route path="progress" element={<QuickShareProgress />} />
-                {/* <Route path="progress" element={<TransfersPage />} /> */}
-                {/* <Route path=":id" element={<TransferInfoPage />} /> */}
+            <Route path="/app">
+              <Route element={<QuickShareProvider />}>
+                <Route path="quick-share" element={<QuickSharePage />}>
+                  <Route path="" element={<QuickShareNew />} />
+                  <Route path="progress" element={<QuickShareProgress />} />
+                  {/* <Route path="progress" element={<TransfersPage />} /> */}
+                  {/* <Route path=":id" element={<TransferInfoPage />} /> */}
+                </Route>
               </Route>
             </Route>
           </Route>

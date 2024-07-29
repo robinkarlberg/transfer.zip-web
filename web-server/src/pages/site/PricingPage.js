@@ -65,6 +65,8 @@ export default function PricingPage({ }) {
         <span>If you purchase a plan, your account will <b>never-ever</b> see ads again, even if you cancel your subscription.</span>
     )
 
+    const momentText = "transfer.zip is free and will stay free forever. If you want to bigger storage and more features, while also supporting the developer, try signing up for a plan."
+
     const cards = (
         <main>
             {
@@ -72,15 +74,15 @@ export default function PricingPage({ }) {
                     <div className="pricing-header p-2 pb-md-4 mx-auto text-center">
                         <h1 className="display-4 fw-normal text-body-emphasis fw-bold">Thank you! <i className="bi bi-heart-fill"></i></h1>
                         <p className="fs-5 text-body-secondary">
-                            Take a moment to review our plans. By supporting transfer.zip, you get access to new features and also contribute to a more secure and private web!
+                            {momentText}
                         </p>
                     </div>
                 ) :
                     (
                         <div className="pricing-header p-3 pb-md-4 mx-auto text-center">
-                            <h1 className="display-4 fw-normal text-body-emphasis fw-bold">Plans</h1>
+                            <h1 className="display-4 fw-normal text-body-emphasis fw-bold">Pricing</h1>
                             <p className="fs-5 text-body-secondary">
-                                Take a moment to review our plans. By supporting transfer.zip, you get access to new features and also contribute to a more secure and private web!
+                                {momentText}
                             </p>
                         </div>
                     )
