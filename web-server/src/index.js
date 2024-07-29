@@ -100,7 +100,7 @@ const router = createBrowserRouter(
 const selfHostRouter = createBrowserRouter(
   createRoutesFromElements(
     <Route>
-      <Route element={<ApplicationProvider />}>
+      <Route element={<FilePickerProvider />}>
         <Route element={<AuthProvider ignoreVerification={true} />}>
           <Route element={<App />}>
             <Route path="/app">

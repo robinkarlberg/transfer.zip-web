@@ -13,9 +13,9 @@ export default function EmptyPage({ }) {
     const navigate = useNavigate()
 
     let willRedirectToQuickShare = false
-    if(isSelfHosted()) {
-        let hashList = null
-        if (window.location.hash) {
+    let hashList = null
+    if (window.location.hash) {
+        if(isSelfHosted()) {
             hashList = window.location.hash.slice(1).split(",")
             willRedirectToQuickShare = hashList.length === 3
         }
