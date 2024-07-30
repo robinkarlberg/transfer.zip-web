@@ -45,6 +45,11 @@ import VerifyAccount from "./pages/app/VerifyAccount";
 import AnalyticsHelmet from "./components/AnalyticsHelmet";
 import JoinWaitlistPage from "./pages/app/JoinWaitlistPage";
 import { FilePickerProvider } from "./providers/FilePickerProvider";
+import ZipFilesSitePage from "./pages/site/tools/ZipFilesSitePage";
+import ZipFilesAppPage from "./pages/app/tools/ZipFilesAppPage";
+import ZipFilesAppNew from "./pages/app/tools/ZipFilesAppNew";
+import ZipFilesAppProgress from "./pages/app/tools/ZipFilesAppProgress";
+import ZipFilesAppFinished from "./pages/app/tools/ZipFilesAppFinished";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -57,6 +62,9 @@ const router = createBrowserRouter(
             <Route path="pricing" element={<PricingPage />} />
             <Route path="legal/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="legal/terms-and-conditions" element={<TermsOfConditionsPage />} />
+
+            <Route path="zip-files-online" element={<ZipFilesSitePage />} />
+
             <Route path="*" element={<Navigate to={"/"} replace={true} />} />
           </Route>
         </Route>
@@ -80,6 +88,13 @@ const router = createBrowserRouter(
                 <Route path="statistics" element={<StatisticsPage />} />
                 <Route path="files" element={<FilesPage />} />
                 <Route path="account" element={<AccountPage />} />
+
+                <Route path="zip-files" element={<ZipFilesAppPage />} >
+                  <Route path="" element={<ZipFilesAppNew/>}/>
+                  <Route path="progress" element={<ZipFilesAppProgress/>}/>
+                  <Route path="finished" element={<ZipFilesAppFinished/>}/>
+                </Route>
+
                 <Route path="" element={<EmptyPage />} />
               </Route>
             </Route>
@@ -112,6 +127,7 @@ const selfHostRouter = createBrowserRouter(
                   {/* <Route path=":id" element={<TransferInfoPage />} /> */}
                 </Route>
               </Route>
+              <Route path="zip-files" element={<ZipFilesAppPage />} />
             </Route>
           </Route>
           <Route path="*" element={<EmptyPage />} />

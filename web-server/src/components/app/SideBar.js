@@ -44,8 +44,9 @@ export default function SideBar({ className }) {
                     </div>
                 </NavLink>
             </div>
+            {!isSelfHosted() && <small className="text-secondary ms-3">FILE TRANSFERS</small> }
             {!isSelfHosted() && (
-                <ul className="d-flex flex-column align-items-stretch list-unstyled px-2">
+                <ul className="d-flex flex-column align-items-stretch list-unstyled px-2 mb-2">
                     <li>
                         <NavLink to="/app/dashboard" disable={disable}>
                             <i className="bi bi-house me-2"></i>Dashboard
@@ -57,17 +58,25 @@ export default function SideBar({ className }) {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/app/statistics" disable={disableStatistics}>
-                            <i className="bi bi-graph-up me-2"></i>Statistics
-                        </NavLink>
-                    </li>
-                    <li>
                         <NavLink to="/app/files" disable={disable}>
                             <i className="bi bi-file-earmark me-2"></i>Files
                         </NavLink>
                     </li>
+                    <li>
+                        <NavLink to="/app/statistics" disable={disableStatistics}>
+                            <i className="bi bi-graph-up me-2"></i>Statistics
+                        </NavLink>
+                    </li>
                 </ul>
             )}
+            <small className="text-secondary ms-3">TOOLS</small>
+            <ul className="d-flex flex-column align-items-stretch list-unstyled px-2 mb-2">
+                <li>
+                    <NavLink to="/app/zip-files">
+                        <i className="bi bi-file-earmark-zip me-2"></i>Create Zip
+                    </NavLink>
+                </li>
+            </ul>
             <div className="px-3 mb-auto d-flex flex-column gap-2">
                 {!isSelfHosted() && user && isGuestOrFreeUser() &&
                     (

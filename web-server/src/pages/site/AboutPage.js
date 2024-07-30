@@ -146,14 +146,14 @@ export default function AboutPage({ }) {
                     </div>
                 </div>
             </div>
-            <div id="about" className="clip overflow-hidden px-3 px-sm-5" data-bs-theme="dark" style={{ clipPath: "margin-box", backgroundColor: "#16181a" }}>
+            <div id="about" className="clip overflow-hidden px-3 px-sm-5 bg-secondary-subtle" data-bs-theme="dark" style={{ clipPath: "margin-box" }}>
                 <div className="m-auto" style={{ maxWidth: "1200px" }}>
                     <div className="d-flex flex-column flex-md-row-reverse pt-5" style={{ height: "400px" }}>
                         <div style={{ maxWidth: "31.2vw" }} className="flex-shrink-1 d-none d-md-inline-block">
                             <img src={promo_1} className="rounded-4" style={{ position: "relative", left: "5vw", maxWidth: "700px" }}></img>
                         </div>
                         <div style={{ minWidth: "260px" }}>
-                            <h2 className="fw-bold text-body">Share your <span className="text-primary">{ /*most important*/}big</span> files while keeping them secure.</h2>
+                            <h1 className="h2 fw-bold text-body">Share your <span className="text-primary">{ /*most important*/}big</span> files while keeping them secure.</h1>
                             <p className="text-body-secondary mb-2">
                                 transfer.zip is optimized for file sharing.
                                 Wether you want to send a 4K movie, share a screenshot or collaborate on creative projects, use transfer.zip to
