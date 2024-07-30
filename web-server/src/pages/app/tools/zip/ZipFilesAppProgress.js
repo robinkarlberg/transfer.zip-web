@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import * as zip from "@zip.js/zip.js";
 
-import streamSaver from "../../../lib/StreamSaver"
+import streamSaver from "../../../../lib/StreamSaver"
 import { ProgressBar } from "react-bootstrap";
-import { humanFileSize } from "../../../utils";
+import { humanFileSize, readFileTillEnd } from "../../../../utils";
 streamSaver.mitm = "/mitm.html"
 
 export default function ZipFilesAppProgress({ }) {
@@ -17,27 +17,6 @@ export default function ZipFilesAppProgress({ }) {
     const [progressBytes, setProgressBytes] = useState(0)
     const [progressZipBytes, setProgressZipBytes] = useState(0)
     const maxBytes = useMemo(() => stateFiles && stateFiles.reduce((sum, file) => sum + file.size, 0), [stateFiles])
-
-    const readFileTillEnd = async (file, cbData) => {
-        return new Promise((resolve, reject) => {
-            let offset = 0
-
-            const readSlice = async o => {
-                const fileSliceBuffer = await file.slice(offset, o + 16384 * 10).arrayBuffer()
-
-                cbData(new Uint8Array(fileSliceBuffer))
-                offset += fileSliceBuffer.byteLength;
-
-                if (offset < file.size) {
-                    readSlice(offset);
-                }
-                else {
-                    resolve()
-                }
-            };
-            readSlice(0)
-        })
-    }
 
     const start = async () => {
         const files = stateFiles.map(x => { return x })

@@ -46,10 +46,13 @@ import AnalyticsHelmet from "./components/AnalyticsHelmet";
 import JoinWaitlistPage from "./pages/app/JoinWaitlistPage";
 import { FilePickerProvider } from "./providers/FilePickerProvider";
 import ZipFilesSitePage from "./pages/site/tools/ZipFilesSitePage";
-import ZipFilesAppPage from "./pages/app/tools/ZipFilesAppPage";
-import ZipFilesAppNew from "./pages/app/tools/ZipFilesAppNew";
-import ZipFilesAppProgress from "./pages/app/tools/ZipFilesAppProgress";
-import ZipFilesAppFinished from "./pages/app/tools/ZipFilesAppFinished";
+import ZipFilesAppPage from "./pages/app/tools/zip/ZipFilesAppPage";
+import ZipFilesAppNew from "./pages/app/tools/zip/ZipFilesAppNew";
+import ZipFilesAppProgress from "./pages/app/tools/zip/ZipFilesAppProgress";
+import ZipFilesAppFinished from "./pages/app/tools/zip/ZipFilesAppFinished";
+import UnzipFilesSitePage from "./pages/site/tools/UnzipFilesSitePage";
+import UnzipFilesAppPage from "./pages/app/tools/unzip/UnzipFilesAppPage";
+import UnzipFilesAppView from "./pages/app/tools/unzip/UnzipFilesAppView";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -63,7 +66,10 @@ const router = createBrowserRouter(
             <Route path="legal/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="legal/terms-and-conditions" element={<TermsOfConditionsPage />} />
 
-            <Route path="zip-files-online" element={<ZipFilesSitePage />} />
+            <Route path="/tools">
+              <Route path="zip-files-online" element={<ZipFilesSitePage />} />
+              <Route path="unzip-files-online" element={<UnzipFilesSitePage />} />
+            </Route>
 
             <Route path="*" element={<Navigate to={"/"} replace={true} />} />
           </Route>
@@ -90,9 +96,14 @@ const router = createBrowserRouter(
                 <Route path="account" element={<AccountPage />} />
 
                 <Route path="zip-files" element={<ZipFilesAppPage />} >
-                  <Route path="" element={<ZipFilesAppNew/>}/>
-                  <Route path="progress" element={<ZipFilesAppProgress/>}/>
-                  <Route path="finished" element={<ZipFilesAppFinished/>}/>
+                  <Route path="" element={<ZipFilesAppNew />} />
+                  <Route path="progress" element={<ZipFilesAppProgress />} />
+                  <Route path="finished" element={<ZipFilesAppFinished />} />
+                </Route>
+
+                <Route path="unzip-files" element={<UnzipFilesAppPage />} >
+                  {/* <Route path="" element={<ZipFilesAppNew />} /> */}
+                  <Route path="view" element={<UnzipFilesAppView />} />
                 </Route>
 
                 <Route path="" element={<EmptyPage />} />

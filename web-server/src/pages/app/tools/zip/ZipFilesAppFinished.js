@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { ProgressBar } from "react-bootstrap";
-import { humanFileSize } from "../../../utils";
+import { humanFileSize } from "../../../../utils";
 
 export default function ZipFilesAppFinished({ }) {
     

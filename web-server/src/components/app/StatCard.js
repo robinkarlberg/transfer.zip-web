@@ -3,11 +3,11 @@ import { AuthContext } from "../../providers/AuthProvider"
 import { ApplicationContext } from "../../providers/ApplicationProvider"
 
 
-export default function StatCard({ title, stat, subtitle, children, disabled }) {
+export default function StatCard({ title, stat, subtitle, children, disabled, ignoreUser }) {
     const { hasFetched } = useContext(ApplicationContext)
     const { user, isGuestOrFreeUser } = useContext(AuthContext)
 
-    const placeholder = (user == null || !hasFetched) ? "placeholder" : ""
+    const placeholder = ((user == null || !hasFetched) && !ignoreUser) ? "placeholder" : ""
 
     return (
         <div className={"bg-body rounded-4 p-3 pb-3 flex-grow-1 flex-sm-grow-0 " + placeholder} style={{ minWidth: "172px" }}>

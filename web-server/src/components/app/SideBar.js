@@ -76,6 +76,11 @@ export default function SideBar({ className }) {
                         <i className="bi bi-file-earmark-zip me-2"></i>Create Zip
                     </NavLink>
                 </li>
+                <li>
+                    <NavLink to="/app/unzip-files">
+                        <i className="bi bi-file-earmark-zip me-2"></i>View Zip
+                    </NavLink>
+                </li>
             </ul>
             <div className="px-3 mb-auto d-flex flex-column gap-2">
                 {!isSelfHosted() && user && isGuestOrFreeUser() &&
