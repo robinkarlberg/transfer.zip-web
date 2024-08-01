@@ -62,10 +62,6 @@ export default function EmptyPage({ }) {
 
     return (
         <div className="d-flex flex-column justify-content-center align-items-center vh-100 overflow-hidden">
-            <Helmet>
-                {/* SEO: Self-referencing canonical page, /quick-share should index as / in search engines. */}
-                <link rel="canonical" href={`${window.location.protocol}//${window.location.hostname}/`} />
-            </Helmet>
             <div className="">
                 <div className="spinner-border text-secondary" role="status">
                     <span className="visually-hidden">Loading...</span>

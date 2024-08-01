@@ -81,14 +81,15 @@ export default function FilesList({ files, onAction, primaryActions, redActions,
                         else onAction("click", file)
                     }}>
                         {file.isDirectory ?
-                            <span><i className="bi bi-folder-fill"></i> {file.info.name} <small className="ms-2 text-body-secondary">{file.info.size} files</small></span>
+                            <span><i className="bi bi-folder-fill me-1"></i> {file.info.name} <small className="ms-2 text-body-secondary">{file.info.size} files</small></span>
                             :
                             <span><i className={"bi me-1 " + getFileIconFromExtension(getFileExtension(file.info.name))}></i> <span className="text-body">{file.info.name}</span></span>
                         }
                     </Link>
                 </td>
                 <td>
-                    <small>{humanFileSize(file.info.size, true)}</small>
+                    {!file.isDirectory && <small>{humanFileSize(file.info.size, true)}</small>}
+
                 </td>
                 {!ignoreType && <td className="d-none d-sm-table-cell" >
                     <small>{file.info.type}</small>

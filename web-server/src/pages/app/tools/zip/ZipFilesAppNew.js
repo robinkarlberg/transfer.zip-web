@@ -1,9 +1,9 @@
-import ZipFileOnlineFilePicker from "../../../../components/site/tools/ZipFileOnlineFilePicker";
+import ZipFilesOnlineFilePicker from "../../../../components/site/tools/ZipFilesOnlineFilePicker";
 
 export default function ZipFilesAppNew({ }) {
     return (
         <>
-            <ZipFileOnlineFilePicker/>
+            <ZipFilesOnlineFilePicker/>
         </>
     )
 }

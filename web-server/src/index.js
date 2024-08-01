@@ -53,6 +53,7 @@ import ZipFilesAppFinished from "./pages/app/tools/zip/ZipFilesAppFinished";
 import UnzipFilesSitePage from "./pages/site/tools/UnzipFilesSitePage";
 import UnzipFilesAppPage from "./pages/app/tools/unzip/UnzipFilesAppPage";
 import UnzipFilesAppView from "./pages/app/tools/unzip/UnzipFilesAppView";
+import UnzipFilesAppNew from "./pages/app/tools/unzip/UnzipFilesAppNew";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -102,7 +103,7 @@ const router = createBrowserRouter(
                 </Route>
 
                 <Route path="unzip-files" element={<UnzipFilesAppPage />} >
-                  {/* <Route path="" element={<ZipFilesAppNew />} /> */}
+                  <Route path="" element={<UnzipFilesAppNew />} />
                   <Route path="view" element={<UnzipFilesAppView />} />
                 </Route>
 

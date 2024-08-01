@@ -157,7 +157,7 @@ export default function DownloadPage({ }) {
                 </div>) }
             </div>
             <div className="d-flex flex-column align-items-center gap-0">
-                <a style={{ textDecoration: "none" }} href="/about"><span className="text-body-secondary">Made with <small><i className="bi bi-heart-fill text-danger"></i></small> in 🇸🇪</span></a>
+                <a style={{ textDecoration: "none" }} href="/"><span className="text-body-secondary">Made with <small><i className="bi bi-heart-fill text-danger"></i></small> in 🇸🇪</span></a>
                 <InlineFooter />
             </div>
         </div>

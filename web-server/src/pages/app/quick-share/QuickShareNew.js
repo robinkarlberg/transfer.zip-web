@@ -63,10 +63,6 @@ export default function QuickShareNew({ }) {
 
     return (
         <div className="d-flex flex-row gap-3">
-            <Helmet>
-                {/* SEO: Canonical page, /quick-share should index as / in search engines. */}
-                <link rel="canonical" href={`${window.origin}/`}/>
-            </Helmet>
 
             {/* this fucking modal shit doesn't work anymore for some reason */}
             {/* <UploadFilesModal onFilesChange={onFilesChange} show={showUploadFilesModal} onCancel={onUploadFilesModalCancel} onDone={() => onUploadFilesModalDone(files)} /> */}

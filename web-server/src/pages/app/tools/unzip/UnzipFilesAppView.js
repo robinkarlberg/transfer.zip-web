@@ -25,16 +25,20 @@ export default function UnzipFilesAppView({ }) {
         for await (const entry of (fileStream.pipeThrough(new zip.ZipReaderStream()))) {
             const split = entry.filename.split("/")
 
-            if (!entry.directory) _files.push({ info: { name: split[split.length - 1], size: entry.uncompressedSize, relativePath: entry.filename, type: "application/octet-stream" } })
+            if (!entry.directory) _files.push({ info: { name: split[split.length - 1], size: entry.uncompressedSize, relativePath: entry.filename, type: "application/octet-stream" }, entry })
             setFiles(_files)
         }
 
 
     }
 
-    const onFilesListAction = (action, file) => {
+    const onFilesListAction = async (action, file) => {
         if (action == "download" || action == "click") {
-
+            const fileStream = streamSaver.createWriteStream(file.info.name, {
+                size: file.info.size
+            })
+            file.entry.readable.pipeTo(fileStream)
+            start()
         }
     }
 
