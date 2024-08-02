@@ -1,13 +1,13 @@
 import { useContext } from "react"
-import { AuthContext } from "../../providers/AuthProvider"
-import { FileTransferContext } from "../../providers/FileTransferProvider"
-import AppGenericPage from "../../components/app/AppGenericPage"
-import TransfersList from "../../components/app/TransfersList"
+import { AuthContext } from "../../../providers/AuthProvider"
+import { FileTransferContext } from "../../../providers/FileTransferProvider"
+import AppGenericPage from "../../../components/app/AppGenericPage"
+import TransfersList from "../../../components/app/TransfersList"
 
-import * as Api from "../../api/Api"
+import * as Api from "../../../api/Api"
 import { Link, useNavigate, useParams } from "react-router-dom"
-import StatCard from "../../components/app/StatCard"
-import { ApplicationContext } from "../../providers/ApplicationProvider"
+import StatCard from "../../../components/app/StatCard"
+import { ApplicationContext } from "../../../providers/ApplicationProvider"
 
 export default function TransfersPage({ }) {
     const { apiTransfers, newApiTransferAndNavigate, newRealtimeTransferAndNavigate } = useContext(ApplicationContext)

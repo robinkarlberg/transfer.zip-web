@@ -8,7 +8,7 @@ import { isSelfHosted } from "../../utils"
  * Empty Page, for redirecting users to the right page. The "default" route.
  */
 export default function EmptyPage({ }) {
-    const { user, isGuestOrFreeUser } = useContext(AuthContext)
+    const { user, isGuestOrFreeUser, isGuestUser } = useContext(AuthContext)
 
     const navigate = useNavigate()
 
@@ -33,7 +33,7 @@ export default function EmptyPage({ }) {
     useEffect(() => {
         if(willRedirectToQuickShare) return
         if (user) {
-            if (true || isGuestOrFreeUser()) {
+            if (isGuestUser()) {
                 navigate("/app/quick-share", { replace: true })
             }
             else {

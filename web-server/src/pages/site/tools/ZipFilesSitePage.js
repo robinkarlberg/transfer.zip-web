@@ -15,7 +15,7 @@ export default function ZipFilesSitePage({ }) {
             steps={[
                 { step: 1, icon: "bi-file-earmark-plus-fill", text: "Pick your files or select a folder" },
                 { step: 2, icon: "bi-hourglass-split", text: "Compress and wait" },
-                { step: 3, icon: "bi-cloud-arrow-down-fill", text: <span>Download or <Link to={"/app/quick-share"}>share your zip file</Link></span> },
+                { step: 3, icon: "bi-cloud-arrow-down-fill", text: <span>Download or <Link to={"/"}>share your zip file</Link></span> },
             ]}
             related={[
                 { to: "/tools/unzip-files-online", title: "Unzip Files Online" }
