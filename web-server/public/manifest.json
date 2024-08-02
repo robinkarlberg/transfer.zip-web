@@ -1,6 +1,6 @@
 {
-    "short_name": "transfer.zip",
-    "name": "transfer.zip | Send files in realtime",
+    "short_name": "TransferZip",
+    "name": "TransferZip | No signup, no size limit, with end-to-end encryption, all for free.",
     "icons": [
         {
             "src": "/img/pwa-icons/android-chrome-192x192.png",
@@ -19,7 +19,7 @@
     "display": "standalone",
     "scope": "/",
     "theme_color": "#0d6efd",
-    "description": "Install transfer.zip on your phone, enabling shortcuts to easily send files using the \"share\" menu on your phone.",
+    "description": "Install TransferZip on your phone, enabling shortcuts to easily send files using the \"share\" menu on your phone.",
     "share_target": {
         "action": "/share-file-collector",
         "method": "POST",

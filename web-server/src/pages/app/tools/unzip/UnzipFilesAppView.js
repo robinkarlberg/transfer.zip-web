@@ -54,7 +54,7 @@ export default function UnzipFilesAppView({ }) {
         return (
             <div>
                 <div className="spinner-border spinner-border-sm me-2 fs-6" role="status">
-                    <span className="visually-hidden">Realtime...</span>
+                    <span className="visually-hidden">Loading...</span>
                 </div>
             </div>
         )
