@@ -63,7 +63,7 @@ export default function SiteFooter({ }) {
                     <h5>Resources</h5>
                     <ul className="nav flex-column">
                         <li className="nav-item mb-2"><Link to="/pricing" className="nav-link p-0 text-body-secondary">Pricing</Link></li>
-                        <li className="nav-item mb-2"><Link to="/faq" className="nav-link p-0 text-body-secondary">FAQ</Link></li>
+                        <li className="nav-item mb-2"><Link to="/pricing#faq" className="nav-link p-0 text-body-secondary">FAQ</Link></li>
                         <li className="nav-item mb-2"><Link to="https://blog.transfer.zip/" className="nav-link p-0 text-body-secondary">Blog</Link></li>
                         {/* <li className="nav-item mb-2"><Link to="/" className="nav-link p-0 text-body-secondary">About</Link></li> */}
                     </ul>
