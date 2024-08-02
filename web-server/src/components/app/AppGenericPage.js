@@ -23,7 +23,7 @@ export default function AppGenericPage({ className, title, titleElement, require
             <div>
                 {title && (
                     <Helmet>
-                        <title>{title} | transfer.zip - Send large files with no signup, no size limit, for free</title>
+                        <title>{title} | TransferZip - Send large files with no signup, no size limit, for free</title>
                     </Helmet>
                 )}
                 <div className="mx-0 m-4" style={{ height: "29.5px" }}>

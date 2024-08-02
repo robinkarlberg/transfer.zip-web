@@ -19,9 +19,9 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { ApplicationProvider } from './providers/ApplicationProvider';
 import { FileTransferProvider } from './providers/FileTransferProvider';
 import { AuthProvider } from './providers/AuthProvider';
-import TransfersPage from './pages/app/TransfersPage';
+import TransfersPage from './pages/app/transfers/TransfersPage';
+import TransferInfoPage from "./pages/app/transfers/TransferInfoPage";
 import AccountPage from './pages/app/AccountPage';
-import TransferInfoPage from "./pages/app/TransferInfoPage";
 import DownloadPage from "./pages/app/DownloadPage";
 import StatisticsPage from "./pages/app/StatisticsPage";
 import FilesPage from "./pages/app/FilesPage";
@@ -53,6 +53,8 @@ import ZipFilesAppFinished from "./pages/app/tools/zip/ZipFilesAppFinished";
 import UnzipFilesSitePage from "./pages/site/tools/UnzipFilesSitePage";
 import UnzipFilesAppPage from "./pages/app/tools/unzip/UnzipFilesAppPage";
 import UnzipFilesAppView from "./pages/app/tools/unzip/UnzipFilesAppView";
+import UnzipFilesAppNew from "./pages/app/tools/unzip/UnzipFilesAppNew";
+import NewTransferPage from "./pages/app/transfers/NewTransferPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -89,6 +91,7 @@ const router = createBrowserRouter(
                 <Route path="dashboard" element={<HomePage />} />
                 <Route path="transfers">
                   <Route path="" element={<TransfersPage />} />
+                  {/* <Route path="new" element={<NewTransferPage />} /> */}
                   <Route path=":id" element={<TransferInfoPage />} />
                 </Route>
                 <Route path="statistics" element={<StatisticsPage />} />
@@ -102,7 +105,7 @@ const router = createBrowserRouter(
                 </Route>
 
                 <Route path="unzip-files" element={<UnzipFilesAppPage />} >
-                  {/* <Route path="" element={<ZipFilesAppNew />} /> */}
+                  <Route path="" element={<UnzipFilesAppNew />} />
                   <Route path="view" element={<UnzipFilesAppView />} />
                 </Route>
 

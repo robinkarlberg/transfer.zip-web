@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import UploadFilesArea from "../../app/UploadFilesArea"
 
-export default function UnzipFileOnlineFilePicker({ className }) {
+export default function UnzipFilesOnlineFilePicker({ className }) {
     const navigate = useNavigate()
 
     const [files, setFiles] = useState([])

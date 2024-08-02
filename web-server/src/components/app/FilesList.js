@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { getFileExtension, getFileIconFromExtension, humanFileSize } from "../../utils";
+import { getFileExtension, getFileIconFromExtension, humanFileSize, removeLastEntry } from "../../utils";
 import { forwardRef, useContext, useEffect, useMemo, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 
@@ -69,6 +69,27 @@ export default function FilesList({ files, onAction, primaryActions, redActions,
 
     const nestedStructure = useMemo(() => buildNestedStructure(files), [files])
 
+    const GoUpFileListEntry = () => {
+        return (
+            <tr>
+                <td scope="row" style={{ padding: 0 }}>
+                    <Link className="list-group-item list-group-item-action p-2" onClick={e => {
+                        e.preventDefault()
+                        setSelectedPath(removeLastEntry(selectedPath))
+                    }}><i className="bi bi-arrow-left-short me-1"></i></Link>
+                </td>
+                <td>
+                </td>
+                {!ignoreType && <td>
+                </td>}
+                <td >
+                </td>
+                <td>
+                </td>
+            </tr>
+        )
+    }
+
     const FilesListEntry = ({ file }) => {
         return (
             <tr>
@@ -81,14 +102,15 @@ export default function FilesList({ files, onAction, primaryActions, redActions,
                         else onAction("click", file)
                     }}>
                         {file.isDirectory ?
-                            <span><i className="bi bi-folder-fill"></i> {file.info.name} <small className="ms-2 text-body-secondary">{file.info.size} files</small></span>
+                            <span><i className="bi bi-folder-fill me-1"></i> {file.info.name} <small className="ms-2 text-body-secondary">{file.info.size} files</small></span>
                             :
                             <span><i className={"bi me-1 " + getFileIconFromExtension(getFileExtension(file.info.name))}></i> <span className="text-body">{file.info.name}</span></span>
                         }
                     </Link>
                 </td>
                 <td>
-                    <small>{humanFileSize(file.info.size, true)}</small>
+                    {!file.isDirectory && <small>{humanFileSize(file.info.size, true)}</small>}
+
                 </td>
                 {!ignoreType && <td className="d-none d-sm-table-cell" >
                     <small>{file.info.type}</small>
@@ -98,7 +120,7 @@ export default function FilesList({ files, onAction, primaryActions, redActions,
                 </td>
                 <td className="text-end" style={{ padding: 0 }}>
                     <Dropdown>
-                        {(primaryActions?.length || redActions?.length) && <Dropdown.Toggle as={CustomToggle} />}
+                        {(primaryActions?.length || redActions?.length) && !file.isDirectory && <Dropdown.Toggle as={CustomToggle} />}
 
                         <Dropdown.Menu className="text-small shadow">
                             {primaryActions?.map(action => (
@@ -143,6 +165,9 @@ export default function FilesList({ files, onAction, primaryActions, redActions,
         const targetDirectory = findDirectory(nestedStructure, pathParts)
 
         const returns = []
+        if (path != "" && path != "/") {
+            returns.push(<GoUpFileListEntry />)
+        }
         if (targetDirectory) {
             returns.push(...targetDirectory.directories.map(dir => <FilesListEntry key={dir.name} file={{ info: { name: dir.name, size: dir.files?.length + dir.directories?.length }, isDirectory: true }} />))
             returns.push(...targetDirectory.files.map(file => <FilesListEntry key={file.info.name} file={file} />))

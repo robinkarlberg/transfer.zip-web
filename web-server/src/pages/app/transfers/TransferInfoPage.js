@@ -1,25 +1,25 @@
 import { Link, Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
-import AppGenericPage from "../../components/app/AppGenericPage";
+import AppGenericPage from "../../../components/app/AppGenericPage";
 import { useContext, useEffect, useRef, useState } from "react";
-import { AuthContext } from "../../providers/AuthProvider";
+import { AuthContext } from "../../../providers/AuthProvider";
 
-import * as Api from "../../api/Api"
-import FilesList from "../../components/app/FilesList";
-import StatCard from "../../components/app/StatCard"
-import UploadFilesModal from "../../components/modals/UploadFilesModal";
-import { humanFileSize, humanFileSizePair, copyTransferLink, groupStatisticsByInterval } from "../../utils";
-import { ApplicationContext } from "../../providers/ApplicationProvider";
-import UploadingFilesModal from "../../components/modals/UploadingFilesModal";
-import TransferNameModal from "../../components/modals/TransferNameModal";
-import EditTransferMetaModal from "../../components/modals/EditTransferMetaModal";
-import GraphCard from "../../components/app/GraphCard";
+import * as Api from "../../../api/Api"
+import FilesList from "../../../components/app/FilesList";
+import StatCard from "../../../components/app/StatCard"
+import UploadFilesModal from "../../../components/modals/UploadFilesModal";
+import { humanFileSize, humanFileSizePair, copyTransferLink, groupStatisticsByInterval } from "../../../utils";
+import { ApplicationContext } from "../../../providers/ApplicationProvider";
+import UploadingFilesModal from "../../../components/modals/UploadingFilesModal";
+import EditTransferMetaModal from "../../../components/modals/EditTransferMetaModal";
+import GraphCard from "../../../components/app/GraphCard";
 import { CartesianGrid, Label, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { Overlay, OverlayTrigger, Tooltip } from "react-bootstrap";
-import SetTransferPasswordModal from "../../components/modals/SetTransferPasswordModal";
-import SendByEmailModal from "../../components/modals/SendByEmailModal";
-import StatisticsGraphCard from "../../components/app/StatisticsGraphCard";
-import StorageFullError from "../../errors/StorageFullError";
-import SentToList from "../../components/app/SentToList";
+import SetTransferPasswordModal from "../../../components/modals/SetTransferPasswordModal";
+import SendByEmailModal from "../../../components/modals/SendByEmailModal";
+import StatisticsGraphCard from "../../../components/app/StatisticsGraphCard";
+import StorageFullError from "../../../errors/StorageFullError";
+import SentToList from "../../../components/app/SentToList";
+import TransferNameModal from "../../../components/modals/TransferNameModal";
 
 export default function TransferInfoPage({ }) {
     const { id } = useParams()
@@ -132,6 +132,7 @@ export default function TransferInfoPage({ }) {
             refreshApiTransfer()
         }
         setShowUploadingFilesModal(false)
+        refreshApiTransfers()
         setShowTransferNameModal(true)
 
         if (transfer.name != null) {
@@ -239,7 +240,7 @@ export default function TransferInfoPage({ }) {
     }
 
     return (
-        <AppGenericPage titleElement={titleElement}>
+        <AppGenericPage title={transfer.name || "Transfer"} titleElement={titleElement}>
             <UploadFilesModal show={showUploadFilesModal} onCancel={() => setShowUploadFilesModal(false)} onDone={onUploadFileModalDone} />
             <UploadingFilesModal show={showUploadingFilesModal} onCancel={() => { }} uploadProgress={uploadProgress} />
             <TransferNameModal show={showTransferNameModal} onCancel={onTransferNameModalCancel} onDone={onTransferNameModalDone} askForName={transfer.name == null} />

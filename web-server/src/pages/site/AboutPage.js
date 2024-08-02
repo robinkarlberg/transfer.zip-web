@@ -77,7 +77,7 @@ export default function AboutPage({ }) {
     return (
         <div>
             <Helmet>
-                <title>transfer.zip - Send large files with no signup, no size limit, for free</title>
+                <title>TransferZip - Send large files with no signup, no size limit, for free</title>
                 {/* <meta name="description" content="Quickly send large files! No signup, no size limit, with end-to-end encryption, all for free."/> */}
             </Helmet>
             <div className="Landing-div d-flex" style={
@@ -155,8 +155,8 @@ export default function AboutPage({ }) {
                         <div style={{ minWidth: "260px" }}>
                             <h1 className="h2 fw-bold text-body">Share your <span className="text-primary">{ /*most important*/}big</span> files while keeping them secure.</h1>
                             <p className="text-body-secondary mb-2">
-                                transfer.zip is optimized for file sharing.
-                                Wether you want to send a 4K movie, share a screenshot or collaborate on creative projects, use transfer.zip to
+                                TransferZip is optimized for file sharing.
+                                Wether you want to send a 4K movie, share a screenshot or collaborate on creative projects, use TransferZip to
                                 send files <b>without size limits</b>, even for free.
                             </p>
                         </div>
@@ -186,7 +186,7 @@ export default function AboutPage({ }) {
                 <div>
                     <div className="m-auto mt-5">
                         <h2 className="display-5 fw-bold">Transfer smarter.</h2>
-                        <p>Ideal for professionals and hobbyists alike. Whenever you need to share files, use transfer.zip!</p>
+                        <p>Ideal for professionals and hobbyists alike. Whenever you need to share files, use TransferZip!</p>
                     </div>
                 </div>
                 <div className="d-flex flex-row flex-wrap py-4 gap-3">
@@ -208,7 +208,7 @@ export default function AboutPage({ }) {
                     </div>
                     <div className="flex-grow-1 bg-body text-center p-3 py-5 rounded">
                         <h2 className="fw-bold"><i className="bi bi-cpu-fill me-2"></i>Self-Hostable</h2>
-                        <p style={{ maxWidth: "300px" }} className="m-auto">For ultimate trust, transfer.zip is easy to <a href="https://github.com/robinkarlberg/transfer.zip-web/tree/main?tab=readme-ov-file#self-hosting">setup locally to self-host.</a></p>
+                        <p style={{ maxWidth: "300px" }} className="m-auto">For ultimate trust, TransferZip is easy to <a href="https://github.com/robinkarlberg/transfer.zip-web/tree/main?tab=readme-ov-file#self-hosting">setup locally to self-host.</a></p>
                     </div>
                     <div className="flex-grow-1 bg-body text-center p-3 py-5 rounded">
                         <h2 className="fw-bold"><i className="bi bi-github me-2"></i>Open source</h2>

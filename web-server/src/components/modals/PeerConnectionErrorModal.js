@@ -17,7 +17,7 @@ export default function PeerConnectionErrorModal({ show, onCancel }) {
                     <div className="ErrorModal flex-grow-1">
                         <p>
                             Your devices could not connect to each other, check your firewall settings or try connecting to another network.
-                            To bypass this limitation, <Link to={"/signup"} reloadDocument>sign up</Link> for a free account at transfer.zip, to use our server
+                            To bypass this limitation, <Link to={"/signup"} reloadDocument>sign up</Link> for a free account at TransferZip, to use our server
                             as a relay.
                         </p>
                         <div className="p-1 pt-0">
@@ -25,7 +25,7 @@ export default function PeerConnectionErrorModal({ show, onCancel }) {
                                 Quick Share uses WebRTC for peer-to-peer data
                                 transfer, meaning the files are streamed directly between peers and not stored anywhere in the process.
                                 However, some some network firewalls may not allow direct connections between devices.
-                                To bypass your network limitations, transfer.zip offers a relay server that removes the need 
+                                To bypass your network limitations, TransferZip offers a relay server that removes the need 
                                 for direct connections, making file sharing easier than ever.
                             </small>
                         </div>

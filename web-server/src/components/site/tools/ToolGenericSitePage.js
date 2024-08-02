@@ -3,7 +3,7 @@ import MaxWidthContainer from "../../../components/MaxWidthContainer"
 import { Link } from "react-router-dom"
 import { Helmet } from "react-helmet"
 
-export default function ToolGenericSitePage({ title, display, tags, children, subtitle, description, question, steps }) {
+export default function ToolGenericSitePage({ title, display, tags, children, subtitle, description, question, steps, related }) {
 
     const HowToCard = ({ step, icon, text }) => {
         return (
@@ -36,13 +36,13 @@ export default function ToolGenericSitePage({ title, display, tags, children, su
                     <div className="flex-grow-1 d-flex flex-column justfiy-content-start align-items-start flex-wrap" style={{ minWidth: "300px", maxWidth: "700px" }}>
                         <h1 className="display-5 fw-bold mb-2">{display}</h1>
                         <p className="text-body-secondary fs-5 d-flex flex-column mb-3">
-                            { tags.map(tag => <div><i className="bi bi-caret-right-fill fs-6"></i> {tag}</div>) }
+                            {tags.map(tag => <div><i className="bi bi-caret-right-fill fs-6"></i> {tag}</div>)}
                         </p>
                         <div className="ms-1">
 
                         </div>
                     </div>
-                    { children }
+                    {children}
                 </div>
             </div>
             <div className="px-3">
@@ -62,11 +62,21 @@ export default function ToolGenericSitePage({ title, display, tags, children, su
                             <span className="ms-2 p-1 px-2 bg-primary text-light my-auto rounded-4"><nobr>in {steps.length} steps</nobr></span>
                         </div>
                         <ol className="list-unstyled d-flex flex-row flex-wrap flex-md-nowrap justify-content-center gap-3">
-                            {steps.map(step => <HowToCard {...step}/>)}
+                            {steps.map(step => <HowToCard {...step} />)}
                         </ol>
                     </div>
                 </MaxWidthContainer>
             </div>
+            {related && <div className="mt-5 px-3">
+                <MaxWidthContainer maxWidth={"1100px"}>
+                    <div className="mt-5 mb-5">
+                        <h2>Related</h2>
+                        <ul className="d-flex flex-row list-unstyled ps-3 gap-2">
+                            {related.map(rel => <li><Link className="p-2" to={rel.to}>{rel.title} <i className="bi bi-arrow-right"></i></Link></li>)}
+                        </ul>
+                    </div>
+                </MaxWidthContainer>
+            </div>}
         </div>
     )
 }

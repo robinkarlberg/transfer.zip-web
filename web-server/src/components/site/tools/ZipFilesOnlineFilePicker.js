@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import UploadFilesArea from "../../app/UploadFilesArea"
 
-export default function ZipFileOnlineFilePicker({ className }) {
+export default function ZipFilesOnlineFilePicker({ className }) {
     const navigate = useNavigate()
 
     const [files, setFiles] = useState([])
@@ -34,7 +34,7 @@ export default function ZipFileOnlineFilePicker({ className }) {
                     <button className="btn bg-primary flex-grow-1 d-flex justify-content-center align-items-center py-2 px-5 rounded-4"
                         onClick={() => onUploadFilesModalDone(files)}>
                         <i className="bi bi-file-zip-fill text-light me-1"></i>
-                        <span className="text-light">Compress</span>
+                        <span className="text-light">Create Zip</span>
                     </button>
                 </div>
             </div>
