@@ -37,8 +37,9 @@ export default function UnzipFilesAppView({ }) {
             const fileStream = streamSaver.createWriteStream(file.info.name, {
                 size: file.info.size
             })
-            file.entry.readable.pipeTo(fileStream)
-            start()
+            const tee = file.entry.readable.tee()
+            file.entry.readable = tee[0]
+            tee[1].pipeTo(fileStream)
         }
     }
 

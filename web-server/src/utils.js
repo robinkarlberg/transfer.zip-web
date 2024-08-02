@@ -145,7 +145,7 @@ export const getFileIconFromExtension = (ext) => {
 
 export const getFileExtension = (filename) => {
     const split = filename.split(".")
-    if(split.length == 0) return null
+    if (split.length == 0) return null
     return split[split.length - 1]
 }
 
@@ -228,7 +228,7 @@ export async function pollForConditionOrThrow(predicateFn, ms, throwAfterMs) {
             reject()
         }, throwAfterMs)
         const pollingFn = () => {
-            if(thrown) {
+            if (thrown) {
                 return
             }
             if (predicateFn()) {
@@ -264,4 +264,12 @@ export const readFileTillEnd = async (file, cbData) => {
         };
         readSlice(0)
     })
+}
+
+export function removeLastEntry(path) {
+    const parts = path.split('/');
+    if(parts.pop() == "") {
+        parts.pop();
+    }
+    return parts.join('/').replace(/\/+$/, '') + "/";
 }
