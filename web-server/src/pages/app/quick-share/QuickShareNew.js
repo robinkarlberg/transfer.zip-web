@@ -75,7 +75,7 @@ export default function QuickShareNew({ }) {
                     <div className="text-center">
                         <h2 className="mb-4">Quick Share</h2>
                     </div>
-                    <UploadFilesArea allowFolders={true} onFilesChange={onFilesChange} className="bg-body rounded-4" style={{ minWidth: "300px" }} />
+                    <UploadFilesArea allowFolders={true} onFilesChange={onFilesChange} className="bg-body rounded-4 btn p-0" style={{ minWidth: "300px" }} />
                     {/* <p className="text-center">
                         Quick Share is a free and open source service from transfer.zip that allows you
                         to share files without any file size or bandwidth limitations.
