@@ -62,6 +62,9 @@ export default function EmptyPage({ }) {
 
     return (
         <div className="d-flex flex-column justify-content-center align-items-center vh-100 overflow-hidden">
+            <Helmet>
+                <title>Open App</title>
+            </Helmet>
             <div className="">
                 <div className="spinner-border text-secondary" role="status">
                     <span className="visually-hidden">Loading...</span>

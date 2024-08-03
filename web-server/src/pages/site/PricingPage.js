@@ -58,14 +58,14 @@ export default function PricingPage({ }) {
     )
 
     const endWorldHungerTooltip = (
-        <span>Unfortunately TransferZip can't end world hunger with the resources we have now, but in the future that could change.</span>
+        <span>Unfortunately Transfer.zip can't end world hunger with the resources we have now, but in the future that could change.</span>
     )
 
     const removeAdsForeverTooltip = (
         <span>If you purchase a plan, your account will <b>never-ever</b> see ads again, even if you cancel your subscription.</span>
     )
 
-    const momentText = "TransferZip is free and will stay free forever. If you want to bigger storage and more features, while also supporting the developer, try signing up for a plan."
+    const momentText = "Transfer.zip is free and will stay free forever. If you want to bigger storage and more features, while also supporting the developer, try signing up for a plan."
 
     const cards = (
         <main>
@@ -256,7 +256,7 @@ export default function PricingPage({ }) {
     return (
         <div className="PricingPage">
             <Helmet>
-                <title>Pricing | TransferZip</title>
+                <title>Pricing | Transfer.zip</title>
                 {/* <meta name="description" content="Quickly send large files! No signup, no size limit, with end-to-end encryption, all for free." /> */}
             </Helmet>
             <MaxWidthContainer maxWidth={"1100px"}>

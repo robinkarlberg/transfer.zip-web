@@ -18,7 +18,8 @@ export default function ZipFilesSitePage({ }) {
                 { step: 3, icon: "bi-cloud-arrow-down-fill", text: <span>Download or <Link to={"/"}>share your zip file</Link></span> },
             ]}
             related={[
-                { to: "/tools/unzip-files-online", title: "Unzip Files Online" }
+                { to: "/tools/unzip-files-online", title: "Unzip File Online" },
+                { to: "/tools/send-zip-file", title: "Send Zip File" }
             ]}
             >
             <div className="bg-body-tertiary shadow-lg rounded-4">

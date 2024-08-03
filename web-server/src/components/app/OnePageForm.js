@@ -31,7 +31,7 @@ export default function OnePageForm({ children, errorMsg, buttonText, loading, o
                             <Link onClick={!back && (() => window.history.back())} to={back}>
                                 <i style={{ fontSize: "25px" }} className="btn bi bi-arrow-left-circle-fill"></i>
                             </Link>
-                            <img className="me-4" style={{ maxWidth: "220px" }} src={logo} alt="TransferZip logo" />
+                            <img className="me-4" style={{ maxWidth: "220px" }} src={logo} alt="Transfer.zip logo" />
                         </div>
                         {children}
 

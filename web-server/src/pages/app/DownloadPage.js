@@ -109,13 +109,13 @@ export default function DownloadPage({ }) {
             <Helmet>
                 <meta property="og:type" content="website" />
                 <meta property="og:title" content={
-                    (download.name || fileCountText) + " | TransferZip"
+                    (download.name || fileCountText) + " | Transfer.zip"
                 } />
                 <meta property="og:url" content="https://transfer.zip/" />
                 <meta property="og:image" content="https://pub-9d516fbe625349fa91201a12a4724d0d.r2.dev/og.png" />
-                <meta property="og:description" content="Transfer smarter with TransferZip" />
+                <meta property="og:description" content="Transfer smarter with Transfer.zip" />
 
-                <title>{download.name || fileCountText} | TransferZip - Transfer smarter</title>
+                <title>{download.name || fileCountText} | Transfer.zip - Transfer smarter</title>
             </Helmet>
             <FilePreviewModal onAction={onFilePreviewModalAction} secretCode={secretCode} show={showFilePreviewModal} 
                 filesList={filesList} fileIndex={filePreviewIndex} onCancel={() => { setShowFilePreviewModal(false) }}

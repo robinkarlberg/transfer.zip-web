@@ -55,6 +55,7 @@ import UnzipFilesAppPage from "./pages/app/tools/unzip/UnzipFilesAppPage";
 import UnzipFilesAppView from "./pages/app/tools/unzip/UnzipFilesAppView";
 import UnzipFilesAppNew from "./pages/app/tools/unzip/UnzipFilesAppNew";
 import NewTransferPage from "./pages/app/transfers/NewTransferPage";
+import ShareZipFileSitePage from "./pages/site/tools/ShareZipFileSitePage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -71,6 +72,7 @@ const router = createBrowserRouter(
             <Route path="/tools">
               <Route path="zip-files-online" element={<ZipFilesSitePage />} />
               <Route path="unzip-files-online" element={<UnzipFilesSitePage />} />
+              {/* <Route path="send-zip-file" element={<ShareZipFileSitePage/>}/> */}
             </Route>
 
             <Route path="*" element={<Navigate to={"/"} replace={true} />} />

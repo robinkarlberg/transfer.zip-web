@@ -10,7 +10,7 @@ export default function PrivacyPolicyPage({ }) {
                 <h1 className="display-5 fw-bold">Privacy Policy</h1>
                 <div className="" style={{ maxWidth: "700px" }}>
                     <p><strong>Introduction</strong></p>
-                    <p>Welcome to TransferZip (transfer.zip). Your privacy is our top priority, and we are committed to collecting as little data as absolutely needed to keep the service running. We handle your personal information with the utmost care and respect, ensuring that it is never ever sold for profit. This privacy policy details our minimal data collection practices and our dedication to protecting your personal information when you use our services.</p>
+                    <p>Welcome to Transfer.zip (transfer.zip). Your privacy is our top priority, and we are committed to collecting as little data as absolutely needed to keep the service running. We handle your personal information with the utmost care and respect, ensuring that it is never ever sold for profit. This privacy policy details our minimal data collection practices and our dedication to protecting your personal information when you use our services.</p>
                     <p><strong>Company Information</strong></p>
                     <p>transfer.zip is dedicated to ensuring your privacy. If you have any questions or concerns, please contact us at support@transfer.zip. For privacy-related inquiries, reach out to privacy@transfer.zip.</p>
                     <p><strong>Types of Data Collected</strong></p>

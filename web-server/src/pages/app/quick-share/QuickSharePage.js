@@ -13,7 +13,7 @@ export default function QuickSharePage({ }) {
     return (
         <div className="w-100 d-flex flex-column flex-grow-1 justify-content-between align-items-center p-3 position-relative">
             <Helmet>
-                <title>TransferZip - Send large files with no signup, no size limit, for free</title>
+                <title>Transfer.zip - Send large files with no signup, no size limit, for free</title>
             </Helmet>
             <div className="d-none d-md-inline-block position-absolute top-0 end-0 m-3">
                 <InlineFooter />

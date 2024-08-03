@@ -49,7 +49,7 @@ export default function SignUp({ }) {
         <>
 
             <Helmet>
-                <title>Sign Up | TransferZip - Send large files with no signup, no size limit, for free</title>
+                <title>Sign Up | Transfer.zip - Send large files with no signup, no size limit, for free</title>
             </Helmet>
             <OnePageForm errorMsg={errorMsg} buttonText="Sign up" loading={loading} onSubmit={onSubmit} back={getParams.get("back")} additionalFooter={additionalFooter}>
                 <h1 className="h3 mb-3 fw-normal">Create an account</h1>
