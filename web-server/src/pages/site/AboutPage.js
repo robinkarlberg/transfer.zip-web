@@ -1,8 +1,6 @@
-import test_img from "../../img/test-cropped.png"
 import promo_1 from "../../img/promo_1.png"
 import promo_2 from "../../img/promo_2.png"
 import landing_bg from "../../img/landing_background.png"
-import landing_bg_dark from "../../img/landing_background_dark.png"
 import { useEffect, useState } from "react"
 import MaxWidthContainer from "../../components/MaxWidthContainer"
 import { Link, Navigate, useNavigate } from "react-router-dom"
