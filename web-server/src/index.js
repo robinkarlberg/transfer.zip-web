@@ -19,9 +19,9 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { ApplicationProvider } from './providers/ApplicationProvider';
 import { FileTransferProvider } from './providers/FileTransferProvider';
 import { AuthProvider } from './providers/AuthProvider';
-import TransfersPage from './pages/app/TransfersPage';
+import TransfersPage from './pages/app/transfers/TransfersPage';
+import TransferInfoPage from "./pages/app/transfers/TransferInfoPage";
 import AccountPage from './pages/app/AccountPage';
-import TransferInfoPage from "./pages/app/TransferInfoPage";
 import DownloadPage from "./pages/app/DownloadPage";
 import StatisticsPage from "./pages/app/StatisticsPage";
 import FilesPage from "./pages/app/FilesPage";
@@ -45,6 +45,17 @@ import VerifyAccount from "./pages/app/VerifyAccount";
 import AnalyticsHelmet from "./components/AnalyticsHelmet";
 import JoinWaitlistPage from "./pages/app/JoinWaitlistPage";
 import { FilePickerProvider } from "./providers/FilePickerProvider";
+import ZipFilesSitePage from "./pages/site/tools/ZipFilesSitePage";
+import ZipFilesAppPage from "./pages/app/tools/zip/ZipFilesAppPage";
+import ZipFilesAppNew from "./pages/app/tools/zip/ZipFilesAppNew";
+import ZipFilesAppProgress from "./pages/app/tools/zip/ZipFilesAppProgress";
+import ZipFilesAppFinished from "./pages/app/tools/zip/ZipFilesAppFinished";
+import UnzipFilesSitePage from "./pages/site/tools/UnzipFilesSitePage";
+import UnzipFilesAppPage from "./pages/app/tools/unzip/UnzipFilesAppPage";
+import UnzipFilesAppView from "./pages/app/tools/unzip/UnzipFilesAppView";
+import UnzipFilesAppNew from "./pages/app/tools/unzip/UnzipFilesAppNew";
+import NewTransferPage from "./pages/app/transfers/NewTransferPage";
+import ShareZipFileSitePage from "./pages/site/tools/ShareZipFileSitePage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -57,6 +68,13 @@ const router = createBrowserRouter(
             <Route path="pricing" element={<PricingPage />} />
             <Route path="legal/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="legal/terms-and-conditions" element={<TermsOfConditionsPage />} />
+
+            <Route path="/tools">
+              <Route path="zip-files-online" element={<ZipFilesSitePage />} />
+              <Route path="unzip-files-online" element={<UnzipFilesSitePage />} />
+              <Route path="send-zip-file" element={<ShareZipFileSitePage/>}/>
+            </Route>
+
             <Route path="*" element={<Navigate to={"/"} replace={true} />} />
           </Route>
         </Route>
@@ -75,11 +93,24 @@ const router = createBrowserRouter(
                 <Route path="dashboard" element={<HomePage />} />
                 <Route path="transfers">
                   <Route path="" element={<TransfersPage />} />
+                  {/* <Route path="new" element={<NewTransferPage />} /> */}
                   <Route path=":id" element={<TransferInfoPage />} />
                 </Route>
                 <Route path="statistics" element={<StatisticsPage />} />
                 <Route path="files" element={<FilesPage />} />
                 <Route path="account" element={<AccountPage />} />
+
+                <Route path="zip-files" element={<ZipFilesAppPage />} >
+                  <Route path="" element={<ZipFilesAppNew />} />
+                  <Route path="progress" element={<ZipFilesAppProgress />} />
+                  <Route path="finished" element={<ZipFilesAppFinished />} />
+                </Route>
+
+                <Route path="unzip-files" element={<UnzipFilesAppPage />} >
+                  <Route path="" element={<UnzipFilesAppNew />} />
+                  <Route path="view" element={<UnzipFilesAppView />} />
+                </Route>
+
                 <Route path="" element={<EmptyPage />} />
               </Route>
             </Route>
@@ -112,6 +143,7 @@ const selfHostRouter = createBrowserRouter(
                   {/* <Route path=":id" element={<TransferInfoPage />} /> */}
                 </Route>
               </Route>
+              <Route path="zip-files" element={<ZipFilesAppPage />} />
             </Route>
           </Route>
           <Route path="*" element={<EmptyPage />} />

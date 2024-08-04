@@ -41,7 +41,7 @@ export default function Login({ }) {
     return (
         <>
             <Helmet>
-                <title>Login | transfer.zip - Send large files with no signup, no size limit, for free</title>
+                <title>Login | Transfer.zip - Send large files with no signup, no size limit, for free</title>
             </Helmet>
             <OnePageForm errorMsg={errorMsg} buttonText="Sign in" loading={loading} onSubmit={onSubmit} back={getParams.get("back")} additionalFooter={additionalFooter} >
                 <h1 className="h3 mb-3 fw-normal">Please sign in</h1>

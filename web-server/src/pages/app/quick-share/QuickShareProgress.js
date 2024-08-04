@@ -162,8 +162,7 @@ export default function QuickShareProgress({ }) {
 
                     setFilesDone(++_filesDone)
                     if (_filesDone >= fileList.length) {
-                        zipStream.close()
-                        setTransferState(TRANSFER_STATE_FINISHED)
+                        zipStream.close().then(() => setTransferState(TRANSFER_STATE_FINISHED))
                         return
                     }
 
@@ -268,7 +267,7 @@ export default function QuickShareProgress({ }) {
         hasStarted = false
         if (!state) {
             console.log("state is null, go back to /")
-            navigate("/")
+            navigate("/app/quick-share")
             return
         }
 

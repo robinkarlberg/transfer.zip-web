@@ -109,13 +109,13 @@ export default function DownloadPage({ }) {
             <Helmet>
                 <meta property="og:type" content="website" />
                 <meta property="og:title" content={
-                    (download.name || fileCountText) + " | transfer.zip"
+                    (download.name || fileCountText) + " | Transfer.zip"
                 } />
                 <meta property="og:url" content="https://transfer.zip/" />
                 <meta property="og:image" content="https://pub-9d516fbe625349fa91201a12a4724d0d.r2.dev/og.png" />
-                <meta property="og:description" content="Transfer smarter with transfer.zip" />
+                <meta property="og:description" content="Transfer smarter with Transfer.zip" />
 
-                <title>{download.name || fileCountText} | transfer.zip - Transfer smarter</title>
+                <title>{download.name || fileCountText} | Transfer.zip - Transfer smarter</title>
             </Helmet>
             <FilePreviewModal onAction={onFilePreviewModalAction} secretCode={secretCode} show={showFilePreviewModal} 
                 filesList={filesList} fileIndex={filePreviewIndex} onCancel={() => { setShowFilePreviewModal(false) }}
@@ -157,7 +157,7 @@ export default function DownloadPage({ }) {
                 </div>) }
             </div>
             <div className="d-flex flex-column align-items-center gap-0">
-                <a style={{ textDecoration: "none" }} href="/about"><span className="text-body-secondary">Made with <small><i className="bi bi-heart-fill text-danger"></i></small> in 🇸🇪</span></a>
+                <a style={{ textDecoration: "none" }} href="/"><span className="text-body-secondary">Made with <small><i className="bi bi-heart-fill text-danger"></i></small> in 🇸🇪</span></a>
                 <InlineFooter />
             </div>
         </div>

@@ -24,6 +24,8 @@
     // TODO: Must come up with a real detection test (#69)
     var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
     let useBlobFallback = /constructor/i.test(global.HTMLElement) || !!global.safari || !!global.WebKitPoint || isSafari
+    window.streamSaverUseFallback = useBlobFallback
+    
     console.log("[StreamSaver] Use blob fallback:", useBlobFallback)
 
     const downloadStrategy = isSecureContext || 'MozAppearance' in document.documentElement.style

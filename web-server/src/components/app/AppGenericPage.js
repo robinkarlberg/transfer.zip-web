@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import { AuthContext } from "../../providers/AuthProvider";
 import { Navigate } from "react-router-dom";
 
-export default function AppGenericPage({ className, title, titleElement, requireAuth, requirePlan, children }) {
+export default function AppGenericPage({ className, title, titleElement, requireAuth, requirePlan, children, flex }) {
     const { user, isFreeUser, isGuestUser } = useContext(AuthContext)
 
     if (requireAuth) {
@@ -20,15 +20,17 @@ export default function AppGenericPage({ className, title, titleElement, require
 
     return (
         <div className={"text-body px-4 w-100  " + className}>
-            {title && (
-                <Helmet>
-                    <title>{title} | transfer.zip - Send large files with no signup, no size limit, for free</title>
-                </Helmet>
-            )}
-            <div className="mx-0 m-4" style={{ height: "29.5px" }}>
-                {titleElement || <h4 >{title}</h4>}
+            <div>
+                {title && (
+                    <Helmet>
+                        <title>{title} | Transfer.zip - Send large files with no signup, no size limit, for free</title>
+                    </Helmet>
+                )}
+                <div className="mx-0 m-4" style={{ height: "29.5px" }}>
+                    {titleElement || <h4 >{title}</h4>}
+                </div>
+                <hr></hr>
             </div>
-            <hr></hr>
             {children}
         </div>
     )

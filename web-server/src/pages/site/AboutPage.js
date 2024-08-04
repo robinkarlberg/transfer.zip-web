@@ -1,8 +1,6 @@
-import test_img from "../../img/test-cropped.png"
 import promo_1 from "../../img/promo_1.png"
 import promo_2 from "../../img/promo_2.png"
 import landing_bg from "../../img/landing_background.png"
-import landing_bg_dark from "../../img/landing_background_dark.png"
 import { useEffect, useState } from "react"
 import MaxWidthContainer from "../../components/MaxWidthContainer"
 import { Link, Navigate, useNavigate } from "react-router-dom"
@@ -77,7 +75,7 @@ export default function AboutPage({ }) {
     return (
         <div>
             <Helmet>
-                <title>transfer.zip - Send large files with no signup, no size limit, for free</title>
+                <title>Transfer.zip - Send large files with no signup, no size limit, for free</title>
                 {/* <meta name="description" content="Quickly send large files! No signup, no size limit, with end-to-end encryption, all for free."/> */}
             </Helmet>
             <div className="Landing-div d-flex" style={
@@ -112,7 +110,7 @@ export default function AboutPage({ }) {
                             </a>
                         </div>
                     </div>
-                    <div className="xd-none xd-md-inline-block bg-body-tertiary shadow-lg rounded-4">
+                    <div className="bg-body-tertiary shadow-lg rounded-4">
                         <div className="d-flex flex-column flex-wrap gap-3 justify-content-center mt-2 p-md-4">
                             <div style={{ maxWidth: "400px" }}>
                                 {/* <div className="text-center">
@@ -146,18 +144,17 @@ export default function AboutPage({ }) {
                     </div>
                 </div>
             </div>
-            <div id="about" className="clip overflow-hidden px-3 px-sm-5" data-bs-theme="dark" style={{ clipPath: "margin-box", backgroundColor: "#16181a" }}>
+            <div id="about" className="clip overflow-hidden px-3 px-sm-5 bg-secondary-subtle" data-bs-theme="dark" style={{ clipPath: "margin-box" }}>
                 <div className="m-auto" style={{ maxWidth: "1200px" }}>
                     <div className="d-flex flex-column flex-md-row-reverse pt-5" style={{ height: "400px" }}>
                         <div style={{ maxWidth: "31.2vw" }} className="flex-shrink-1 d-none d-md-inline-block">
                             <img src={promo_1} className="rounded-4" style={{ position: "relative", left: "5vw", maxWidth: "700px" }}></img>
                         </div>
                         <div style={{ minWidth: "260px" }}>
-                            <h2 className="fw-bold text-body">Share your <span className="text-primary">{ /*most important*/}big</span> files while keeping them secure.</h2>
+                            <h1 className="h2 fw-bold text-body">Share your <span className="text-primary">{ /*most important*/}big</span> files while keeping them secure.</h1>
                             <p className="text-body-secondary mb-2">
-                                transfer.zip is optimized for file sharing.
-                                Wether you want to send a 4K movie, share a screenshot or collaborate on creative projects, use transfer.zip to
-                                send files <b>without size limits</b>, even for free.
+                                Wether you want to send a 4K movie, share a screenshot or collaborate on creative projects, 
+                                your files are stored encrypted for no one to see except you and your peers. 
                             </p>
                         </div>
                     </div>
@@ -186,7 +183,7 @@ export default function AboutPage({ }) {
                 <div>
                     <div className="m-auto mt-5">
                         <h2 className="display-5 fw-bold">Transfer smarter.</h2>
-                        <p>Ideal for professionals and hobbyists alike. Whenever you need to share files, use transfer.zip!</p>
+                        <p>Ideal for professionals and hobbyists alike. Whenever you need to share files, use Transfer.zip!</p>
                     </div>
                 </div>
                 <div className="d-flex flex-row flex-wrap py-4 gap-3">
@@ -208,7 +205,7 @@ export default function AboutPage({ }) {
                     </div>
                     <div className="flex-grow-1 bg-body text-center p-3 py-5 rounded">
                         <h2 className="fw-bold"><i className="bi bi-cpu-fill me-2"></i>Self-Hostable</h2>
-                        <p style={{ maxWidth: "300px" }} className="m-auto">For ultimate trust, transfer.zip is easy to <a href="https://github.com/robinkarlberg/transfer.zip-web/tree/main?tab=readme-ov-file#self-hosting">setup locally to self-host.</a></p>
+                        <p style={{ maxWidth: "300px" }} className="m-auto">For ultimate trust, Transfer.zip is easy to <a href="https://github.com/robinkarlberg/transfer.zip-web/tree/main?tab=readme-ov-file#self-hosting">setup locally to self-host.</a></p>
                     </div>
                     <div className="flex-grow-1 bg-body text-center p-3 py-5 rounded">
                         <h2 className="fw-bold"><i className="bi bi-github me-2"></i>Open source</h2>

@@ -8,7 +8,7 @@ import { isSelfHosted } from "../../utils"
  * Empty Page, for redirecting users to the right page. The "default" route.
  */
 export default function EmptyPage({ }) {
-    const { user, isGuestOrFreeUser } = useContext(AuthContext)
+    const { user, isGuestOrFreeUser, isGuestUser } = useContext(AuthContext)
 
     const navigate = useNavigate()
 
@@ -33,7 +33,7 @@ export default function EmptyPage({ }) {
     useEffect(() => {
         if(willRedirectToQuickShare) return
         if (user) {
-            if (true || isGuestOrFreeUser()) {
+            if (isGuestUser()) {
                 navigate("/app/quick-share", { replace: true })
             }
             else {
@@ -63,8 +63,7 @@ export default function EmptyPage({ }) {
     return (
         <div className="d-flex flex-column justify-content-center align-items-center vh-100 overflow-hidden">
             <Helmet>
-                {/* SEO: Self-referencing canonical page, /quick-share should index as / in search engines. */}
-                <link rel="canonical" href={`${window.location.protocol}//${window.location.hostname}/`} />
+                <title>Open App</title>
             </Helmet>
             <div className="">
                 <div className="spinner-border text-secondary" role="status">
