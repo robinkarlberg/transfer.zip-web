@@ -1,7 +1,7 @@
 import { useState } from "react"
 import UploadOrReceiveArea from "../UploadOrReceiveArea"
 
-export default function UploadFilesArea({ onDone, onFilesChange, allowFolders, ...props }) {
+export default function UploadFilesArea({ className,onDone, onFilesChange, allowFolders, ...props }) {
 
     const [files, setFiles] = useState([])
 
@@ -34,7 +34,7 @@ export default function UploadFilesArea({ onDone, onFilesChange, allowFolders, .
     }
 
     return (
-        <div {...props}>
+        <div className={`btn p-0 ${className}`} {...props}>
             <div className="d-flex flex-row gap-1 overflow-x-auto p-2">
                 {files.map(f => {
                     return <FileScrollerEntry key={f.name + f.lastmodified + f.size + f.type} file={f} />
