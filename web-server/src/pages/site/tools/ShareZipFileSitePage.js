@@ -1,7 +1,33 @@
+import { useState } from "react"
 import ToolGenericSitePage from "../../../components/site/tools/ToolGenericSitePage"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import UploadFilesArea from "../../../components/app/UploadFilesArea"
 
 export default function ShareZipFileSitePage({ }) {
+
+    const navigate = useNavigate()
+    const [files, setFiles] = useState([])
+
+    const onReceiveClicked = e => {
+        navigate("/app/quick-share/progress", {
+            state: {
+                transferDirection: "R"
+            }
+        })
+    }
+
+    const onFilesChange = (files) => {
+        setFiles(files)
+    }
+
+    const onUploadFilesModalDone = async (files) => {
+        navigate("/app/quick-share/progress", {
+            state: {
+                files,
+                transferDirection: "S"
+            }
+        })
+    }
 
     return (
         <ToolGenericSitePage
@@ -9,7 +35,7 @@ export default function ShareZipFileSitePage({ }) {
             display={<span><span className="text-primary">Easily</span> share your zip file with a link.</span>}
             tags={["Supports files more than 100GB", "Create temporary link", "Fast, free and secure"]}
             subtitle={<span><span className="text-primary">Transfer</span> your zip files for free</span>}
-            description={""}
+            description={"This tool offers a convenient solution for sharing large zip files through a simple and secure process. It supports files larger than 100GB, making it easy to transfer large files for free. Users can generate temporary links for their zip files, enabling recipients to effortlessly access and download the files as long as yours and their browser window is open."}
             question={"How to send zip file free"}
             steps={[
                 { step: 1, icon: "bi-file-earmark-plus-fill", text: "Pick your zip file or folder" },
@@ -21,7 +47,7 @@ export default function ShareZipFileSitePage({ }) {
                 { to: "/tools/unzip-files-online", title: "Unzip File Online" }
             ]}
         >
-            {/* <div className="bg-body-tertiary shadow-lg rounded-4">
+            <div className="bg-body-tertiary shadow-lg rounded-4">
                 <div className="d-flex flex-column flex-wrap gap-3 justify-content-center mt-2 p-md-4">
                     <div style={{ maxWidth: "400px" }}>
                         <UploadFilesArea allowFolders={true} onFilesChange={onFilesChange} className="bg-body rounded-4" style={{ minWidth: "300px" }} />
@@ -49,7 +75,7 @@ export default function ShareZipFileSitePage({ }) {
                         </div>
                     </div>
                 </div>
-            </div> */}
+            </div>
         </ToolGenericSitePage>
 
     )
