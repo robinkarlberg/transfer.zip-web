@@ -93,7 +93,7 @@ const router = createBrowserRouter(
                 <Route path="dashboard" element={<HomePage />} />
                 <Route path="transfers">
                   <Route path="" element={<TransfersPage />} />
-                  {/* <Route path="new" element={<NewTransferPage />} /> */}
+                  <Route path="new" element={<NewTransferPage />} />
                   <Route path=":id" element={<TransferInfoPage />} />
                 </Route>
                 <Route path="statistics" element={<StatisticsPage />} />

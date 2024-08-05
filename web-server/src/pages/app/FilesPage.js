@@ -12,7 +12,7 @@ import FilesList from "../../components/app/FilesList"
 import StorageStatCard from "../../components/app/statcards/StorageStatCard"
 
 export default function FilesPage({ }) {
-    const { apiTransfers, newApiTransferAndNavigate, newRealtimeTransferAndNavigate, hasFetched } = useContext(ApplicationContext)
+    const { apiTransfers, hasFetched } = useContext(ApplicationContext)
     // const { transfers: realtimeTransfers } = useContext(FileTransferContext)
 
     const navigate = useNavigate()

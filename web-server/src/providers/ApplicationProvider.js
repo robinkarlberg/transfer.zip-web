@@ -52,11 +52,6 @@ export const ApplicationProvider = () => {
         }
     }
 
-    const newApiTransferAndNavigate = async () => {
-        const newTransfer = await newApiTransfer()
-        navigate("/app/transfers/" + newTransfer.id, { state: { addFiles: true } })
-    }
-
     useEffect(() => {
         // WebRtc.createWebSocket()
         if(!isSelfHosted()) {
@@ -80,7 +75,6 @@ export const ApplicationProvider = () => {
             removeTransfer,
             newApiTransfer,
             hasFetched,
-            newApiTransferAndNavigate,
             setShowUnlockFeatureModal,
             setShowStorageFullModal
         }}>

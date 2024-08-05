@@ -14,7 +14,7 @@ import { Helmet } from "react-helmet";
 
 export default function HomePage({ }) {
 
-    const { apiTransfers, hasFetched, newApiTransferAndNavigate } = useContext(ApplicationContext)
+    const { apiTransfers, hasFetched } = useContext(ApplicationContext)
     const { user } = useContext(AuthContext)
 
     const navigate = useNavigate()
@@ -93,7 +93,7 @@ export default function HomePage({ }) {
                             <small><span className="text-body-secondary">Share files as long as browser is open, <b>no size limit</b>.</span></small>
                         </div>
                     </button>
-                    <button onClick={newApiTransferAndNavigate} className="btn bg-body border rounded-4 p-3 flex-grow-1 flex-md-grow-0">
+                    <button onClick={() => navigate("/app/transfers/new")} className="btn bg-body border rounded-4 p-3 flex-grow-1 flex-md-grow-0">
                         <div className="text-start d-flex flex-column">
                             <span className="text-primary-emphasis">Transfer<i className="bi bi-arrow-right-short"></i></span>
                             <small><span className="text-body-secondary">Upload files and share them, <b>stored permanently</b>.</span></small>

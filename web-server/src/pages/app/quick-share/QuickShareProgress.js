@@ -24,7 +24,7 @@ let hasStarted = false
 export default function QuickShareProgress({ }) {
     const { listen, call, fileTransferGetFileList, fileTransferServeFiles, createFileStream } = useContext(QuickShareContext)
     const { user } = useContext(AuthContext)
-    const [ isUsingRelay, setIsUsingRelay ] = useState(false)
+    const [isUsingRelay, setIsUsingRelay] = useState(false)
 
     const navigate = useNavigate()
     const { state } = useLocation()
@@ -47,6 +47,11 @@ export default function QuickShareProgress({ }) {
 
     const hasConnected = () => {
         return transferState == TRANSFER_STATE_TRANSFERRING || transferState == TRANSFER_STATE_FINISHED
+    }
+
+    const onStoreFilePermanentlyClicked = e => {
+        e.preventDefault()
+
     }
 
     let translate = -52 * Math.max(filesDone - 3, 0)
@@ -109,7 +114,7 @@ export default function QuickShareProgress({ }) {
     }
 
     const start = () => {
-        if(hasStarted) {
+        if (hasStarted) {
             return console.warn("[QuickShareProgress] start was called twice!")
         }
         console.log("[QuickShareProgress] start!")
@@ -118,7 +123,7 @@ export default function QuickShareProgress({ }) {
         let _filesDone = 0
 
         const recvDirection = (fileTransfer, fileList) => {
-            if(fileTransfer.isUsingRelayChannel()) {
+            if (fileTransfer.isUsingRelayChannel()) {
                 setIsUsingRelay(true)
             }
 
@@ -188,7 +193,7 @@ export default function QuickShareProgress({ }) {
         let waitTimer = null
 
         const sendDirection = (fileTransfer) => {
-            if(fileTransfer.isUsingRelayChannel()) {
+            if (fileTransfer.isUsingRelayChannel()) {
                 setIsUsingRelay(true)
             }
 
@@ -244,7 +249,7 @@ export default function QuickShareProgress({ }) {
             const oncandidate = (candidate) => {
                 waitTimer && clearTimeout(waitTimer)
                 waitTimer = setTimeout(() => {
-                    if(transferState == TRANSFER_STATE_WAIT_FOR_USER || transferState == TRANSFER_STATE_CONNECTING) {
+                    if (transferState == TRANSFER_STATE_WAIT_FOR_USER || transferState == TRANSFER_STATE_CONNECTING) {
                         setTransferState(TRANSFER_STATE_IDLE)
                     }
                 }, 15000)
@@ -274,7 +279,7 @@ export default function QuickShareProgress({ }) {
         WebRtc.createWebSocket()
         console.log("isSentLinkWithHash:", isSentLinkWithHash)
 
-        if(isSelfHosted() || user != null) {
+        if (isSelfHosted() || user != null) {
             start()
         }
 
@@ -284,7 +289,7 @@ export default function QuickShareProgress({ }) {
     }, [])
 
     useEffect(() => {
-        if(!hasStarted && user != null) start()
+        if (!hasStarted && user != null) start()
     }, [user])
 
     const sendTitle = "Send Files"
@@ -322,13 +327,21 @@ export default function QuickShareProgress({ }) {
                         :
                         <p className="text-danger"><b className="text-danger">Error: </b>{errorMessage}</p>
                     }
-                    { !errorMessage && (transferState == TRANSFER_STATE_CONNECTING || transferState == TRANSFER_STATE_TRANSFERRING) && (
-                        <div className="d-none d-md-block">
-                            <div className="py-1 px-2 border border-secondary bg-secondary-subtle rounded-4 d-inline-block">
-                                <i className="bi bi-exclamation-circle text-secondary-emphasis me-2"></i><span className="text-secondary-emphasis me-1">Keep your browser window open</span>
+                    {!errorMessage && (transferState == TRANSFER_STATE_IDLE || transferState == TRANSFER_STATE_CONNECTING || transferState == TRANSFER_STATE_TRANSFERRING) && (
+                        <div className="dx-none dx-md-block">
+                            <div className={"border border-secondary bg-secondary-subtle rounded-4 d-inline-block " + (isSentLinkWithHash ? "py-1 px-2" : "py-2 px-3")}>
+                                <div>
+                                    <p className="text-secondary-emphasis m-0" style={{ maxWidth: "350px" }}>
+                                        <i className="bi bi-exclamation-circle text-secondary-emphasis me-2"></i>
+                                        {isSentLinkWithHash ? "Keep your browser window open" : "Link will expire when tab is closed."}
+                                    </p>
+                                    {!isSentLinkWithHash &&
+                                        <Link onClick={onStoreFilePermanentlyClicked} style={{ textDecoration: "none" }} className="">Upload files permanently<i className="bi bi-arrow-right-short"></i></Link>
+                                    }
+                                </div>
                             </div>
                         </div>
-                    ) }
+                    )}
                 </div>
             </div>
         </div>

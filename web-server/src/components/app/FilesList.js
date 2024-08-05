@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { getFileExtension, getFileIconFromExtension, humanFileSize, removeLastEntry } from "../../utils";
+import { buildNestedStructure, getFileExtension, getFileIconFromExtension, humanFileSize, humanFileType, removeLastEntry } from "../../utils";
 import { forwardRef, useContext, useEffect, useMemo, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 
@@ -36,35 +36,6 @@ export default function FilesList({ files, onAction, primaryActions, redActions,
 
     const prettify = (str) => {
         return str[0].toUpperCase() + str.slice(1)
-    }
-
-    function buildNestedStructure(files) {
-        if (!files) return null
-
-        const root = { directories: [], files: [] };
-
-        files.forEach(file => {
-            const parts = (file.info.relativePath || file.info.name).split('/');
-            let current = root;
-
-            parts.forEach((part, index) => {
-                if (index === parts.length - 1) {
-                    // This is a file, add it to the current directory's files array
-                    current.files.push(file);
-                } else {
-                    // This is a directory
-                    let dir = current.directories.find(d => d.name === part + "/");
-                    if (!dir) {
-                        // If the directory does not exist, create it
-                        dir = { name: part + "/", directories: [], files: [] };
-                        current.directories.push(dir);
-                    }
-                    current = dir; // Move to the found or created directory
-                }
-            });
-        });
-
-        return root;
     }
 
     const nestedStructure = useMemo(() => buildNestedStructure(files), [files])
@@ -113,7 +84,7 @@ export default function FilesList({ files, onAction, primaryActions, redActions,
 
                 </td>
                 {!ignoreType && <td className="d-none d-sm-table-cell" >
-                    <small>{file.info.type}</small>
+                    <small>{humanFileType(file.info.type)}</small>
                 </td>}
                 <td>
                     {/* <small className="text-body-secondary">Uploading...</small> */}

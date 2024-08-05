@@ -37,6 +37,13 @@ export function humanFileSizePair(bytes, si = false, dp = 0) {
     return { amount, unit }
 }
 
+export const humanFileType = (type) => {
+    if(!type) return "binary"
+    if(type == "application/octet-stream") return "binary"
+    const split = type.split("/")
+    return split.length <= 1 ? split : split[1].replace(/^x-/, "")
+}
+
 export const getTransferLink = (transfer) => {
     const hash = transfer.k ? `#${transfer.k}` : ""
     return `${window.location.origin}/transfer/${transfer.secretCode}${hash}`
@@ -264,6 +271,35 @@ export const readFileTillEnd = async (file, cbData) => {
         };
         readSlice(0)
     })
+}
+
+export function buildNestedStructure(files) {
+    if (!files) return null
+
+    const root = { directories: [], files: [] };
+
+    files.forEach(file => {
+        const parts = (file.info.relativePath || file.info.name).split('/');
+        let current = root;
+
+        parts.forEach((part, index) => {
+            if (index === parts.length - 1) {
+                // This is a file, add it to the current directory's files array
+                current.files.push(file);
+            } else {
+                // This is a directory
+                let dir = current.directories.find(d => d.name === part + "/");
+                if (!dir) {
+                    // If the directory does not exist, create it
+                    dir = { name: part + "/", directories: [], files: [] };
+                    current.directories.push(dir);
+                }
+                current = dir; // Move to the found or created directory
+            }
+        });
+    });
+
+    return root;
 }
 
 export function removeLastEntry(path) {
