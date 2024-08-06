@@ -309,3 +309,7 @@ export function removeLastEntry(path) {
     }
     return parts.join('/').replace(/\/+$/, '') + "/";
 }
+
+export function getFileNameFromPath(path) {
+    return path.split('/').pop();
+}

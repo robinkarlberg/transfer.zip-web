@@ -86,7 +86,7 @@ export default function NewTransferPage({ }) {
 
     const [expirationTime, setExpirationTime] = useState(EXPIRATION_TIMES[1])
 
-    const [files, setFiles] = useState([])
+    const [files, setFiles] = useState(state?.files || [])
 
     const totalSize = useMemo(() => (files.length == 0 ? 0 : files.reduce((prev, file) => file.size + prev, 0)), [files])
     const entries = useMemo(() => buildNestedStructure(files.map(file => {
@@ -120,7 +120,7 @@ export default function NewTransferPage({ }) {
         navigate("/app/transfers/" + transfer.id)
     }
 
-    const uploadFiles = async (files) => {
+    const uploadFiles = async () => {
         let totalBytes = 0
         for (let file of files) {
             totalBytes += file.size
@@ -131,6 +131,7 @@ export default function NewTransferPage({ }) {
         }
 
         const newTransfer = await newApiTransfer()
+        const transfer = newTransfer
         setTransfer(newTransfer)
 
         const progressObjectList = files.map(file => {
@@ -200,7 +201,7 @@ export default function NewTransferPage({ }) {
 
     const ListEntry = ({ entry, isDirectory }) => {
         return (
-            <div className="py-2 px-3 text-body d-flex bg-body rounded-4 flex-column">
+            <div className="py-2 px-3 text-body d-flex bg-body-tertiary rounded-4 flex-column">
                 <div><small className="text-truncate d-block">{entry.info.name.replace(/\/$/, "")}</small></div>
                 <div className="text-secondary"><small>{
                     isDirectory ?
@@ -235,49 +236,53 @@ export default function NewTransferPage({ }) {
 
             <h2 className="mb-3">New Transfer</h2>
 
-            <div className="d-flex flex-column align-items-start gap-3">
-                <div>
-                    <div className="d-flex flex-row flex-wrap gap-2 align-items-center mb-3">
-                        <div>
-                            <div className="btn rounded-4 d-flex flex-row bg-primary px-3" onClick={() => fileInputRef.current.click()}>
-                                <i className="bi bi-file-earmark-fill me-1"></i>
-                                Add Files
+            <div className="d-inline-block">
+                <div className="d-flex flex-column align-items-start gap-3 rounded-4">
+                    <div>
+                        <div className="d-flex flex-row flex-wrap gap-2 align-items-center mb-3">
+                            <div>
+                                <div className="btn rounded-4 d-flex flex-row bg-primary px-3" onClick={() => fileInputRef.current.click()}>
+                                    <i className="bi bi-file-earmark-fill me-1"></i>
+                                    Add Files
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <div className="btn rounded-4 d-flex flex-row bg-body px-3" onClick={() => folderInputRef.current.click()}>
-                                <i className="bi bi-folder-fill me-1"></i>
-                                Add Folder
+                            <div>
+                                <div className="btn rounded-4 d-flex flex-row bg-body-tertiary px-3" onClick={() => folderInputRef.current.click()}>
+                                    <i className="bi bi-folder-fill me-1"></i>
+                                    Add Folder
+                                </div>
                             </div>
+                            <span className="text-body-secondary me-2">
+                                {files.length} files
+                            </span>
                         </div>
-                        <span className="text-body-secondary me-2">
-                            {files.length} files
-                        </span>
-                    </div>
-                    <div className="mb-3 d-flex flex-column gap-2 rounded-4 overflow-y-scroll" style={{ minWidth: "320px", maxHeight: "400px" }}>
+                        <div className="mb-3 d-flex flex-column gap-2 rounded-4 overflow-y-scroll" style={{ minWidth: "320px", maxHeight: "400px" }}>
+                            {
+                                files.length == 0 ?
+                                    <></>
+                                    :
+                                    mapEntries()
+                            }
+                        </div>
                         {
-                            files.length == 0 ?
-                                <></>
-                                :
-                                mapEntries()
+                            files.length != 0 &&
+                            <div className="d-flex flex-row align-items-center gap-2">
+                                <button onClick={uploadFiles} className="btn btn-primary rounded-4 px-3 flex-grow-1">
+                                    <i className="bi bi-send-fill me-2"></i>Transfer <small className="text-primary-emphasis">{humanFileSize(totalSize, true)}</small>
+                                </button>
+                            </div>
                         }
                     </div>
                     {
                         files.length != 0 &&
-                        <div className="d-flex flex-row align-items-center gap-2">
-                            <button className="btn btn-primary rounded-4 px-3 flex-grow-1"><i className="bi bi-send-fill me-2"></i>Transfer <small className="text-primary-emphasis">{humanFileSize(totalSize, true)}</small></button>
+                        <div>
+                            <div>
+                                <h5>Expires in</h5>
+                                {expirationTimeDropdown}
+                            </div>
                         </div>
                     }
                 </div>
-                {
-                    files.length != 0 &&
-                    <div>
-                        <div>
-                            <h5>Expires in</h5>
-                            {expirationTimeDropdown}
-                        </div>
-                    </div>
-                }
             </div>
 
 

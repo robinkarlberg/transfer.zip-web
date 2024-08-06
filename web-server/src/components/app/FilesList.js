@@ -84,7 +84,7 @@ export default function FilesList({ files, onAction, primaryActions, redActions,
 
                 </td>
                 {!ignoreType && <td className="d-none d-sm-table-cell" >
-                    <small>{humanFileType(file.info.type)}</small>
+                    {!file.isDirectory && <small>{humanFileType(file.info.type)}</small>}
                 </td>}
                 <td>
                     {/* <small className="text-body-secondary">Uploading...</small> */}

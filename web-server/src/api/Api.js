@@ -133,6 +133,7 @@ export async function uploadTransferFile(file, transferId, cbProgress) {
     const url = `${API_URL}/transfers/${transferId}/files/upload`
     const formData = new FormData()
     formData.append("file", file)
+    formData.append("relativePath", file.webkitRelativePath || file.name)
 
     return await new Promise((resolve) => {
         xhr.onreadystatechange = function () {
