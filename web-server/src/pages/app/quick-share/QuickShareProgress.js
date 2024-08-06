@@ -250,7 +250,7 @@ export default function QuickShareProgress({ }) {
                 waitTimer && clearTimeout(waitTimer)
                 waitTimer = setTimeout(() => {
                     if (transferState == TRANSFER_STATE_WAIT_FOR_USER || transferState == TRANSFER_STATE_CONNECTING) {
-                        setTransferState(TRANSFER_STATE_IDLE)
+                        // setTransferState(TRANSFER_STATE_IDLE)
                     }
                 }, 15000)
                 setTransferState(TRANSFER_STATE_CONNECTING)
@@ -336,7 +336,7 @@ export default function QuickShareProgress({ }) {
                                         {isSentLinkWithHash ? "Keep your browser window open" : "Link will expire when tab is closed."}
                                     </p>
                                     {!isSentLinkWithHash &&
-                                        <Link onClick={onStoreFilePermanentlyClicked} style={{ textDecoration: "none" }} className="">Upload files permanently<i className="bi bi-arrow-right-short"></i></Link>
+                                        <Link to={"/app/transfers/new"} state={{ files }} style={{ textDecoration: "none" }} className="">Upload files permanently<i className="bi bi-arrow-right-short"></i></Link>
                                     }
                                 </div>
                             </div>
