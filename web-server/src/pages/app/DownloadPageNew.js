@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 
 import * as Api from "../../api/Api";
@@ -11,9 +11,13 @@ import landing_bg from "../../img/landing_background.png"
 
 import logo_small from "../../img/transfer-zip-logo-transparent-nopadding.png"
 
-import bg_test from "../../img/dl/bg_test.jpeg"
+import bg_light from "../../img/dl/bg_light.jpeg"
+import bg_dark from "../../img/dl/bg_dark.jpeg"
+
+
 import SiteFooter from "../../components/site/SiteFooter";
 import MaxWidthContainer from "../../components/MaxWidthContainer";
+import { buildNestedStructure, humanFileSize } from "../../utils";
 
 export default function DownloadPageNew({ }) {
     const { secretCode } = useParams()
@@ -22,7 +26,10 @@ export default function DownloadPageNew({ }) {
     const [transferPassword, setTransferPassword] = useState(undefined)
     const [showDownloadPasswordModal, setShowDownloadPasswordModal] = useState(false)
 
-    const [displayMode, setDisplayMode] = useState("list")
+    const entries = useMemo(() => !download ? [] : buildNestedStructure(download.files), [download, transferPassword])
+    const totalSize = useMemo(() => (!download || download.files.length == 0 ? 0 : download.files.reduce((prev, file) => file.info.size + prev, 0)), [download])
+
+    const [theme, setTheme] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light", [])
 
     const onDownloadPasswordModalDone = (download, password) => {
         setDownload(download)
@@ -45,6 +52,18 @@ export default function DownloadPageNew({ }) {
         Api.downloadAll(secretCode, transferPassword)
     }
 
+    useEffect(() => {
+        const watchMedia = window.matchMedia('(prefers-color-scheme: dark)')
+        const evtListener = watchMedia.addEventListener('change', event => {
+            const newColorScheme = event.matches ? "dark" : "light";
+            setTheme(newColorScheme)
+        });
+
+        return () => {
+            watchMedia.removeEventListener("change", evtListener)
+        }
+    })
+
     if (download == null || download.hasPassword) {
         return (
             <div>
@@ -56,20 +75,12 @@ export default function DownloadPageNew({ }) {
         )
     }
 
-    const DownloadEntry = ({ entry }) => {
-        return (
-            <div>
-
-            </div>
-        )
-    }
-
     const fileCountText = download.files.length + (download.files.length == 1 ? " File" : " Files")
 
     const displayAds = download.displayAds && (process.env.REACT_APP_ADSENSE && process.env.REACT_APP_ADSENSE == "true")
 
     return (
-        <div data-bs-theme="light">
+        <div data-bs-theme={theme}>
             <div className="m-auto bg-dark-subtle d-flex flex-column vh-100">
                 <Helmet>
                     <meta property="og:type" content="website" />
@@ -85,8 +96,8 @@ export default function DownloadPageNew({ }) {
 
                 <SiteHeader />
 
-                <div className="flex-grow-1 d-flex flex-column align-items-center bg-black px-2 px-md-5" style={{
-                    backgroundImage: "url(" + bg_test + ")",
+                <div className="flex-grow-1 d-flex flex-column align-items-center bg-dark-subtle px-2 px-md-5" style={{
+                    backgroundImage: "url(" + (theme == "dark" ? "" : bg_light) + ")",
                     backgroundPosition: "center",
                     backgroundSize: "cover"
                 }}>
@@ -95,17 +106,24 @@ export default function DownloadPageNew({ }) {
                             <div className="p-2">
                                 <div className="text-center mb-4">
                                     {/* <i className="bi bi-send-fill text-primary me-2 fs-1"></i> */}
-                                    <h1 className="h3 fw-semibold text-primary"><i className="bi bi-send-fill text-primary me-2"></i>You got files!</h1>
+                                    <h1 className="h3 fw-semibold text-primary"><i className="bi bi-send-fill me-2"></i>You got files!</h1>
                                 </div>
                                 <h1 className="h5">{download.name || fileCountText}</h1>
-                                <span className="text-body-secondary d-block overflow-hidden" style={{ maxHeight: "100px" }}>{download.description || "No description."}</span>
+                                <small className="text-body-secondary d-block overflow-hidden" style={{ maxHeight: "4.5em" }}>{download.description || "No description."}</small>
                             </div>
-                            <div className="flex-grow-1">
-                                { }
+                            <hr className="my-0"></hr>
+                            <div className="flex-grow-1 p-2 d-flex flex-column">
+                                {entries.directories.length > 0 &&
+                                    <span><i className="bi bi-folder-fill me-1"></i>{entries.directories.length} Folder{entries.directories.length > 1 ? "s" : ""}</span>
+                                }
+                                {download.name && download.files.length > 0 &&
+                                    <span><i className="bi bi-file-earmark me-1"></i>{download.files.length} File{download.files.length > 1 ? "s" : ""}</span>
+                                }
+                                <span className="text-body-secondary"><i className=""></i>{humanFileSize(totalSize)}</span>
                             </div>
                             <div className="d-flex flex-row gap-2">
-                                <button className="btn btn-outline-primary rounded-pill px-3 pe-4"><i className="bi bi-search me-2"></i>Preview</button>
-                                <button className="btn btn-primary rounded-pill px-4 flex-grow-1">Download</button>
+                                <button disabled className="btn btn-outline-primary rounded-pill px-3 pe-4"><i className="bi bi-search me-2"></i>Preview</button>
+                                <button onClick={downloadAll} className="btn btn-primary rounded-pill px-4 flex-grow-1">Download</button>
                             </div>
                         </div>
                     </div>
