@@ -18,13 +18,13 @@ export default function SideBar({ className }) {
 
     const NavLink = ({ to, children, disable, className, override, reloadDocument }) => {
         let _to = to
-        const activeClass = to == "/" ? (currentPage == "/" ? "text-white " : "text-body-secondary ") : (currentPage.startsWith(to) ? "text-white " : "text-body-secondary ")
+        const activeClass = (currentPage.startsWith(to) ? "text-white " : "text-body-secondary ")
         let onClick = undefined
         if (!override && disable) {
             onClick = (e) => { e.preventDefault(); setShowUnlockFeatureModal(true) }
         }
         return (
-            <Link onClick={onClick} reloadDocument={reloadDocument} className={"w-100 p-2 px-3 d-inline-block link-underline link-underline-opacity-0 " + activeClass + className} to={_to}>
+            <Link onClick={onClick} reloadDocument={reloadDocument} className={"fw-medium w-100 p-2 px-3 d-inline-block link-underline link-underline-opacity-0 " + activeClass + className} to={_to}>
                 {children}
             </Link>
         )
@@ -33,38 +33,36 @@ export default function SideBar({ className }) {
     return (
         <div className={"d-flex flex-column flex-shrink-0 text-bg-dark shadow bg-body border-end " + className} style={{ minWidth: "210px" }}>
             <Link to="/" reloadDocument={true} style={{ height: "60px" }} className="d-flex align-items-center m-3 my-2 text-white text-decoration-none">
-                <img className="bi" src={logo} style={{ height: "40px" }}></img>
+                <img className="m-auto" src={logo} style={{ height: "35px" }}></img>
                 {/* <span className="fs-4">Sidebar</span> */}
             </Link>
             {/* <hr /> */}
             <div className="px-4 mb-3">
-                <NavLink to="/app/quick-share" className={"btn text-start rounded-pill border border-secondary"} override={true}>
-                    <div className="d-flex flex-row justify-content-between">
-                        Quick Share<i className="bi bi-lightning-fill"></i>
-                    </div>
-                </NavLink>
+                <button className="fw-medium btn btn-primary rounded-pill w-100">
+                    Transfer<i className="ms-2 bi bi-send-fill"></i>
+                </button>
             </div>
-            {!isSelfHosted() && <small className="text-secondary ms-3">FILE TRANSFERS</small> }
+            {!isSelfHosted() && <small className="text-secondary ms-3">FILE TRANSFERS</small>}
             {!isSelfHosted() && (
                 <ul className="d-flex flex-column align-items-stretch list-unstyled px-2 mb-2">
                     <li>
                         <NavLink to="/app/dashboard" disable={disable}>
-                            <i className="bi bi-house me-2"></i>Dashboard
+                            <i className="bi bi-house-fill me-2"></i>Dashboard
                         </NavLink>
                     </li>
                     <li>
                         <NavLink to="/app/transfers" disable={disable}>
-                            <i className="bi bi-arrow-down-up me-2"></i>Transfers
+                            <i className="bi bi-send-fill me-2"></i>Transfers
                         </NavLink>
                     </li>
                     <li>
                         <NavLink to="/app/files" disable={disable}>
-                            <i className="bi bi-file-earmark me-2"></i>Files
+                            <i className="bi bi-database-fill me-2"></i>Storage
                         </NavLink>
                     </li>
                     <li>
                         <NavLink to="/app/statistics" disable={disableStatistics}>
-                            <i className="bi bi-graph-up me-2"></i>Statistics
+                            <i className="bi bi-bar-chart-line-fill me-2"></i>Statistics
                         </NavLink>
                     </li>
                 </ul>

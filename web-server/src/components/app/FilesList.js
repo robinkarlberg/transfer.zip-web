@@ -137,7 +137,7 @@ export default function FilesList({ files, onAction, primaryActions, redActions,
 
         const returns = []
         if (path != "" && path != "/") {
-            returns.push(<GoUpFileListEntry />)
+            returns.push(<GoUpFileListEntry key={"//goup//"}/>)
         }
         if (targetDirectory) {
             returns.push(...targetDirectory.directories.map(dir => <FilesListEntry key={dir.name} file={{ info: { name: dir.name, size: dir.files?.length + dir.directories?.length }, isDirectory: true }} />))

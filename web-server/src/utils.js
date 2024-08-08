@@ -38,8 +38,8 @@ export function humanFileSizePair(bytes, si = false, dp = 0) {
 }
 
 export const humanFileType = (type) => {
-    if(!type) return "binary"
-    if(type == "application/octet-stream") return "binary"
+    if (!type) return "binary"
+    if (type == "application/octet-stream") return "binary"
     const split = type.split("/")
     return split.length <= 1 ? split : split[1].replace(/^x-/, "")
 }
@@ -158,6 +158,8 @@ export const getFileExtension = (filename) => {
 
 export const groupStatisticsByInterval = (statistics, interval) => {
     // groups contains objects: { name: <new Date(obj.time).toISOString().split('T')[0]>, value: 0 }
+    if(!statistics) return []
+    console.log(statistics)
     const groups = []
 
     const now = new Date();
@@ -285,7 +287,7 @@ export function buildNestedStructure(files) {
         parts.forEach((part, index) => {
             if (index === parts.length - 1) {
                 // This is a file, add it to the current directory's files array
-                current.files.push(file);
+                current.files.push({ ...file, info: { ...file.info, name: getFileNameFromPath(file.info.name) } });
             } else {
                 // This is a directory
                 let dir = current.directories.find(d => d.name === part + "/");
@@ -304,7 +306,7 @@ export function buildNestedStructure(files) {
 
 export function removeLastEntry(path) {
     const parts = path.split('/');
-    if(parts.pop() == "") {
+    if (parts.pop() == "") {
         parts.pop();
     }
     return parts.join('/').replace(/\/+$/, '') + "/";

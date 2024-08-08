@@ -56,12 +56,13 @@ import UnzipFilesAppView from "./pages/app/tools/unzip/UnzipFilesAppView";
 import UnzipFilesAppNew from "./pages/app/tools/unzip/UnzipFilesAppNew";
 import NewTransferPage from "./pages/app/transfers/NewTransferPage";
 import ShareZipFileSitePage from "./pages/site/tools/ShareZipFileSitePage";
+import DownloadPageNew from "./pages/app/DownloadPageNew";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route element={<AnalyticsHelmet />}>
       <Route element={<FilePickerProvider />}>
-        <Route path="/transfer/:secretCode" element={<DownloadPage />} />
+        <Route path="/transfer/:secretCode" element={<DownloadPageNew />} />
         <Route element={<AuthProvider ignoreVerification={true} />}>
           <Route path="/" element={<Site />}>
             <Route path="/" element={<AboutPage />} />

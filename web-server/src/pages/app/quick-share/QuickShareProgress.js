@@ -336,7 +336,9 @@ export default function QuickShareProgress({ }) {
                                         {isSentLinkWithHash ? "Keep your browser window open" : "Link will expire when tab is closed."}
                                     </p>
                                     {!isSentLinkWithHash &&
-                                        <Link to={"/app/transfers/new"} state={{ files }} style={{ textDecoration: "none" }} className="">Upload files permanently<i className="bi bi-arrow-right-short"></i></Link>
+                                        <Link to={"/app/transfers/new"} state={{ files }} style={{ textDecoration: "none" }} className="">
+                                            Upload files permanently<i className="bi bi-arrow-right-short"></i>
+                                        </Link>
                                     }
                                 </div>
                             </div>

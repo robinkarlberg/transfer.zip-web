@@ -225,6 +225,10 @@ export async function previewDlFileRawResponse(secretCode, fileId, password) {
     return res
 }
 
+export async function search(query) {
+    return await post(`/search`, { query })
+}
+
 export async function joinWaitlist(email) {
     return await post(`/waitlist/join`, { email })
 }

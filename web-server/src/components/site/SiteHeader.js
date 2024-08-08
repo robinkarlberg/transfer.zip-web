@@ -1,5 +1,5 @@
 import { forwardRef, useContext, useState } from "react"
-import logo from "../../img/transfer-zip-logotext-cropped.png"
+import official_logo from "../../img/transfer-zip-logotext-cropped.png"
 import logo_small from "../../img/transfer-zip-logo-transparent-nopadding.png"
 
 import { Link, useNavigate } from "react-router-dom"
@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { Dropdown } from "react-bootstrap"
 import { AuthContext } from "../../providers/AuthProvider"
 
-export default function SiteHeader({ }) {
+export default function SiteHeader({ customLogo: logo }) {
     const [navbarExpanded, setNavbarExpanded] = useState(false)
     
     const navigate = useNavigate()
@@ -45,10 +45,10 @@ export default function SiteHeader({ }) {
         <nav className="navbar navbar-expand-lg bg-body py-3 shadow-sm" /* position-fixed w-100 z-2 */>
             <div style={{ maxWidth: "1300px" }} className="container-fluid px-sm-3">
                 <a className="navbar-brand" href="#">
-                    <img style={{ width: "140px" }} onClick={() => { navigate("/") }} className="" src={logo} />
+                    <img style={{ width: "140px" }} onClick={() => { navigate("/") }} className="" src={logo || official_logo} />
                 </a>
                 <button className="navbar-toggler px-2" onClick={() => { setNavbarExpanded(!navbarExpanded) }} type="button" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
+                    <i className="bi bi-list fs-1"></i>
                 </button>
                 <div className={"collapse navbar-collapse " + (navbarExpanded ? "show" : "")}>
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
@@ -59,13 +59,13 @@ export default function SiteHeader({ }) {
                             <Link className="nav-link" to="/#about">About</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="pricing">Pricing</Link>
+                            <Link className="nav-link" to="/pricing">Pricing</Link>
                         </li>
                         <li className="nav-item">
                             <Link className="nav-link" to="https://blog.transfer.zip/">Blog</Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="pricing#faq">FAQ</Link>
+                            <Link className="nav-link" to="/pricing#faq">FAQ</Link>
                         </li>
                     </ul>
                     { headerCallToAction }

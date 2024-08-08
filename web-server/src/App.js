@@ -12,6 +12,8 @@ import { AuthContext, AuthProvider } from "./providers/AuthProvider";
 import Header from "./components/app/Header";
 import { Helmet } from "react-helmet";
 import { isSelfHosted } from "./utils";
+import InlineFooter from "./components/app/InlineFooter";
+import SearchBox from "./components/app/SearchBox";
 
 
 function App() {
@@ -40,8 +42,21 @@ function App() {
       <div className={"App flex-grow-1 bg-dark-subtle vh-100 d-flex flex-column flex-md-row"}>
         <Header className="d-md-none" />
         <SideBar className="d-none d-md-flex" />
-        <div className="d-flex flex-row flex-grow-1 flex-sm-grow-1 overflow-y-scroll">
-          <Outlet />
+        <div className="d-flex flex-column flex-grow-1 flex-sm-grow-1 overflow-y-scroll">
+          {!isSelfHosted() && <div className="d-none p-3 px-4 bg-body border-bottom d-md-flex flex-row justify-content-between">
+            <div className="position-relative d-flex flex-row flex-grow-1">
+              {/* <div className="d-flex flex-column justify-content-center">
+                <i className="bi bi-search position-absolute ms-1"></i>
+              </div> */}
+              <SearchBox/>
+            </div>
+            <div>
+              
+            </div>
+          </div>}
+          <div className="d-flex flex-row flex-grow-1">
+            <Outlet />
+          </div>
         </div>
         {/* <div className="w-100">
         <div className="m-auto" style={{ maxWidth: "1500px" }}>

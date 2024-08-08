@@ -43,7 +43,7 @@ export default function TransferInfoPage({ }) {
     const copiedLinkTooltipTarget = useRef(null)
 
     const interval = "month"
-    const [statistics, setStatistics] = useState([])
+    const [statistics, setStatistics] = useState({})
 
     const updateStatistics = async (fromDate) => {
         const res = await Api.getTransferStatistics(id, 0)
@@ -51,7 +51,7 @@ export default function TransferInfoPage({ }) {
     }
 
     const getDownloadsCount = () => {
-        const grouped = groupStatisticsByInterval(statistics, interval)
+        const grouped = groupStatisticsByInterval(statistics.downloads, interval)
         return grouped.reduce((prev, curr) => prev + curr.value, 0)
     }
 
@@ -152,7 +152,7 @@ export default function TransferInfoPage({ }) {
     useEffect(() => {
         updateStatistics()
         refreshApiTransfer()
-    }, [])
+    }, [id])
 
     if (!id) {
         return <Navigate to={"/app/transfers"} replace={true} />
@@ -186,11 +186,6 @@ export default function TransferInfoPage({ }) {
     const totalFileSizeStat = () => {
         const total = humanFileSizePair(countTotalFileSize(), true)
         return <div>{total.amount}<small>{total.unit}</small></div>
-    }
-
-    const totalDownloadsStat = () => {
-        return transfer.statistics.length
-        // return transfer.statistics.length
     }
 
     const onFilesListAction = (action, file) => {
@@ -274,11 +269,11 @@ export default function TransferInfoPage({ }) {
                     <Link to={"/upgrade"} style={{ textDecoration: "none" }}>Upgrade plan<i className="bi bi-arrow-right-short"></i></Link>
                 </StatCard>
                 <StatCard title={"Files"} stat={transfer.files.length}>
-                    <a href="#" onClick={() => setShowUploadFilesModal(true)} style={{ textDecoration: "none" }}>Add files<i className="bi bi-arrow-right-short"></i></a>
+                    <a href="#" onClick={() => {}} style={{ textDecoration: "none" }}>View files<i className="bi bi-arrow-right-short"></i></a>
                 </StatCard>
                 {!isFreeUser() && (
                     <StatCard title={"Shared With"} stat={transfer.emailsSharedWith?.length}>
-                        <h6 className="text-body-secondary mb-0">{transfer.emailsSharedWith?.length == 1 ? "person" : "people"}</h6>
+                        <h6 className="text-body-secondary mb-0">{transfer.emailsSharedWith?.length == 1 ? "email" : "emails"}</h6>
                     </StatCard>
                 )}
                 <StatCard title={"Downloads"} stat={getDownloadsCount()}>
