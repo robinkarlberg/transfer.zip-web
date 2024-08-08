@@ -183,7 +183,7 @@ export async function downloadAll(secretCode, password) {
         type: res.headers["content-type"]
     })
 
-    res.body.pipeTo(fileStream)
+    return res.body.pipeTo(fileStream)
 }
 
 export function getDownloadLink(secretCode, fileId) {

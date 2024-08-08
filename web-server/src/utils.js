@@ -158,7 +158,7 @@ export const getFileExtension = (filename) => {
 
 export const groupStatisticsByInterval = (statistics, interval) => {
     // groups contains objects: { name: <new Date(obj.time).toISOString().split('T')[0]>, value: 0 }
-    if(!statistics) return []
+    if (!statistics) return []
     console.log(statistics)
     const groups = []
 
@@ -314,4 +314,53 @@ export function removeLastEntry(path) {
 
 export function getFileNameFromPath(path) {
     return path.split('/').pop();
+}
+
+export function parseTransferExpiryDate(expiresAt) {
+    const date = new Date(expiresAt)
+    if (date.getTime() == 0) return false
+    return date
+}
+
+// ChatGPT ;)
+export function humanTimeUntil(targetDate) {
+    const now = new Date();
+
+    // Calculate the difference in milliseconds
+    let diff = targetDate - now;
+
+    if (diff <= 0) {
+        return "now";
+    }
+
+    // Time calculations for years, days, hours, minutes, and seconds
+    const msInSecond = 1000;
+    const msInMinute = msInSecond * 60;
+    const msInHour = msInMinute * 60;
+    const msInDay = msInHour * 24;
+    const msInYear = msInDay * 365;  // Approximation, ignoring leap years
+
+    const years = Math.floor(diff / msInYear);
+    diff -= years * msInYear;
+
+    const days = Math.floor(diff / msInDay);
+    diff -= days * msInDay;
+
+    const hours = Math.floor(diff / msInHour);
+    diff -= hours * msInHour;
+
+    const minutes = Math.floor(diff / msInMinute);
+    diff -= minutes * msInMinute;
+
+    const seconds = Math.floor(diff / msInSecond);
+
+    // Construct the readable string
+    let readableString = "";
+    if (years > 0) readableString += `${years}y `;
+    if (days > 0) readableString += `${days}d `;
+    if (hours > 0) readableString += `${hours}h `;
+    if (minutes > 0) readableString += `${minutes}m `;
+    if (seconds > 0 || readableString === "") readableString += `${seconds}s`;
+
+    return readableString.trim();
 }

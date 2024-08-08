@@ -17,7 +17,7 @@ import bg_dark from "../../img/dl/bg_dark.jpeg"
 
 import SiteFooter from "../../components/site/SiteFooter";
 import MaxWidthContainer from "../../components/MaxWidthContainer";
-import { buildNestedStructure, humanFileSize } from "../../utils";
+import { buildNestedStructure, humanFileSize, parseTransferExpiryDate, humanTimeUntil } from "../../utils";
 
 export default function DownloadPageNew({ }) {
     const { secretCode } = useParams()
@@ -28,6 +28,9 @@ export default function DownloadPageNew({ }) {
 
     const entries = useMemo(() => !download ? [] : buildNestedStructure(download.files), [download, transferPassword])
     const totalSize = useMemo(() => (!download || download.files.length == 0 ? 0 : download.files.reduce((prev, file) => file.info.size + prev, 0)), [download])
+    const expiryDate = useMemo(() => !download ? false : parseTransferExpiryDate(download.expiresAt), [download])
+
+    const [loadingDownload, setLoadingDownload] = useState(false)
 
     const [theme, setTheme] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light", [])
 
@@ -48,8 +51,10 @@ export default function DownloadPageNew({ }) {
         })
     }, [])
 
-    const downloadAll = () => {
-        Api.downloadAll(secretCode, transferPassword)
+    const downloadAll = async () => {
+        setLoadingDownload(true)
+        await Api.downloadAll(secretCode, transferPassword)
+        setLoadingDownload(false)
     }
 
     useEffect(() => {
@@ -106,7 +111,7 @@ export default function DownloadPageNew({ }) {
                             <div className="p-2">
                                 <div className="text-center mb-4">
                                     {/* <i className="bi bi-send-fill text-primary me-2 fs-1"></i> */}
-                                    <h1 className="h3 fw-semibold text-primary"><i className="bi bi-send-fill me-2"></i>You got files!</h1>
+                                    <h1 className={"h3 fw-semibold " + (theme == "dark" ? "text-primary-emphasis" : "text-primary")}><i className="bi bi-send-fill me-2"></i>You got files!</h1>
                                 </div>
                                 <h1 className="h5">{download.name || fileCountText}</h1>
                                 <small className="text-body-secondary d-block overflow-hidden" style={{ maxHeight: "4.5em" }}>{download.description || "No description."}</small>
@@ -119,11 +124,14 @@ export default function DownloadPageNew({ }) {
                                 {download.name && download.files.length > 0 &&
                                     <span><i className="bi bi-file-earmark me-1"></i>{download.files.length} File{download.files.length > 1 ? "s" : ""}</span>
                                 }
-                                <span className="text-body-secondary"><i className=""></i>{humanFileSize(totalSize)}</span>
+                                <span className="text-body-secondary"><i className=""></i>{humanFileSize(totalSize, true)}</span>
+                                <div className="mt-auto text-center">
+                                    {expiryDate && <small className="text-body-secondary">Expires in {humanTimeUntil(expiryDate)}</small>}
+                                </div>
                             </div>
                             <div className="d-flex flex-row gap-2">
-                                <button disabled className="btn btn-outline-primary rounded-pill px-3 pe-4"><i className="bi bi-search me-2"></i>Preview</button>
-                                <button onClick={downloadAll} className="btn btn-primary rounded-pill px-4 flex-grow-1">Download</button>
+                                <button disabled className={"btn btn-outline-primary rounded-pill px-3 pe-4 " + (loadingDownload ? "" : "")}><i className="bi bi-search me-2"></i>Preview</button>
+                                <button disabled={loadingDownload} onClick={downloadAll} className="btn btn-primary rounded-pill px-4 flex-grow-1">Download</button>
                             </div>
                         </div>
                     </div>

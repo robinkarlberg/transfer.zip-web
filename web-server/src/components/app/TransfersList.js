@@ -5,12 +5,10 @@ import { Link, useNavigate } from "react-router-dom"
 import * as Api from "../../api/Api"
 // import { AuthContext } from "../../providers/AuthProvider";
 
-import { copyTransferLink } from "../../utils"
+import { copyTransferLink, parseTransferExpiryDate, humanTimeUntil } from "../../utils"
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 
-const TRANSFER_LIMIT = 5
-
-export default function TransfersList({ transfers, maxWidth }) {
+export default function TransfersList({ transfers, maxWidth, limit=99999 }) {
     const { removeTransfer } = useContext(ApplicationContext)
     const navigate = useNavigate()
 
@@ -62,7 +60,7 @@ export default function TransfersList({ transfers, maxWidth }) {
     // }
 
     const TransfersListEntry = ({ transfer }) => {
-
+        const expiryDate = parseTransferExpiryDate(transfer.expiresAt)
         // console.log(transfer)
         return (
             <div className="HoverButton px-3 py-2 d-flex flex-row justify-content-between bg-body-tertiary rounded-4 btn text-start w-100"
@@ -90,7 +88,10 @@ export default function TransfersList({ transfers, maxWidth }) {
                                     :
                                     <span></span>
                         }
-
+                        { expiryDate && <span className="text-secondary">
+                            <i className="bi bi-dot"></i>
+                            <small><i className="bi bi-clock me-1"></i>{humanTimeUntil(expiryDate)}</small>
+                        </span>}
                     </div>
                 </div>
                 <div className="d-flex flex-column justify-content-center">
@@ -100,12 +101,29 @@ export default function TransfersList({ transfers, maxWidth }) {
         )
     }
 
+    const ViewMoreEntry = (
+        <div className="HoverButtonTertiary px-3 py-2 d-flex flex-row justify-content-between bg-body rounded-4 btn text-start w-100"
+                style={{ maxWidth: "350px" }}
+                onClick={() => navigate("/app/transfers")}
+            >
+                <div className="d-flex flex-column overflow-hidden">
+                    <div className="text-truncate">
+                        <span className="fw-medium">{transfers.length - limit} more<i className="bi bi-arrow-right-short"></i></span>
+                    </div>
+                    <div className="text-secondary overflow-hidden text-truncate">
+                        {transfers.slice(limit, limit + 6).map((transfer, i) => <small>{transfer.name || transfer.id}{i != transfers.length - limit - 1 && <i className="bi bi-dot"></i>}</small>)}
+                    </div>
+                </div>
+            </div>
+    )
+
     return (
         <div className="TransfersList mb-3">
             <div className="d-flex flex-row flex-wrap gap-2">
-                {transfers.map(t => {
+                {transfers.slice(0, limit).map(t => {
                     return <TransfersListEntry key={t.id} transfer={t} />
                 })}
+                {transfers.length > limit && ViewMoreEntry }
             </div>
         </div>
     )

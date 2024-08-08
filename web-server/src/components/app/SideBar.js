@@ -81,17 +81,17 @@ export default function SideBar({ className }) {
                 </li>
             </ul>
             <div className="px-3 mb-auto d-flex flex-column gap-2">
-                {!isSelfHosted() && user && isGuestOrFreeUser() &&
+                {!isSelfHosted() && user && isGuestUser() &&
                     (
-                        <Link className="btn btn-primary rounded-pill w-100" to={(isGuestUser() ? "/signup" : "/upgrade")} reloadDocument>
-                            {!user ? ("...") : (isGuestUser() ? "Sign up" : "Upgrade")}
+                        <Link className="btn btn-primary rounded-pill w-100" to={"/signup"} reloadDocument>
+                            Sign Up
                         </Link>
                     )
                 }
-                {!isSelfHosted() && user && isGuestUser() &&
+                {!isSelfHosted() && user && isGuestOrFreeUser() &&
                     (
-                        <Link className="btn btn-outline-primary rounded-pill w-100" to={"/login"} reloadDocument>
-                            Login
+                        <Link className="btn btn-outline-primary rounded-pill w-100" to={(isGuestUser() ? "/login" : "/upgrade")} reloadDocument>
+                            {!user ? ("...") : (isGuestUser() ? "Login" : "Upgrade")}
                         </Link>
                     )
                 }

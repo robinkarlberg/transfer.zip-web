@@ -104,8 +104,8 @@ export default function HomePage({ }) {
                     </div>
                 </div>
             </div>
-            <h5>Recent Transfers</h5>
-            <TransfersList transfers={apiTransfers} />
+            <h5>Recent</h5>
+            <TransfersList transfers={apiTransfers} limit={5}/>
         </AppGenericPage>
     )
 }

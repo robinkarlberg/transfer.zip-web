@@ -62,7 +62,7 @@ export default function TransfersPage({ }) {
                 </StatCard> */}
             </div>
             <h5>Sent</h5>
-            <TransfersList transfers={apiTransfers} maxWidth="700px" />
+            <TransfersList transfers={apiTransfers} maxWidth="700px"/>
             {/* <h5>Received</h5>
             <TransfersList transfers={apiTransfers} maxWidth="700px" /> */}
         </AppGenericPage>
