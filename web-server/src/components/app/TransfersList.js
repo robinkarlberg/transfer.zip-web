@@ -118,7 +118,7 @@ export default function TransfersList({ transfers, maxWidth, limit=99999 }) {
     )
 
     return (
-        <div className="TransfersList mb-3">
+        <div className="TransfersList mb-3" style={{ maxWidth: "1100px" }}>
             <div className="d-flex flex-row flex-wrap gap-2">
                 {transfers.slice(0, limit).map(t => {
                     return <TransfersListEntry key={t.id} transfer={t} />

@@ -37,7 +37,7 @@ export const ApplicationProvider = () => {
     })
 
     const newApiTransfer = async (expiresAt = 0) => {
-        const newTransfer = (await Api.createTransfer(0)).transfer
+        const newTransfer = (await Api.createTransfer(expiresAt)).transfer
         await refreshApiTransfers() // calls updateAllTransfersList()
         return newTransfer
     }

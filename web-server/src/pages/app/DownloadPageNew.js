@@ -121,7 +121,7 @@ export default function DownloadPageNew({ }) {
                                 {entries.directories.length > 0 &&
                                     <span><i className="bi bi-folder-fill me-1"></i>{entries.directories.length} Folder{entries.directories.length > 1 ? "s" : ""}</span>
                                 }
-                                {download.name && download.files.length > 0 &&
+                                {download.files.length > 0 &&
                                     <span><i className="bi bi-file-earmark me-1"></i>{download.files.length} File{download.files.length > 1 ? "s" : ""}</span>
                                 }
                                 <span className="text-body-secondary"><i className=""></i>{humanFileSize(totalSize, true)}</span>

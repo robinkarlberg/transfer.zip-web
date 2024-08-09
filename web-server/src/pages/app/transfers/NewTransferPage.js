@@ -9,7 +9,7 @@ import StorageFullError from "../../../errors/StorageFullError";
 import TransferNameModal from "../../../components/modals/TransferNameModal";
 import UploadFilesArea from "../../../components/app/UploadFilesArea";
 import { Dropdown } from "react-bootstrap";
-import { buildNestedStructure, getFileExtension, getFileIconFromExtension, humanFileSize, humanFileType } from "../../../utils";
+import { addSecondsToCurrentDate, buildNestedStructure, getFileExtension, getFileIconFromExtension, humanFileSize, humanFileType } from "../../../utils";
 
 const MAX_FILES_DISPLAYED = 5
 
@@ -130,7 +130,7 @@ export default function NewTransferPage({ }) {
             throw new StorageFullError()
         }
 
-        const newTransfer = await newApiTransfer()
+        const newTransfer = await newApiTransfer(addSecondsToCurrentDate(expirationTime.seconds))
         const transfer = newTransfer
         setTransfer(newTransfer)
 

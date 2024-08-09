@@ -341,26 +341,37 @@ export function humanTimeUntil(targetDate) {
     const msInYear = msInDay * 365;  // Approximation, ignoring leap years
 
     const years = Math.floor(diff / msInYear);
-    diff -= years * msInYear;
+    if (years > 0) {
+        const remaining = diff - years * msInYear;
+        if (remaining >= msInYear / 2) return `${years + 1}y`;
+        return `${years}y`;
+    }
 
     const days = Math.floor(diff / msInDay);
-    diff -= days * msInDay;
+    if (days > 0) {
+        const remaining = diff - days * msInDay;
+        if (remaining >= msInDay / 2) return `${days + 1}d`;
+        return `${days}d`;
+    }
 
     const hours = Math.floor(diff / msInHour);
-    diff -= hours * msInHour;
+    if (hours > 0) {
+        const remaining = diff - hours * msInHour;
+        if (remaining >= msInHour / 2) return `${hours + 1}h`;
+        return `${hours}h`;
+    }
 
     const minutes = Math.floor(diff / msInMinute);
-    diff -= minutes * msInMinute;
+    if (minutes > 0) {
+        const remaining = diff - minutes * msInMinute;
+        if (remaining >= msInMinute / 2) return `${minutes + 1}m`;
+        return `${minutes}m`;
+    }
 
     const seconds = Math.floor(diff / msInSecond);
+    return `${seconds}s`;
+}
 
-    // Construct the readable string
-    let readableString = "";
-    if (years > 0) readableString += `${years}y `;
-    if (days > 0) readableString += `${days}d `;
-    if (hours > 0) readableString += `${hours}h `;
-    if (minutes > 0) readableString += `${minutes}m `;
-    if (seconds > 0 || readableString === "") readableString += `${seconds}s`;
-
-    return readableString.trim();
+export function addSecondsToCurrentDate(seconds) {
+    return new Date(Date.now() + (seconds * 1000))
 }
