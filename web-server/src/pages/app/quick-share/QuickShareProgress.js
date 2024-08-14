@@ -23,7 +23,7 @@ const TRANSFER_STATE_FAILED = "failed"
 let hasStarted = false
 export default function QuickShareProgress({ }) {
     const { listen, call, fileTransferGetFileList, fileTransferServeFiles, createFileStream } = useContext(QuickShareContext)
-    const { user } = useContext(AuthContext)
+    const { user, isGuestUser } = useContext(AuthContext)
     const [isUsingRelay, setIsUsingRelay] = useState(false)
 
     const navigate = useNavigate()
@@ -346,6 +346,6 @@ export default function QuickShareProgress({ }) {
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     )
 }

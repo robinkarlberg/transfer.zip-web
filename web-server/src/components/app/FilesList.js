@@ -1,12 +1,12 @@
 import { Link, useLocation, useNavigate } from "react-router-dom"
-import { buildNestedStructure, getFileExtension, getFileIconFromExtension, humanFileSize, humanFileType, removeLastEntry } from "../../utils";
+import { buildNestedStructure, getFileExtension, getFileIconFromExtension, getFileNameFromPath, humanFileSize, humanFileType, removeLastEntry } from "../../utils";
 import { forwardRef, useContext, useEffect, useMemo, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 
 import * as Api from "../../api/Api"
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 
-export default function FilesList({ files, onAction, primaryActions, redActions, maxWidth, ignoreType, useLocationHash }) {
+export default function FilesList({ files, onAction, primaryActions, redActions, maxWidth, ignoreType, useLocationHash, noDirectories }) {
     const navigate = useNavigate()
     const { refreshApiTransfers } = useContext(ApplicationContext)
     const { hash, state } = useLocation()
@@ -62,6 +62,7 @@ export default function FilesList({ files, onAction, primaryActions, redActions,
     }
 
     const FilesListEntry = ({ file }) => {
+        const name = getFileNameFromPath(file.info.name)
         return (
             <tr>
                 <td scope="row" style={{ padding: 0 }}>
@@ -73,9 +74,9 @@ export default function FilesList({ files, onAction, primaryActions, redActions,
                         else onAction("click", file)
                     }}>
                         {file.isDirectory ?
-                            <span><i className="bi bi-folder-fill me-1"></i> {file.info.name} <small className="ms-2 text-body-secondary">{file.info.size} files</small></span>
+                            <span><i className="bi bi-folder-fill me-1"></i> {file.info.name} <small className="ms-2 text-body-secondary">{file.info.size} items</small></span>
                             :
-                            <span><i className={"bi me-1 " + getFileIconFromExtension(getFileExtension(file.info.name))}></i> <span className="text-body">{file.info.name}</span></span>
+                            <span><i className={"bi me-1 " + getFileIconFromExtension(getFileExtension(name))}></i> <span className="text-body">{name}</span></span>
                         }
                     </Link>
                 </td>
@@ -175,7 +176,8 @@ export default function FilesList({ files, onAction, primaryActions, redActions,
                             </td>
                         </tr>
                     )}
-                    {mapEntriesFromPath(selectedPath)}
+                    { noDirectories ? files.map(file => <FilesListEntry key={file.info.name + file.info.size} file={file}/>) : mapEntriesFromPath(selectedPath) }
+                    
                 </tbody>
             </table>
         </div>

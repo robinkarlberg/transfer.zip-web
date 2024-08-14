@@ -232,3 +232,7 @@ export async function search(query) {
 export async function joinWaitlist(email) {
     return await post(`/waitlist/join`, { email })
 }
+
+export async function settings() {
+    return await get("/settings")
+}

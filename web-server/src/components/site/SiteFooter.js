@@ -76,8 +76,8 @@ export default function SiteFooter({ }) {
                         <p>Earn discounts for the up and coming subscription plans.</p>
                         <div className="d-flex flex-column flex-sm-row w-100 gap-2">
                             <label htmlFor="newsletter" className="visually-hidden">Email address</label>
-                            <input ref={emailFieldRef} id="newsletter" type="email" className="form-control" placeholder="Email address" />
-                            <button disabled={loading} className="btn btn-primary" type="submit">{loading ? spinner : "Subscribe"}</button>
+                            <input disabled={successEmail} ref={emailFieldRef} id="newsletter" value={successEmail ? "Thank you! :-)" : undefined} type="email" className="form-control" placeholder="Email address" />
+                            <button disabled={loading || successEmail} className="btn btn-primary" type="submit">{successEmail ? <i className="bi bi-check-lg"></i> : (loading ? spinner : "Subscribe")}</button>
                         </div>
                     </form>
                 </div>

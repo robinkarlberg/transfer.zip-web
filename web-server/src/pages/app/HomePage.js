@@ -74,7 +74,7 @@ export default function HomePage({ }) {
                         stat={getFilesCount()}
                         subtitle={"in storage"}
                     >
-                        <Link to="/app/files" style={{ textDecoration: "none" }}>View files<i className="bi bi-arrow-right-short"></i></Link>
+                        <Link to="/app/storage" style={{ textDecoration: "none" }}>View files<i className="bi bi-arrow-right-short"></i></Link>
                     </StatCard>
                     <StatCard
                         title={"Downloads"}

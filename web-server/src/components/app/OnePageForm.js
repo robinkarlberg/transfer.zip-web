@@ -1,9 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import MaxWidthContainer from "../MaxWidthContainer";
 
 import logo from "../../img/transfer-zip-logotext-cropped.png"
 
 export default function OnePageForm({ children, errorMsg, buttonText, loading, onSubmit, back, additionalFooter }) {
+
+    const { state } = useLocation()
+
+    const prevState = state?.prevState
 
     const _onSubmit = async (e) => {
         e.preventDefault()
@@ -28,7 +32,7 @@ export default function OnePageForm({ children, errorMsg, buttonText, loading, o
                 <main className="form-signin w-100 m-auto p-3">
                     <form onSubmit={_onSubmit}>
                         <div className="d-flex flex-row justify-content-between align-items-center mb-4">
-                            <Link onClick={!back && (() => window.history.back())} to={back}>
+                            <Link onClick={!back && (() => window.history.back())} to={back} state={prevState || undefined}>
                                 <i style={{ fontSize: "25px" }} className="btn bi bi-arrow-left-circle-fill"></i>
                             </Link>
                             <img className="me-4" style={{ maxWidth: "220px" }} src={logo} alt="Transfer.zip logo" />

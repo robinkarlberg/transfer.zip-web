@@ -113,7 +113,7 @@ export default function DownloadPageNew({ }) {
                                     {/* <i className="bi bi-send-fill text-primary me-2 fs-1"></i> */}
                                     <h1 className={"h3 fw-semibold " + (theme == "dark" ? "text-primary-emphasis" : "text-primary")}><i className="bi bi-send-fill me-2"></i>You got files!</h1>
                                 </div>
-                                <h1 className="h5">{download.name || fileCountText}</h1>
+                                <h1 className="h5" style={{ overflowWrap: "break-word" }}>{download.name || fileCountText}</h1>
                                 <small className="text-body-secondary d-block overflow-hidden" style={{ maxHeight: "4.5em" }}>{download.description || "No description."}</small>
                             </div>
                             <hr className="my-0"></hr>

@@ -98,7 +98,7 @@ const router = createBrowserRouter(
                   <Route path=":id" element={<TransferInfoPage />} />
                 </Route>
                 <Route path="statistics" element={<StatisticsPage />} />
-                <Route path="files" element={<FilesPage />} />
+                <Route path="storage" element={<FilesPage />} />
                 <Route path="account" element={<AccountPage />} />
 
                 <Route path="zip-files" element={<ZipFilesAppPage />} >

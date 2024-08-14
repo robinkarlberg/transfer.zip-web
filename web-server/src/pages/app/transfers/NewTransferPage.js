@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import AppGenericPage from "../../../components/app/AppGenericPage";
 import UploadingFilesModal from "../../../components/modals/UploadingFilesModal";
 import { forwardRef, useContext, useEffect, useMemo, useRef, useState } from "react";
@@ -13,69 +13,14 @@ import { addSecondsToCurrentDate, buildNestedStructure, getFileExtension, getFil
 
 const MAX_FILES_DISPLAYED = 5
 
-const DAY_SECONDS = 3600 * 24
-const BYTE_GB = 1073741824
-
-const EXPIRATION_TIMES = [
-    {
-        period: "1 day",
-        seconds: DAY_SECONDS,
-        maxSize: BYTE_GB * 10
-    },
-    {
-        period: "3 days",
-        seconds: DAY_SECONDS * 3,
-        maxSize: BYTE_GB * 8
-    },
-    {
-        period: "7 days",
-        seconds: DAY_SECONDS * 7,
-        maxSize: BYTE_GB * 6
-    },
-    {
-        period: "30 days",
-        seconds: DAY_SECONDS * 30,
-        maxSize: BYTE_GB * 4
-    },
-    {
-        period: "60 days",
-        seconds: DAY_SECONDS * 60,
-        maxSize: BYTE_GB * 2
-    },
-    {
-        period: "3 months",
-        seconds: DAY_SECONDS * 91 * 2,
-        maxSize: BYTE_GB * 1
-    },
-    {
-        period: "1 year",
-        seconds: DAY_SECONDS * 365,
-        maxSize: BYTE_GB * 1
-    },
-    {
-        period: "Never",
-        seconds: 0,
-        maxSize: BYTE_GB * 1
-    }
-];
-
-const getMaxExpirationTimeForSize = (size) => {
-    let last = EXPIRATION_TIMES[0]
-    for (let expTime of EXPIRATION_TIMES.slice(1)) {
-        if (size > expTime.maxSize) return last
-        last = expTime
-    }
-    return last
-}
-
 export default function NewTransferPage({ }) {
-    const { apiTransfers, refreshApiTransfers, hasFetched, setShowUnlockFeatureModal, newApiTransfer } = useContext(ApplicationContext)
-    const { userStorage, isFreeUser } = useContext(AuthContext)
+    const { apiTransfers, refreshApiTransfers, hasFetched, setShowStorageFullModal, newApiTransfer, settings } = useContext(ApplicationContext)
+    const { user, userStorage, isFreeUser, isGuestUser } = useContext(AuthContext)
 
     const [transfer, setTransfer] = useState(null)
 
     const navigate = useNavigate()
-    const { state } = useLocation()
+    const { state, pathname } = useLocation()
 
     const fileInputRef = useRef()
     const folderInputRef = useRef()
@@ -84,7 +29,7 @@ export default function NewTransferPage({ }) {
     const [showTransferNameModal, setShowTransferNameModal] = useState(false)
     const [uploadProgress, setUploadProgress] = useState(null)
 
-    const [expirationTime, setExpirationTime] = useState(EXPIRATION_TIMES[1])
+    const [expirationTime, setExpirationTime] = useState(null)
 
     const [files, setFiles] = useState(state?.files || [])
 
@@ -95,14 +40,50 @@ export default function NewTransferPage({ }) {
         }
     })), [files])
 
+    const getMaxExpirationTimeForSize = (size) => {
+        let last = settings.EXPIRATION_TIMES[0]
+        for (let expTime of settings.EXPIRATION_TIMES.slice(1)) {
+            if (size > expTime.maxSize) return last
+            last = expTime
+        }
+        return last
+    }
+
     const capExpirationTime = () => {
+        if (!expirationTime) return
         if (totalSize > expirationTime.maxSize) {
             console.log(totalSize)
             setExpirationTime(getMaxExpirationTimeForSize(totalSize))
         }
     }
 
+    const CustomToggle = forwardRef(({ children, onClick }, ref) => (
+        <a
+            className="ms-1 text-body"
+            href="#"
+            ref={ref}
+            onClick={(e) => {
+                e.preventDefault();
+                onClick(e);
+            }}
+        >
+            {children}
+            <i className="bi bi-chevron-down fs-6 ms-1"></i>
+        </a>
+    ));
+
     useEffect(capExpirationTime, [files])
+
+    useEffect(() => {
+        console.log(settings)
+        if (settings) {
+            setExpirationTime(settings.EXPIRATION_TIMES[1])
+        }
+    }, [settings])
+
+    if (!expirationTime) {
+        return <></>
+    }
 
     const onFileInputChange = (e) => {
         setFiles([...files, ...e.target.files])
@@ -115,6 +96,7 @@ export default function NewTransferPage({ }) {
 
     const onTransferNameModalDone = async (name) => {
         if (!name) return
+        await Api.updateTransfer(transfer.id, { name })
         setShowTransferNameModal(false)
         refreshApiTransfers()
         navigate("/app/transfers/" + transfer.id)
@@ -127,6 +109,7 @@ export default function NewTransferPage({ }) {
         }
 
         if (userStorage.usedBytes + totalBytes > userStorage.maxBytes) {
+            setShowStorageFullModal(true)
             throw new StorageFullError()
         }
 
@@ -148,26 +131,17 @@ export default function NewTransferPage({ }) {
             })
         }
         setShowUploadingFilesModal(false)
+
         setShowTransferNameModal(true)
+        if (files.length == 1) {
+            await Api.updateTransfer(transfer.id, { name: files[0].name })
+            setTimeout(async () => {
+                refreshApiTransfers()
+                navigate("/app/transfers/" + transfer.id)
+            }, 2000)
+        }
 
     }
-
-    const CustomToggle = forwardRef(({ children, onClick }, ref) => (
-        <a
-            className="ms-1 text-body"
-            href="#"
-            ref={ref}
-            onClick={(e) => {
-                e.preventDefault();
-                onClick(e);
-            }}
-        >
-            {children}
-            <i className="bi bi-chevron-down fs-6 ms-1"></i>
-        </a>
-    ));
-
-
 
     const expirationTimeDropdown = (
         <Dropdown>
@@ -177,8 +151,9 @@ export default function NewTransferPage({ }) {
 
             <Dropdown.Menu>
                 {
-                    EXPIRATION_TIMES.map(x =>
+                    settings.EXPIRATION_TIMES.map(x =>
                         <Dropdown.Item
+                            key={x.period}
                             disabled={totalSize > x.maxSize}
                             onClick={() => setExpirationTime(x)}>
                             <span className={x == expirationTime && "text-primary-emphasis"}>
@@ -200,15 +175,30 @@ export default function NewTransferPage({ }) {
     )
 
     const ListEntry = ({ entry, isDirectory }) => {
+        const removeEntry = () => {
+            console.log(entry)
+            if (isDirectory) {
+                setFiles(files.filter(file => !file.webkitRelativePath || (file.webkitRelativePath.split("/")[0] + "/") !== entry.info.name))
+            }
+            else {
+                setFiles(files.filter(file => file.webkitRelativePath || file.name !== entry.info.name))
+            }
+        }
+
         return (
-            <div className="py-2 px-3 text-body d-flex bg-body-tertiary rounded-4 flex-column">
-                <div><small className="text-truncate d-block">{entry.info.name.replace(/\/$/, "")}</small></div>
-                <div className="text-secondary"><small>{
-                    isDirectory ?
-                        <span><i className="bi bi-folder-fill me-1"></i> Folder<i className="bi bi-dot"></i>{entry.info.size} items</span>
-                        :
-                        <span>{humanFileSize(entry.info.size, true)}<i className={"bi bi-dot"}></i>{humanFileType(entry.info.type)}</span>
-                }</small></div>
+            <div className="py-2 px-3 text-body bg-body-tertiary rounded-4 d-flex flex-row justify-content-between">
+                <div className="d-flex flex-column">
+                    <div><small className="text-truncate d-block">{entry.info.name.replace(/\/$/, "")}</small></div>
+                    <div className="text-secondary"><small>{
+                        isDirectory ?
+                            <span><i className="bi bi-folder-fill me-1"></i> Folder<i className="bi bi-dot"></i>{entry.info.size} items</span>
+                            :
+                            <span>{humanFileSize(entry.info.size, true)}<i className={"bi bi-dot"}></i>{humanFileType(entry.info.type)}</span>
+                    }</small></div>
+                </div>
+                <div className="d-flex flex-column justify-content-center">
+                    <Link className="text-body" onClick={removeEntry}><i className="bi bi-x-lg"></i></Link>
+                </div>
             </div>
         )
     }
@@ -229,9 +219,13 @@ export default function NewTransferPage({ }) {
         // files.slice(0, MAX_FILES_DISPLAYED).map(file => <ListEntry key={file.webkitRelativePath || file.name + file.size + file.lastModified} file={file} />)
     }
 
+    if (user && isGuestUser()) {
+        return <Navigate to={"/signup"} state={{ prevState: state, prevStatePath: pathname }} />
+    }
+
     return (
         <AppGenericPage title={"New Transfer"} titleElement={titleElement}>
-            <TransferNameModal show={showTransferNameModal} onCancel={onTransferNameModalCancel} onDone={onTransferNameModalDone} askForName={true} />
+            <TransferNameModal show={showTransferNameModal} onCancel={onTransferNameModalCancel} onDone={onTransferNameModalDone} askForName={files.length != 1} />
             <UploadingFilesModal show={showUploadingFilesModal} onCancel={() => { }} uploadProgress={uploadProgress} />
 
             <h2 className="mb-3">New Transfer</h2>

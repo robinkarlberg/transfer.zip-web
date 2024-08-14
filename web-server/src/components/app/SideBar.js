@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import logo from "../../img/transfer-zip-logotext-cropped.png"
 import { ProgressBar } from "react-bootstrap"
 import { useContext } from "react"
@@ -7,6 +7,8 @@ import { ApplicationContext } from "../../providers/ApplicationProvider"
 import { isSelfHosted } from "../../utils"
 
 export default function SideBar({ className }) {
+
+    const navigate = useNavigate()
 
     const { setShowUnlockFeatureModal } = useContext(ApplicationContext)
     const { user, isGuestOrFreeUser, isGuestUser, isFreeUser } = useContext(AuthContext)
@@ -38,7 +40,7 @@ export default function SideBar({ className }) {
             </Link>
             {/* <hr /> */}
             <div className="px-4 mb-3">
-                <button className="fw-medium btn btn-primary rounded-pill w-100">
+                <button onClick={() => navigate("/app/transfers/new")} className="fw-medium btn btn-primary rounded-pill w-100">
                     Transfer<i className="ms-2 bi bi-send-fill"></i>
                 </button>
             </div>
@@ -56,7 +58,7 @@ export default function SideBar({ className }) {
                         </NavLink>
                     </li>
                     <li>
-                        <NavLink to="/app/files" disable={disable}>
+                        <NavLink to="/app/storage" disable={disable}>
                             <i className="bi bi-database-fill me-2"></i>Storage
                         </NavLink>
                     </li>

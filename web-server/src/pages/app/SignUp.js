@@ -7,13 +7,17 @@ import { Helmet } from "react-helmet";
 
 export default function SignUp({ }) {
 
+    const { state } = useLocation()
+    const prevState = state?.prevState
+    const prevStatePath = state?.prevStatePath
+
+    const navigate = useNavigate()
+
     const [loading, setLoading] = useState(false)
     const [errorMsg, setErrorMsg] = useState(null)
 
     const emailFieldRef = useRef()
     const passwordFieldRef = useRef()
-
-    const navigate = useNavigate()
 
     const getParams = new URLSearchParams(window.location.search)
 
@@ -28,11 +32,16 @@ export default function SignUp({ }) {
         try {
             const res = await Api.register(emailFieldRef.current.value, passwordFieldRef.current.value)
             if (res.success) {
-                navigate(getParams.get("success") || "/pricing", {
-                    state: {
-                        newSignUp: true
-                    }
-                })
+                if (prevStatePath) {
+                    navigate(prevStatePath, { state: prevState })
+                }
+                else {
+                    navigate(getParams.get("success") || "/pricing", {
+                        state: {
+                            newSignUp: true
+                        }
+                    })
+                }
             }
         }
         catch (err) {
@@ -43,7 +52,7 @@ export default function SignUp({ }) {
         }
     }
 
-    const additionalFooter = <Link to={"/login"}>Have an account?</Link>
+    const additionalFooter = <Link to={"/login"} state={prevStatePath ? { prevState, prevStatePath } : undefined}>Have an account?</Link>
 
     return (
         <>

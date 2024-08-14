@@ -1,6 +1,6 @@
 // https://stackoverflow.com/questions/75652431/how-should-the-createbrowserrouter-and-routerprovider-be-use-with-application-co
 
-import { createContext, useCallback, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 import * as WebRtc from "../webrtc";
@@ -23,14 +23,16 @@ export const ApplicationProvider = () => {
     const [showUnlockFeatureModal, setShowUnlockFeatureModal] = useState(false)
     const [showStorageFullModal, setShowStorageFullModal] = useState(false)
 
+    const [settings, setSettings] = useState(null)
+
     const navigate = useNavigate()
 
     const refreshApiTransfers = useCallback(async () => {
         try {
             const res = await Api.getTransfers()
-            setApiTransfers(res.transfers)
+            setApiTransfers(res.transfers.reverse())
         }
-        catch(e) {
+        catch (e) {
             console.error(e)
         }
         if (!hasFetched) setHasFetched(true)
@@ -43,19 +45,17 @@ export const ApplicationProvider = () => {
     }
 
     const removeTransfer = async (transfer) => {
-        if (transfer.isRealtime) {
-            transfer.worker.close()
-        }
-        else {
-            await Api.deleteTransfer(transfer.id)
-            await refreshApiTransfers() // calls updateAllTransfersList()
-        }
+        await Api.deleteTransfer(transfer.id)
+        await refreshApiTransfers() // calls updateAllTransfersList()
     }
 
     useEffect(() => {
         // WebRtc.createWebSocket()
-        if(!isSelfHosted()) {
+        if (!isSelfHosted()) {
             refreshApiTransfers()
+            Api.settings().then(res => {
+                setSettings(res)
+            })
         }
         // for(let contact of contactsList) {
         //     createContactRtcSession(contact)
@@ -76,11 +76,12 @@ export const ApplicationProvider = () => {
             newApiTransfer,
             hasFetched,
             setShowUnlockFeatureModal,
-            setShowStorageFullModal
+            setShowStorageFullModal,
+            settings
         }}>
             <GenericErrorModal show={errorMessage != null} errorMessage={errorMessage} onCancel={() => { setErrorMessage(null) }} />
-            { !isSelfHosted() && <UnlockFeatureModal show={showUnlockFeatureModal}/> }
-            <StorageFullModal show={showStorageFullModal}/>
+            {!isSelfHosted() && <UnlockFeatureModal show={showUnlockFeatureModal} />}
+            <StorageFullModal show={showStorageFullModal} />
             {/* {!isInfoPage && <Adsense className={"mobile-banner-ad"} data_ad_client="ca-pub-9550547294674683" data_ad_slot="4736473932" />} */}
             <Outlet />
         </ApplicationContext.Provider>
