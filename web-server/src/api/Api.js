@@ -176,6 +176,7 @@ export async function downloadAll(secretCode, password) {
     // TODO: zip files client-side instead of on the server if files are small enough
     // TODO: if zip lib bug is fixed, zip everything client side
     const res = await fetch(`${API_URL}/download/${secretCode}/zip`, {
+        credentials: "include",
         headers: extraHeaders
     })
 
@@ -197,6 +198,7 @@ export async function downloadDlFile(secretCode, fileId, password) {
     // TODO: zip files client-side instead of on the server if files are small enough
     // TODO: if zip lib bug is fixed, zip everything client side
     const res = await fetch(getDownloadLink(secretCode, fileId), {
+        credentials: "include",
         headers: extraHeaders
     })
 
