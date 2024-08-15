@@ -22,6 +22,7 @@ import { buildNestedStructure, humanFileSize, parseTransferExpiryDate, humanTime
 export default function DownloadPageNew({ }) {
     const { secretCode } = useParams()
     const [download, setDownload] = useState(null)
+    const [error, setError] = useState(null)
 
     const [transferPassword, setTransferPassword] = useState(undefined)
     const [showDownloadPasswordModal, setShowDownloadPasswordModal] = useState(false)
@@ -48,6 +49,8 @@ export default function DownloadPageNew({ }) {
             else {
                 setDownload(res.download)
             }
+        }).catch(err => {
+            setError(err.message)
         })
     }, [])
 
@@ -68,6 +71,15 @@ export default function DownloadPageNew({ }) {
             watchMedia.removeEventListener("change", evtListener)
         }
     })
+
+    if(error) {
+        return (
+            <div>
+                <h1>Error</h1>
+                <p>{error}</p>
+            </div>
+        )
+    }
 
     if (download == null || download.hasPassword) {
         return (

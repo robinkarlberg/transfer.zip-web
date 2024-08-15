@@ -10,6 +10,7 @@ import TransferNameModal from "../../../components/modals/TransferNameModal";
 import UploadFilesArea from "../../../components/app/UploadFilesArea";
 import { Dropdown } from "react-bootstrap";
 import { addSecondsToCurrentDate, buildNestedStructure, getFileExtension, getFileIconFromExtension, humanFileSize, humanFileType } from "../../../utils";
+import QuestionMark from "../../../components/QuestionMark";
 
 const MAX_FILES_DISPLAYED = 5
 
@@ -156,8 +157,9 @@ export default function NewTransferPage({ }) {
                             key={x.period}
                             disabled={totalSize > x.maxSize}
                             onClick={() => setExpirationTime(x)}>
-                            <span className={x == expirationTime && "text-primary-emphasis"}>
+                            <span className={"d-flex flex-row justify-content-between " + (x == expirationTime ? "text-primary-emphasis" : "")}>
                                 {x.period}
+                                {totalSize > x.maxSize && <QuestionMark>Expiry time of {x.period} has a limit of {humanFileSize(x.maxSize, true)}</QuestionMark>}
                             </span>
                         </Dropdown.Item>)
                 }
