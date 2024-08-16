@@ -18,6 +18,7 @@ import bg_dark from "../../img/dl/bg_dark.jpeg"
 import SiteFooter from "../../components/site/SiteFooter";
 import MaxWidthContainer from "../../components/MaxWidthContainer";
 import { buildNestedStructure, humanFileSize, parseTransferExpiryDate, humanTimeUntil } from "../../utils";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 export default function DownloadPageNew({ }) {
     const { secretCode } = useParams()
@@ -72,7 +73,7 @@ export default function DownloadPageNew({ }) {
         }
     })
 
-    if(error) {
+    if (error) {
         return (
             <div>
                 <h1>Error</h1>
@@ -95,6 +96,14 @@ export default function DownloadPageNew({ }) {
     const fileCountText = download.files.length + (download.files.length == 1 ? " File" : " Files")
 
     const displayAds = download.displayAds && (process.env.REACT_APP_ADSENSE && process.env.REACT_APP_ADSENSE == "true")
+
+    const renderTooltip = (props) => {
+        return (
+            <Tooltip className="border rounded" {...props}>
+                The preview feature is in development and will be available soon!
+            </Tooltip>
+        )
+    }
 
     return (
         <div data-bs-theme={theme}>
@@ -142,7 +151,13 @@ export default function DownloadPageNew({ }) {
                                 </div>
                             </div>
                             <div className="d-flex flex-row gap-2">
-                                <button disabled className={"btn btn-outline-primary rounded-pill px-3 pe-4 " + (loadingDownload ? "" : "")}><i className="bi bi-search me-2"></i>Preview</button>
+                                <OverlayTrigger placement={"top"} overlay={renderTooltip}>
+                                    <button disabled
+                                        className={"btn btn-outline-primary rounded-pill px-3 pe-4 " + (loadingDownload ? "" : "")}
+                                        style={{ pointerEvents: "all", cursor: "default" }}>
+                                        <i className="bi bi-search me-2"></i>Preview
+                                    </button>
+                                </OverlayTrigger>
                                 <button disabled={loadingDownload} onClick={downloadAll} className="btn btn-primary rounded-pill px-4 flex-grow-1">Download</button>
                             </div>
                         </div>
