@@ -8,7 +8,8 @@ const get = async (endpoint, extraHeaders) => {
     if (isSelfHosted()) throw new Error("Tried to make an API call, but is Self Hosting", endpoint)
     const res = await (await fetch(API_URL + endpoint, {
         credentials: "include",
-        headers: extraHeaders
+        headers: extraHeaders,
+        signal: AbortSignal.timeout(6000)
     })).json()
 
     if (!res.success) {
