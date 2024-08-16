@@ -217,7 +217,7 @@ export default function AboutPage({ }) {
                 <div className="text-center">
                     <h2 className="display-6 fw-bold">Try it today!</h2>
                     <p>No account or credit card required.</p>
-                    <a className="btn btn-primary py-2 px-3" href={process.env.REACT_APP_APP_URL + "/app"}>Open app</a>
+                    <a className="btn btn-primary py-2 px-3" href={"/app"}>Open app</a>
                 </div>
             </MaxWidthContainer>
         </div>
