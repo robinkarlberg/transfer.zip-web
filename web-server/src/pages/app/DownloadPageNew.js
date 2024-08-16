@@ -11,8 +11,8 @@ import landing_bg from "../../img/landing_background.png"
 
 import logo_small from "../../img/transfer-zip-logo-transparent-nopadding.png"
 
-import bg_light from "../../img/dl/bg_light.jpeg"
-import bg_dark from "../../img/dl/bg_dark.jpeg"
+import bg_light_img from "../../img/dl/bg_light.jpeg"
+import bg_dark_img from "../../img/dl/bg_dark.jpeg"
 
 
 import SiteFooter from "../../components/site/SiteFooter";
@@ -32,6 +32,8 @@ export default function DownloadPageNew({ }) {
     const totalSize = useMemo(() => (!download || download.files.length == 0 ? 0 : download.files.reduce((prev, file) => file.info.size + prev, 0)), [download])
     const expiryDate = useMemo(() => !download ? false : parseTransferExpiryDate(download.expiresAt), [download])
 
+    const [settings, setSettings] = useState(null)
+
     const [loadingDownload, setLoadingDownload] = useState(false)
 
     const [theme, setTheme] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light", [])
@@ -42,6 +44,9 @@ export default function DownloadPageNew({ }) {
     }
 
     useEffect(() => {
+        Api.settings().then(res => {
+            setSettings(res)
+        })
         Api.getDownload(secretCode).then(res => {
             console.log(res.download)
             if (res.hasPassword) {
@@ -108,6 +113,8 @@ export default function DownloadPageNew({ }) {
         )
     }
 
+    const backgroundUrl = theme == "dark" ? (settings?.campaign ? settings.campaign.darkUrl : "") : (settings ? settings.campaign.lightUrl : bg_light_img)
+
     return (
         <div data-bs-theme={theme}>
             <div className="m-auto bg-dark-subtle d-flex flex-column vh-100">
@@ -125,11 +132,14 @@ export default function DownloadPageNew({ }) {
 
                 <SiteHeader />
 
-                <div className="flex-grow-1 d-flex flex-column align-items-center bg-dark-subtle px-2 px-md-5" style={{
-                    backgroundImage: "url(" + (theme == "dark" ? "" : bg_light) + ")",
+                <div className="flex-grow-1 d-flex flex-column align-items-center bg-dark-subtle px-2 px-md-5 position-relative" style={{
+                    backgroundImage: "url(" + backgroundUrl + ")",
                     backgroundPosition: "center",
                     backgroundSize: "cover"
                 }}>
+                    {settings?.campaign && <span className="position-absolute start-0 bottom-0 p-2 text-body-secondary"
+                        dangerouslySetInnerHTML={{ __html: settings.campaign.campaignHTML }} />
+                    }
                     <div className="flex-grow-1 text-body d-flex flex-row justify-content-center align-items-center w-100" style={{ maxWidth: "1300px" }}>
                         <div className="bg-body rounded-4 p-3 border d-flex flex-column shadow-lg" style={{ width: "320px", minHeight: "400px" }}>
                             <div className="p-2">
