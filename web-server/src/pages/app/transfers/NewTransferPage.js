@@ -11,6 +11,7 @@ import UploadFilesArea from "../../../components/app/UploadFilesArea";
 import { Dropdown } from "react-bootstrap";
 import { addSecondsToCurrentDate, buildNestedStructure, getFileExtension, getFileIconFromExtension, humanFileSize, humanFileType } from "../../../utils";
 import QuestionMark from "../../../components/QuestionMark";
+import ConfirmModal from "../../../components/modals/ConfirmModal";
 
 const MAX_FILES_DISPLAYED = 5
 
@@ -221,14 +222,22 @@ export default function NewTransferPage({ }) {
         // files.slice(0, MAX_FILES_DISPLAYED).map(file => <ListEntry key={file.webkitRelativePath || file.name + file.size + file.lastModified} file={file} />)
     }
 
-    if (user && isGuestUser()) {
-        return <Navigate to={"/signup"} state={{ prevState: state, prevStatePath: pathname }} />
-    }
+    // if (user && isGuestUser()) {
+    //     return <Navigate to={"/signup"} state={{ prevState: state, prevStatePath: pathname }} />
+    // }
 
     return (
         <AppGenericPage title={"New Transfer"} titleElement={titleElement}>
             <TransferNameModal show={showTransferNameModal} onCancel={onTransferNameModalCancel} onDone={onTransferNameModalDone} askForName={files.length != 1} />
             <UploadingFilesModal show={showUploadingFilesModal} onCancel={() => { }} uploadProgress={uploadProgress} />
+            <ConfirmModal show={user && isGuestUser()} title={"Account required"}
+                description={"Using permanent transfers requires an account. Sign up or use Quick Share instead, which works without an account."}
+                confirmText={"Sign Up"}
+                onConfirm={() => navigate("/signup", { state: { prevState: state, prevStatePath: pathname } })}
+                cancelText={"Use Quick Share"}
+                onCancel={() => navigate("/app/quick-share")}
+                backdrop="static"
+                />
 
             <h2 className="mb-3">New Transfer</h2>
 
