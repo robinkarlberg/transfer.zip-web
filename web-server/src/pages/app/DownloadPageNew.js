@@ -57,8 +57,11 @@ export default function DownloadPageNew({ }) {
 
     const downloadAll = async () => {
         setLoadingDownload(true)
-        await Api.downloadAll(secretCode, transferPassword)
-        setLoadingDownload(false)
+        const timeoutId = setTimeout(() => setLoadingDownload(false), 5000)
+        Api.downloadAll(secretCode, transferPassword).then(() => {
+            clearTimeout(timeoutId)
+            setLoadingDownload(false)
+        })
     }
 
     useEffect(() => {
