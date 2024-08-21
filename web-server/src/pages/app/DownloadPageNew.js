@@ -113,7 +113,7 @@ export default function DownloadPageNew({ }) {
         )
     }
 
-    const backgroundUrl = theme == "dark" ? (settings?.campaign ? settings.campaign.darkUrl : "") : (settings ? settings.campaign.lightUrl : bg_light_img)
+    const backgroundUrl = theme == "dark" ? (settings?.campaign ? settings.campaign.darkUrl : "") : (settings?.campaign ? settings.campaign.lightUrl : bg_light_img)
 
     return (
         <div data-bs-theme={theme}>
