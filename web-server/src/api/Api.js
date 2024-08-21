@@ -134,6 +134,7 @@ export async function uploadTransferFile(file, transferId, cbProgress) {
     const url = `${API_URL}/transfers/${transferId}/files/upload`
     const formData = new FormData()
     formData.append("file", file)
+    formData.append("relativePath", file.webkitRelativePath || file.name)
 
     return await new Promise((resolve) => {
         xhr.onreadystatechange = function () {
@@ -176,6 +177,7 @@ export async function downloadAll(secretCode, password) {
     // TODO: zip files client-side instead of on the server if files are small enough
     // TODO: if zip lib bug is fixed, zip everything client side
     const res = await fetch(`${API_URL}/download/${secretCode}/zip`, {
+        credentials: "include",
         headers: extraHeaders
     })
 
@@ -183,7 +185,7 @@ export async function downloadAll(secretCode, password) {
         type: res.headers["content-type"]
     })
 
-    res.body.pipeTo(fileStream)
+    return res.body.pipeTo(fileStream)
 }
 
 export function getDownloadLink(secretCode, fileId) {
@@ -197,6 +199,7 @@ export async function downloadDlFile(secretCode, fileId, password) {
     // TODO: zip files client-side instead of on the server if files are small enough
     // TODO: if zip lib bug is fixed, zip everything client side
     const res = await fetch(getDownloadLink(secretCode, fileId), {
+        credentials: "include",
         headers: extraHeaders
     })
 
@@ -225,6 +228,14 @@ export async function previewDlFileRawResponse(secretCode, fileId, password) {
     return res
 }
 
+export async function search(query) {
+    return await post(`/search`, { query })
+}
+
 export async function joinWaitlist(email) {
     return await post(`/waitlist/join`, { email })
+}
+
+export async function settings() {
+    return await get("/settings")
 }

@@ -11,7 +11,7 @@ export default function QuestionMark({ placement, children }) {
 
     return (
         <OverlayTrigger placement={placement || "bottom"} overlay={renderTooltip}>
-            <i className="ms-1 bi bi-question-circle"></i>
+            <i className="ms-1 bi bi-question-circle" style={{ pointerEvents: "all" }}></i>
         </OverlayTrigger>
     )
 }

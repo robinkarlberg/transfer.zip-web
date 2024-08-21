@@ -103,7 +103,7 @@ export default function AboutPage({ }) {
                         </p>
                         <div className="ms-1">
                             {/* <Link className="btn btn-primary me-2 px-3" to="/signup">Sign up</Link> */}
-                            <a className="btn btn-primary me-2" href={process.env.REACT_APP_APP_URL + "/app"}>Open app</a>
+                            <a className="btn btn-primary me-2" href="/app">Open app</a>
                             {/* <Link className="btn btn-outline-primary px-3" to="/signup">Sign up</Link> */}
                             <a className="btn btn-sm btn-link" target="_blank" href="https://github.com/robinkarlberg/transfer.zip-web">
                                 <i className="bi bi-star"></i> Star on GitHub {stars && `(${stars})`}
@@ -217,7 +217,7 @@ export default function AboutPage({ }) {
                 <div className="text-center">
                     <h2 className="display-6 fw-bold">Try it today!</h2>
                     <p>No account or credit card required.</p>
-                    <a className="btn btn-primary py-2 px-3" href={process.env.REACT_APP_APP_URL + "/app"}>Open app</a>
+                    <a className="btn btn-primary py-2 px-3" href={"/app"}>Open app</a>
                 </div>
             </MaxWidthContainer>
         </div>

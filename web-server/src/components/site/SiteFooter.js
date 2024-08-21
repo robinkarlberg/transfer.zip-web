@@ -40,7 +40,6 @@ export default function SiteFooter({ }) {
     return (
         <footer className="mt-5">
             <div className="row mx-3">
-
                 <div className="col-6 col-md-2 mb-3">
                     <h5>Tools</h5>
                     <ul className="nav flex-column">
@@ -77,8 +76,8 @@ export default function SiteFooter({ }) {
                         <p>Earn discounts for the up and coming subscription plans.</p>
                         <div className="d-flex flex-column flex-sm-row w-100 gap-2">
                             <label htmlFor="newsletter" className="visually-hidden">Email address</label>
-                            <input ref={emailFieldRef} id="newsletter" type="email" className="form-control" placeholder="Email address" />
-                            <button disabled={loading} className="btn btn-primary" type="submit">{loading ? spinner : "Subscribe"}</button>
+                            <input disabled={successEmail} ref={emailFieldRef} id="newsletter" value={successEmail ? "Thank you! :-)" : undefined} type="email" className="form-control" placeholder="Email address" />
+                            <button disabled={loading || successEmail} className="btn btn-primary" type="submit">{successEmail ? <i className="bi bi-check-lg"></i> : (loading ? spinner : "Subscribe")}</button>
                         </div>
                     </form>
                 </div>
@@ -95,8 +94,9 @@ export default function SiteFooter({ }) {
                 </div>
                 <ul className="nav col-md-4 justify-content-end list-unstyled d-flex fs-3 mb-2">
                     <li className="ms-3"><a className="text-body-secondary" href="https://github.com/robinkarlberg/transfer.zip-web/"><i className="bi bi-github"></i></a></li>
+                    <li className="ms-3"><a className="text-body-secondary" href="https://discord.gg/ZeZqtDdkqj"><i className="bi bi-discord"></i></a></li>
                     <li className="ms-3"><a className="text-body-secondary" href="https://twitter.com/transfer_zip"><i className="bi bi-twitter"></i></a></li>
-                    <li className="ms-3"><a className="text-body-secondary" href="https://instagram.com/transfer.zip"><i className="bi bi-instagram"></i></a></li>
+                    <li className="ms-3"><a className="text-body-secondary" href="https://instagram.com/go.transfer.zip"><i className="bi bi-instagram"></i></a></li>
                     <li className="ms-3"><a className="text-body-secondary" href="https://tiktok.com/@transfer.zip"><i className="bi bi-tiktok"></i></a></li>
                 </ul>
             </div>

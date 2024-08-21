@@ -12,7 +12,7 @@ export default function StatisticsGraphCard({ title, statistics, customInterval 
     }
 
     const groupDownloads = () => {
-        return groupStatisticsByInterval(statistics, interval)
+        return groupStatisticsByInterval(statistics.downloads, interval)
     }
 
     const graphStatistics = () => {

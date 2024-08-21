@@ -26,10 +26,10 @@ export default function AppGenericPage({ className, title, titleElement, require
                         <title>{title} | Transfer.zip - Send large files with no signup, no size limit, for free</title>
                     </Helmet>
                 )}
-                <div className="mx-0 m-4" style={{ height: "29.5px" }}>
+                <div className="mt-4 mb-3">
                     {titleElement || <h4 >{title}</h4>}
                 </div>
-                <hr></hr>
+                {/* <hr></hr> */}
             </div>
             {children}
         </div>

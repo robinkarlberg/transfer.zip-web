@@ -17,11 +17,11 @@ export default function StatisticsPage({ }) {
     const { transfers, apiTransfers, hasFetched } = useContext(ApplicationContext)
     const { userStorage, user, isFreeUser } = useContext(AuthContext)
 
-    const [statistics, setStatistics] = useState([])
+    const [statistics, setStatistics] = useState({})
     const [customInterval, setCustomInterval] = useState(localStorage.getItem("statisticsGraphCardInterval"))
 
     const getDownloadsCount = (interval) => {
-        const grouped = groupStatisticsByInterval(statistics, interval)
+        const grouped = groupStatisticsByInterval(statistics.downloads, interval)
         return grouped.reduce((prev, curr) => prev + curr.value, 0)
     }
 

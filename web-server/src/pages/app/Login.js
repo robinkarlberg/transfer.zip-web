@@ -1,11 +1,18 @@
 import { useContext, useRef, useState } from "react";
 import OnePageForm from "../../components/app/OnePageForm";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import * as Api from "../../api/Api";
 import { Helmet } from "react-helmet";
 
 export default function Login({ }) {
+
+    const { state } = useLocation()
+    const prevState = state?.prevState
+    const prevStatePath = state?.prevStatePath
+
+    const navigate = useNavigate()
+
     const [loading, setLoading] = useState(false)
     const [errorMsg, setErrorMsg] = useState(null)
 
@@ -25,7 +32,12 @@ export default function Login({ }) {
         try {
             const res = await Api.login(emailFieldRef.current.value, passwordFieldRef.current.value)
             if (res.success) {
-                window.location.href = (getParams.get("success") || "/app")
+                if (prevStatePath) {
+                    navigate(prevStatePath, { state: prevState })
+                }
+                else {
+                    window.location.href = (getParams.get("success") || "/app")
+                }
             }
         }
         catch (err) {

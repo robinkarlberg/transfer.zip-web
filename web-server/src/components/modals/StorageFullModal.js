@@ -3,13 +3,16 @@ import { Modal } from "react-bootstrap";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 
 import "./UnlockFeatureModal.css"
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import QuestionMark from "../QuestionMark";
 import { AuthContext } from "../../providers/AuthProvider";
 
 export default function StorageFullModal({ show }) {
     const { setShowStorageFullModal } = useContext(ApplicationContext)
     const { user, isGuestUser } = useContext(AuthContext)
+
+    const { state } = useLocation()
+
 
     const freeIcon = (
         <small className="ms-2 bg-body-secondary rounded-1 fw-bold" style={{ fontSize: "0.7em", padding: "0.2em" }}>FREE</small>
@@ -47,7 +50,7 @@ export default function StorageFullModal({ show }) {
                     <div className="py-3 pb-2">
                         <h2 className="text-center">Storage is full!</h2>
                         <div className="m-auto mb-3" style={{ maxWidth: "480px" }}>
-                            <h6 className="text-center text-body-secondary">Your files are too big. Upgrade your plan today to increase your limit and enjoy many extra features!</h6>
+                            <h6 className="text-center text-body-secondary">Your files are too big. Upgrade your plan today or use Quick Share instead. Quick Share has no size limit.</h6>
                         </div>
                         <div className="mb-4 m-auto" style={{ maxWidth: "510px" }}>
                             <ul className="text-body-secondary list-unstyled ms-2 me-1">
@@ -62,8 +65,8 @@ export default function StorageFullModal({ show }) {
                             </ul>
                         </div>
                         <div className="d-flex flex-row gap-2 justify-content-center">
+                            <Link onClick={() => setShowStorageFullModal(false)} to={"/app/quick-share"} className="btn btn-outline-primary rounded-pill px-5">Use Quick Share</Link>
                             <Link onClick={() => setShowStorageFullModal(false)} to={"/upgrade"} className="btn btn-primary rounded-pill px-5">Upgrade</Link>
-                            {/* <Link onClick={() => setShowUnlockFeatureModal(false)} to={"/login"} className="btn btn-outline-primary rounded-pill px-5">Login</Link> */}
                         </div>
                     </div>
                 </Modal.Body>

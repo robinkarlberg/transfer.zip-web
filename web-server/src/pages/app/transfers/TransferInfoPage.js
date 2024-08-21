@@ -20,11 +20,12 @@ import StatisticsGraphCard from "../../../components/app/StatisticsGraphCard";
 import StorageFullError from "../../../errors/StorageFullError";
 import SentToList from "../../../components/app/SentToList";
 import TransferNameModal from "../../../components/modals/TransferNameModal";
+import ConfirmModal from "../../../components/modals/ConfirmModal";
 
 export default function TransferInfoPage({ }) {
     const { id } = useParams()
     const [transfer, setTransfer] = useState(null)
-    const { apiTransfers, refreshApiTransfers, hasFetched, setShowUnlockFeatureModal } = useContext(ApplicationContext)
+    const { apiTransfers, refreshApiTransfers, hasFetched, setShowUnlockFeatureModal, removeTransfer } = useContext(ApplicationContext)
     const { userStorage, isFreeUser } = useContext(AuthContext)
 
     const { state } = useLocation()
@@ -38,12 +39,13 @@ export default function TransferInfoPage({ }) {
     const [showEditTransferMetaModal, setShowEditTransferMetaModal] = useState(false)
     const [showSetTransferPasswordModal, setShowSetTransferPasswordModal] = useState(false)
     const [showSendByEmailModal, setShowSendByEmailModal] = useState(false)
+    const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false)
 
     const [showCopiedLink, setShowCopiedLink] = useState(false)
     const copiedLinkTooltipTarget = useRef(null)
 
     const interval = "month"
-    const [statistics, setStatistics] = useState([])
+    const [statistics, setStatistics] = useState({})
 
     const updateStatistics = async (fromDate) => {
         const res = await Api.getTransferStatistics(id, 0)
@@ -51,7 +53,7 @@ export default function TransferInfoPage({ }) {
     }
 
     const getDownloadsCount = () => {
-        const grouped = groupStatisticsByInterval(statistics, interval)
+        const grouped = groupStatisticsByInterval(statistics.downloads, interval)
         return grouped.reduce((prev, curr) => prev + curr.value, 0)
     }
 
@@ -152,7 +154,7 @@ export default function TransferInfoPage({ }) {
     useEffect(() => {
         updateStatistics()
         refreshApiTransfer()
-    }, [])
+    }, [id])
 
     if (!id) {
         return <Navigate to={"/app/transfers"} replace={true} />
@@ -186,11 +188,6 @@ export default function TransferInfoPage({ }) {
     const totalFileSizeStat = () => {
         const total = humanFileSizePair(countTotalFileSize(), true)
         return <div>{total.amount}<small>{total.unit}</small></div>
-    }
-
-    const totalDownloadsStat = () => {
-        return transfer.statistics.length
-        // return transfer.statistics.length
     }
 
     const onFilesListAction = (action, file) => {
@@ -239,6 +236,11 @@ export default function TransferInfoPage({ }) {
         else setShowSetTransferPasswordModal(true)
     }
 
+    const onConfirmDeleteModalConfirm = async () => {
+        await removeTransfer(transfer)
+        navigate("/app/transfers", { replace: true })
+    }
+
     return (
         <AppGenericPage title={transfer.name || "Transfer"} titleElement={titleElement}>
             <UploadFilesModal show={showUploadFilesModal} onCancel={() => setShowUploadFilesModal(false)} onDone={onUploadFileModalDone} />
@@ -247,6 +249,12 @@ export default function TransferInfoPage({ }) {
             <EditTransferMetaModal show={showEditTransferMetaModal} onCancel={onEditTransferMetaModalCancel} onDone={onEditTransferMetaModalDone} transfer={transfer} />
             <SetTransferPasswordModal show={showSetTransferPasswordModal} password={transfer.password} onCancel={() => setShowSetTransferPasswordModal(false)} onDone={onSetTransferPasswordModalDone} />
             <SendByEmailModal transfer={transfer} show={showSendByEmailModal} onCancel={() => setShowSendByEmailModal(false)} onDone={onSendByEmailModalDone} />
+            <ConfirmModal show={showConfirmDeleteModal}
+                title={"Delete transfer"}
+                description={"Do you really want to delete this transfer? This will permanently remove all the files, and the download links will stop working."}
+                onCancel={() => setShowConfirmDeleteModal(false)}
+                onConfirm={onConfirmDeleteModalConfirm}
+                />
 
             <h2 className="mb-3">{transfer.name || transfer.id}{lockElement}</h2>
             <div style={{ maxWidth: "800px" }}>
@@ -256,10 +264,11 @@ export default function TransferInfoPage({ }) {
                 </p>
             </div>
             <div className="d-flex flex-row flex-wrap gap-2 mb-3">
-                <button className="btn btn-primary rounded-4 py-1 px-3" onClick={() => setShowUploadFilesModal(true)}><span>Add files</span><i className="bi bi-arrow-right-short"></i></button>
-                <button ref={copiedLinkTooltipTarget} className="btn bg-body-secondary rounded-4 py-1 px-3" onClick={copyLinkButtonClicked}><span>Copy link</span><i className="bi bi-arrow-right-short"></i></button>
-                <button className="btn border-0 bg-body-secondary rounded-4 py-1 px-3" onClick={sendByEmailButtonClicked}><span>Send by email</span><i className="bi bi-arrow-right-short"></i></button>
-                <button className="btn bg-body rounded-4 py-1 px-3" onClick={transferPasswordButtonClicked}><span>Password</span><i className="bi bi-arrow-right-short"></i></button>
+                <button className="btn btn-primary rounded-4 py-1 px-3" onClick={copyLinkButtonClicked} ref={copiedLinkTooltipTarget}><span>Copy link</span><i className="bi bi-arrow-right-short"></i></button>
+                <button className="btn bg-body-secondary rounded-4 py-1 px-3" onClick={sendByEmailButtonClicked}><span>Send by email</span><i className="bi bi-arrow-right-short"></i></button>
+                <button className="btn bg-body-secondary rounded-4 py-1 px-3" onClick={transferPasswordButtonClicked}><span>Password</span><i className="bi bi-arrow-right-short"></i></button>
+                <button className="btn bg-body rounded-4 py-1 px-3" onClick={() => setShowUploadFilesModal(true)}><span>Add files</span><i className="bi bi-arrow-right-short"></i></button>
+                <button className="btn bg-body rounded-4 py-1 px-3" onClick={() => setShowConfirmDeleteModal(true)}><i className="bi bi-trash"></i></button>
                 {/* <button className="btn bg-body rounded-4 py-1 px-3"><span>...</span></button> */}
                 <Overlay target={copiedLinkTooltipTarget.current} show={showCopiedLink} placement="top">
                     {({ ...props }) => (
@@ -274,11 +283,11 @@ export default function TransferInfoPage({ }) {
                     <Link to={"/upgrade"} style={{ textDecoration: "none" }}>Upgrade plan<i className="bi bi-arrow-right-short"></i></Link>
                 </StatCard>
                 <StatCard title={"Files"} stat={transfer.files.length}>
-                    <a href="#" onClick={() => setShowUploadFilesModal(true)} style={{ textDecoration: "none" }}>Add files<i className="bi bi-arrow-right-short"></i></a>
+                    <a href="#" onClick={() => {}} style={{ textDecoration: "none" }}>View files<i className="bi bi-arrow-right-short"></i></a>
                 </StatCard>
                 {!isFreeUser() && (
                     <StatCard title={"Shared With"} stat={transfer.emailsSharedWith?.length}>
-                        <h6 className="text-body-secondary mb-0">{transfer.emailsSharedWith?.length == 1 ? "person" : "people"}</h6>
+                        <h6 className="text-body-secondary mb-0">{transfer.emailsSharedWith?.length == 1 ? "email" : "emails"}</h6>
                     </StatCard>
                 )}
                 <StatCard title={"Downloads"} stat={getDownloadsCount()}>

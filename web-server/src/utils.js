@@ -37,6 +37,13 @@ export function humanFileSizePair(bytes, si = false, dp = 0) {
     return { amount, unit }
 }
 
+export const humanFileType = (type) => {
+    if (!type) return "binary"
+    if (type == "application/octet-stream") return "binary"
+    const split = type.split("/")
+    return split.length <= 1 ? split : split[1].replace(/^x-/, "")
+}
+
 export const getTransferLink = (transfer) => {
     const hash = transfer.k ? `#${transfer.k}` : ""
     return `${window.location.origin}/transfer/${transfer.secretCode}${hash}`
@@ -151,6 +158,8 @@ export const getFileExtension = (filename) => {
 
 export const groupStatisticsByInterval = (statistics, interval) => {
     // groups contains objects: { name: <new Date(obj.time).toISOString().split('T')[0]>, value: 0 }
+    if (!statistics) return []
+    console.log(statistics)
     const groups = []
 
     const now = new Date();
@@ -266,10 +275,103 @@ export const readFileTillEnd = async (file, cbData) => {
     })
 }
 
+export function buildNestedStructure(files) {
+    if (!files) return null
+
+    const root = { directories: [], files: [] };
+
+    files.forEach(file => {
+        const parts = (file.info.relativePath || file.info.name).split('/');
+        let current = root;
+
+        parts.forEach((part, index) => {
+            if (index === parts.length - 1) {
+                // This is a file, add it to the current directory's files array
+                current.files.push({ ...file, info: { ...file.info, name: getFileNameFromPath(file.info.name) } });
+            } else {
+                // This is a directory
+                let dir = current.directories.find(d => d.name === part + "/");
+                if (!dir) {
+                    // If the directory does not exist, create it
+                    dir = { name: part + "/", directories: [], files: [] };
+                    current.directories.push(dir);
+                }
+                current = dir; // Move to the found or created directory
+            }
+        });
+    });
+
+    return root;
+}
+
 export function removeLastEntry(path) {
     const parts = path.split('/');
-    if(parts.pop() == "") {
+    if (parts.pop() == "") {
         parts.pop();
     }
     return parts.join('/').replace(/\/+$/, '') + "/";
+}
+
+export function getFileNameFromPath(path) {
+    return path.split('/').pop();
+}
+
+export function parseTransferExpiryDate(expiresAt) {
+    const date = new Date(expiresAt)
+    if (date.getTime() == 0) return false
+    return date
+}
+
+// ChatGPT ;)
+export function humanTimeUntil(targetDate) {
+    const now = new Date();
+
+    // Calculate the difference in milliseconds
+    let diff = targetDate - now;
+
+    if (diff <= 0) {
+        return "now";
+    }
+
+    // Time calculations for years, days, hours, minutes, and seconds
+    const msInSecond = 1000;
+    const msInMinute = msInSecond * 60;
+    const msInHour = msInMinute * 60;
+    const msInDay = msInHour * 24;
+    const msInYear = msInDay * 365;  // Approximation, ignoring leap years
+
+    const years = Math.floor(diff / msInYear);
+    if (years > 0) {
+        const remaining = diff - years * msInYear;
+        if (remaining >= msInYear / 2) return `${years + 1}y`;
+        return `${years}y`;
+    }
+
+    const days = Math.floor(diff / msInDay);
+    if (days > 0) {
+        const remaining = diff - days * msInDay;
+        if (remaining >= msInDay / 2) return `${days + 1}d`;
+        return `${days}d`;
+    }
+
+    const hours = Math.floor(diff / msInHour);
+    if (hours > 0) {
+        const remaining = diff - hours * msInHour;
+        if (remaining >= msInHour / 2) return `${hours + 1}h`;
+        return `${hours}h`;
+    }
+
+    const minutes = Math.floor(diff / msInMinute);
+    if (minutes > 0) {
+        const remaining = diff - minutes * msInMinute;
+        if (remaining >= msInMinute / 2) return `${minutes + 1}m`;
+        return `${minutes}m`;
+    }
+
+    const seconds = Math.floor(diff / msInSecond);
+    return `${seconds}s`;
+}
+
+export function addSecondsToCurrentDate(seconds) {
+    return new Date(Date.now() + (seconds * 1000))
 }

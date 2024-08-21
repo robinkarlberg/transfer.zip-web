@@ -12,7 +12,7 @@ import FilesList from "../../components/app/FilesList"
 import StorageStatCard from "../../components/app/statcards/StorageStatCard"
 
 export default function FilesPage({ }) {
-    const { apiTransfers, newApiTransferAndNavigate, newRealtimeTransferAndNavigate, hasFetched } = useContext(ApplicationContext)
+    const { apiTransfers, hasFetched } = useContext(ApplicationContext)
     // const { transfers: realtimeTransfers } = useContext(FileTransferContext)
 
     const navigate = useNavigate()
@@ -38,7 +38,7 @@ export default function FilesPage({ }) {
             files.push(...x.files)
         })
         files.sort((a, b) => b.info.size - a.info.size)
-        return files
+        return files.slice(0, 20)
     }
 
     const onFilesListAction = (action, file) => {
@@ -61,15 +61,15 @@ export default function FilesPage({ }) {
     }
 
     return (
-        <AppGenericPage requireAuth={true} title={"Files"} className={"FilesPage"}>
+        <AppGenericPage requireAuth={true} title={"Storage"} className={"FilesPage"}>
             <div className="d-flex flex-row flex-wrap gap-3 mb-3">
                 <StatCard title={"Files"} stat={getFilesCount()} subtitle={`in ${getApiTransfersCount()} transfers`}>
                     <Link to="/app/transfers" style={{ textDecoration: "none" }}>View transfers<i className="bi bi-arrow-right-short"></i></Link>
                 </StatCard>
                 <StorageStatCard />
             </div>
-            <h4>Your Largest Files</h4>
-            <FilesList onAction={onFilesListAction} files={getFiles()} maxWidth={"800px"} />
+            <h5>Your Largest Files</h5>
+            <FilesList onAction={onFilesListAction} files={getFiles()} maxWidth={"800px"} noDirectories={true}/>
         </AppGenericPage>
     )
 }
