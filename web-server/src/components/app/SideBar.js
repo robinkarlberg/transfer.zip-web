@@ -40,7 +40,7 @@ export default function SideBar({ className }) {
             </Link>
             {/* <hr /> */}
             <div className="px-4 mb-3">
-                <button onClick={() => navigate("/app/transfers/new")} className="fw-medium btn btn-primary rounded-pill w-100">
+                <button onClick={() => navigate(isSelfHosted() ? "/app/quick-share" : "/app/transfers/new")} className="fw-medium btn btn-primary rounded-pill w-100">
                     Transfer<i className="ms-2 bi bi-send-fill"></i>
                 </button>
             </div>

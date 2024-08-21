@@ -73,7 +73,7 @@ const router = createBrowserRouter(
             <Route path="/tools">
               <Route path="zip-files-online" element={<ZipFilesSitePage />} />
               <Route path="unzip-files-online" element={<UnzipFilesSitePage />} />
-              <Route path="send-zip-file" element={<ShareZipFileSitePage/>}/>
+              <Route path="send-zip-file" element={<ShareZipFileSitePage />} />
             </Route>
 
             <Route path="*" element={<Navigate to={"/"} replace={true} />} />
@@ -144,7 +144,17 @@ const selfHostRouter = createBrowserRouter(
                   {/* <Route path=":id" element={<TransferInfoPage />} /> */}
                 </Route>
               </Route>
-              <Route path="zip-files" element={<ZipFilesAppPage />} />
+
+              <Route path="zip-files" element={<ZipFilesAppPage />} >
+                <Route path="" element={<ZipFilesAppNew />} />
+                <Route path="progress" element={<ZipFilesAppProgress />} />
+                <Route path="finished" element={<ZipFilesAppFinished />} />
+              </Route>
+
+              <Route path="unzip-files" element={<UnzipFilesAppPage />} >
+                <Route path="" element={<UnzipFilesAppNew />} />
+                <Route path="view" element={<UnzipFilesAppView />} />
+              </Route>
             </Route>
           </Route>
           <Route path="*" element={<EmptyPage />} />

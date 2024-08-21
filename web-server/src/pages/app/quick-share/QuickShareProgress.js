@@ -327,7 +327,7 @@ export default function QuickShareProgress({ }) {
                         :
                         <p className="text-danger"><b className="text-danger">Error: </b>{errorMessage}</p>
                     }
-                    {!errorMessage && (transferState == TRANSFER_STATE_IDLE || transferState == TRANSFER_STATE_CONNECTING || transferState == TRANSFER_STATE_TRANSFERRING) && (
+                    {!isSelfHosted() && !errorMessage && (transferState == TRANSFER_STATE_IDLE || transferState == TRANSFER_STATE_CONNECTING || transferState == TRANSFER_STATE_TRANSFERRING) && (
                         <div className="dx-none dx-md-block">
                             <div className={"border border-secondary bg-secondary-subtle rounded-4 d-inline-block " + (isSentLinkWithHash ? "py-1 px-2" : "py-2 px-3")}>
                                 <div>
