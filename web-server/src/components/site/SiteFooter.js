@@ -45,7 +45,7 @@ export default function SiteFooter({ }) {
                     <ul className="nav flex-column">
                         <li className="nav-item mb-2"><Link to="/tools/zip-files-online" className="nav-link p-0 text-body-secondary">Zip Files Online</Link></li>
                         <li className="nav-item mb-2"><Link to="/tools/unzip-files-online" className="nav-link p-0 text-body-secondary">Unzip File Online</Link></li>
-                        <li className="nav-item mb-2"><Link to="/tools/send-zip-file" className="nav-link p-0 text-body-secondary">Send Zip File</Link></li>
+                        {/* <li className="nav-item mb-2"><Link to="/tools/send-zip-file" className="nav-link p-0 text-body-secondary">Send Zip File</Link></li> */}
                         {/* <li className="nav-item mb-2"><Link to="/tools/share-100gb-file" className="nav-link p-0 text-body-secondary">Share 100GB File</Link></li> */}
                         {/* <li className="nav-item mb-2"><Link to="/tools/share-big-video-file" className="nav-link p-0 text-body-secondary">Share big video file</Link></li> */}
                         {/* <li className="nav-item mb-2"><Link to="#" className="nav-link p-0 text-body-secondary">About</Link></li> */}
@@ -57,6 +57,7 @@ export default function SiteFooter({ }) {
                         <li className="nav-item mb-2"><Link to="https://blog.transfer.zip/posts/best-mediafire-alternatives-to-store-files-in-2024/" className="nav-link p-0 text-body-secondary">Mediafire alternatives</Link></li>
                         <li className="nav-item mb-2"><Link to="https://blog.transfer.zip/posts/how-send-100gb-files-for-free/" className="nav-link p-0 text-body-secondary">Send 100GB files for free</Link></li>
                         <li className="nav-item mb-2"><Link to="https://blog.transfer.zip/posts/how-to-send-large-audio-files/" className="nav-link p-0 text-body-secondary">Send large audio files</Link></li>
+                        <li className="nav-item mb-2"><Link to="https://blog.transfer.zip/" className="nav-link p-0 text-body-secondary">Blog</Link></li>
                     </ul>
                 </div>
 
@@ -65,8 +66,8 @@ export default function SiteFooter({ }) {
                     <ul className="nav flex-column">
                         <li className="nav-item mb-2"><Link to="/pricing" className="nav-link p-0 text-body-secondary">Pricing</Link></li>
                         <li className="nav-item mb-2"><Link to="/pricing#faq" className="nav-link p-0 text-body-secondary">FAQ</Link></li>
-                        <li className="nav-item mb-2"><Link to="https://blog.transfer.zip/" className="nav-link p-0 text-body-secondary">Blog</Link></li>
-                        {/* <li className="nav-item mb-2"><Link to="/" className="nav-link p-0 text-body-secondary">About</Link></li> */}
+                        <li className="nav-item mb-2"><Link to="/legal/privacy-policy" className="nav-link p-0 text-body-secondary">Privacy Policy</Link></li>
+                        <li className="nav-item mb-2"><Link to="/legal/terms-of-service" className="nav-link p-0 text-body-secondary">Terms of Service</Link></li>
                     </ul>
                 </div>
 

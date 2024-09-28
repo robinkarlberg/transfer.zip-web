@@ -73,7 +73,7 @@ const router = createBrowserRouter(
             <Route path="/tools">
               <Route path="zip-files-online" element={<ZipFilesSitePage />} />
               <Route path="unzip-files-online" element={<UnzipFilesSitePage />} />
-              <Route path="send-zip-file" element={<ShareZipFileSitePage />} />
+              {/* <Route path="send-zip-file" element={<ShareZipFileSitePage />} /> */}
             </Route>
 
             <Route path="*" element={<Navigate to={"/"} replace={true} />} />

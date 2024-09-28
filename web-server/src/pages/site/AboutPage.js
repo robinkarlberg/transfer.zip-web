@@ -187,10 +187,10 @@ export default function AboutPage({ }) {
                             By using peer-to-peer connections, we eliminate the need for a server, which greatly improves transfer speeds.
                             This also helps keep the cost of the service down to the minimum, by not using a server when possible.
                         </p>
-                        <h3>So... Transfer Smarter!</h3>
-                        {/* <p className="fs-5">
+                        <h3 className="h2">So, Transfer Smarter!</h3>
+                        <p className="fs-5">
                             Ideal for professionals and hobbyists alike. Whenever you need to share files, use Transfer.zip!
-                        </p> */}
+                        </p>
                     </div>
                 </div>
                 <div className="d-flex flex-row flex-wrap py-4 gap-3">

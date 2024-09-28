@@ -19,7 +19,7 @@ export default function ZipFilesSitePage({ }) {
             ]}
             related={[
                 { to: "/tools/unzip-files-online", title: "Unzip File Online" },
-                { to: "/tools/send-zip-file", title: "Send Zip File" }
+                // { to: "/tools/send-zip-file", title: "Send Zip File" }
             ]}
             >
             <div className="bg-body-tertiary shadow-lg rounded-4">
