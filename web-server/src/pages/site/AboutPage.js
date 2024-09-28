@@ -153,8 +153,8 @@ export default function AboutPage({ }) {
                         <div style={{ minWidth: "260px" }}>
                             <h1 className="h2 fw-bold text-body">Share your <span className="text-primary">{ /*most important*/}big</span> files while keeping them secure.</h1>
                             <p className="text-body-secondary mb-2">
-                                Wether you want to send a 4K movie, share a screenshot or collaborate on creative projects, 
-                                your files are stored encrypted for no one to see except you and your peers. 
+                                Wether you want to send a 4K movie, share a screenshot or collaborate on creative projects,
+                                your files are stored encrypted for no one to see except you and your peers.
                             </p>
                         </div>
                     </div>
@@ -182,8 +182,15 @@ export default function AboutPage({ }) {
             <MaxWidthContainer maxWidth={"1100px"} className="bg-body-secondary py-5 px-3">
                 <div>
                     <div className="m-auto mt-5">
-                        <h2 className="display-5 fw-bold">Transfer smarter.</h2>
-                        <p>Ideal for professionals and hobbyists alike. Whenever you need to share files, use Transfer.zip!</p>
+                        <h2 className="display-5 fw-bold">The <span className="">fastest</span> - and <span className="text-primary">cheapest</span> way.</h2>
+                        <p className="fs-4">
+                            By using peer-to-peer connections, we eliminate the need for a server, which greatly improves transfer speeds.
+                            This also helps keep the cost of the service down to the minimum, by not using a server when possible.
+                        </p>
+                        <h3>So... Transfer Smarter!</h3>
+                        {/* <p className="fs-5">
+                            Ideal for professionals and hobbyists alike. Whenever you need to share files, use Transfer.zip!
+                        </p> */}
                     </div>
                 </div>
                 <div className="d-flex flex-row flex-wrap py-4 gap-3">
