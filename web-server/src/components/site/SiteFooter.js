@@ -66,7 +66,7 @@ export default function SiteFooter({ }) {
                     <ul className="nav flex-column">
                         <li className="nav-item mb-2"><Link to="/pricing" className="nav-link p-0 text-body-secondary">Pricing</Link></li>
                         <li className="nav-item mb-2"><Link to="/pricing#faq" className="nav-link p-0 text-body-secondary">FAQ</Link></li>
-                        <li className="nav-item mb-2"><Link to="/legal/privacy-policy" className="nav-link p-0 text-body-secondary">Privacy Policy</Link></li>
+                        <li className="nav-item mb-2"><Link to="https://privacypolice.ai/policy/Transfer.zip" className="nav-link p-0 text-body-secondary">Privacy Policy</Link></li>
                         <li className="nav-item mb-2"><Link to="/legal/terms-and-conditions" className="nav-link p-0 text-body-secondary">Terms and Conditions</Link></li>
                     </ul>
                 </div>
