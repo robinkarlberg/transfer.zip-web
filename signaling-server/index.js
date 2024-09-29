@@ -103,9 +103,9 @@ function handleBinaryData(conn, _data) {
 
         let recipientConn;
         if ((recipientConn = sessions.get(targetId))) {
-            if(recipientConn.bufferedAmount > 100_000_000) {    // 100MB
-                console.log("High bufferedAmount:", recipientConn.bufferedAmount)
-            }
+            // if(recipientConn.bufferedAmount > 100_000_000) {    // 100MB
+            //     console.log("High bufferedAmount:", recipientConn.bufferedAmount)
+            // }
             packetDataView.setInt8(0, SPKT_RELAY)   // Change to server packet type before sending back
             recipientConn.send(packet)
         }
