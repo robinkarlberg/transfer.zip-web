@@ -11,3 +11,7 @@ services:
     restart: unless-stopped
     ports:
       - 127.0.0.1:9002:8001
+    deploy:
+      resources:
+        limits:
+          memory: 2700M
