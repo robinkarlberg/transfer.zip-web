@@ -8,6 +8,9 @@ export default function PrivacyPolicyPage({ }) {
             </Helmet>
             <div className="m-auto mt-4" style={{ maxWidth: "1100px" }}>
                 <h1 className="display-5 fw-bold">Privacy Policy</h1>
+                <div className="mb-3 fs-5">
+                    <a href="https://privacypolice.ai/policy/Transfer.zip">View a Summary of our Privacy Policy<i className="bi bi-arrow-right-short"></i></a>
+                </div>
                 <div className="" style={{ maxWidth: "700px" }}>
                     <p><strong>Introduction</strong></p>
                     <p>Welcome to Transfer.zip (transfer.zip). Your privacy is our top priority, and we are committed to collecting as little data as absolutely needed to keep the service running. We handle your personal information with the utmost care and respect, ensuring that it is never ever sold for profit. This privacy policy details our minimal data collection practices and our dedication to protecting your personal information when you use our services.</p>
