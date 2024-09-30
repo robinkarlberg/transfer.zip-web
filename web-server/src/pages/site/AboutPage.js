@@ -80,7 +80,7 @@ export default function AboutPage({ }) {
             </Helmet>
             <div className="Landing-div d-flex" style={
                 {
-                    minHeight: "max(80vh, 700px)",
+                    minHeight: "max(70vh, 700px)",
                     backgroundImage: "url(" + landing_bg + ")",
                     backgroundPosition: "center",
                     backgroundSize: "cover"
@@ -144,6 +144,38 @@ export default function AboutPage({ }) {
                     </div>
                 </div>
             </div>
+            <div className="bg-body text-body px-3 px-sm-5" data-bs-theme="dark">
+                <div className="m-auto" style={{ maxWidth: "1500px" }}>
+                    <div className="pt-4 pb-0 d-flex justify-content-center rounded-pill">
+                        <h4 className="text-center"><i className="bi bi-trophy me-2"></i>Trusted by 8000+ users every month!</h4>
+                    </div>
+                    <ul className="d-flex flex-row flex-wrap justify-content-center list-unstyled mb-0 pt-4 pb-4 gap-4">
+                        <li style={{ maxWidth: "400px" }} className="text-body-secondary">
+                            <div className="fs-6">
+                                <i className="bi bi-quote me-1"></i>
+                                <span>F*****g THANK you. Everyone else has recommended site that all have limits on file size that are just too small for me ... </span>
+                            </div>
+                            <a className="text-body-tertiary" href="https://www.reddit.com/r/techsupport/comments/bjqmm6/comment/lj01kxe/">-Bravo-Xray</a>
+                        </li>
+                        <li style={{ maxWidth: "400px" }}>
+                            <div className="fs-5">
+                                <i className="bi bi-quote me-1"></i>
+                                <span>Love how simple and no-BS Transfer.zip is.</span>
+                            </div>
+                            <a className="text-body" href="https://www.reddit.com/r/techsupport/comments/bjqmm6/comment/kilzfob/">-maddogmdd</a>
+                        </li>
+                        <li style={{ maxWidth: "400px" }} className="text-body-secondary">
+                            <div className="fs-6">
+                                <i className="bi bi-quote me-1"></i>
+                                <span>
+                                    ... after spending hours browsing for a simple way to send a 23 GB file, this is the answer.
+                                </span>
+                            </div>
+                            <a className="text-body-tertiary" href="https://www.reddit.com/r/techsupport/comments/bjqmm6/comment/lgjz9lh/">-amca12006</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
             <div id="about" className="clip overflow-hidden px-3 px-sm-5 bg-secondary-subtle" data-bs-theme="dark" style={{ clipPath: "margin-box" }}>
                 <div className="m-auto" style={{ maxWidth: "1200px" }}>
                     <div className="d-flex flex-column flex-md-row-reverse pt-5" style={{ height: "400px" }}>
@@ -183,7 +215,7 @@ export default function AboutPage({ }) {
                 <div>
                     <div className="m-auto mt-5">
                         <h2 className="display-5 fw-bold">The <span className="">fastest</span> - and <span className="text-primary">cheapest</span> way.</h2>
-                        <p className="fs-4">
+                        <p className="fs-5 mb-5">
                             By using peer-to-peer connections, we eliminate the need for a server, which greatly improves transfer speeds.
                             This also helps keep the cost of the service down to the minimum, by not using a server when possible.
                         </p>
