@@ -20,6 +20,7 @@ export default function AppGenericPage({ className, title, titleElement, require
 
     return (
         <div className={"text-body px-4 w-100  " + className}>
+            
             <div>
                 {title && (
                     <Helmet>

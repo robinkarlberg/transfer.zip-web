@@ -56,7 +56,9 @@ export default function SignUp({ }) {
 
     return (
         <>
-
+            <div className="d-block bg-warning-subtle text-warning-emphasis text-center p-2">
+                <span><b>Maintenance:</b> logins and permanent transfers are unavailable from today until 2/10</span>
+            </div>
             <Helmet>
                 <title>Sign Up | Transfer.zip - Send large files with no signup, no size limit, for free</title>
             </Helmet>

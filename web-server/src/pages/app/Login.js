@@ -55,6 +55,9 @@ export default function Login({ }) {
             <Helmet>
                 <title>Login | Transfer.zip - Send large files with no signup, no size limit, for free</title>
             </Helmet>
+            <div className="d-block bg-warning-subtle text-warning-emphasis text-center p-2">
+                <span><b>Maintenance:</b> logins and permanent transfers are unavailable from today until 2/10</span>
+            </div>
             <OnePageForm errorMsg={errorMsg} buttonText="Sign in" loading={loading} onSubmit={onSubmit} back={getParams.get("back")} additionalFooter={additionalFooter} >
                 <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
 

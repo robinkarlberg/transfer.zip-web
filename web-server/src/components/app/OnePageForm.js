@@ -25,7 +25,7 @@ export default function OnePageForm({ children, errorMsg, buttonText, loading, o
             {errorMsg}
         </div>
     )
-    
+
     return (
         <div className="OnePageForm min-vh-100 d-flex flex-column bg-body-tertiary justify-content-center">
             <MaxWidthContainer className="" maxWidth={"330px"}>
