@@ -7,9 +7,9 @@ export default function Site() {
   return (
     <div className="Site bg-body text-body" data-bs-theme="light">
       <ScrollRestoration />
-      <div className="d-block bg-warning-subtle text-warning-emphasis text-center p-2">
+      {/* <div className="d-block bg-warning-subtle text-warning-emphasis text-center p-2">
         <span><b>Maintenance:</b> logins and permanent transfers are unavailable from today until 2/10</span>
-      </div>
+      </div> */}
       <SiteHeader />
       <Outlet />
       <MaxWidthContainer>
