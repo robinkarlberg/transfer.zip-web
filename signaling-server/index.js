@@ -118,17 +118,25 @@ function handleBinaryData(conn, _data) {
             // }
             if (conn._relay_packets % (DEFAULT_PACKET_BUDGET / 4) == 0) {
                 const sendPacketBudget = () => {
+                    console.log("Finally sending packet budget:", DEFAULT_PACKET_BUDGET)
                     conn.send(constructPacketBudgetPacket(callerId, targetId, DEFAULT_PACKET_BUDGET))
                 }
-                if (recipientConn.bufferedAmount > 100_000_000) {
+
+                const waitingFunction = async () => {
                     if (recipientConn.bufferedAmount > 500_000_000) {
                         console.log("recipientConn bufferedAmount > 500_000_000:", recipientConn.bufferedAmount, " - Terminating connection!")
                         closeConnWithReason(recipientConn, "The sender is ignoring packet budget, they are sending packets too fast!")
                         closeConnWithReason(conn, "Ignoring packet budget, you are sending packets too fast!")
                         return
                     }
-                    console.log("recipientConn bufferedAmount > 100_000_000:", recipientConn.bufferedAmount, " - Waiting for drain event before sending packet budget.")
-                    conn.once("drain", () => sendPacketBudget)
+                    console.log("recipientConn bufferedAmount > 100_000_000:", recipientConn.bufferedAmount, " - Waiting for better conditions before sending packet budget.")
+                    while(recipientConn.bufferedAmount > 100_000_000) {
+                        await new Promise(resolve => setTimeout(resolve, 500))
+                    }
+                }
+
+                if (recipientConn.bufferedAmount > 100_000_000) {
+                    waitingFunction()
                 }
                 else {
                     sendPacketBudget()

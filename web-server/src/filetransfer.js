@@ -255,7 +255,7 @@ export class FileTransfer {
 
         while(this.channel.dataPacketBudget <= 0) {
             console.log("PACKET BUDGET == 0:", this.channel.dataPacketBudget, " - Waiting...")
-            await new Promise(resolve => setTimeout(resolve, 10))   // ugly af
+            await new Promise(resolve => setTimeout(resolve, 500))   // ugly af
         }
 
 		if(this.internalBufferedAmount + fileData.byteLength >= this.INTERNAL_BUFFER_MAX_SIZE) {
