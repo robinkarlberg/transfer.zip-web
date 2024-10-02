@@ -197,7 +197,9 @@ export class FileTransfer {
      * @param {Uint8Array} data 
      */
     sendData(data) {
-        // console.log(data)
+        if(this.channel instanceof RelayChannel) {
+            this.channel.dataPacketBudget -= 1
+        }
         this.channel.send(data)
     }
 
@@ -250,6 +252,12 @@ export class FileTransfer {
             // this.channel.send(fileData)
 			// return ws.send(this._constructPacket(fileData))
 		}
+
+        while(this.channel.dataPacketBudget <= 0) {
+            console.log("PACKET BUDGET == 0:", this.channel.dataPacketBudget, " - Waiting...")
+            await new Promise(resolve => setTimeout(resolve, 10))   // ugly af
+        }
+
 		if(this.internalBufferedAmount + fileData.byteLength >= this.INTERNAL_BUFFER_MAX_SIZE) {
 			await this._sendQueuedData()
 		}

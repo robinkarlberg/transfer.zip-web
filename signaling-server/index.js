@@ -18,6 +18,9 @@ const SPKT_RELAY = 14
 const SPKT_SWITCH_TO_FALLBACK = 15
 const SPKT_SWITCH_TO_FALLBACK_ACK = 16
 const SPKT_P2P_FAILED = 17
+const SPKT_RELAY_BUDGET = 99
+
+const DEFAULT_PACKET_BUDGET = 256
 
 const textEnc = new TextEncoder()
 const textDec = new TextDecoder()
@@ -81,6 +84,17 @@ const closeConnWithReason = (conn, reason) => {
     conn.close()
 }
 
+const constructPacketBudgetPacket = (targetId, sessionId, packetBudget) => {
+    const packet = new Uint8Array(1 + 36 + 36 + 4)
+    const packetDataView = new DataView(packet.buffer)
+    packetDataView.setInt8(0, SPKT_RELAY_BUDGET)
+
+    packet.set(encodeString(targetId), 1)
+    packet.set(encodeString(sessionId), 1 + 36)
+    packetDataView.setInt32(1 + 36 + 36, packetBudget)
+    return packet
+}
+
 function handleBinaryData(conn, _data) {
     const packet = new Uint8Array(_data)
     const packetDataView = new DataView(packet.buffer)
@@ -88,24 +102,39 @@ function handleBinaryData(conn, _data) {
 
     if (packetId == CPKT_RELAY) {
         const targetId = decodeString(packet.subarray(1, 1 + 36))
-        // const callerId = decodeString(packet.subarray(1 + 36, 1 + 36 + 36))
+        const callerId = decodeString(packet.subarray(1 + 36, 1 + 36 + 36))
 
-        // const callerSession = sessions.get(callerId)
-        // if (!callerSession) return closeConnWithReason(conn, "[CPKT_RELAY] Specified callerId does not exist", callerId)
-
-        // if(conn._session.relayBytesTransfered == undefined) {
-        //     conn._session.relayBytesTransfered = 0
-        // }
-        // conn._session.relayBytesTransfered += packet.byteLength - 1 - 36 -36
-        // if(conn._session.relayBytesTransfered > 10.3e9) {    // ~10GB free user relay limit
-        //     return closeConnWithReason(conn, "[CPKT_RELAY] 15GiB quota for free user exceeded.")
-        // }
+        if (!conn._relay_packets) {
+            conn._relay_packets = 1
+        }
+        else {
+            conn._relay_packets += 1
+        }
 
         let recipientConn;
         if ((recipientConn = sessions.get(targetId))) {
             // if(recipientConn.bufferedAmount > 100_000_000) {    // 100MB
             //     console.log("High bufferedAmount:", recipientConn.bufferedAmount)
             // }
+            if (conn._relay_packets % (DEFAULT_PACKET_BUDGET / 4) == 0) {
+                const sendPacketBudget = () => {
+                    conn.send(constructPacketBudgetPacket(callerId, targetId, DEFAULT_PACKET_BUDGET))
+                }
+                if (recipientConn.bufferedAmount > 100_000_000) {
+                    if (recipientConn.bufferedAmount > 500_000_000) {
+                        console.log("recipientConn bufferedAmount > 500_000_000:", recipientConn.bufferedAmount, " - Terminating connection!")
+                        closeConnWithReason(recipientConn, "The sender is ignoring packet budget, they are sending packets too fast!")
+                        closeConnWithReason(conn, "Ignoring packet budget, you are sending packets too fast!")
+                        return
+                    }
+                    console.log("recipientConn bufferedAmount > 100_000_000:", recipientConn.bufferedAmount, " - Waiting for drain event before sending packet budget.")
+                    conn.once("drain", () => sendPacketBudget)
+                }
+                else {
+                    sendPacketBudget()
+                }
+            }
+
             packetDataView.setInt8(0, SPKT_RELAY)   // Change to server packet type before sending back
             recipientConn.send(packet)
         }

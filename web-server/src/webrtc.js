@@ -49,6 +49,7 @@ const SPKT_RELAY = 14
 const SPKT_SWITCH_TO_FALLBACK = 15
 const SPKT_SWITCH_TO_FALLBACK_ACK = 16
 const SPKT_P2P_FAILED = 17
+const SPKT_RELAY_BUDGET = 99
 
 let WS_URL
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
@@ -152,13 +153,13 @@ export const createWebSocket = () => {
 			const packet = new Uint8Array(e.data)
 			const packetDataView = new DataView(packet.buffer)
 			const packetId = packetDataView.getInt8(0)
-			if (packetId == SPKT_RELAY) {
+			if (packetId == SPKT_RELAY || packetId == SPKT_RELAY_BUDGET) {
 				const targetId = decodeString(packet.subarray(1, 1 + 36))
 				const callerId = decodeString(packet.subarray(1 + 36, 1 + 36 + 36))
 				// const targetId = packetDataView.
 				for (let rtcSession of activeRtcSessions) {
 					if (rtcSession.sessionId === targetId) {
-						rtcSession.onbinarydata && rtcSession.onbinarydata(e.data.slice(1 + 36 + 36), callerId)
+						rtcSession.onbinarydata && rtcSession.onbinarydata(e.data.slice(1 + 36 + 36), packetId)
 					}
 				}
 			}
@@ -203,13 +204,14 @@ export const closeWebSocket = () => {
 export class RelayChannel {
 	binaryType = "arraybuffer"
 	bufferedAmount = 0
+	dataPacketBudget = Number.MAX_SAFE_INTEGER
 
 	constructor(rtcSession, targetId) {
 		this.rtcSession = rtcSession
 		this.targetId = targetId
 		this.messageListeners = []
-		this.rtcSession.onbinarydata = (data) => {
-			this.onbinarydata.bind(this, data)()
+		this.rtcSession.onbinarydata = (data, packetId) => {
+			this.onbinarydata.bind(this, data, packetId)()
 		}
 	}
 
@@ -217,9 +219,17 @@ export class RelayChannel {
 		this.bufferedAmount = ws.bufferedAmount
 	}
 
-	onbinarydata = function (data) {
-		for (const messageListener of this.messageListeners) {
-			messageListener({ data })	// Mimic Event object
+	onbinarydata = function (data, packetId) {
+		if(packetId === SPKT_RELAY_BUDGET) {
+			const dataView = new DataView(data)
+			const packetBudget = dataView.getInt32(0)
+			console.log("Received packet budget:", packetBudget)
+			this.setPacketBudget(packetBudget)
+		}
+		else {
+			for (const messageListener of this.messageListeners) {
+				messageListener({ data })	// Mimic Event object
+			}
 		}
 	}
 
@@ -235,6 +245,9 @@ export class RelayChannel {
 	}
 
 	send(data) {
+		if(this.dataPacketBudget < 0) {
+			console.error("dataPacketBudget LESS THAN 0 when SENDING, THIS SHOULD NOT HAPPEN!!")
+		}
 		if (!(data instanceof Uint8Array)) {
 			return console.error("[WebRtc] [RelayChannel] send: data is not of type Uint8Array!! Got", typeof (data), "instead:", data)
 		}
@@ -245,6 +258,10 @@ export class RelayChannel {
 	addEventListener(event, fn) {
 		if (event == "message") this.messageListeners.push(fn)
 		else console.warn("[WebRtc] [RelayChannel] addEventListener: Unknown event name:", event)
+	}
+
+	setPacketBudget(pb) {
+		this.dataPacketBudget = pb
 	}
 }
 
