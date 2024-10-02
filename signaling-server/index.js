@@ -133,6 +133,7 @@ function handleBinaryData(conn, _data) {
                     while(recipientConn.bufferedAmount > 100_000_000) {
                         await new Promise(resolve => setTimeout(resolve, 500))
                     }
+                    sendPacketBudget()
                 }
 
                 if (recipientConn.bufferedAmount > 100_000_000) {
