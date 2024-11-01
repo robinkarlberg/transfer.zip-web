@@ -89,22 +89,12 @@ export default function AboutPage({ }) {
                     <div className="d-flex flex-column justfiy-content-start align-items-start flex-wrap" style={{ minWidth: "300px", maxWidth: "700px" }}>
                         <h1 className="display-5 fw-bold mb-2">The <span className="text-primary">universal</span> file transfer solution.</h1>
                         <p className="text-body-secondary fs-5 d-flex flex-column mb-3">
-                            {/* transfer.zip is <b>free</b>, <b>fast</b> and <b>encrypted</b>, all while being open-source.  */}
-                            {/* Wether you want to send a 4K movie, share a screenshot or collaborate on creative projects, use transfer.zip to
-              send files <b>without size limits</b>, even for free, using WebRTC technology. */}
                             <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Unlimited file size with Quick Share</b></div>
                             <div><i className="bi bi-caret-right-fill fs-6"></i> End-to-end encryption</div>
-                            {/* <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Statistics</b> for your transfers</div> */}
-                            {/* <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Customize</b> download pages</div> */}
-                            {/* <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Fast</b> download speeds</div> */}
-                            {/* <div><i className="bi bi-caret-right-fill fs-6"></i> Open source</div> */}
                             <div><i className="bi bi-caret-right-fill fs-6"></i> No account required</div>
-                            {/* <div><i className="bi bi-caret-right-fill fs-6"></i> <b>Branded</b> download pages</div> */}
                         </p>
                         <div className="ms-1">
-                            {/* <Link className="btn btn-primary me-2 px-3" to="/signup">Sign up</Link> */}
                             <a className="btn btn-primary me-2" href="/app">Open app</a>
-                            {/* <Link className="btn btn-outline-primary px-3" to="/signup">Sign up</Link> */}
                             <a className="btn btn-sm btn-link" target="_blank" href="https://github.com/robinkarlberg/transfer.zip-web">
                                 <i className="bi bi-star"></i> Star on GitHub {stars && `(${stars})`}
                             </a>
@@ -113,9 +103,6 @@ export default function AboutPage({ }) {
                     <div className="bg-body-tertiary shadow-lg rounded-4">
                         <div className="d-flex flex-column flex-wrap gap-3 justify-content-center mt-2 p-md-4">
                             <div style={{ maxWidth: "400px" }}>
-                                {/* <div className="text-center">
-                                    <h2 className="mb-4 fw-bold">Try it out:</h2>
-                                </div> */}
                                 <UploadFilesArea allowFolders={true} onFilesChange={onFilesChange} className="bg-body rounded-4" style={{ minWidth: "300px" }} />
                             </div>
                             <div>
