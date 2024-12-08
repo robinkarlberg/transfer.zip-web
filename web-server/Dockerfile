@@ -1,11 +1,9 @@
-FROM node:alpine3.19 as build
+FROM node:lts-alpine3.19 AS build
 
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-# COPY . .
 
-# RUN ls -alh && sleep 10
 RUN npm i
 
 COPY src/ src/
