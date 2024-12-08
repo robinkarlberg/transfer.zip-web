@@ -3,14 +3,16 @@ FROM node:alpine3.19 as build
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-COPY src/ src/
-COPY public/ public/
-
-COPY .env .env
 # COPY . .
 
 # RUN ls -alh && sleep 10
 RUN npm i
+
+COPY src/ src/
+COPY public/ public/
+
+COPY .env .env
+
 RUN npm run build
 
 FROM nginx:alpine as serve
