@@ -57,73 +57,76 @@ import UnzipFilesAppNew from "./pages/app/tools/unzip/UnzipFilesAppNew";
 import NewTransferPage from "./pages/app/transfers/NewTransferPage";
 import ShareZipFileSitePage from "./pages/site/tools/ShareZipFileSitePage";
 import DownloadPageNew from "./pages/app/DownloadPageNew";
+import { SponsorButtonRoute } from "./providers/SponsorButtonProvider";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route element={<AnalyticsHelmet />}>
-      <Route element={<FilePickerProvider />}>
-        <Route path="/transfer/:secretCode" element={<DownloadPageNew />} />
-        <Route element={<AuthProvider ignoreVerification={true} />}>
-          <Route path="/" element={<Site />}>
-            <Route path="/" element={<AboutPage />} />
-            <Route path="pricing" element={<PricingPage />} />
-            <Route path="legal/privacy-policy" element={<PrivacyPolicyPage />} />
-            <Route path="legal/terms-and-conditions" element={<TermsOfConditionsPage />} />
+      <Route element={<SponsorButtonRoute />}>
+        <Route element={<FilePickerProvider />}>
+          <Route path="/transfer/:secretCode" element={<DownloadPageNew />} />
+          <Route element={<AuthProvider ignoreVerification={true} />}>
+            <Route path="/" element={<Site />}>
+              <Route path="/" element={<AboutPage />} />
+              <Route path="pricing" element={<PricingPage />} />
+              <Route path="legal/privacy-policy" element={<PrivacyPolicyPage />} />
+              <Route path="legal/terms-and-conditions" element={<TermsOfConditionsPage />} />
 
-            <Route path="/tools">
-              <Route path="zip-files-online" element={<ZipFilesSitePage />} />
-              <Route path="unzip-files-online" element={<UnzipFilesSitePage />} />
-              {/* <Route path="send-zip-file" element={<ShareZipFileSitePage />} /> */}
+              <Route path="/tools">
+                <Route path="zip-files-online" element={<ZipFilesSitePage />} />
+                <Route path="unzip-files-online" element={<UnzipFilesSitePage />} />
+                {/* <Route path="send-zip-file" element={<ShareZipFileSitePage />} /> */}
+              </Route>
+
+              <Route path="*" element={<Navigate to={"/"} replace={true} />} />
             </Route>
-
-            <Route path="*" element={<Navigate to={"/"} replace={true} />} />
           </Route>
-        </Route>
-        <Route element={<AuthProvider />}>
-          <Route element={<ApplicationProvider />}>
-            <Route element={<App />}>
-              <Route path="/app">
-                <Route element={<QuickShareProvider />}>
-                  <Route path="quick-share" element={<QuickSharePage />}>
-                    <Route path="" element={<QuickShareNew />} />
-                    <Route path="progress" element={<QuickShareProgress />} />
-                    {/* <Route path="progress" element={<TransfersPage />} /> */}
-                    {/* <Route path=":id" element={<TransferInfoPage />} /> */}
+          <Route element={<AuthProvider />}>
+            <Route element={<ApplicationProvider />}>
+              <Route element={<App />}>
+                <Route path="/app">
+                  <Route element={<QuickShareProvider />}>
+                    <Route path="quick-share" element={<QuickSharePage />}>
+                      <Route path="" element={<QuickShareNew />} />
+                      <Route path="progress" element={<QuickShareProgress />} />
+                      {/* <Route path="progress" element={<TransfersPage />} /> */}
+                      {/* <Route path=":id" element={<TransferInfoPage />} /> */}
+                    </Route>
                   </Route>
-                </Route>
-                <Route path="dashboard" element={<HomePage />} />
-                <Route path="transfers">
-                  <Route path="" element={<TransfersPage />} />
-                  <Route path="new" element={<NewTransferPage />} />
-                  <Route path=":id" element={<TransferInfoPage />} />
-                </Route>
-                <Route path="statistics" element={<StatisticsPage />} />
-                <Route path="storage" element={<FilesPage />} />
-                <Route path="account" element={<AccountPage />} />
+                  <Route path="dashboard" element={<HomePage />} />
+                  <Route path="transfers">
+                    <Route path="" element={<TransfersPage />} />
+                    <Route path="new" element={<NewTransferPage />} />
+                    <Route path=":id" element={<TransferInfoPage />} />
+                  </Route>
+                  <Route path="statistics" element={<StatisticsPage />} />
+                  <Route path="storage" element={<FilesPage />} />
+                  <Route path="account" element={<AccountPage />} />
 
-                <Route path="zip-files" element={<ZipFilesAppPage />} >
-                  <Route path="" element={<ZipFilesAppNew />} />
-                  <Route path="progress" element={<ZipFilesAppProgress />} />
-                  <Route path="finished" element={<ZipFilesAppFinished />} />
-                </Route>
+                  <Route path="zip-files" element={<ZipFilesAppPage />} >
+                    <Route path="" element={<ZipFilesAppNew />} />
+                    <Route path="progress" element={<ZipFilesAppProgress />} />
+                    <Route path="finished" element={<ZipFilesAppFinished />} />
+                  </Route>
 
-                <Route path="unzip-files" element={<UnzipFilesAppPage />} >
-                  <Route path="" element={<UnzipFilesAppNew />} />
-                  <Route path="view" element={<UnzipFilesAppView />} />
-                </Route>
+                  <Route path="unzip-files" element={<UnzipFilesAppPage />} >
+                    <Route path="" element={<UnzipFilesAppNew />} />
+                    <Route path="view" element={<UnzipFilesAppView />} />
+                  </Route>
 
-                <Route path="" element={<EmptyPage />} />
+                  <Route path="" element={<EmptyPage />} />
+                </Route>
               </Route>
             </Route>
           </Route>
+          <Route path="/upgrade" element={<Navigate to={"/pricing"} replace={true} />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/verify-account" element={<VerifyAccount />} />
+          <Route path="/reset-password" element={<ResetPasswordRequest />} />
+          <Route path="/change-password" element={<ChangePassword />} />
+          <Route path="/join-waitlist" element={<JoinWaitlistPage />} />
         </Route>
-        <Route path="/upgrade" element={<Navigate to={"/pricing"} replace={true} />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/verify-account" element={<VerifyAccount />} />
-        <Route path="/reset-password" element={<ResetPasswordRequest />} />
-        <Route path="/change-password" element={<ChangePassword />} />
-        <Route path="/join-waitlist" element={<JoinWaitlistPage />} />
       </Route>
     </Route >
   )
