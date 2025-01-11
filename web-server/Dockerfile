@@ -1,16 +1,16 @@
-FROM node:alpine3.19 as build
+FROM node:lts-alpine3.19 AS build
 
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+
+RUN npm i
+
 COPY src/ src/
 COPY public/ public/
 
 COPY .env .env
-# COPY . .
 
-# RUN ls -alh && sleep 10
-RUN npm i
 RUN npm run build
 
 FROM nginx:alpine as serve

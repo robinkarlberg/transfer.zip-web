@@ -45,7 +45,7 @@ export default function SiteFooter({ }) {
                     <ul className="nav flex-column">
                         <li className="nav-item mb-2"><Link to="/tools/zip-files-online" className="nav-link p-0 text-body-secondary">Zip Files Online</Link></li>
                         <li className="nav-item mb-2"><Link to="/tools/unzip-files-online" className="nav-link p-0 text-body-secondary">Unzip File Online</Link></li>
-                        {/* <li className="nav-item mb-2"><Link to="/tools/send-zip-file" className="nav-link p-0 text-body-secondary">Send Zip File</Link></li> */}
+                        <li className="nav-item mb-2"><Link to="https://sponsorapp.io/" className="nav-link p-0 text-body-secondary">SponsorApp</Link></li>
                         {/* <li className="nav-item mb-2"><Link to="/tools/share-100gb-file" className="nav-link p-0 text-body-secondary">Share 100GB File</Link></li> */}
                         {/* <li className="nav-item mb-2"><Link to="/tools/share-big-video-file" className="nav-link p-0 text-body-secondary">Share big video file</Link></li> */}
                         {/* <li className="nav-item mb-2"><Link to="#" className="nav-link p-0 text-body-secondary">About</Link></li> */}
@@ -88,7 +88,7 @@ export default function SiteFooter({ }) {
                     <Link to="/" className="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
                         <img style={{ width: "50px" }} src={logo_small}></img>
                     </Link>
-                    <span className="mb-3 mb-md-0 text-body-secondary">&copy; 2024 Robin K</span>
+                    <span className="mb-3 mb-md-0 text-body-secondary">&copy; 2025 Robin K</span>
                 </div>
                 <div className="d-none d-sm-flex text-center flex-row flex-sm-row gap-2 mb-2">
                     <a style={{ textDecoration: "none" }} href="#"><span className="text-body-secondary">Made with <small><i className="bi bi-heart-fill text-danger"></i></small> in 🇸🇪</span></a>

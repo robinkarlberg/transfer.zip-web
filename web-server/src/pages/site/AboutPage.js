@@ -147,7 +147,7 @@ export default function AboutPage({ }) {
             <div className="bg-body text-body px-3 px-sm-5" data-bs-theme="dark">
                 <div className="m-auto" style={{ maxWidth: "1500px" }}>
                     <div className="pt-4 pb-0 d-flex justify-content-center rounded-pill">
-                        <h4 className="text-center"><i className="bi bi-trophy me-2"></i>Trusted by 8000+ users every month!</h4>
+                        <h4 className="text-center"><i className="bi bi-trophy me-2"></i>Trusted by 10000+ users every month!</h4>
                     </div>
                     <ul className="d-flex flex-row flex-wrap justify-content-center list-unstyled mb-0 pt-4 pb-4 gap-4">
                         <li style={{ maxWidth: "400px" }} className="text-body-secondary">
