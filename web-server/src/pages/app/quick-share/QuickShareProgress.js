@@ -337,7 +337,7 @@ export default function QuickShareProgress({ }) {
                                     </p>
                                     {!isSentLinkWithHash && transferDirection == "S" &&
                                         <Link to={"/app/transfers/new"} state={{ files }} style={{ textDecoration: "none" }} className="">
-                                            Upload files permanently<i className="bi bi-arrow-right-short"></i>
+                                            Upload files for longer<i className="bi bi-arrow-right-short"></i>
                                         </Link>
                                     }
                                 </div>

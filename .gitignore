@@ -1,3 +1,4 @@
 ads.txt
 start.sh
 .env
+.DS_Store

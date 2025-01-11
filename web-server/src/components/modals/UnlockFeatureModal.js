@@ -50,7 +50,7 @@ export default function UnlockFeatureModal({ show }) {
                         </p>
                         <div className="mb-4 m-auto" style={{ maxWidth: "450px" }}>
                             <ul className="text-body-secondary list-unstyled ms-2 me-1 d-flex flex-column gap-2">
-                                {isGuestUser() && <ListItem icon={"bi-server"} title={"Transfers"} subtitle={"Store files permanently and share them."} plan={"FREE"} />}
+                                {isGuestUser() && <ListItem icon={"bi-server"} title={"Transfers"} subtitle={"Store files for longer and share them."} plan={"FREE"} />}
                                 {isGuestUser() ? (
                                     <ListItem icon={"bi-graph-up"} title={"Statistics"} plan={"COMING SOON"} />
                                 ) : (
