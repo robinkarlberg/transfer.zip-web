@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap"
+    rel="stylesheet"> -->
+
+  <meta charset="utf-8" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>%REACT_APP_SITE_NAME% - Make money with your website - add a sponsor button to your site. </title>
+  <meta name="description" content='Make money with your website - add a sponsor button to your site. Ethical monetization made simple.' />
+
+  <!-- Include Eruda script if REACT_APP_ERUDA is set to 1 -->
+  <script>
+    // Simulating condition check in HTML
+    if ('%REACT_APP_ERUDA%' === '1') {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/eruda';
+      document.head.appendChild(script);
+
+      script.onload = function () {
+        eruda.init();
+      };
+    }
+  </script>
+
+</head>
+
+<body>
+  <div id="root"></div>
+</body>
+
+</html>

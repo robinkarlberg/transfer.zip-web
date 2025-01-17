@@ -1,4 +1,5 @@
-ads.txt
-start.sh
+node_modules/
 .env
+db/
+/data/
 .DS_Store

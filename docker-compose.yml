@@ -1,0 +1,27 @@
+services:
+  mongo:
+    image: mongo
+    restart: unless-stopped
+    volumes:
+      - ./db:/data/db
+    ports:
+      - 127.0.0.1:${MONGODB_FORWARD_PORT:-27017}:27017
+    env_file:
+      - .env
+
+  api:
+    build: api
+    restart: unless-stopped
+    # ports:
+    #   - 127.0.0.1:${API_PORT:-3000}:3000
+    env_file:
+      - api/.env
+      - .env
+
+  frontend:
+    build:
+      context: frontend
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:${WEB_SERVER_FORWARD_PORT:-10000}:80
+    

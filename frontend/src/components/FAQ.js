@@ -1,0 +1,71 @@
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react"
+import BIcon from './BIcon'
+
+const faqs = [
+  {
+    question: "How are messages moderated?",
+    answer:
+      "All messages must undergo a thorough moderation algorithm to ensure compliance and quality standards. Unlike other solutions, site-owners will not need to worry about malicious messages/advertisements. We ensure no malicious or spammy content appears on your site."
+  },
+  {
+    question: "What payment methods are accepted?",
+    answer:
+      "We accept all major credit cards using our payment processor Stripe.",
+  },
+  {
+    question: "Do you accept PayPal?",
+    answer:
+      "Not at the moment. It will definitely be supported in the future.",
+  },
+  // {
+  //   question: "How can I sign up for the service?",
+  //   answer:
+  //     `Currently, ${process.env.REACT_APP_SITE_NAME} is invite-only. You can join the waitlist.`
+  // },
+  {
+    question: "Is there a free trial available?",
+    answer:
+      "Our product is already free to use for site-owners. There is no need for a free trial!"
+  },
+  {
+    question: "How do I contact support if I encounter an issue?",
+    answer:
+      "You can contact our support team via the 'Support' button further down on the site.",
+  },
+  {
+    question: "Can I cancel my account?",
+    answer:
+      "Yes, you can cancel your account by contacting support.",
+  },
+  // More questions can be added as needed...
+]
+
+export default function FAQ() {
+  return (
+    <div className="bg-white" id="faq">
+      <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-40">
+        <div className="mx-auto max-w-4xl divide-y divide-gray-900/10">
+          <h2 className="text-2xl font-bold leading-10 tracking-tight text-gray-900">Frequently asked questions</h2>
+          <dl className="mt-10 space-y-6 divide-y divide-gray-900/10">
+            {faqs.map((faq) => (
+              <Disclosure key={faq.question} as="div" className="pt-6">
+                <dt>
+                  <DisclosureButton className="group flex w-full items-start justify-between text-left text-gray-900">
+                    <span className="text-base font-semibold leading-7">{faq.question}</span>
+                    <span className="ml-6 flex h-7 items-center">
+                      <BIcon name={"plus-lg"} aria-hidden="true" className="h-6 w-6 group-data-[open]:hidden" />
+                      <BIcon name={"dash-lg"} aria-hidden="true" className="h-6 w-6 [.group:not([data-open])_&]:hidden" />
+                    </span>
+                  </DisclosureButton>
+                </dt>
+                <DisclosurePanel as="dd" className="mt-2 pr-12">
+                  <p className="text-base leading-7 text-gray-600">{faq.answer}</p>
+                </DisclosurePanel>
+              </Disclosure>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </div>
+  )
+}
