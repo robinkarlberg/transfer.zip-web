@@ -45,7 +45,7 @@ export default function SiteFooter({ }) {
                     <ul className="nav flex-column">
                         <li className="nav-item mb-2"><Link to="/tools/zip-files-online" className="nav-link p-0 text-body-secondary">Zip Files Online</Link></li>
                         <li className="nav-item mb-2"><Link to="/tools/unzip-files-online" className="nav-link p-0 text-body-secondary">Unzip File Online</Link></li>
-                        <li className="nav-item mb-2"><Link to="https://sponsorapp.io/" className="nav-link p-0 text-body-secondary">SponsorApp</Link></li>
+                        {/* <li className="nav-item mb-2"><Link to="https://sponsorapp.io/" className="nav-link p-0 text-body-secondary">SponsorApp</Link></li> */}
                         {/* <li className="nav-item mb-2"><Link to="/tools/share-100gb-file" className="nav-link p-0 text-body-secondary">Share 100GB File</Link></li> */}
                         {/* <li className="nav-item mb-2"><Link to="/tools/share-big-video-file" className="nav-link p-0 text-body-secondary">Share big video file</Link></li> */}
                         {/* <li className="nav-item mb-2"><Link to="#" className="nav-link p-0 text-body-secondary">About</Link></li> */}
