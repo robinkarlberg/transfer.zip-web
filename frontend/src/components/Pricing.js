@@ -6,32 +6,26 @@ import { isWaitlist } from "../utils"
 
 const tiers = [
   {
-    name: 'Our Cut',
+    name: 'Simple',
     id: 'our-cut',
-    price: '10%',
-    lifetime: true,
+    price: '$9',
+    lifetime: false,
     description: "We retain a modest 10% to keep the service running and provide customer service.",
     features: [
-      'We secure the payments',
-      'We talk to the advertisers',
-      'We display the advertisements',
-      'We handle the business-side',
+      'Send files of any size',
+      'Store files up to 1TB',
     ],
     featured: false
   },
   {
-    name: 'Your Cut',
+    name: 'Pro',
     id: 'your-cut',
-    price: '90%',
-    lifetime: true,
+    price: '$29',
+    lifetime: false,
     description: 'Keep 90% of your income, empowering you to keep more of what you earn and invest in your passion.',
     features: [
-      'Payouts directly to your bank account',
-      'No hidden fees',
-      'No subscription plan',
-      'Use on unlimited websites',
-      'Get sponsored without contacting sponsors',
-      'Easiest way for sponsors to find you',
+      'Send files of any size',
+      'Store 10TB files',
     ],
     featured: true
   },
@@ -94,7 +88,7 @@ export default function Pricing() {
               >
                 {tier.price}
               </span>
-              {/* <span className={classNames(tier.featured ? 'text-gray-400' : 'text-gray-500', 'text-base')}>{tier.lifetime ? "once" : "/month"}</span> */}
+              <span className={classNames(tier.featured ? 'text-gray-400' : 'text-gray-500', 'text-base')}>{tier.lifetime ? "once" : "/month"}</span>
             </p>
             <p className={classNames(tier.featured ? 'text-gray-300' : 'text-gray-600', 'mt-6 text-base/7')}>
               {tier.description}

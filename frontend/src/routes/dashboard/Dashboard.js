@@ -5,8 +5,6 @@ import { AuthContext } from "../../providers/AuthProvider";
 import Dropdown from "../../components/elements/Dropdown";
 import { DashboardContext } from "../../providers/DashboardProvider";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
-import AddDomainModal from "../../components/elements/modals/AddDomainModal";
-import DomainSettingsModal from "../../components/elements/modals/DomainSettingsModal";
 
 import logo from "../../img/icon.png"
 
@@ -19,7 +17,7 @@ export default function Dashboard({ }) {
 
   const { displayGenericModal } = useContext(ApplicationContext)
   const { user, isGuestUser } = useContext(AuthContext)
-  const { selectedTenant, setSelectedTenantId, setShowAddDomainModal } = useContext(DashboardContext)
+  const { selectedTenant, setSelectedTenantId } = useContext(DashboardContext)
   const [selectedTenantSettings, setSelectedTenantSettings] = useState(null)
 
   const [open, setOpen] = useState(true)
@@ -118,7 +116,7 @@ export default function Dashboard({ }) {
             }),
             [
               {
-                title: <span><BIcon name={"plus"} className={"me-1"} />Add Domain</span>, onClick: () => setShowAddDomainModal(true)
+                title: <span><BIcon name={"plus"} className={"me-1"} />Add Domain</span>, onClick: () => {}
               }
             ]
           ]} />
@@ -135,7 +133,6 @@ export default function Dashboard({ }) {
 
   return (
     <Wrapper>
-      <DomainSettingsModal show={!!selectedTenantSettings} onClose={() => setSelectedTenantSettings(null)} tenant={selectedTenantSettings} />
       {loaded}
     </Wrapper>
   )

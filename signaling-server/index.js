@@ -36,25 +36,26 @@ const decodeString = (arr) => {
 const wss = new WebSocketServer({
     host: "0.0.0.0",
     port: 8001,
+}, () => {
+    console.log("WebSocket server is listening on ws://0.0.0.0:8001");
 });
 
 const sessions = new Map();
 
 const deleteSession = sessionId => {
-    console.log("Deleting session:", sessionId)
+    console.log("Deleting session:", sessionId);
     sessions.delete(sessionId);
 }
 
 wss.on("connection", conn => {
-    console.log("conn");
+    console.log("Connection established");
 
     conn.on("message", (data, isBinary) => {
         try {
             if (!isBinary) {
-                handleTextMessage(conn, data)
-            }
-            else {
-                handleBinaryData(conn, data)
+                handleTextMessage(conn, data);
+            } else {
+                handleBinaryData(conn, data);
             }
         } catch (err) {
             console.error(err);
@@ -63,21 +64,20 @@ wss.on("connection", conn => {
     });
 
     conn.on("close", () => {
-        console.log("Connection closed")
+        console.log("Connection closed");
         if (conn._session?.ids) {
             for (let id of conn._session.ids) {
-                deleteSession(id)
+                deleteSession(id);
             }
-        }
-        else {
-            console.log("Connection closed, but no session ids were found to delete")
+        } else {
+            console.log("Connection closed, but no session ids were found to delete");
         }
     });
 });
 
 wss.on("error", e => {
-    console.err(e)
-})
+    console.error(e);
+});
 
 const closeConnWithReason = (conn, reason) => {
     console.log("Closing conn: " + reason)
@@ -130,7 +130,7 @@ function handleBinaryData(conn, _data) {
                         return
                     }
                     console.log("recipientConn bufferedAmount > 100_000_000:", recipientConn.bufferedAmount, " - Waiting for better conditions before sending packet budget.")
-                    while(recipientConn.bufferedAmount > 100_000_000) {
+                    while (recipientConn.bufferedAmount > 100_000_000) {
                         await new Promise(resolve => setTimeout(resolve, 500))
                     }
                     sendPacketBudget()

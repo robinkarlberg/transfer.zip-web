@@ -44,7 +44,7 @@ export default function Footer({ }) {
               <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white">Other Projects</h2>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 <li className="mb-4">
-                  <a href="https://transfer.zip/" className="hover:underline ">Transfer.zip</a>
+                  <a href="https://SponsorApp.io/" className="hover:underline ">SponsorApp</a>
                 </li>
                 <li>
                   <a href="https://privacypolice.ai/" className="hover:underline">Privacy Police</a>

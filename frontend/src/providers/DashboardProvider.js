@@ -1,12 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react"
 import { Outlet } from "react-router-dom"
 import { AuthContext } from "./AuthProvider";
-import { createAccountSession, getStripeAccount, getTenant } from "../Api";
-import VerifyDomainModal from "../components/elements/modals/VerifyDomainModal";
-import DomainSettingsModal from "../components/elements/modals/DomainSettingsModal";
+import { createAccountSession, getStripeAccount } from "../Api";
 import { loadConnectAndInitialize } from "@stripe/connect-js";
 import { ConnectComponentsProvider } from "@stripe/react-connect-js";
-import AddDomainModal from "../components/elements/modals/AddDomainModal";
 
 export const DashboardContext = createContext({})
 
@@ -40,12 +37,10 @@ export const DashboardProvider = () => {
     const [selectedTenant, setSelectedTenant] = useState(null)
 
     const refreshTenant = async () => {
-        const res = await getTenant(selectedTenantId)
-        setSelectedTenant(res.tenant)
+        // const res = await getTenant(selectedTenantId)
+        // setSelectedTenant(res.tenant)
     }
 
-    const [showAddDomainModal, setShowAddDomainModal] = useState(false)
-    
     const [stripeAccountData, setStripeAccountData] = useState(null)
 
     const [stripeConnectInstance, setStripeConnectInstance] = useState(undefined);
@@ -101,9 +96,7 @@ export const DashboardProvider = () => {
             refreshTenant,
             stripeConnectInstance,
             stripeAccountData,
-            setShowAddDomainModal
         }}>
-            <AddDomainModal show={showAddDomainModal} onClose={() => setShowAddDomainModal(false)} />
             {stripeConnectInstance ?
                 <ConnectComponentsProvider connectInstance={stripeConnectInstance}>
                     <Outlet />

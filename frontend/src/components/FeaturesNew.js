@@ -1,6 +1,4 @@
 import BIcon from "./BIcon"
-import SponsorDemoScreenshot from "../img/SponsorDemoScreenshot.png"
-import product_video from "../img/SponsorDemo.mp4"
 
 const features = [
   {
@@ -15,16 +13,13 @@ const features = [
   },
 ]
 
-export default function Features4() {
+export default function FeaturesNew() {
   return (
     <div className="bg-white py-24 sm:py-32" id="features2">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className="text-base/7 font-semibold text-primary">Sponsorships</h2>
+          <h2 className="text-base/7 font-semibold text-primary">End-to-end encryption</h2>
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            {/* Ditch Adsense. <span className="underline decoration-dashed decoration-primary">Monetize Ethically</span>. */}
-            {/* Creators ❤️ SponsorApp */}
-            {/* Like BuyMeACoffee and AdSense got a baby. */}
             Go beyond simple donations.
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
@@ -55,9 +50,9 @@ export default function Features4() {
             className="mx-auto rounded-xl w-full max-w-4xl"
             loop
             controls
-            poster={SponsorDemoScreenshot}
+            // poster={SponsorDemoScreenshot}
           >
-            <source src={product_video} type="video/mp4" />
+            {/* <source src={product_video} type="video/mp4" /> */}
           </video>
         </div>
       </div>

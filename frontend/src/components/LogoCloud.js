@@ -1,7 +1,6 @@
 import react from "../img/logo-react.png"
 import wp from "../img/logo-wp.webp"
 
-
 export default function LogoCloud() {
   return (
     <div className="bg-white">

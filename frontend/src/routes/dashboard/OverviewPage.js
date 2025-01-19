@@ -5,7 +5,7 @@ import { DashboardContext } from "../../providers/DashboardProvider";
 import BIcon from "../../components/BIcon";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 import { AuthContext } from "../../providers/AuthProvider";
-import { createAccountSession, connectCreateAccount, connectLinkAccount, createCheckoutSession, tenantSetAdPriceDollars } from "../../Api";
+import { createAccountSession, connectCreateAccount, connectLinkAccount, createCheckoutSession } from "../../Api";
 
 import {
     ConnectBalances,
@@ -15,13 +15,10 @@ import Modal from "../../components/elements/Modal";
 import Alert from "../../components/elements/Alert";
 import OnboardingSteps from "../../components/dashboard/OnboardingSteps";
 
-import OnboardingDemo from "../../img/OnboardingDemo.mp4"
-import { isWaitlist } from "../../utils";
-
 export default function OverviewPage({ }) {
 
     const { displayErrorModal, displaySuccessModal } = useContext(ApplicationContext)
-    const { selectedTenant, refreshTenant, stripeConnectInstance, stripeAccountData, setShowAddDomainModal } = useContext(DashboardContext)
+    const { selectedTenant, refreshTenant, stripeConnectInstance, stripeAccountData } = useContext(DashboardContext)
     const { user } = useContext(AuthContext)
 
     const [showIntegrationCodeModal, setShowIntegrationCodeModal] = useState(false)
@@ -40,7 +37,7 @@ export default function OverviewPage({ }) {
                     To begin using SponsorApp, first add the domain of your website. 
                 </p>
                 <button
-                    onClick={() => setShowAddDomainModal(true)}
+                    onClick={() => {}}
                     className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 >
                     <BIcon name={"plus-lg"} /> Add Domain
@@ -149,22 +146,7 @@ export default function OverviewPage({ }) {
 
     const handleUpdatePriceSubmit = async e => {
         e.preventDefault()
-
-        const formData = new FormData(e.target)
-
-        setUpdatePriceLoading(true)
-        setUpdatePriceError(null)
-        try {
-            await tenantSetAdPriceDollars(selectedTenant.id, formData.get("price"))
-            await refreshTenant()
-            setShowUpdatePriceModal(false)
-        }
-        catch (err) {
-            setUpdatePriceError(err.message)
-        }
-        finally {
-            setUpdatePriceLoading(false)
-        }
+        
     }
 
     return (
