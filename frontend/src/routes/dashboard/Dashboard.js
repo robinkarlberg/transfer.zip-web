@@ -21,10 +21,10 @@ export default function Dashboard({ }) {
   const [open, setOpen] = useState(true)
 
   const Button = ({ icon, text, to, onClick, className }) => {
-    const activeClassParent = (currentPage.startsWith(to) ? "text-primary bg-body-secondary " : "text-secondary ")
+    const activeClassParent = (currentPage.startsWith(to) ? "text-primary bg-body-secondary font-semibold " : "text-secondary font-medium ")
 
     return (
-      <button onClick={onClick || (() => navigate(to))} className={`hover:bg-body-secondary grow text-start px-4 py-2 font-medium flex items-center rounded-lg hover:text-primary ${activeClassParent} ${className}`}>
+      <button onClick={onClick || (() => navigate(to))} className={`hover:bg-body-secondary grow text-start px-4 py-2 flex items-center rounded-lg hover:text-primary ${activeClassParent} ${className}`}>
         <BIcon className={`text-xl me-2`} name={icon} />{text}
       </button>
     )
@@ -76,7 +76,7 @@ export default function Dashboard({ }) {
 
   const loaded = (
     <>
-      <div className="lg:w-72 py-6 px-6 pt-12 border-r bg-white flex flex-col">
+      <div className="lg:w-64 py-6 px-6 pt-12 border-r bg-white flex flex-col">
         <Link className="mb-4" to="/">
           <div className="flex flex-row">
             <img
@@ -88,12 +88,11 @@ export default function Dashboard({ }) {
           </div>
         </Link>
         <div className="flex flex-col gap-y-2">
+          <button className="bg-primary hover:bg-primary-light text-white font-medium py-2 rounded">New Transfer<BIcon className={"ms-2"} name={"send-fill"}/></button>
           {
             [
-              { icon: "globe", text: "Overview", to: "/app/overview" },
-              { icon: "columns-gap", text: "Layout", to: "/app/layout" },
-              { icon: "megaphone", text: "Sponsors", to: "/app/sponsors" },
-              { icon: "bank", text: "Payouts", to: "/app/payments" },
+              { icon: "house-fill", text: "Overview", to: "/app/overview" },
+              { icon: "send-fill", text: "Transfers", to: "/app/transfers" },
             ].map((value, index) => <Button key={value.to} {...value} />)
           }
         </div>

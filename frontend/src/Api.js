@@ -52,6 +52,10 @@ export async function onboard(onboardObj) {
     return await post("/user/onboard", onboardObj)
 }
 
+export async function getUserStorage() {
+    return await get("/user/storage")
+}
+
 // auth
 
 export async function login(email, password) {

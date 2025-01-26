@@ -4,59 +4,52 @@ import { useContext, useRef, useState } from "react";
 import BIcon from "../../components/BIcon";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 import { AuthContext } from "../../providers/AuthProvider";
+import { humanFileSize, humanFileSizePair } from "../../transferUtils";
+import { DashboardContext } from "../../providers/DashboardProvider";
 
 
 export default function OverviewPage({ }) {
 
     const { displayErrorModal, displaySuccessModal } = useContext(ApplicationContext)
     const { user } = useContext(AuthContext)
-
-    const [showIntegrationCodeModal, setShowIntegrationCodeModal] = useState(false)
+    const { storage } = useContext(DashboardContext)
 
     const codeRef = useRef(null)
     const navigate = useNavigate()
 
-    const handleCopy = async e => {
-        if (codeRef.current) {
-            try {
-                await navigator.clipboard.writeText(codeRef.current.innerText);
-                // alert('Copied to clipboard!');
-                displaySuccessModal("Copied to clipboard!", "Paste the code into the <head> section on your website.")
-            } catch (err) {
-                console.error('Failed to copy: ', err);
-            }
-        }
+    const getUsedStorage = () => {
+        if (!storage) return <div>...<small>B</small></div>
+        const { amount, unit } = humanFileSizePair(storage.usedBytes, true)
+        return <span>{amount}<small>{unit}</small></span>
+    }
+
+    const getMaxStorage = () => {
+        return storage ? humanFileSize(storage.maxBytes, true) : "0GB"
     }
 
     const stats = [
         {
-            name: 'Files',
-            stat: 1,
+            name: 'Transfers', stat: 1,
             actionName: "More Info",
             action: () => navigate("../sponsors")
         },
         {
-            name: 'Files', stat: `$2`,
-            actionName: "Change Price",
+            name: 'Downloads', stat: `$2`,
+            actionName: "Last Week",
             action: () => { }
         },
         {
-            name: 'Many Files', stat: 1,
-            // actionName: "Find Sponsors",
-            action: () => {  }
+            name: 'Storage', stat: <span>{getUsedStorage()} / {getMaxStorage()}</span>,
+            actionName: "More Storage",
+            action: () => { }
         },
     ]
-
-    const handleUpdatePriceSubmit = async e => {
-        e.preventDefault()
-        
-    }
 
     return (
         <GenericPage title={"Overview"}>
             <div className="mb-4">
                 {/* <h3 className="text-base font-semibold leading-6 text-gray-900">Statistics</h3> */}
-                <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+                <dl className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
                     {stats.map((item) => (
                         <div key={item.name} className="overflow-hidden bg-white rounded-lg border px-4 py-5 shadow sm:p-6">
                             <dt className="truncate text-sm font-medium text-gray-500">{item.name}</dt>

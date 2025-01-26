@@ -24,6 +24,7 @@ import SignUpPage from "./routes/SignUpPage";
 import ChangePasswordPage from "./routes/ChangePasswordPage";
 import NotFoundPage from "./routes/NotFoundPage";
 import VerifyAccountPage from "./routes/VerifyAccountPage";
+import TransfersPage from "./routes/dashboard/TransfersPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -37,6 +38,7 @@ const router = createBrowserRouter(
                 <Route path="/app" element={<Dashboard />}>
                   <Route index element={<Navigate to="/app/overview" replace />} />
                   <Route path="overview" element={<OverviewPage />} />
+                  <Route path="transfers" element={<TransfersPage />} />
                   <Route path="settings" element={<SettingsPage />} />
                 </Route>
               </Route>
