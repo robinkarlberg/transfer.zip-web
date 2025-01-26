@@ -82,9 +82,9 @@ export function getGoogleLink() {
 //     return await post("/auth/verification/request", {})
 // }
 
-// export async function doVerification(email, token) {
-//     return await post("/auth/verification/do", { email, token })
-// }
+export async function doVerification(email, token) {
+    return await post("/auth/verification/do", { email, token })
+}
 
 // stripe
 

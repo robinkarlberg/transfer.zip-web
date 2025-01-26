@@ -1,108 +1,26 @@
 import { Link, Navigate, replace, useNavigate } from "react-router-dom";
 import Spinner from "../../../components/Spinner";
-import moment from 'moment-timezone';
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { AuthContext } from "../../../providers/AuthProvider";
 import { sleep } from "../../../utils";
-import { onboard } from "../../../Api";
+import { logout, onboard } from "../../../Api";
 import logo from "../../../img/icon.png"
 import Alert from "../../../components/elements/Alert";
-
-const countryList = require("country-list");
-
-const timeZoneOptions = moment.tz.names();
-
-const supportedCountries = [
-  "Australia",
-  "Austria",
-  "Belgium",
-  "Brazil",
-  "Bulgaria",
-  "Canada",
-  "Croatia",
-  "Cyprus",
-  "Czechia",
-  "Denmark",
-  "Estonia",
-  "Finland",
-  "France",
-  "Germany",
-  // "Ghana",
-  "Gibraltar",
-  "Greece",
-  "Hong Kong",
-  "Hungary",
-  // "India",
-  // "Indonesia",
-  "Ireland",
-  "Italy",
-  "Japan",
-  // "Kenya",
-  "Latvia",
-  "Liechtenstein",
-  "Lithuania",
-  "Luxembourg",
-  "Malaysia",
-  "Malta",
-  "Mexico",
-  "Netherlands",
-  "New Zealand",
-  // "Nigeria",
-  "Norway",
-  "Poland",
-  "Portugal",
-  "Romania",
-  "Singapore",
-  "Slovakia",
-  "Slovenia",
-  // "South Africa",
-  "Spain",
-  "Sweden",
-  "Switzerland",
-  "Thailand",
-  "United Arab Emirates",
-  "United Kingdom of Great Britain and Northern Ireland",
-  "United States of America"
-]
+import BIcon from "../../../components/BIcon";
+import Waiting from "../../../components/elements/Waiting";
 
 export default function OnboardingPage({ }) {
   const { user, isGuestUser, isFreeUser, refreshUser } = useContext(AuthContext)
 
   const navigate = useNavigate()
 
-  const [loading, setLoading] = useState(false)
+  const loading = useMemo(() => !user?.verified, [user])
   const [message, setMessage] = useState(null)
 
-  const [countrySupported, setCountrySupported] = useState(true)
-
-  const handleSubmit = async e => {
-    e.preventDefault()
-    setLoading(true)
-
-    await sleep(1000)
-
-    const formData = new FormData(e.target)
-    const country = formData.get("country")
-
-    try {
-      await onboard({ country })
-      await refreshUser()
-    }
-    catch {
-
-    }
-    finally {
-      setLoading(false)
-    }
+  const requestOnboard = async e => {
+    await onboard({})
+    await refreshUser()
   }
-
-  const handleChange = e => {
-    const selectedCountry = e.target.value;
-    setCountrySupported(supportedCountries.includes(selectedCountry))
-  };
-
-
-  const defaultTz = moment.tz.guess()
 
   useEffect(() => {
     if (isGuestUser) {
@@ -111,9 +29,31 @@ export default function OnboardingPage({ }) {
     else if (user && user.onboarded) {
       navigate("/app", { replace: true })
     }
+    else if(user && user.verified) {
+      requestOnboard()
+    }
   }, [user])
 
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (user) {
+        if (!user.verified) {
+          refreshUser()
+        } else {
+          clearInterval(intervalId)
+        }
+      }
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   if (!user) return <></>
+
+  const handleLogout = async () => {
+    await logout()
+    window.location.href = "/"
+  }
 
   return (
     <>
@@ -129,109 +69,29 @@ export default function OnboardingPage({ }) {
             Welcome to {process.env.REACT_APP_SITE_NAME}!
           </h2>
           <p>
-            We need a little more information from you to give you the best experience.
+            Before you can use our service, you need to verify your account.
           </p>
         </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form onSubmit={handleSubmit} action="#" method="POST" className="space-y-6">
-            <div className="sm:col-span-3">
-              <label htmlFor="country" className="block text-sm/6 font-medium text-gray-900">
-                Country
-              </label>
-              <div className="mt-2">
-                <select
-                  // disabled={loading}
-                  onChange={handleChange}
-                  defaultValue={"United States of America"}
-                  id="country"
-                  name="country"
-                  autoComplete="country-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary sm:max-w-xs sm:text-sm/6"
-                >
-                  {/* <option>United States of America</option> */}
-                  {countryList.getData().map(({ code, name }) => (
-                    <option key={name} value={name}>
-                      {name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <p className="mt-3 text-sm/6 text-gray-600">
-                For regulatory reasons, we require you to provide your country of residence.
-              </p>
-            </div>
-            {/* <div>
-              <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
-                Email address
-              </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  autoComplete="email"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-                  Password
-                </label>
-                <div className="text-sm">
-                  <a href="#" className="font-semibold text-primary hover:text-primary-light">
-                    Forgot password?
-                  </a>
-                </div>
-              </div>
-              <div className="mt-2">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  required
-                  autoComplete="current-password"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
-                />
-              </div>
-            </div> */}
+          <div className="space-y-6">
+            <Waiting title={"Email sent..."} complete={!loading} completeTitle={"Verified!"}>
+              An email has been sent to {user.email}, click the link to verify your account.
+            </Waiting>
             <div>
               {message &&
                 <div className="mb-2">
                   <span className="text-red-600">{message}</span>
                 </div>
               }
-              {!countrySupported && (
-                <div className="mb-2">
-                  <Alert title={"Unsupported Country"}>
-                    <p className="mb-2">
-                      Your country is currently not supported by our payment processor Stripe, meaning we are unable to process payments.
-                    </p>
-                    <p>
-                      We will notify you once a suitable alternative like PayPal is supported.
-                    </p>
-                  </Alert>
-                </div>
-              )}
-              <button
-                disabled={loading || !countrySupported}
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-primary px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:bg-gray-300"
-              >
-                Start! {loading && <Spinner className={"ms-2"} />}
-              </button>
             </div>
-          </form>
+          </div>
 
-          {/* <p className="mt-10 text-center text-sm/6 text-gray-500">
-            Don't have an account?{' '}
-            <a href="#" className="font-semibold text-primary hover:text-primary-light">
-              Sign Up
-            </a>
-          </p> */}
+          <p className="mt-10 text-center text-sm/6 text-gray-500">
+            Wrong email?{' '}
+            <Link onClick={handleLogout} className="font-semibold text-primary hover:text-primary-light">
+              Log out
+            </Link>
+          </p>
         </div>
       </div>
     </>

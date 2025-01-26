@@ -23,6 +23,7 @@ import RefreshPage from "./routes/dashboard/connect/RefreshPage";
 import SignUpPage from "./routes/SignUpPage";
 import ChangePasswordPage from "./routes/ChangePasswordPage";
 import NotFoundPage from "./routes/NotFoundPage";
+import VerifyAccountPage from "./routes/VerifyAccountPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -37,10 +38,6 @@ const router = createBrowserRouter(
                   <Route index element={<Navigate to="/app/overview" replace />} />
                   <Route path="overview" element={<OverviewPage />} />
                   <Route path="settings" element={<SettingsPage />} />
-                  <Route path="connect">
-                    <Route path="return" element={<Navigate to={"/app/overview"} replace />} />
-                    <Route path="refresh" element={<RefreshPage />} />
-                  </Route>
                 </Route>
               </Route>
             </Route>
@@ -53,6 +50,7 @@ const router = createBrowserRouter(
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/change-password" element={<ChangePasswordPage />} />
+            <Route path="/verify-account" element={<VerifyAccountPage />} />
           </Route>
           {/* <Route path="reset-password" element={<PasswordResetRequestPage />} /> */}
         </Route>

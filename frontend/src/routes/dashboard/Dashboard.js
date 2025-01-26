@@ -17,8 +17,6 @@ export default function Dashboard({ }) {
 
   const { displayGenericModal } = useContext(ApplicationContext)
   const { user, isGuestUser } = useContext(AuthContext)
-  const { selectedTenant, setSelectedTenantId } = useContext(DashboardContext)
-  const [selectedTenantSettings, setSelectedTenantSettings] = useState(null)
 
   const [open, setOpen] = useState(true)
 
@@ -60,12 +58,6 @@ export default function Dashboard({ }) {
     )
   }
 
-  const handleTenantSettings = tenant => e => {
-    e.stopPropagation()
-    e.preventDefault()
-    setSelectedTenantSettings(tenant)
-  }
-
   const loading = (
     <>
       <div>
@@ -96,32 +88,16 @@ export default function Dashboard({ }) {
           </div>
         </Link>
         <div className="flex flex-col gap-y-2">
-          {selectedTenant && user && user.tenants.length > 0 ?
+          {
             [
               { icon: "globe", text: "Overview", to: "/app/overview" },
               { icon: "columns-gap", text: "Layout", to: "/app/layout" },
               { icon: "megaphone", text: "Sponsors", to: "/app/sponsors" },
               { icon: "bank", text: "Payouts", to: "/app/payments" },
             ].map((value, index) => <Button key={value.to} {...value} />)
-            :
-            <div>
-            </div>
           }
         </div>
-        {/* ${!selectedTenant?.domain && " animate-pulse hover:animate-none outline outline-primary rounded"} */}
-        <div className={`mb-2 mt-auto `}>
-          <Dropdown className={""} title={selectedTenant?.domain ?? "Select domain"} items={[
-            user.tenants.map((tenant) => {
-              return { title: <span className="font-medium flex flex-row justify-between"><span>{tenant.domain}</span><BIcon onClick={handleTenantSettings(tenant)} name={"gear"} /></span>, onClick: () => setSelectedTenantId(tenant.id) }
-            }),
-            [
-              {
-                title: <span><BIcon name={"plus"} className={"me-1"} />Add Domain</span>, onClick: () => {}
-              }
-            ]
-          ]} />
-        </div>
-        <div className="">
+        <div className="mt-auto">
           <Button icon={"person"} text={"Account"} to={"/app/settings"} className={"w-full"} />
         </div>
       </div>
