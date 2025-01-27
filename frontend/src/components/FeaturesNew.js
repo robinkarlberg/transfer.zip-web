@@ -20,11 +20,10 @@ export default function FeaturesNew() {
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base/7 font-semibold text-primary">End-to-end encryption</h2>
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Go beyond simple donations.
+            Unlimited File Size -<br/>Unlimited Privacy
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            With SponsorApp, your supporters can design a banner or leave a message that appears right on your website,
-            making their contribution truly stand out.
+            Quick Share ensures your data is protected with end-to-end encryption, keeping your files secure and private - even from us, all while being larger than 100GB.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
@@ -50,7 +49,7 @@ export default function FeaturesNew() {
             className="mx-auto rounded-xl w-full max-w-4xl"
             loop
             controls
-            // poster={SponsorDemoScreenshot}
+          // poster={SponsorDemoScreenshot}
           >
             {/* <source src={product_video} type="video/mp4" /> */}
           </video>

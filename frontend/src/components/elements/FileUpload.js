@@ -3,6 +3,7 @@ import BIcon from "../BIcon"
 import { Link } from "react-router-dom"
 import { Transition } from "@headlessui/react"
 import { humanFileSize, humanFileType } from "../../transferUtils"
+import { humanFileName } from "../../utils"
 
 export default function FileUpload({ onFiles }) {
 
@@ -67,7 +68,7 @@ export default function FileUpload({ onFiles }) {
                     <div className="absolute right-0 hidden group-hover:block pe-2">
                       <button onClick={() => removeFile(file)} className="bg-white border p-1 rounded-lg"><BIcon name={"x"} center /></button>
                     </div>
-                    <p className="text-nowrap">{file.name}</p>
+                    <p className="text-nowrap">{humanFileName(file.name)}</p>
                     <span className="text-sm text-gray-500">{humanFileSize(file.size, true)}<BIcon name={"dot"} />{humanFileType(file.type)}</span>
                   </div>
                 )

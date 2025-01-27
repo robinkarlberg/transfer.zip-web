@@ -116,3 +116,24 @@ export function isEarlyOffer() {
 
     return currentDate.getTime() < cutoffDate.getTime();
 }
+
+export function humanFileName(fileName) {
+    // List of common file extensions to remove
+    const knownExtensions = [
+        'txt', 'png', 'jpg', 'jpeg', 'gif', 'bmp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'mp3', 'mp4', 'wav', 'avi', 'mov', 'mkv', 'html', 'css', 'js', 'json', 'xml', 'zip', 'rar', '7z'
+    ];
+
+    // Find the last dot in the file name
+    const lastDotIndex = fileName.lastIndexOf('.');
+
+    // If a dot exists and the extension is in the knownExtensions list
+    if (lastDotIndex !== -1) {
+        const extension = fileName.slice(lastDotIndex + 1).toLowerCase();
+        if (knownExtensions.includes(extension)) {
+            return fileName.slice(0, lastDotIndex); // Remove the extension
+        }
+    }
+
+    // Return the original file name if no matching extension is found
+    return fileName;
+}
