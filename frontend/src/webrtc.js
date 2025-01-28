@@ -1,5 +1,12 @@
-import * as FileTransfer from "./filetransfer";
-import { decodeString, encodeString } from "./utils";
+const textEnc = new TextEncoder()
+const textDec = new TextDecoder()
+
+export const encodeString = (str) => {
+    return textEnc.encode(str)
+}
+export const decodeString = (arr) => {
+    return textDec.decode(arr)
+}
 
 export class PeerConnectionError extends Error {
 	constructor() {

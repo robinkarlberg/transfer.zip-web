@@ -25,6 +25,9 @@ import ChangePasswordPage from "./routes/ChangePasswordPage";
 import NotFoundPage from "./routes/NotFoundPage";
 import VerifyAccountPage from "./routes/VerifyAccountPage";
 import TransfersPage from "./routes/dashboard/TransfersPage";
+import QuickSharePage from "./routes/QuickSharePage";
+import QuickShareProgress from "./routes/quick-share/QuickShareProgress";
+import QuickShareNew from "./routes/quick-share/QuickShareNew";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -45,6 +48,10 @@ const router = createBrowserRouter(
             </Route>
             <Route path="/" element={<App />}>
               <Route index element={<HomePage />} />
+              <Route path="/quick-share" element={<QuickSharePage />} >
+                <Route index element={<QuickShareNew />} />
+                <Route path="progress" element={<QuickShareProgress />} />
+              </Route>
               <Route path="/legal/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/legal/terms-and-conditions" element={<TermsAndConditionsPage />} />
               <Route path="*" element={<NotFoundPage />} />

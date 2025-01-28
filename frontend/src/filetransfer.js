@@ -1,9 +1,6 @@
 /* global BigInt */
 
-import streamSaver from "./lib/StreamSaver"
-import { decodeString, encodeString } from "./utils"
 import { RelayChannel } from "./webrtc"
-streamSaver.mitm = "/mitm.html"
 
 export const FILE_CHUNK_SIZE = 16384
 
@@ -12,6 +9,16 @@ const PACKET_ID = {
     fileData: 1,
     fileList: 2,
     error: 9
+}
+
+const textEnc = new TextEncoder()
+const textDec = new TextDecoder()
+
+export const encodeString = (str) => {
+    return textEnc.encode(str)
+}
+export const decodeString = (arr) => {
+    return textDec.decode(arr)
 }
 
 const genIV = () => {

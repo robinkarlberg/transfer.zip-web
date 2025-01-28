@@ -6,6 +6,7 @@
     "@headlessui/react": "^2.2.0",
     "@stripe/connect-js": "^3.3.18",
     "@stripe/react-connect-js": "^3.3.19",
+    "@zip.js/zip.js": "^2.7.54",
     "bootstrap-icons": "^1.11.3",
     "country-list": "^2.3.0",
     "moment-timezone": "^0.5.46",
