@@ -1,10 +1,17 @@
-import { useEffect, useMemo, useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useContext, useEffect, useMemo, useState } from "react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 
 import streamSaver from "../../lib/StreamSaver"
 import * as zip from "@zip.js/zip.js";
 import * as WebRtc from "../../webrtc"
 import { call, listen, fileTransferGetFileList, fileTransferServeFiles } from "../../quickshare";
+import { QuickShareContext } from "../QuickSharePage";
+import { tryCopyToClipboard, isSelfHosted } from "../../utils";
+import Spinner from "../../components/Spinner";
+import QRCode from "react-qr-code"
+import BIcon from "../../components/BIcon";
+import Notification from "../../components/elements/Notification";
+import { ApplicationContext } from "../../providers/ApplicationProvider";
 
 const TRANSFER_STATE_WAIT_FOR_USER = "wait_for_user"
 const TRANSFER_STATE_IDLE = "idle"
@@ -14,15 +21,10 @@ const TRANSFER_STATE_FINISHED = "finished"
 const TRANSFER_STATE_FAILED = "failed"
 
 export default function QuickShareProgress({ }) {
+  const { displayNotification } = useContext(ApplicationContext)
+  const { hasBeenSentLink, files, k, remoteSessionId, transferDirection } = useContext(QuickShareContext)
+
   const navigate = useNavigate()
-
-  const { state } = useLocation()
-  let { files, k, remoteSessionId, transferDirection } = state || {}
-
-  /**
-   * `true` if the user has been sent a link, either to receive or send a file
-   */
-  const hasBeenSentLink = k && remoteSessionId && transferDirection
 
   const [transferState, setTransferState] = useState(hasBeenSentLink ? TRANSFER_STATE_IDLE : TRANSFER_STATE_WAIT_FOR_USER)
 
@@ -30,6 +32,8 @@ export default function QuickShareProgress({ }) {
   const [quickShareLink, setQuickShareLink] = useState(null)
 
   const [errorMessage, setErrorMessage] = useState(null)
+
+  const hasConnected = useMemo(() => transferState == TRANSFER_STATE_TRANSFERRING || transferState == TRANSFER_STATE_FINISHED, [transferState])
 
   const startProgress = () => {
     setTransferState(TRANSFER_STATE_IDLE)
@@ -75,6 +79,7 @@ export default function QuickShareProgress({ }) {
 
         fileTransfer.onfilefinished = (fileInfo) => {
           currentZipWriter.close()
+          filesDone++
 
           if (filesDone >= fileList.length) {
             zipStream.close().then(() => setTransferState(TRANSFER_STATE_FINISHED))
@@ -99,6 +104,8 @@ export default function QuickShareProgress({ }) {
 
         fileTransfer.onfilefinished = (fileInfo) => {
           fileWriter.close()
+          filesDone++
+
           setTransferState(TRANSFER_STATE_FINISHED)
         }
       }
@@ -187,9 +194,74 @@ export default function QuickShareProgress({ }) {
     }
   }, [])
 
-  return (
-    <div>
+  const sendTitle = "Send Files"
+  const recvTitle = "Receive Files"
+  const title = hasBeenSentLink ? (transferDirection == "R" ? recvTitle : sendTitle) : (transferDirection == "S" ? sendTitle : recvTitle)
 
+  const spinner = <Spinner className={"inline-block"} sizeClassName={"h-4 w-4"} />
+
+  const handleCopy = async e => {
+    if (await tryCopyToClipboard(quickShareLink)) {
+      displayNotification("Copied Link", "The Quick Share link was successfully copied to the clipboard!")
+    }
+  }
+
+  return (
+    <div className="flex flex-col md:flex-row gap-4">
+      <div className="w-full max-w-64">
+        <h1 className="text-3xl font-bold mb-4 block md:hidden">{title}</h1>
+        <div>
+          <QRCode style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+            className={"bg-white p-5 border rounded-lg shadow-sm"}
+            size={128}
+            fgColor="#212529"
+            value={quickShareLink ? quickShareLink : "https://transfer.zip/?542388234752394243924377293849asdasd"} />
+        </div>
+        <div>
+          <div className="relative mt-2 flex items-center">
+            <input
+              type="url"
+              className="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+              defaultValue={quickShareLink}
+              contentEditable="false"
+            />
+            <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
+              <button onClick={handleCopy} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-gray-600 bg-white hover:bg-gray-50">
+                <BIcon name={"copy"} className={"mr-1 ms-1"} />Copy
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h1 className="text-3xl font-bold mb-1 hidden md:block">{title}</h1>
+        {!errorMessage ?
+          (<ol className="list-decimal list-inside mb-4 md:mb-2">
+            {/* <li>Choose if you want to send or receive files.</li> */}
+            <li className={transferState == TRANSFER_STATE_IDLE ? "" : "text-gray-400"}>{(hasBeenSentLink && !isSelfHosted()) ? "Connecting to server..." : "Scan the QR code or send the link to the recipient."} {transferState == TRANSFER_STATE_IDLE && spinner}</li>
+            <li className={transferState == TRANSFER_STATE_CONNECTING ? "" : "text-gray-400"}>Wait for your devices to establish a connection. {transferState == TRANSFER_STATE_CONNECTING && spinner}</li>
+            <li className={transferState == TRANSFER_STATE_TRANSFERRING ? "" : "text-gray-400"}>Stand by while the files are being transfered. {transferState == TRANSFER_STATE_TRANSFERRING && spinner}</li>
+            <li className={transferState == TRANSFER_STATE_FINISHED ? "" : "text-gray-400"}>Done!</li>
+          </ol>)
+          :
+          <p className="text-danger"><b className="text-danger">Error: </b>{errorMessage}</p>
+        }
+        <div className="flex md:inline-flex gap-2 border rounded-lg shadow-sm py-2 ps-3 pe-4 bg-blue-50">
+          <div>
+            <BIcon className={"text-blue-950"} name={"info-circle"} />{" "}
+          </div>
+          <div>
+            <p className="text-blue-950">
+              {hasBeenSentLink ? "Keep your browser window open" : "Link will expire when tab is closed."}
+            </p>
+            {!hasBeenSentLink && transferDirection == "S" &&
+              <Link to={"/app/transfers/new"} state={{ files }} className="text-primary hover:text-primary-light font-medium">
+                Upload files for longer &rarr;
+              </Link>
+            }
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

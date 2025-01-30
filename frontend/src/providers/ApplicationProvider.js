@@ -2,6 +2,9 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { Outlet } from "react-router-dom"
 import Modal from "../components/elements/Modal";
 import WaitlistModal from "../components/elements/modals/WaitlistModal";
+import Notification from "../components/elements/Notification";
+
+let notificationTimeoutId = null
 
 export const ApplicationContext = createContext({})
 
@@ -33,13 +36,27 @@ export const ApplicationProvider = () => {
         })
     }
 
+    const [notificationProps, setNotificationProps] = useState({ show: false, title: "", description: "" })
+
+    const displayNotification = (title, description) => {
+        if(notificationTimeoutId) clearTimeout(notificationTimeoutId)
+        setNotificationProps({ show: true, title, description })
+        notificationTimeoutId = setTimeout(() => {
+            setNotificationProps({ show: false, title, description })
+            notificationTimeoutId = null
+        }, 4000)
+    }
+
+
     return (
         <ApplicationContext.Provider value={{
             setShowWaitlistModal,
             displayGenericModal,
             displayErrorModal,
-            displaySuccessModal
+            displaySuccessModal,
+            displayNotification
         }}>
+            <Notification {...notificationProps} />
             <Modal show={showGenericModal} onClose={() => setShowGenericModal(false)} {...genericModalProps} />
             <WaitlistModal show={showWaitlistModal} />
             <Outlet />

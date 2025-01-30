@@ -116,3 +116,18 @@ export function isEarlyOffer() {
 
     return currentDate.getTime() < cutoffDate.getTime();
 }
+
+export const isSelfHosted = () => {
+    return process.env.REACT_APP_SELFHOST == undefined || (process.env.REACT_APP_SELFHOST && process.env.REACT_APP_SELFHOST == "true")
+}
+
+export const tryCopyToClipboard = async (value) => {
+    try {
+        await navigator.clipboard.writeText(value);
+        console.log("Successfully copied ", value);
+        return true
+    } catch (error) {
+        console.error("Couldn't copy ", value, error);
+        return false
+    }
+}
