@@ -26,7 +26,11 @@ export default function QuickShareProgress({ }) {
 
   const navigate = useNavigate()
 
-  const [transferState, setTransferState] = useState(hasBeenSentLink ? TRANSFER_STATE_IDLE : TRANSFER_STATE_WAIT_FOR_USER)
+  const [transferState, _setTransferState] = useState(hasBeenSentLink ? TRANSFER_STATE_IDLE : TRANSFER_STATE_WAIT_FOR_USER)
+  const setTransferState = (ts) => {
+    console.log("[QuickShareProgress] setTransferState", ts)
+    _setTransferState(ts)
+}
 
   const [filesProgress, setFilesProgress] = useState(null)
   const [quickShareLink, setQuickShareLink] = useState(null)
@@ -127,6 +131,7 @@ export default function QuickShareProgress({ }) {
         setFilesProgress(_filesProgress.map(x => x))
       }
       fileTransfer.onfilefinished = fileInfo => {
+        filesDone++
         if (filesDone >= files.length) {
           setTransferState(TRANSFER_STATE_FINISHED)
         }
@@ -217,21 +222,23 @@ export default function QuickShareProgress({ }) {
             fgColor="#212529"
             value={quickShareLink ? quickShareLink : "https://transfer.zip/?542388234752394243924377293849asdasd"} />
         </div>
-        <div>
-          <div className="relative mt-2 flex items-center">
-            <input
-              type="url"
-              className="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-              defaultValue={quickShareLink}
-              contentEditable="false"
-            />
-            <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-              <button onClick={handleCopy} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-gray-600 bg-white hover:bg-gray-50">
-                <BIcon name={"copy"} className={"mr-1 ms-1"} />Copy
-              </button>
+        {!hasBeenSentLink && (
+          <div>
+            <div className="relative mt-2 flex items-center">
+              <input
+                type="url"
+                className="block w-full rounded-md border-0 py-1.5 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                defaultValue={quickShareLink}
+                contentEditable="false"
+              />
+              <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
+                <button onClick={handleCopy} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-gray-600 bg-white hover:bg-gray-50">
+                  <BIcon name={"copy"} className={"mr-1 ms-1"} />Copy
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
       <div>
         <h1 className="text-3xl font-bold mb-1 hidden md:block">{title}</h1>
@@ -247,8 +254,8 @@ export default function QuickShareProgress({ }) {
           <p className="text-danger"><b className="text-danger">Error: </b>{errorMessage}</p>
         }
         <div className="flex md:inline-flex gap-2 border rounded-lg shadow-sm py-2 ps-3 pe-4 bg-blue-50">
-          <div>
-            <BIcon className={"text-blue-950"} name={"info-circle"} />{" "}
+          <div className="flex items-center h-6">
+            <BIcon center className={"text-blue-950 text-xs animate-pulse"} name={"circle-fill"} />{" "}
           </div>
           <div>
             <p className="text-blue-950">
