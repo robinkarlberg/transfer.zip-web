@@ -28,11 +28,11 @@ export default function TestimonialCloud() {
         <div className="mx-auto mt-10 grid max-w-lg grid-cols-1 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:gap-x-10 lg:mx-0 md:max-w-none md:grid-cols-3">
           {testimonials.map(testimonial => {
             return (
-              <div className="col-span-1 text-center">
-                <div className="text-primary mb-2">{[1, 2, 3, 4, 5].map(() => <BIcon name={"star-fill"} />)}</div>
-                <div className="text-gray-700 mb-2"><p>{testimonial.quote}</p></div>
+              <div key={testimonial.proof} className="col-span-1 text-center h-32">
+                <div className="text-yellow-400 mb-2">{[1, 2, 3, 4, 5].map(() => <BIcon name={"star-fill"} />)}</div>
+                <div className="text-gray-600 mb-2"><p><BIcon name={"quote"}/> {testimonial.quote}</p></div>
                 <div className="font-bold text-gray-700">
-                  <BIcon name={"reddit"} className={"me-1 text-gray-700"} />
+                  <BIcon name={"reddit"} className={"me-1"} />
                   <a className="hover:underline" href={testimonial.proof}>{testimonial.author}</a>
                 </div>
               </div>
