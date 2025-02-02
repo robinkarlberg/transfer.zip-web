@@ -50,7 +50,7 @@ export default function FileUpload({ onFiles, onReceiveClicked, children, showOv
         {onReceiveClicked && (
           <div className="absolute w-full flex">
             <button onClick={onReceiveClicked} className="text-sm font-medium text-gray-500 relative mx-auto bg-white border py-1 px-10 rounded-t-lg transition-all h-7 -top-7 hover:h-8 hover:-top-8 hover:text-primary">
-              <BIcon name={"file-earmark-arrow-down"} /> Recieve files
+              <BIcon name={"file-earmark-arrow-down"} /> Receive files
             </button>
           </div>
         )}
