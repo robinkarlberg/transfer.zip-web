@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 import { Transition } from "@headlessui/react"
 import { humanFileSize, humanFileType } from "../../transferUtils"
 
-export default function FileUpload({ onFiles, onReceiveClicked }) {
+export default function FileUpload({ onFiles, onReceiveClicked, children, showOverlay }) {
 
   const [files, setFiles] = useState([])
 
@@ -54,6 +54,11 @@ export default function FileUpload({ onFiles, onReceiveClicked }) {
             </button>
           </div>
         )}
+        <Transition show={showOverlay || false}>
+          <div className="absolute left-0 top-0 w-full h-full flex flex-col justify-center items-center group transition data-[closed]:opacity-0">
+            {children}
+          </div>
+        </Transition>
         <Transition show={files.length == 0}>
           <button onClick={handlePickFiles} className="absolute left-0 top-0 w-full h-full flex flex-col justify-center items-center group transition data-[closed]:opacity-0">
             <div className="text-white rounded-full bg-primary w-12 h-12 flex group-hover:bg-primary-light">

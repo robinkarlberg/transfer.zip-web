@@ -16,11 +16,12 @@ export async function loader({ params }) {
 
 export default function OverviewPage({ }) {
 
+    const { transfers } = useLoaderData()
+
     const { displayErrorModal, displaySuccessModal } = useContext(ApplicationContext)
     const { user } = useContext(AuthContext)
     const { storage } = useContext(DashboardContext)
 
-    const codeRef = useRef(null)
     const navigate = useNavigate()
 
     const getUsedStorage = () => {
@@ -39,7 +40,7 @@ export default function OverviewPage({ }) {
 
     const stats = [
         {
-            name: 'Transfers', stat: 1,
+            name: 'Transfers', stat: transfers.length,
             actionName: "View All",
             action: () => navigate("../sponsors")
         },
@@ -49,7 +50,7 @@ export default function OverviewPage({ }) {
         //     action: () => { }
         // },
         {
-            name: 'Storage', stat: <span>{getUsedStorage()}</span>,
+            name: 'Storage', stat: <span>{Math.floor((storage?.usedBytes / storage?.maxBytes)) * 100} <small>%</small></span>,
             actionName: "Get More Storage",
             action: () => { }
         },
@@ -63,8 +64,6 @@ export default function OverviewPage({ }) {
     //         }
     //     }
     // ]
-
-    const { transfers } = useLoaderData()
 
     return (
         <GenericPage title={"Overview"}>
@@ -80,7 +79,7 @@ export default function OverviewPage({ }) {
                     ))}
                 </dl>
             </div>
-            <h3 className="font-bold text-xl mb-1">Recent</h3>
+            <h3 className="font-bold text-xl mb-1">Recent Transfers</h3>
             <TransferList transfers={transfers} />
         </GenericPage>
     )

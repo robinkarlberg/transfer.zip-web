@@ -4,14 +4,14 @@ import BIcon from "../BIcon"
 export default function TransferList({ transfers }) {
 
   const Entry = ({ transfer }) => {
-    const { title, files, expiresAt } = transfer
+    const { name, files, expiresAt } = transfer
     const expiryDate = parseTransferExpiryDate(expiresAt)
     return (
-      <button className="w-full max-w-96 text-start rounded-xl border border-gray-200 bg-white px-4 py-3 group hover:bg-gray-50">
+      <button className="text-start rounded-xl border border-gray-200 bg-white px-4 py-3 group hover:bg-gray-50">
         <div>
-          <h3 className="text-xl font-bold me-1">{title}</h3>
+          <h3 className="text-xl font-bold me-1">{name}</h3>
           <div className="text-sm text-gray-600 font-semibold">
-            <span className="">{files.length} file{files.length > 1 ? "s" : ""}</span>
+            <span className="">{files.length} file{files.length != 1 ? "s" : ""}</span>
             {transfer.statistics.downloads.length > 1 ?
               <span><BIcon name="dot" /><i className="bi bi-arrow-down-circle-fill me-1"></i>{transfer.statistics.downloads.length} downloads</span>
               :
@@ -35,7 +35,9 @@ export default function TransferList({ transfers }) {
 
   return (
     <div className="">
-      {transfers.map((transfer, index) => <Entry transfer={transfer} />)}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
+        {transfers.map((transfer, index) => <Entry transfer={transfer} />)}
+      </div>
       {transfers.length == 0 && (
         <div className="text-center py-16 rounded-xl border-dashed border-2">
           <h3 className="font-semibold text-2xl mb-1">Your transfers will appear here</h3>

@@ -123,6 +123,7 @@ export async function joinWaitlist(email) {
 const CHUNK_SIZE = 10 * 1024 * 1024 // 10MB
 
 export function uploadTransferFiles(transferId, files, onProgress) {
+    let bytesTransferred = 0
     return new Promise((resolve, reject) => {
         // Initialize the WebSocket connection
         const apiUrlWithoutProtocol = API_URL.replace(/^https?:/, '')
@@ -143,9 +144,10 @@ export function uploadTransferFiles(transferId, files, onProgress) {
                     // TODO: wait if neccessary
 
                     ws.send(e.target.result)
+                    bytesTransferred += e.target.result.byteLength
+                    
                     onProgress && onProgress({
-                        fileIndex,
-                        progress: Math.min(start + CHUNK_SIZE, currentFile.size) / currentFile.size
+                        bytesTransferred
                     })
 
                     if (start + CHUNK_SIZE < currentFile.size) {

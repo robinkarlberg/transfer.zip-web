@@ -39,8 +39,8 @@ const router = createBrowserRouter(
               <Route path="/onboarding" element={<OnboardingPage />} />
               <Route element={<RequireOnboarded />}>
                 <Route path="/app" element={<Dashboard />}>
-                  <Route index element={<Navigate to="/app/overview" replace />} />
-                  <Route path="overview" element={<OverviewPage />} loader={OverviewPageLoader} />
+                  {/* <Route index element={<Navigate to="/app/overview" replace />} /> */}
+                  <Route index element={<OverviewPage />} loader={OverviewPageLoader} />
                   <Route path="transfers">
                     <Route index element={<TransfersPage />} loader={TransfersPageLoader} />
                     <Route path="new" element={<NewTransferPage />} />
