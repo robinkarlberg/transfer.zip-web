@@ -232,7 +232,7 @@ export default function QuickShareProgress({ }) {
                 contentEditable="false"
               />
               <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-                <button onClick={handleCopy} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-gray-600 bg-white hover:bg-gray-50">
+                <button onClick={handleCopy} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
                   <BIcon name={"copy"} className={"mr-1 ms-1"} />Copy
                 </button>
               </div>

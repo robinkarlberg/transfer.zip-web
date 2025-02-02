@@ -88,7 +88,7 @@ export default function Dashboard({ }) {
           </div>
         </Link>
         <div className="flex flex-col gap-y-2">
-          <button className="bg-primary hover:bg-primary-light text-white text-sm font-semibold py-2 rounded-lg">Transfer<BIcon className={"ms-2"} name={"send-fill"}/></button>
+          <Link to={"/app/transfers/new"} className="text-center bg-primary hover:bg-primary-light text-white text-sm font-semibold py-2 rounded-lg">Transfer<BIcon className={"ms-2"} name={"send-fill"}/></Link>
           {
             [
               { icon: "house-fill", text: "Overview", to: "/app/overview" },

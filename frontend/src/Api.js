@@ -205,6 +205,9 @@ export function uploadTransferFiles(transferId, files, onProgress) {
     })
 }
 
+export async function getTransferList() {
+    return await get(`/transfer/list`)
+}
 
 export async function newTransfer() {
     return await post(`/transfer/new`, {})

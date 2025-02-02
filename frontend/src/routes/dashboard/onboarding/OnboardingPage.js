@@ -24,7 +24,7 @@ export default function OnboardingPage({ }) {
 
   useEffect(() => {
     if (isGuestUser) {
-      navigate("/signin", { replace: true })
+      navigate("/login", { replace: true })
     }
     else if (user && user.onboarded) {
       navigate("/app", { replace: true })

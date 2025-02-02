@@ -38,13 +38,15 @@ export const ApplicationProvider = () => {
 
     const [notificationProps, setNotificationProps] = useState({ show: false, title: "", description: "" })
 
+    const clearNotification = () => {
+        setNotificationProps({ ...notificationProps, show: false })
+        notificationTimeoutId = null
+    }
+
     const displayNotification = (title, description) => {
-        if(notificationTimeoutId) clearTimeout(notificationTimeoutId)
+        if (notificationTimeoutId) clearTimeout(notificationTimeoutId)
         setNotificationProps({ show: true, title, description })
-        notificationTimeoutId = setTimeout(() => {
-            setNotificationProps({ show: false, title, description })
-            notificationTimeoutId = null
-        }, 4000)
+        notificationTimeoutId = setTimeout(clearNotification, 4000)
     }
 
 
@@ -56,7 +58,7 @@ export const ApplicationProvider = () => {
             displaySuccessModal,
             displayNotification
         }}>
-            <Notification {...notificationProps} />
+            <Notification onHide={clearNotification} {...notificationProps} />
             <Modal show={showGenericModal} onClose={() => setShowGenericModal(false)} {...genericModalProps} />
             <WaitlistModal show={showWaitlistModal} />
             <Outlet />

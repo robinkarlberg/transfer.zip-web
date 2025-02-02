@@ -10,7 +10,7 @@ export default function RequireOnboarded({ }) {
 
   useEffect(() => {
     if (isGuestUser) {
-      navigate("/signin", { replace: true })
+      navigate("/login", { replace: true })
     }
     else if (user && !user.onboarded) {
       navigate("/onboarding", { replace: true })

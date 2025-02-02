@@ -13,21 +13,21 @@ import Dashboard from "./routes/dashboard/Dashboard";
 import SignInPage from "./routes/SignInPage";
 import { DashboardProvider } from "./providers/DashboardProvider";
 import SettingsPage from "./routes/dashboard/SettingsPage";
-import OverviewPage from "./routes/dashboard/OverviewPage";
+import OverviewPage, { loader as OverviewPageLoader } from "./routes/dashboard/OverviewPage";
 import OnboardingPage from "./routes/dashboard/onboarding/OnboardingPage";
 import RequireOnboarded from "./components/RequireOnboarded";
 import PrivacyPolicyPage from "./routes/legal/PrivacyPolicyPage";
 import TermsAndConditionsPage from "./routes/legal/TermsAndConditionsPage";
 import { AnalyticsProvider } from "./providers/AnalyticsProvider";
-import RefreshPage from "./routes/dashboard/connect/RefreshPage";
 import SignUpPage from "./routes/SignUpPage";
 import ChangePasswordPage from "./routes/ChangePasswordPage";
 import NotFoundPage from "./routes/NotFoundPage";
 import VerifyAccountPage from "./routes/VerifyAccountPage";
-import TransfersPage from "./routes/dashboard/TransfersPage";
+import TransfersPage, { loader as TransfersPageLoader } from "./routes/dashboard/TransfersPage";
 import QuickSharePage from "./routes/QuickSharePage";
 import QuickShareProgress from "./routes/quick-share/QuickShareProgress";
 import QuickShareNew from "./routes/quick-share/QuickShareNew";
+import NewTransferPage from "./routes/dashboard/transfers/NewTransferPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -40,8 +40,11 @@ const router = createBrowserRouter(
               <Route element={<RequireOnboarded />}>
                 <Route path="/app" element={<Dashboard />}>
                   <Route index element={<Navigate to="/app/overview" replace />} />
-                  <Route path="overview" element={<OverviewPage />} />
-                  <Route path="transfers" element={<TransfersPage />} />
+                  <Route path="overview" element={<OverviewPage />} loader={OverviewPageLoader} />
+                  <Route path="transfers">
+                    <Route index element={<TransfersPage />} loader={TransfersPageLoader} />
+                    <Route path="new" element={<NewTransferPage />} />
+                  </Route>
                   <Route path="settings" element={<SettingsPage />} />
                 </Route>
               </Route>
@@ -56,7 +59,7 @@ const router = createBrowserRouter(
               <Route path="/legal/terms-and-conditions" element={<TermsAndConditionsPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Route>
-            <Route path="/signin" element={<SignInPage />} />
+            <Route path="/login" element={<SignInPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/change-password" element={<ChangePasswordPage />} />
             <Route path="/verify-account" element={<VerifyAccountPage />} />
