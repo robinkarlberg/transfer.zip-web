@@ -20,20 +20,20 @@ const testimonials = [
 
 export default function TestimonialCloud() {
   return (
-    <div className="bg-white mb-32">
+    <div className="bg-gray-50 mb-8 mt-12 border border-dashed">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        {/* <h2 className="text-center text-lg/8 font-semibold text-gray-900">
-          Trusted by more than 10k users every month.
+        {/* <h2 className="text-center text-2xl font-medium text-gray-900">
+          Trusted by more than 11k users every month.
         </h2> */}
-        <div className="mx-auto mt-10 grid max-w-lg grid-cols-1 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:gap-x-10 lg:mx-0 md:max-w-none md:grid-cols-3">
+        <div className="mx-auto pb-10 pt-12 grid max-w-lg grid-cols-1 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:gap-x-10 lg:mx-0 md:max-w-none md:grid-cols-3">
           {testimonials.map(testimonial => {
             return (
               <div key={testimonial.proof} className="col-span-1 text-center h-32">
-                <div className="text-yellow-400 mb-2">{[1, 2, 3, 4, 5].map(() => <BIcon name={"star-fill"} />)}</div>
-                <div className="text-gray-600 mb-2"><p><BIcon name={"quote"}/> {testimonial.quote}</p></div>
+                <div className="text-blue-500 mb-2">{[1, 2, 3, 4, 5].map(() => <BIcon name={"star-fill"} />)}</div>
+                <div className="text-gray-600 mb-2"><p><BIcon name={"quote"} /> {testimonial.quote}</p></div>
                 <div className="font-bold text-gray-700">
                   <BIcon name={"reddit"} className={"me-1"} />
-                  <a className="hover:underline" href={testimonial.proof}>{testimonial.author}</a>
+                  <a className="hover:underline" target="_blank" href={testimonial.proof}>{testimonial.author}</a>
                 </div>
               </div>
             )

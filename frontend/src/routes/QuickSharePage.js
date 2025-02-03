@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
 import FileUpload from "../components/elements/FileUpload";
 import { createContext } from "react";
+import TestimonialCloud from "../components/TestimonialCloud";
 
 export const QuickShareContext = createContext({})
 
@@ -54,6 +55,7 @@ export default function QuickSharePage({ }) {
       {/* <div>
         <h2></h2>
       </div> */}
+      <TestimonialCloud/>
     </div>
   )
 }

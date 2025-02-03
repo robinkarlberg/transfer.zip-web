@@ -2,14 +2,14 @@ import BIcon from "./BIcon"
 
 const features = [
   {
-    name: 'Larger Files',
+    name: 'Much Larger Files',
     description: '',
-    icon: "file-earmark-arrow-up"
+    icon: "database-fill-up"
   },
   {
-    name: '10x as Fast Speeds',
-    description: 'Recognizing and acknowledging your supporters gives them more incentive to support you.',
-    icon: "currency-dollar",
+    name: 'Much Faster Transfers',
+    description: '',
+    icon: "fast-forward-fill",
   },
 ]
 
@@ -18,7 +18,7 @@ export default function FeaturesNew() {
     <div className="bg-white py-24 sm:py-32" id="features2">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className="text-base/7 font-semibold text-primary">End-to-end encryption</h2>
+          <h2 className="text-base/7 font-semibold text-primary">Transfer without limits</h2>
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
             Unlimited File Size -<br/>Unlimited Privacy
           </p>

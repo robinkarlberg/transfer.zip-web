@@ -21,7 +21,7 @@ export default function Dashboard({ }) {
   const [open, setOpen] = useState(true)
 
   const Button = ({ icon, text, to, onClick, className }) => {
-    const activeClassParent = ((currentPage == to || currentPage == `${to}/`) ? "text-primary bg-body-secondary font-semibold " : "text-secondary font-medium ")
+    const activeClassParent = ((to != "/app" ? currentPage.startsWith(to) : (currentPage == to || currentPage == `${to}/`)) ? "text-primary bg-body-secondary font-semibold " : "text-secondary font-medium ")
 
     return (
       <button onClick={onClick || (() => navigate(to))} className={`hover:bg-body-secondary grow text-start px-4 py-2 flex items-center rounded-lg hover:text-primary ${activeClassParent} ${className}`}>

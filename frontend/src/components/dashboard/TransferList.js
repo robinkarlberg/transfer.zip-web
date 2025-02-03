@@ -1,13 +1,14 @@
+import { Link } from "react-router-dom"
 import { humanTimeUntil, parseTransferExpiryDate } from "../../utils"
 import BIcon from "../BIcon"
 
 export default function TransferList({ transfers }) {
 
   const Entry = ({ transfer }) => {
-    const { name, files, expiresAt } = transfer
+    const { id, name, files, expiresAt } = transfer
     const expiryDate = parseTransferExpiryDate(expiresAt)
     return (
-      <button className="text-start rounded-xl border border-gray-200 bg-white px-4 py-3 group hover:bg-gray-50">
+      <Link to={`/app/transfers/${id}`} className="text-start rounded-xl border border-gray-200 bg-white px-4 py-3 group hover:bg-gray-50">
         <div>
           <h3 className="text-xl font-bold me-1">{name}</h3>
           <div className="text-sm text-gray-600 font-semibold">
@@ -29,14 +30,14 @@ export default function TransferList({ transfers }) {
             </span>}
           </div>
         </div>
-      </button>
+      </Link>
     )
   }
 
   return (
     <div className="">
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
-        {transfers.map((transfer, index) => <Entry transfer={transfer} />)}
+        {transfers.map((transfer, index) => <Entry key={transfer.id} transfer={transfer} />)}
       </div>
       {transfers.length == 0 && (
         <div className="text-center py-16 rounded-xl border-dashed border-2">

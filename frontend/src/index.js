@@ -28,6 +28,7 @@ import QuickSharePage from "./routes/QuickSharePage";
 import QuickShareProgress from "./routes/quick-share/QuickShareProgress";
 import QuickShareNew from "./routes/quick-share/QuickShareNew";
 import NewTransferPage from "./routes/dashboard/transfers/NewTransferPage";
+import TransferInfoPage from "./routes/dashboard/transfers/TransferInfoPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -41,10 +42,10 @@ const router = createBrowserRouter(
                 <Route path="/app" element={<Dashboard />}>
                   {/* <Route index element={<Navigate to="/app/overview" replace />} /> */}
                   <Route index element={<OverviewPage />} loader={OverviewPageLoader} />
-                  <Route path="transfers">
-                    <Route index element={<TransfersPage />} loader={TransfersPageLoader} />
-                    <Route path="new" element={<NewTransferPage />} />
+                  <Route path="transfers" element={<TransfersPage />} loader={TransfersPageLoader} >
+                    <Route path=":id" element={<TransferInfoPage />} />
                   </Route>
+                  <Route path="transfers/new" element={<NewTransferPage />} />
                   <Route path="settings" element={<SettingsPage />} />
                 </Route>
               </Route>

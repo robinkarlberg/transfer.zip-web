@@ -1,4 +1,4 @@
-import { Link, useLoaderData } from "react-router-dom";
+import { Link, Outlet, useLoaderData } from "react-router-dom";
 import BIcon from "../../components/BIcon";
 import GenericPage from "../../components/dashboard/GenericPage";
 import TransferList from "../../components/dashboard/TransferList";
@@ -20,6 +20,7 @@ export default function TransfersPage({ }) {
         {/* <button className="bg-gray-500 text-white text-sm rounded-lg py-1.5 px-3 shadow hover:bg-gray-400">New Transfer</button> */}
       </div>
       <TransferList transfers={transfers} />
+      <Outlet/>
     </GenericPage>
   )
 }

@@ -128,7 +128,7 @@ export function uploadTransferFiles(transferId, files, onProgress) {
         // Initialize the WebSocket connection
         const apiUrlWithoutProtocol = API_URL.replace(/^https?:/, '')
         const wsProtocol = window.location.protocol == "https:" ? "wss:" : "ws:"
-        const ws = new WebSocket(`${wsProtocol}//${apiUrlWithoutProtocol}/upload/${transferId}`)
+        const ws = new WebSocket(`${wsProtocol}//${apiUrlWithoutProtocol}/transfer/upload/${transferId}`)
 
         const startFileTransfer = (fileIndex) => {
             const currentFile = files[fileIndex]
@@ -145,7 +145,7 @@ export function uploadTransferFiles(transferId, files, onProgress) {
 
                     ws.send(e.target.result)
                     bytesTransferred += e.target.result.byteLength
-                    
+
                     onProgress && onProgress({
                         bytesTransferred
                     })
@@ -172,7 +172,7 @@ export function uploadTransferFiles(transferId, files, onProgress) {
         }
 
         ws.onopen = () => {
-            startFileTransfer(0)
+
         }
 
         ws.onmessage = (event) => {
@@ -182,8 +182,11 @@ export function uploadTransferFiles(transferId, files, onProgress) {
                 const message = event.data
                 const jsonObject = JSON.parse(message)
 
-                // Handle completion (final result)
-                if (jsonObject.finished) {
+                if (jsonObject.ready) {
+                    startFileTransfer(0)
+                }
+                else if (jsonObject.finished) {
+                    // Handle completion (final result)
                     ws.close()
                     resolve()
                 }
