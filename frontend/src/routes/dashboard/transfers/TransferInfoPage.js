@@ -1,50 +1,18 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import BIcon from '../../../components/BIcon'
-import { useNavigate } from 'react-router-dom'
-
-const team = [
-  {
-    name: 'Tom Cook',
-    email: 'tom.cook@example.com',
-    href: '#',
-    imageUrl:
-      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Whitney Francis',
-    email: 'whitney.francis@example.com',
-    href: '#',
-    imageUrl:
-      'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Leonard Krasner',
-    email: 'leonard.krasner@example.com',
-    href: '#',
-    imageUrl:
-      'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Floyd Miles',
-    email: 'floyd.miles@example.com',
-    href: '#',
-    imageUrl:
-      'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Emily Selman',
-    email: 'emily.selman@example.com',
-    href: '#',
-    imageUrl:
-      'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-]
+import { useNavigate, useParams, useRouteLoaderData } from 'react-router-dom'
+import { AuthContext } from '../../../providers/AuthProvider'
 
 export default function TransferInfoPage() {
+  const { transfers } = useRouteLoaderData("transfers")
+  const { id } = useParams()
+
   const navigate = useNavigate()
+
+  const transfer = useMemo(() => transfers.find(x => x.id === id))
 
   const [open, setOpen] = useState(false)
 
@@ -55,26 +23,31 @@ export default function TransferInfoPage() {
   const handleClose = () => {
     if (open) {
       setOpen(false)
-      setTimeout(() => navigate(".."), 500)
+      setTimeout(() => navigate(".."), 300)
     }
+  }
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+
+    
   }
 
   return (
     <Dialog open={open} onClose={handleClose} className="relative z-10">
       <div className="fixed inset-0" />
-
       <div className="fixed inset-0 overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
           <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
             <DialogPanel
               transition
-              className="pointer-events-auto w-screen max-w-md transform transition duration-500 ease-in-out data-[closed]:translate-x-full"
+              className="pointer-events-auto w-screen max-w-md transform transition duration-300 ease-in-out data-[closed]:translate-x-full"
             >
               <form className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl">
                 <div className="h-0 flex-1 overflow-y-auto">
                   <div className="bg-primary px-4 py-6 sm:px-6">
                     <div className="flex items-center justify-between">
-                      <DialogTitle className="text-base font-semibold leading-6 text-white">Transfer</DialogTitle>
+                      <DialogTitle className="text-base font-semibold leading-6 text-white">{transfer.name}</DialogTitle>
                       <div className="ml-3 flex h-7 items-center">
                         <button
                           type="button"
@@ -83,13 +56,13 @@ export default function TransferInfoPage() {
                         >
                           <span className="absolute -inset-2.5" />
                           <span className="sr-only">Close panel</span>
-                          <BIcon center name={"x"} aria-hidden="true" className="h-6 w-6" />
+                          <BIcon center name={"x-lg"} aria-hidden="true" className="h-6 w-6" />
                         </button>
                       </div>
                     </div>
                     <div className="mt-1">
                       <p className="text-sm text-primary-300">
-                        Get started by filling in the information below to create your new project.
+                        Edit and view information about your transfer.
                       </p>
                     </div>
                   </div>
@@ -97,13 +70,15 @@ export default function TransferInfoPage() {
                     <div className="divide-y divide-gray-200 px-4 sm:px-6">
                       <div className="space-y-6 pb-5 pt-6">
                         <div>
-                          <label htmlFor="project-name" className="block text-sm font-medium leading-6 text-gray-900">
+                          <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
                             Name
                           </label>
                           <div className="mt-2">
                             <input
-                              id="project-name"
-                              name="project-name"
+                              defaultValue={transfer.hasName ? transfer.name : undefined}
+                              placeholder={transfer.hasName ? "" : "Untitled Transfer"}
+                              id="name"
+                              name="name"
                               type="text"
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
                             />
@@ -119,39 +94,11 @@ export default function TransferInfoPage() {
                               name="description"
                               rows={4}
                               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
-                              defaultValue={''}
+                              defaultValue={transfer.description}
                             />
                           </div>
                         </div>
-                        <div>
-                          <h3 className="text-sm font-medium leading-6 text-gray-900">Team Members</h3>
-                          <div className="mt-2">
-                            <div className="flex space-x-2">
-                              {team.map((person) => (
-                                <a
-                                  key={person.email}
-                                  href={person.href}
-                                  className="relative rounded-full hover:opacity-75"
-                                >
-                                  <img
-                                    alt={person.name}
-                                    src={person.imageUrl}
-                                    className="inline-block h-8 w-8 rounded-full"
-                                  />
-                                </a>
-                              ))}
-                              <button
-                                type="button"
-                                className="relative inline-flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 border-dashed border-gray-200 bg-white text-gray-400 hover:border-gray-300 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-offset-2"
-                              >
-                                <span className="absolute -inset-2" />
-                                <span className="sr-only">Add team member</span>
-                                <BIcon center name={"plus"} aria-hidden="true" className="h-5 w-5" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                        <fieldset>
+                        {/* <fieldset>
                           <legend className="text-sm font-medium leading-6 text-gray-900">Privacy</legend>
                           <div className="mt-2 space-y-4">
                             <div className="relative flex items-start">
@@ -217,7 +164,7 @@ export default function TransferInfoPage() {
                               </div>
                             </div>
                           </div>
-                        </fieldset>
+                        </fieldset> */}
                       </div>
                       <div className="pb-6 pt-4">
                         <div className="flex text-sm">
@@ -226,7 +173,7 @@ export default function TransferInfoPage() {
                             className="group inline-flex items-center font-medium text-primary hover:text-primary-dark"
                           >
                             <BIcon
-                              name={"link"}
+                              name={"link-45deg"}
                               aria-hidden="true"
                               className="h-5 w-5 text-primary-light group-hover:text-primary-dark"
                             />

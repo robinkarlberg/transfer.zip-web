@@ -217,3 +217,13 @@ export async function getTransferList() {
 export async function newTransfer() {
     return await post(`/transfer/new`, {})
 }
+
+// download
+
+export async function getDownload(secretCode) {
+    return await get(`/download/${secretCode}`)
+}
+
+export async function settings() {
+    return await get("/settings")
+}

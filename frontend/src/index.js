@@ -29,6 +29,7 @@ import QuickShareProgress from "./routes/quick-share/QuickShareProgress";
 import QuickShareNew from "./routes/quick-share/QuickShareNew";
 import NewTransferPage from "./routes/dashboard/transfers/NewTransferPage";
 import TransferInfoPage from "./routes/dashboard/transfers/TransferInfoPage";
+import DownloadPage, { HydrateFallback as DownloadPageHydrateFallback, loader as DownloadPageLoader } from "./routes/DownloadPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -42,7 +43,7 @@ const router = createBrowserRouter(
                 <Route path="/app" element={<Dashboard />}>
                   {/* <Route index element={<Navigate to="/app/overview" replace />} /> */}
                   <Route index element={<OverviewPage />} loader={OverviewPageLoader} />
-                  <Route path="transfers" element={<TransfersPage />} loader={TransfersPageLoader} >
+                  <Route path="transfers" element={<TransfersPage />} loader={TransfersPageLoader} id={"transfers"}>
                     <Route path=":id" element={<TransferInfoPage />} />
                   </Route>
                   <Route path="transfers/new" element={<NewTransferPage />} />
@@ -56,6 +57,7 @@ const router = createBrowserRouter(
                 <Route index element={<QuickShareNew />} />
                 <Route path="progress" element={<QuickShareProgress />} />
               </Route>
+              <Route path="/transfer/:secretCode" element={<DownloadPage />} loader={DownloadPageLoader} HydrateFallback={DownloadPageHydrateFallback} />
               <Route path="/legal/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/legal/terms-and-conditions" element={<TermsAndConditionsPage />} />
               <Route path="*" element={<NotFoundPage />} />
