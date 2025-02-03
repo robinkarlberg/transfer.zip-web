@@ -44,7 +44,7 @@ export default function ChangePasswordPage() {
       const res = await doPasswordReset(email, token, newPassword)
       if (res.success) {
         setSuccess(true)
-        navigate("/signin")
+        navigate("/login")
         displaySuccessModal("Success", "Your password was reset successfully.")
       }
     }
@@ -129,7 +129,7 @@ export default function ChangePasswordPage() {
 
           <p className="mt-10 text-center text-sm/6 text-gray-500">
             Already have an account?{' '}
-            <Link to="/signin" className="font-semibold text-primary hover:text-primary-light">
+            <Link to="/login" className="font-semibold text-primary hover:text-primary-light">
               Sign in
             </Link>
           </p>

@@ -6,15 +6,22 @@ import { ApplicationContext } from "../../providers/ApplicationProvider";
 import { AuthContext } from "../../providers/AuthProvider";
 import { humanFileSize, humanFileSizePair } from "../../transferUtils";
 import { DashboardContext } from "../../providers/DashboardProvider";
+import TransferList from "../../components/dashboard/TransferList";
+import { getTransferList } from "../../Api";
 
+export async function loader({ params }) {
+    const { transfers } = await getTransferList()
+    return { transfers }
+  }
 
 export default function OverviewPage({ }) {
+
+    const { transfers } = useLoaderData()
 
     const { displayErrorModal, displaySuccessModal } = useContext(ApplicationContext)
     const { user } = useContext(AuthContext)
     const { storage } = useContext(DashboardContext)
 
-    const codeRef = useRef(null)
     const navigate = useNavigate()
 
     const getUsedStorage = () => {
@@ -27,23 +34,36 @@ export default function OverviewPage({ }) {
         return storage ? humanFileSize(storage.maxBytes, true) : "0GB"
     }
 
+    const storageStat = () => {
+
+    }
+
     const stats = [
         {
-            name: 'Transfers', stat: 1,
-            actionName: "More Info",
+            name: 'Transfers', stat: transfers.length,
+            actionName: "View All",
             action: () => navigate("../sponsors")
         },
+        // {
+        //     name: 'Downloads', stat: `2`,
+        //     actionName: "Last Week",
+        //     action: () => { }
+        // },
         {
-            name: 'Downloads', stat: `$2`,
-            actionName: "Last Week",
-            action: () => { }
-        },
-        {
-            name: 'Storage', stat: <span>{getUsedStorage()} / {getMaxStorage()}</span>,
-            actionName: "More Storage",
+            name: 'Storage', stat: <span>{Math.floor((storage?.usedBytes / storage?.maxBytes)) * 100} <small>%</small></span>,
+            actionName: "Get More Storage",
             action: () => { }
         },
     ]
+
+    // const transfers = [
+    //     {
+    //         title: "Test Transfer", files: [{ name: "asdad", size: 100000, type: "text/plain" }], expiresAt: new Date("2025-02-23"), statistics: {
+    //             downloads: [],
+    //             views: ["asdas"]
+    //         }
+    //     }
+    // ]
 
     return (
         <GenericPage title={"Overview"}>
@@ -59,6 +79,8 @@ export default function OverviewPage({ }) {
                     ))}
                 </dl>
             </div>
+            <h3 className="font-bold text-xl mb-1">Recent Transfers</h3>
+            <TransferList transfers={transfers} />
         </GenericPage>
     )
 }

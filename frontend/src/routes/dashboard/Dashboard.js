@@ -21,7 +21,7 @@ export default function Dashboard({ }) {
   const [open, setOpen] = useState(true)
 
   const Button = ({ icon, text, to, onClick, className }) => {
-    const activeClassParent = (currentPage.startsWith(to) ? "text-primary bg-body-secondary font-semibold " : "text-secondary font-medium ")
+    const activeClassParent = ((currentPage == to || currentPage == `${to}/`) ? "text-primary bg-body-secondary font-semibold " : "text-secondary font-medium ")
 
     return (
       <button onClick={onClick || (() => navigate(to))} className={`hover:bg-body-secondary grow text-start px-4 py-2 flex items-center rounded-lg hover:text-primary ${activeClassParent} ${className}`}>
@@ -88,10 +88,10 @@ export default function Dashboard({ }) {
           </div>
         </Link>
         <div className="flex flex-col gap-y-2">
-          <button className="bg-primary hover:bg-primary-light text-white font-medium py-2 rounded">New Transfer<BIcon className={"ms-2"} name={"send-fill"}/></button>
+          <Link to={"/app/transfers/new"} className="text-center bg-primary hover:bg-primary-light text-white text-sm font-semibold py-2 rounded-lg">Transfer<BIcon className={"ms-2"} name={"send-fill"}/></Link>
           {
             [
-              { icon: "house-fill", text: "Overview", to: "/app/overview" },
+              { icon: "house-fill", text: "Overview", to: "/app" },
               { icon: "send-fill", text: "Transfers", to: "/app/transfers" },
             ].map((value, index) => <Button key={value.to} {...value} />)
           }

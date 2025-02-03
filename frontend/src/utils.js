@@ -136,4 +136,80 @@ export function humanFileName(fileName) {
 
     // Return the original file name if no matching extension is found
     return fileName;
+
+}
+
+export const isSelfHosted = () => {
+    return process.env.REACT_APP_SELFHOST == undefined || (process.env.REACT_APP_SELFHOST && process.env.REACT_APP_SELFHOST == "true")
+}
+
+export const tryCopyToClipboard = async (value) => {
+    try {
+        await navigator.clipboard.writeText(value);
+        console.log("Successfully copied ", value);
+        return true
+    } catch (error) {
+        console.error("Couldn't copy ", value, error);
+        return false
+    }
+}
+
+export function parseTransferExpiryDate(expiresAt) {
+    const date = new Date(expiresAt)
+    if (date.getTime() == 0) return false
+    return date
+}
+
+// ChatGPT ;)
+export function humanTimeUntil(targetDate) {
+    const now = new Date();
+
+    // Calculate the difference in milliseconds
+    let diff = targetDate - now;
+
+    if (diff <= 0) {
+        return "now";
+    }
+
+    // Time calculations for years, days, hours, minutes, and seconds
+    const msInSecond = 1000;
+    const msInMinute = msInSecond * 60;
+    const msInHour = msInMinute * 60;
+    const msInDay = msInHour * 24;
+    const msInYear = msInDay * 365;  // Approximation, ignoring leap years
+
+    const years = Math.floor(diff / msInYear);
+    if (years > 0) {
+        const remaining = diff - years * msInYear;
+        if (remaining >= msInYear / 2) return `${years + 1}y`;
+        return `${years}y`;
+    }
+
+    const days = Math.floor(diff / msInDay);
+    if (days > 0) {
+        const remaining = diff - days * msInDay;
+        if (remaining >= msInDay / 2) return `${days + 1}d`;
+        return `${days}d`;
+    }
+
+    const hours = Math.floor(diff / msInHour);
+    if (hours > 0) {
+        const remaining = diff - hours * msInHour;
+        if (remaining >= msInHour / 2) return `${hours + 1}h`;
+        return `${hours}h`;
+    }
+
+    const minutes = Math.floor(diff / msInMinute);
+    if (minutes > 0) {
+        const remaining = diff - minutes * msInMinute;
+        if (remaining >= msInMinute / 2) return `${minutes + 1}m`;
+        return `${minutes}m`;
+    }
+
+    const seconds = Math.floor(diff / msInSecond);
+    return `${seconds}s`;
+}
+
+export function addSecondsToCurrentDate(seconds) {
+    return new Date(Date.now() + (seconds * 1000))
 }

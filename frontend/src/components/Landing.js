@@ -1,8 +1,28 @@
 "use client"
 
+import { useNavigate } from "react-router-dom"
 import FileUpload from "./elements/FileUpload"
 
 export default function Example() {
+
+  const navigate = useNavigate()
+
+  const handleFiles = (files) => {
+    navigate("/quick-share/progress", {
+      state: {
+        files,
+        transferDirection: "S"
+      }
+    })
+  }
+
+  const handleReceiveClicked = e => {
+    navigate("/quick-share/progress", {
+      state: {
+        transferDirection: "R"
+      }
+    })
+  }
 
   return (
     <div className="bg-white">
@@ -57,14 +77,14 @@ export default function Example() {
               >
                 Create Account
               </a>
-              <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
+              <a href="https://github.com/robinkarlberg/transfer.zip-web" className="text-sm font-semibold leading-6 text-gray-900">
                 Star on GitHub <span aria-hidden="true">→</span>
               </a>
             </div>
           </div>
           <div className="mt-16 sm:mt-24 lg:mt-0 lg:flex-shrink-0 lg:flex-grow">
             <div className="mx-auto max-w-sm">
-              <FileUpload />
+              <FileUpload onFiles={handleFiles} onReceiveClicked={handleReceiveClicked} />
             </div>
           </div>
         </div>

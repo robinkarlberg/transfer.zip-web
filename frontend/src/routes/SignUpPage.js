@@ -72,8 +72,8 @@ export default function SignUpPage() {
           This example requires updating your template:
   
           ```
-          <html class="h-full bg-white">
-          <body class="h-full">
+          <html className="h-full bg-white">
+          <body className="h-full">
           ```
         */}
       <div className="flex min-h-[100vh] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -153,7 +153,7 @@ export default function SignUpPage() {
 
           <p className="mt-10 text-center text-sm/6 text-gray-500">
             Already have an account?{' '}
-            <Link to="/signin" className="font-semibold text-primary hover:text-primary-light">
+            <Link to="/login" className="font-semibold text-primary hover:text-primary-light">
               Sign in
             </Link>
           </p>

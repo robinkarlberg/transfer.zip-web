@@ -72,13 +72,6 @@ export default function VerifyAccountPage() {
               Wait a moment...
             </Waiting>
           </div>
-
-          {/* <p className="mt-10 text-center text-sm/6 text-gray-500">
-            Already have an account?{' '}
-            <Link to="/signin" className="font-semibold text-primary hover:text-primary-light">
-              Sign in
-            </Link>
-          </p> */}
         </div>
       </div>
     </>
