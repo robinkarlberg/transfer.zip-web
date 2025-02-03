@@ -29,7 +29,7 @@ export default function TestimonialCloud() {
           {testimonials.map(testimonial => {
             return (
               <div key={testimonial.proof} className="col-span-1 text-center h-32">
-                <div className="text-blue-500 mb-2">{[1, 2, 3, 4, 5].map(() => <BIcon name={"star-fill"} />)}</div>
+                <div className="text-blue-500 mb-2">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div>
                 <div className="text-gray-600 mb-2"><p><BIcon name={"quote"} /> {testimonial.quote}</p></div>
                 <div className="font-bold text-gray-700">
                   <BIcon name={"reddit"} className={"me-1"} />
