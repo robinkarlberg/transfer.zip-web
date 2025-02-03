@@ -2,12 +2,12 @@ import BIcon from "./BIcon"
 
 const features = [
   {
-    name: 'More Fun and Engaging!',
-    description: 'SponsorApp is more fun for supporters, they can leave a custom message for everyone to see.',
-    icon: "emoji-smile",
+    name: 'Larger Files',
+    description: '',
+    icon: "file-earmark-arrow-up"
   },
   {
-    name: 'More Fun = More Donations',
+    name: '10x as Fast Speeds',
     description: 'Recognizing and acknowledging your supporters gives them more incentive to support you.',
     icon: "currency-dollar",
   },
