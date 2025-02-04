@@ -13,7 +13,7 @@ export default function QuickSharePage({ }) {
   /**
    * `true` if the user has been sent a link, either to receive or send a file
    */
-  const hasBeenSentLink = k && remoteSessionId && transferDirection
+  const hasBeenSentLink = !!(k && remoteSessionId && transferDirection)
 
   return (
     <div>

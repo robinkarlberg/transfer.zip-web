@@ -3,6 +3,7 @@ import { newTransfer, uploadTransferFiles } from "../../../Api";
 import GenericPage from "../../../components/dashboard/GenericPage";
 import FileUpload from "../../../components/elements/FileUpload";
 import { useNavigate } from "react-router-dom";
+import Progress from "../../../components/elements/Progress";
 
 export default function NewTransferPage({ }) {
 
@@ -16,9 +17,7 @@ export default function NewTransferPage({ }) {
     }
     return 0;
   }, [filesToUpload]);
-
   const [bytesTransferred, setBytesTransferred] = useState(0)
-  const percentTransferred = useMemo(() => Math.floor(totalBytes / bytesTransferred * 100))
 
   const handleFiles = async files => {
     const { transfer } = await newTransfer()
@@ -33,11 +32,7 @@ export default function NewTransferPage({ }) {
   return (
     <GenericPage title={"New Transfer"}>
       <div className="w-full max-w-96">
-        <FileUpload onFiles={handleFiles} showOverlay={!!filesToUpload}>
-          <div className="w-full">
-            <div style={{ width: `${percentTransferred}%` }} className="h-2 rounded bg-primary inline-block"></div>
-          </div>
-        </FileUpload>
+        <FileUpload onFiles={handleFiles} progressElement={<Progress max={totalBytes} now={bytesTransferred} title={"Uploading..."} />} showProgress={!!filesToUpload} />
       </div>
     </GenericPage>
   )

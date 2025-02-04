@@ -12,6 +12,8 @@ import QRCode from "react-qr-code"
 import BIcon from "../../components/BIcon";
 import Notification from "../../components/elements/Notification";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
+import Progress from "../../components/elements/Progress";
+import { Transition } from "@headlessui/react";
 
 const TRANSFER_STATE_WAIT_FOR_USER = "wait_for_user"
 const TRANSFER_STATE_IDLE = "idle"
@@ -30,7 +32,7 @@ export default function QuickShareProgress({ }) {
   const setTransferState = (ts) => {
     console.log("[QuickShareProgress] setTransferState", ts)
     _setTransferState(ts)
-}
+  }
 
   const [filesProgress, setFilesProgress] = useState(null)
   const [quickShareLink, setQuickShareLink] = useState(null)
@@ -38,6 +40,16 @@ export default function QuickShareProgress({ }) {
   const [errorMessage, setErrorMessage] = useState(null)
 
   const hasConnected = useMemo(() => transferState == TRANSFER_STATE_TRANSFERRING || transferState == TRANSFER_STATE_FINISHED, [transferState])
+
+  const [totalBytes, setTotalBytes] = useState(0)
+  const bytesTransferred = useMemo(() => {
+    if (filesProgress) {
+      console.log(filesProgress)
+      return filesProgress.reduce((total, fileProgress) => total + fileProgress.bytesTransferred, 0);
+    }
+    return 0;
+  }, [filesProgress]);
+  const percentTransferred = useMemo(() => Math.floor(totalBytes / bytesTransferred * 100), [totalBytes, bytesTransferred])
 
   const startProgress = () => {
     setTransferState(TRANSFER_STATE_IDLE)
@@ -51,8 +63,10 @@ export default function QuickShareProgress({ }) {
         size: doZip ? undefined : fileList[0].size
       })
 
+      setTotalBytes(fileList.reduce((total, file) => total + file.size, 0))
+
       let _filesProgress = fileList.map(file => {
-        return { file: file, progress: 0 }
+        return { file: file, progress: 0, bytesTransferred: 0 }
       })
       setFilesProgress(_filesProgress.map(x => x))
       fileTransfer.requestFile(0)
@@ -60,6 +74,7 @@ export default function QuickShareProgress({ }) {
       fileTransfer.onprogress = ({ now, max, done }, fileInfo) => {
         if (filesDone >= fileList.length) return console.warn("[QuickShareProgress] fileTransfer.onprogress called after files are done")
         _filesProgress[filesDone].progress = now / max
+        _filesProgress[filesDone].bytesTransferred = now
         // console.log(now / max)
         setFilesProgress(_filesProgress.map(x => x))
       }
@@ -118,6 +133,7 @@ export default function QuickShareProgress({ }) {
     let waitTimer = null
 
     const sendDirection = (fileTransfer) => {
+      setTotalBytes(files.reduce((total, file) => total + file.size, 0))
       let _filesProgress = files.map(file => {
         return { file: file, progress: 0 }
       })
@@ -128,6 +144,7 @@ export default function QuickShareProgress({ }) {
       }
       fileTransfer.onprogress = ({ now, max }, fileInfo) => {
         _filesProgress[filesDone].progress = now / max
+        _filesProgress[filesDone].bytesTransferred = now
         setFilesProgress(_filesProgress.map(x => x))
       }
       fileTransfer.onfilefinished = fileInfo => {
@@ -215,12 +232,17 @@ export default function QuickShareProgress({ }) {
     <div className="flex flex-col md:flex-row gap-4">
       <div className="w-full max-w-64">
         <h1 className="text-3xl font-bold mb-4 block md:hidden">{title}</h1>
-        <div>
+        <div className="relative">
           <QRCode style={{ height: "auto", maxWidth: "100%", width: "100%" }}
             className={"bg-white p-5 border rounded-lg shadow-sm"}
             size={128}
             fgColor="#212529"
             value={quickShareLink ? quickShareLink : "https://transfer.zip/?542388234752394243924377293849asdasd"} />
+          <Transition show={hasConnected || hasBeenSentLink}>
+            <div className="absolute bg-gray-50 left-0 top-0 w-full max-w-full h-full rounded-lg p-16 border transition data-[closed]:opacity-0">
+              <Progress now={bytesTransferred} max={totalBytes} unit={"%"} />
+            </div>
+          </Transition>
         </div>
         {!hasBeenSentLink && (
           <div>

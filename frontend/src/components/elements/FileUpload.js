@@ -4,8 +4,9 @@ import { Link } from "react-router-dom"
 import { Transition } from "@headlessui/react"
 import { humanFileSize, humanFileType } from "../../transferUtils"
 import { humanFileName } from "../../utils"
+import Progress from "./Progress"
 
-export default function FileUpload({ onFiles, onReceiveClicked, children, showOverlay }) {
+export default function FileUpload({ onFiles, onReceiveClicked, progressElement, showProgress }) {
 
   const [files, setFiles] = useState([])
 
@@ -55,9 +56,9 @@ export default function FileUpload({ onFiles, onReceiveClicked, children, showOv
             </button>
           </div>
         )}
-        <Transition show={showOverlay || false}>
+        <Transition show={showProgress || false}>
           <div className="absolute left-0 top-0 w-full h-full flex flex-col justify-center items-center group transition data-[closed]:opacity-0">
-            {children}
+            {progressElement}
           </div>
         </Transition>
         <Transition show={files.length == 0}>
