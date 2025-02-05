@@ -1,7 +1,8 @@
 "use client"
 
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import FileUpload from "./elements/FileUpload"
+import BIcon from "./BIcon"
 
 export default function Example() {
 
@@ -71,14 +72,14 @@ export default function Example() {
               Send files with <span className="underline decoration-primary decoration-dashed font-semibold">no size limits</span> in real-time, with end-to-end encryption and blazingly fast speeds, all for free.
             </p>
             <div className="mt-10 flex items-center gap-x-6">
-              <a
-                href="#"
+              <Link
+                to="signup"
                 className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 Create Account
-              </a>
+              </Link>
               <a href="https://github.com/robinkarlberg/transfer.zip-web" className="text-sm font-semibold leading-6 text-gray-900">
-                Star on GitHub <span aria-hidden="true">→</span>
+                <BIcon name={"star"}/> Star on GitHub <span aria-hidden="true">→</span>
               </a>
             </div>
           </div>

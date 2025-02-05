@@ -10,6 +10,8 @@ export const DashboardProvider = () => {
     const { user } = useContext(AuthContext)
     const [storage, setStorage] = useState(null)
 
+    const [selectedTransferId, setSelectedTransferId] = useState(null)
+
     const refreshStorage = async () => {
         try {
             const res = await getUserStorage()
@@ -27,7 +29,9 @@ export const DashboardProvider = () => {
     return (
         <DashboardContext.Provider value={{
             storage,
-            refreshStorage
+            refreshStorage,
+            selectedTransferId,
+            setSelectedTransferId
         }}>
             <Outlet />
         </DashboardContext.Provider >
