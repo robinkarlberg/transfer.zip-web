@@ -135,7 +135,7 @@ export default function QuickShareProgress({ }) {
     const sendDirection = (fileTransfer) => {
       setTotalBytes(files.reduce((total, file) => total + file.size, 0))
       let _filesProgress = files.map(file => {
-        return { file: file, progress: 0 }
+        return { file: file, progress: 0, bytesTransferred: 0 }
       })
       setFilesProgress(_filesProgress.map(x => x))
       fileTransfer.onfilebegin = fileInfo => {
