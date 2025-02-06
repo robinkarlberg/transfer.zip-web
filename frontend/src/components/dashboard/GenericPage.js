@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { DashboardContext } from "../../providers/DashboardProvider"
+import { DashboardContext } from "../../routes/dashboard/Dashboard"
 import BIcon from "../BIcon"
 
 export default function GenericPage({ title, category, side, children, flex, full, className, ...props }) {

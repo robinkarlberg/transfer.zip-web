@@ -1,14 +1,20 @@
 import { Link } from "react-router-dom"
 import { humanTimeUntil, parseTransferExpiryDate } from "../../utils"
 import BIcon from "../BIcon"
+import { useContext } from "react"
+import { DashboardContext } from "../../routes/dashboard/Dashboard"
 
 export default function TransferList({ transfers }) {
+
+  const { displayedTransferId, setSelectedTransferId, hideSidebar } = useContext(DashboardContext)
 
   const Entry = ({ transfer }) => {
     const { id, name, files, expiresAt } = transfer
     const expiryDate = parseTransferExpiryDate(expiresAt)
+    const isSelected = id === displayedTransferId
+
     return (
-      <Link to={`/app/transfers/${id}`} className="text-start rounded-xl border border-gray-200 bg-white px-4 py-3 group hover:bg-gray-50">
+      <button onClick={() => isSelected ? hideSidebar() : setSelectedTransferId(id)} className={`text-start rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-4 py-3 group hover:bg-gray-50`}>
         <div>
           <h3 className="text-xl font-bold me-1">{name}</h3>
           <div className="text-sm text-gray-600 font-semibold">
@@ -30,7 +36,7 @@ export default function TransferList({ transfers }) {
             </span>}
           </div>
         </div>
-      </Link>
+      </button>
     )
   }
 

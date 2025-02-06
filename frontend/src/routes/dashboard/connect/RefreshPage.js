@@ -1,7 +1,6 @@
 import { useContext, useEffect } from "react"
 import { connectCreateAccount, connectLinkAccount } from "../../../Api"
 import { AuthContext } from "../../../providers/AuthProvider"
-import { DashboardContext } from "../../../providers/DashboardProvider"
 import { ApplicationContext } from "../../../providers/ApplicationProvider"
 
 export default function RefreshPage({ }) {
@@ -35,7 +34,7 @@ export default function RefreshPage({ }) {
   }
 
   useEffect(() => {
-    if(selectedTenant) {
+    if (selectedTenant) {
       handleLinkBankAccount()
     }
   }, [selectedTenant])

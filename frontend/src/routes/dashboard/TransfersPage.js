@@ -1,17 +1,12 @@
-import { Link, Outlet, useLoaderData } from "react-router-dom";
+import { Link, Outlet, useLoaderData, useRouteLoaderData } from "react-router-dom";
 import BIcon from "../../components/BIcon";
 import GenericPage from "../../components/dashboard/GenericPage";
 import TransferList from "../../components/dashboard/TransferList";
 import { getTransferList } from "../../Api";
 
-export async function loader({ params }) {
-  const { transfers } = await getTransferList()
-  return { transfers }
-}
-
 export default function TransfersPage({ }) {
 
-  const { transfers } = useLoaderData()
+  const { transfers } = useRouteLoaderData("dashboard")
 
   return (
     <GenericPage title={"Transfers"}>

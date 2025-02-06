@@ -9,9 +9,8 @@ import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouterP
 import { AuthProvider } from './providers/AuthProvider';
 import HomePage from './routes/HomePage';
 import { ApplicationProvider } from './providers/ApplicationProvider';
-import Dashboard from "./routes/dashboard/Dashboard";
+import Dashboard, { loader as DashboardLoader } from "./routes/dashboard/Dashboard";
 import SignInPage from "./routes/SignInPage";
-import { DashboardProvider } from "./providers/DashboardProvider";
 import SettingsPage from "./routes/dashboard/SettingsPage";
 import OverviewPage, { loader as OverviewPageLoader } from "./routes/dashboard/OverviewPage";
 import OnboardingPage from "./routes/dashboard/onboarding/OnboardingPage";
@@ -37,18 +36,14 @@ const router = createBrowserRouter(
       <Route element={<AnalyticsProvider />}>
         <Route element={<AuthProvider />}>
           <Route element={<ApplicationProvider />}>
-            <Route element={<DashboardProvider />}>
-              <Route path="/onboarding" element={<OnboardingPage />} />
-              <Route element={<RequireOnboarded />}>
-                <Route path="/app" element={<Dashboard />}>
-                  {/* <Route index element={<Navigate to="/app/overview" replace />} /> */}
-                  <Route index element={<OverviewPage />} loader={OverviewPageLoader} />
-                  <Route path="transfers" element={<TransfersPage />} loader={TransfersPageLoader} id={"transfers"}>
-                    <Route path=":id" element={<TransferInfoPage />} />
-                  </Route>
-                  <Route path="transfers/new" element={<NewTransferPage />} />
-                  <Route path="settings" element={<SettingsPage />} />
-                </Route>
+            <Route path="/onboarding" element={<OnboardingPage />} />
+            <Route element={<RequireOnboarded />}>
+              <Route path="/app" element={<Dashboard />} id="dashboard" loader={DashboardLoader}>
+                {/* <Route index element={<Navigate to="/app/overview" replace />} /> */}
+                <Route index element={<OverviewPage />} />
+                <Route path="transfers" element={<TransfersPage />} />
+                <Route path="transfers/new" element={<NewTransferPage />} />
+                <Route path="settings" element={<SettingsPage />} />
               </Route>
             </Route>
             <Route path="/" element={<App />}>

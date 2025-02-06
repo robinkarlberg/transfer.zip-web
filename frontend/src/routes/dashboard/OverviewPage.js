@@ -1,22 +1,17 @@
-import { Link, useLoaderData, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLoaderData, useLocation, useNavigate, useRouteLoaderData } from "react-router-dom";
 import GenericPage from "../../components/dashboard/GenericPage";
 import { useContext, useRef, useState } from "react";
 import BIcon from "../../components/BIcon";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 import { AuthContext } from "../../providers/AuthProvider";
 import { humanFileSize, humanFileSizePair } from "../../transferUtils";
-import { DashboardContext } from "../../providers/DashboardProvider";
+import { DashboardContext } from "./Dashboard";
 import TransferList from "../../components/dashboard/TransferList";
 import { getTransferList } from "../../Api";
 
-export async function loader({ params }) {
-    const { transfers } = await getTransferList()
-    return { transfers }
-  }
-
 export default function OverviewPage({ }) {
 
-    const { transfers } = useLoaderData()
+    const { transfers } = useRouteLoaderData("dashboard")
 
     const { displayErrorModal, displaySuccessModal } = useContext(ApplicationContext)
     const { user } = useContext(AuthContext)
