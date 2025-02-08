@@ -44,15 +44,6 @@ export const humanFileType = (type) => {
   return split.length <= 1 ? split : split[1].replace(/^x-/, "")
 }
 
-export const getTransferLink = (transfer) => {
-  const hash = transfer.k ? `#${transfer.k}` : ""
-  return `${window.location.origin}/transfer/${transfer.secretCode}${hash}`
-}
-
-export const copyTransferLink = async (transfer) => {
-  await navigator.clipboard.writeText(getTransferLink(transfer))
-}
-
 const textEnc = new TextEncoder()
 const textDec = new TextDecoder()
 

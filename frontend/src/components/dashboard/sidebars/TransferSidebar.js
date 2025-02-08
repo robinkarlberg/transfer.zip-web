@@ -1,17 +1,33 @@
-import { useContext } from "react"
+import { useContext, useMemo } from "react"
 import { DashboardContext } from "../../../routes/dashboard/Dashboard"
 import { DialogTitle } from "@headlessui/react"
 import BIcon from "../../BIcon"
+import { tryCopyToClipboard } from "../../../utils"
+import { ApplicationContext } from "../../../providers/ApplicationProvider"
+import { getTransferDownloadLink } from "../../../Api"
 
 export default function TransferSidebar({ }) {
+  const { displayNotification } = useContext(ApplicationContext)
   const { selectedTransfer, hideSidebar } = useContext(DashboardContext)
 
   const handleClose = () => {
     hideSidebar()
   }
 
+  const transferLink = useMemo(() => getTransferDownloadLink(selectedTransfer) + "/zip", [selectedTransfer])
+
+  const handleCopy = async e => {
+    if (await tryCopyToClipboard(transferLink)) {
+      displayNotification("Copied Link", "The Transfer link was successfully copied to the clipboard!")
+    }
+  }
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+  }
+
   return (
-    <form className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl">
+    <form onSubmit={handleSubmit} className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl">
       <div className="h-0 flex-1 overflow-y-auto">
         <div className="bg-primary px-4 py-6 sm:px-6">
           <div className="flex items-center justify-between">
@@ -37,6 +53,25 @@ export default function TransferSidebar({ }) {
         <div className="flex flex-1 flex-col justify-between">
           <div className="divide-y divide-gray-200 px-4 sm:px-6">
             <div className="space-y-6 pb-5 pt-6">
+              <div>
+                {/* <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
+                  Link
+                </label> */}
+                <div className="relative mt-2 flex items-center">
+                  <input
+                    type="url"
+                    className="block w-full border-0 py-2.5 ps-4 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                    defaultValue={transferLink}
+                    contentEditable="false"
+                  />
+                  <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
+                    <button type="button" onClick={handleCopy} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
+                      <BIcon name={"copy"} className={"mr-1 ms-1"} />Copy Link
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {/* <hr /> */}
               <div>
                 <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
                   Name
@@ -66,89 +101,9 @@ export default function TransferSidebar({ }) {
                   />
                 </div>
               </div>
-              {/* <fieldset>
-                    <legend className="text-sm font-medium leading-6 text-gray-900">Privacy</legend>
-                    <div className="mt-2 space-y-4">
-                      <div className="relative flex items-start">
-                        <div className="absolute flex h-6 items-center">
-                          <input
-                            defaultChecked
-                            id="privacy-public"
-                            name="privacy"
-                            type="radio"
-                            aria-describedby="privacy-public-description"
-                            className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
-                          />
-                        </div>
-                        <div className="pl-7 text-sm leading-6">
-                          <label htmlFor="privacy-public" className="font-medium text-gray-900">
-                            Public access
-                          </label>
-                          <p id="privacy-public-description" className="text-gray-500">
-                            Everyone with the link will see this project.
-                          </p>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="relative flex items-start">
-                          <div className="absolute flex h-6 items-center">
-                            <input
-                              id="privacy-private-to-project"
-                              name="privacy"
-                              type="radio"
-                              aria-describedby="privacy-private-to-project-description"
-                              className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
-                            />
-                          </div>
-                          <div className="pl-7 text-sm leading-6">
-                            <label htmlFor="privacy-private-to-project" className="font-medium text-gray-900">
-                              Private to project members
-                            </label>
-                            <p id="privacy-private-to-project-description" className="text-gray-500">
-                              Only members of this project would be able to access.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <div className="relative flex items-start">
-                          <div className="absolute flex h-6 items-center">
-                            <input
-                              id="privacy-private"
-                              name="privacy"
-                              type="radio"
-                              aria-describedby="privacy-private-to-project-description"
-                              className="h-4 w-4 border-gray-300 text-primary focus:ring-primary"
-                            />
-                          </div>
-                          <div className="pl-7 text-sm leading-6">
-                            <label htmlFor="privacy-private" className="font-medium text-gray-900">
-                              Private to you
-                            </label>
-                            <p id="privacy-private-description" className="text-gray-500">
-                              You are the only one able to access this project.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </fieldset> */}
             </div>
             <div className="pb-6 pt-4">
               <div className="flex text-sm">
-                <a
-                  href="#"
-                  className="group inline-flex items-center font-medium text-primary hover:text-primary-dark"
-                >
-                  <BIcon
-                    name={"link-45deg"}
-                    aria-hidden="true"
-                    className="h-5 w-5 text-primary-light group-hover:text-primary-dark"
-                  />
-                  <span className="ml-2">Copy link</span>
-                </a>
-              </div>
-              <div className="mt-4 flex text-sm">
                 <a href="#" className="group inline-flex items-center text-gray-500 hover:text-gray-900">
                   <BIcon
                     name={"question-circle"}

@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom"
-import { getDownload, settings } from "../Api"
+import { getDownload, getTransferDownloadLink, settings } from "../Api"
 import TestimonialCloud from "../components/TestimonialCloud";
 import BIcon from "../components/BIcon";
 import { humanTimeUntil, parseTransferExpiryDate } from "../utils";
@@ -25,6 +25,10 @@ export default function DownloadPage({ }) {
   const { download } = useLoaderData()
 
   const expiryDate = useMemo(() => !download ? false : parseTransferExpiryDate(download.expiresAt), [download])
+
+  const handleDownloadClicked = async e => {
+    window.open(getTransferDownloadLink(download) + "/zip", "_blank")
+  }
 
   return (
     <div>
@@ -70,7 +74,7 @@ export default function DownloadPage({ }) {
             </div>
             <div className="flex gap-2">
               <button disabled className="text-gray-400 bg-white border shadow rounded-lg px-3 py-1 grow-0"><BIcon name={"search"} /> Preview</button>
-              <button className="text-white bg-primary shadow rounded-lg px-3 py-1 grow hover:bg-primary-light">Download</button>
+              <button onClick={handleDownloadClicked} className="text-white bg-primary shadow rounded-lg px-3 py-1 grow hover:bg-primary-light">Download</button>
             </div>
           </div>
         </div>

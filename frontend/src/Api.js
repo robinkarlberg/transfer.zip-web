@@ -124,6 +124,7 @@ const CHUNK_SIZE = 10 * 1024 * 1024 // 10MB
 
 export function uploadTransferFiles(transferId, files, onProgress) {
     let bytesTransferred = 0
+    let currentFileIndex = 0
     return new Promise((resolve, reject) => {
         // Initialize the WebSocket connection
         const apiUrlWithoutProtocol = API_URL.replace(/^https?:/, '')
@@ -154,14 +155,6 @@ export function uploadTransferFiles(transferId, files, onProgress) {
                         sendChunk(start + CHUNK_SIZE)
                     } else {
                         fileIndex++
-                        if (fileIndex < files.length) {
-                            startFileTransfer(fileIndex + 1)
-                        }
-                        else {
-                            ws.send(JSON.stringify({
-                                finished: true
-                            }))
-                        }
                     }
                 }
                 reader.readAsArrayBuffer(nextChunk)
@@ -183,7 +176,14 @@ export function uploadTransferFiles(transferId, files, onProgress) {
                 const jsonObject = JSON.parse(message)
 
                 if (jsonObject.ready) {
-                    startFileTransfer(0)
+                    if (currentFileIndex < files.length) {
+                        startFileTransfer(currentFileIndex++)
+                    }
+                    else {
+                        ws.send(JSON.stringify({
+                            finished: true
+                        }))
+                    }
                 }
                 else if (jsonObject.finished) {
                     // Handle completion (final result)
@@ -216,6 +216,11 @@ export async function getTransferList() {
 
 export async function newTransfer() {
     return await post(`/transfer/new`, {})
+}
+
+export const getTransferDownloadLink = (transfer) => {
+    const hash = transfer.k ? `#${transfer.k}` : ""
+    return `${API_URL}/download/${transfer.secretCode}${hash}`
 }
 
 // download
