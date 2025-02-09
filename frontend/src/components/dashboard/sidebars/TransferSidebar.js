@@ -10,11 +10,15 @@ export default function TransferSidebar({ }) {
   const { displayNotification } = useContext(ApplicationContext)
   const { selectedTransfer, hideSidebar } = useContext(DashboardContext)
 
+  const transferLink = useMemo(() => getTransferDownloadLink(selectedTransfer) + "/zip", [selectedTransfer])
+
+  if(!selectedTransfer) {
+    return <></>
+  }
+
   const handleClose = () => {
     hideSidebar()
   }
-
-  const transferLink = useMemo(() => getTransferDownloadLink(selectedTransfer) + "/zip", [selectedTransfer])
 
   const handleCopy = async e => {
     if (await tryCopyToClipboard(transferLink)) {

@@ -6,7 +6,7 @@ import { DashboardContext } from "../../routes/dashboard/Dashboard"
 
 export default function TransferList({ transfers }) {
 
-  const { displayedTransferId, setSelectedTransferId, hideSidebar } = useContext(DashboardContext)
+  const { displayedTransferId, setSelectedTransferId, hideSidebar, showSidebar } = useContext(DashboardContext)
 
   const Entry = ({ transfer }) => {
     const { id, name, files, expiresAt } = transfer
@@ -40,9 +40,11 @@ export default function TransferList({ transfers }) {
     )
   }
 
+  const gridClassNames = showSidebar ? "xl:grid-cols-2 2xl:grid-cols-3" : "md:grid-cols-2 xl:grid-cols-3"
+
   return (
     <div className="">
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
+      <div className={`grid grid-cols-1 gap-2 ${gridClassNames}`}>
         {transfers.map((transfer, index) => <Entry key={transfer.id} transfer={transfer} />)}
       </div>
       {transfers.length == 0 && (

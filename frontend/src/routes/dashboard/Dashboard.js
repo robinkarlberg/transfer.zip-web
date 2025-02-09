@@ -15,7 +15,7 @@ export async function loader({ params }) {
   return { transfers }
 }
 
-export const DashboardContext = createContext({});
+export const DashboardContext = createContext({})
 
 export default function Dashboard({ }) {
   const location = useLocation()
@@ -158,7 +158,8 @@ export default function Dashboard({ }) {
       displayedTransferId,
       setSelectedTransferId,
       selectedTransfer,
-      hideSidebar
+      hideSidebar,
+      showSidebar
     }}>
       <Wrapper>
         {loaded}

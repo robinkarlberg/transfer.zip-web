@@ -1,6 +1,6 @@
 import { Link, useLoaderData, useLocation, useNavigate, useRouteLoaderData } from "react-router-dom";
 import GenericPage from "../../components/dashboard/GenericPage";
-import { useContext, useRef, useState } from "react";
+import { useContext, useMemo, useRef, useState } from "react";
 import BIcon from "../../components/BIcon";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 import { AuthContext } from "../../providers/AuthProvider";
@@ -13,9 +13,11 @@ export default function OverviewPage({ }) {
 
     const { transfers } = useRouteLoaderData("dashboard")
 
+    const recentTransfers = useMemo(() => transfers.slice(0, 9), [transfers])
+
     const { displayErrorModal, displaySuccessModal } = useContext(ApplicationContext)
     const { user } = useContext(AuthContext)
-    const { storage } = useContext(DashboardContext)
+    const { storage, showSidebar } = useContext(DashboardContext)
 
     const navigate = useNavigate()
 
@@ -37,7 +39,7 @@ export default function OverviewPage({ }) {
         {
             name: 'Transfers', stat: transfers.length,
             actionName: "View All",
-            action: () => navigate("../sponsors")
+            action: () => navigate("transfers")
         },
         // {
         //     name: 'Downloads', stat: `2`,
@@ -51,20 +53,13 @@ export default function OverviewPage({ }) {
         },
     ]
 
-    // const transfers = [
-    //     {
-    //         title: "Test Transfer", files: [{ name: "asdad", size: 100000, type: "text/plain" }], expiresAt: new Date("2025-02-23"), statistics: {
-    //             downloads: [],
-    //             views: ["asdas"]
-    //         }
-    //     }
-    // ]
+    const gridClassNames = showSidebar ? "xl:grid-cols-3" : "lg:grid-cols-3"
 
     return (
         <GenericPage title={"Overview"}>
             <div className="mb-4">
                 {/* <h3 className="text-base font-semibold leading-6 text-gray-900">Statistics</h3> */}
-                <dl className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3">
+                <dl className={`mt-5 grid grid-cols-1 gap-5 ${gridClassNames}`}>
                     {stats.map((item) => (
                         <div key={item.name} className="overflow-hidden bg-white rounded-lg border px-4 py-5 shadow sm:p-6">
                             <dt className="truncate text-sm font-medium text-gray-500">{item.name}</dt>
@@ -75,7 +70,7 @@ export default function OverviewPage({ }) {
                 </dl>
             </div>
             <h3 className="font-bold text-xl mb-1">Recent Transfers</h3>
-            <TransferList transfers={transfers} />
+            <TransferList transfers={recentTransfers} />
         </GenericPage>
     )
 }

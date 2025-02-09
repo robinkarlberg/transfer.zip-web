@@ -27,7 +27,6 @@ import QuickSharePage from "./routes/QuickSharePage";
 import QuickShareProgress from "./routes/quick-share/QuickShareProgress";
 import QuickShareNew from "./routes/quick-share/QuickShareNew";
 import NewTransferPage from "./routes/dashboard/transfers/NewTransferPage";
-import TransferInfoPage from "./routes/dashboard/transfers/TransferInfoPage";
 import DownloadPage, { HydrateFallback as DownloadPageHydrateFallback, loader as DownloadPageLoader } from "./routes/DownloadPage";
 
 const router = createBrowserRouter(
@@ -42,6 +41,7 @@ const router = createBrowserRouter(
                 {/* <Route index element={<Navigate to="/app/overview" replace />} /> */}
                 <Route index element={<OverviewPage />} />
                 <Route path="transfers" element={<TransfersPage />} />
+                {/* <Route path="transfers/:id" element={<TransfersPage />} /> */}
                 <Route path="transfers/new" element={<NewTransferPage />} />
                 <Route path="settings" element={<SettingsPage />} />
               </Route>

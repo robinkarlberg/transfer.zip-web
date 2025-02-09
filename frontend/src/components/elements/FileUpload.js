@@ -48,7 +48,7 @@ export default function FileUpload({ onFiles, onReceiveClicked, progressElement,
         <input ref={fileInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" multiple></input>
         <input ref={folderInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" webkitdirectory="true"></input>
       </form>
-      <div className={`text-start relative w-full rounded-2xl bg-white border shadow-lg flex flex-col min-h-56 ${onReceiveClicked ? "mt-8" : ""}`}>
+      <div className={`overflow-clip text-start relative w-full rounded-2xl bg-white border shadow-lg flex flex-col min-h-56 ${onReceiveClicked ? "mt-8" : ""}`}>
         {onReceiveClicked && (
           <div className="absolute w-full flex">
             <button onClick={onReceiveClicked} className="text-sm font-medium text-gray-500 relative mx-auto bg-white border py-1 px-10 rounded-t-lg transition-all h-7 -top-7 hover:h-8 hover:-top-8 hover:text-primary">
@@ -56,11 +56,6 @@ export default function FileUpload({ onFiles, onReceiveClicked, progressElement,
             </button>
           </div>
         )}
-        <Transition show={showProgress || false}>
-          <div className="absolute left-0 top-0 w-full h-full flex flex-col justify-center items-center group transition data-[closed]:opacity-0">
-            {progressElement}
-          </div>
-        </Transition>
         <Transition show={files.length == 0}>
           <button onClick={handlePickFiles} className="absolute left-0 top-0 w-full h-full flex flex-col justify-center items-center group transition data-[closed]:opacity-0">
             <div className="text-white rounded-full bg-primary w-12 h-12 flex group-hover:bg-primary-light">
@@ -96,6 +91,13 @@ export default function FileUpload({ onFiles, onReceiveClicked, progressElement,
                 <span className="text-gray-500 text-sm me-2 hidden sm:inline">{humanFileSize(totalFileSize, true)}</span>
                 <button onClick={handleTransferClicked} className="text-white px-2 py-1 rounded-lg shadow bg-primary hover:bg-primary-light">Transfer &rarr;</button>
               </div>
+            </div>
+          </div>
+        </Transition>
+        <Transition show={showProgress || false}>
+          <div className="bg-white absolute left-0 top-0 w-full h-full p-8 flex flex-row justify-center items-center group transition data-[closed]:opacity-0">
+            <div className="relative w-full h-full max-w-52 max-h-52">
+              {progressElement}
             </div>
           </div>
         </Transition>

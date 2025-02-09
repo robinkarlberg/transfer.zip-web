@@ -219,8 +219,8 @@ export async function newTransfer() {
 }
 
 export const getTransferDownloadLink = (transfer) => {
-    const hash = transfer.k ? `#${transfer.k}` : ""
-    return `${API_URL}/download/${transfer.secretCode}${hash}`
+    if(!transfer) return null
+    return `${API_URL}/download/${transfer.secretCode}`
 }
 
 // download
