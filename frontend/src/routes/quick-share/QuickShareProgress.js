@@ -44,7 +44,7 @@ export default function QuickShareProgress({ }) {
   const [totalBytes, setTotalBytes] = useState(0)
   const bytesTransferred = useMemo(() => {
     if (filesProgress) {
-      console.log(filesProgress)
+      // console.log(filesProgress)
       return filesProgress.reduce((total, fileProgress) => total + fileProgress.bytesTransferred, 0);
     }
     return 0;

@@ -12,7 +12,7 @@ export default function TransferSidebar({ }) {
 
   const transferLink = useMemo(() => getTransferDownloadLink(selectedTransfer) + "/zip", [selectedTransfer])
 
-  if(!selectedTransfer) {
+  if (!selectedTransfer) {
     return <></>
   }
 
@@ -107,7 +107,7 @@ export default function TransferSidebar({ }) {
               </div>
             </div>
             <div className="pb-6 pt-4">
-              <div className="flex text-sm">
+              {/* <div className="flex text-sm">
                 <a href="#" className="group inline-flex items-center text-gray-500 hover:text-gray-900">
                   <BIcon
                     name={"question-circle"}
@@ -116,7 +116,10 @@ export default function TransferSidebar({ }) {
                   />
                   <span className="ml-2">Learn more about sharing</span>
                 </a>
-              </div>
+              </div> */}
+              {selectedTransfer.files.length > 0 &&
+                <span><i className="bi bi-file-earmark me-1"></i>{selectedTransfer.files.length} File{selectedTransfer.files.length > 1 ? "s" : ""}</span>
+              }
             </div>
           </div>
         </div>

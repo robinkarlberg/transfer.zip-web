@@ -9,6 +9,7 @@ import logo from "../../img/icon.png"
 import { Transition } from "@headlessui/react";
 import { getTransferList, getUserStorage } from "../../Api";
 import TransferSidebar from "../../components/dashboard/sidebars/TransferSidebar";
+import NewTransferModal from "../../components/elements/modals/NewTransferModal";
 
 export async function loader({ params }) {
   const { transfers } = await getTransferList()
@@ -159,7 +160,7 @@ export default function Dashboard({ }) {
       setSelectedTransferId,
       selectedTransfer,
       hideSidebar,
-      showSidebar
+      showSidebar,
     }}>
       <Wrapper>
         {loaded}
