@@ -18,6 +18,16 @@ export async function loader({ params }) {
 
 export const DashboardContext = createContext({})
 
+const Wrapper = ({ children }) => {
+  return (
+    <div className="bg-gray-50 ">
+      <div className="h-[100vh] --max-w-[96rem] mx-auto flex flex-row">
+        {children}
+      </div>
+    </div>
+  )
+}
+
 export default function Dashboard({ }) {
   const location = useLocation()
   const currentPage = location.pathname
@@ -87,16 +97,6 @@ export default function Dashboard({ }) {
     }
   }, [user, location])
 
-  const Wrapper = ({ children }) => {
-    return (
-      <div className="bg-gray-50 ">
-        <div className="h-[100vh] --max-w-[96rem] mx-auto flex flex-row">
-          {children}
-        </div>
-      </div>
-    )
-  }
-
   const loading = (
     <>
       <div>
@@ -113,45 +113,6 @@ export default function Dashboard({ }) {
     )
   }
 
-  const loaded = (
-    <>
-      <div className="lg:w-64 py-6 px-6 pt-12 border-r bg-white flex flex-col">
-        <Link className="mb-4" to="/">
-          <div className="flex flex-row">
-            <img
-              alt="Company Logo"
-              src={logo}
-              className="h-8 w-auto me-1"
-            />
-            <h2 className="text-2xl font-bold text-gray-800">{process.env.REACT_APP_SITE_NAME}</h2>
-          </div>
-        </Link>
-        <div className="flex flex-col gap-y-2">
-          <Link to={"/app/transfers/new"} className="text-center bg-primary hover:bg-primary-light text-white text-sm font-semibold py-2 rounded-lg">Transfer<BIcon className={"ms-2"} name={"send-fill"} /></Link>
-          {
-            [
-              { icon: "house-fill", text: "Overview", to: "/app" },
-              { icon: "send-fill", text: "Transfers", to: "/app/transfers" },
-            ].map((value, index) => <Button key={value.to} {...value} />)
-          }
-        </div>
-        <div className="mt-auto">
-          <Button icon={"person"} text={"Account"} to={"/app/settings"} className={"w-full"} />
-        </div>
-      </div>
-      <div className="grow overflow-y-auto h-[100vh] z-10 mx-auto max-w-6xl">
-        <Outlet />
-      </div>
-      <Transition show={showSidebar}>
-        <div className="relative transition duration-500 w-96 data-[closed]:w-0">
-          <div className="absolute w-96 h-full">
-            {selectedTransferId != null && <TransferSidebar />}
-          </div>
-        </div>
-      </Transition>
-    </>
-  )
-
   return (
     <DashboardContext.Provider value={{
       storage,
@@ -163,7 +124,40 @@ export default function Dashboard({ }) {
       showSidebar,
     }}>
       <Wrapper>
-        {loaded}
+        <div className="lg:w-64 py-6 px-6 pt-12 border-r bg-white flex flex-col">
+          <Link className="mb-4" to="/">
+            <div className="flex flex-row">
+              <img
+                alt="Company Logo"
+                src={logo}
+                className="h-8 w-auto me-1"
+              />
+              <h2 className="text-2xl font-bold text-gray-800">{process.env.REACT_APP_SITE_NAME}</h2>
+            </div>
+          </Link>
+          <div className="flex flex-col gap-y-2">
+            <Link to={"/app/transfers/new"} className="text-center bg-primary hover:bg-primary-light text-white text-sm font-semibold py-2 rounded-lg">Transfer<BIcon className={"ms-2"} name={"send-fill"} /></Link>
+            {
+              [
+                { icon: "house-fill", text: "Overview", to: "/app" },
+                { icon: "send-fill", text: "Transfers", to: "/app/transfers" },
+              ].map((value, index) => <Button key={value.to} {...value} />)
+            }
+          </div>
+          <div className="mt-auto">
+            <Button icon={"person"} text={"Account"} to={"/app/settings"} className={"w-full"} />
+          </div>
+        </div>
+        <div className="grow overflow-y-auto h-[100vh] z-10 mx-auto max-w-6xl">
+          <Outlet/>
+        </div>
+        <Transition show={showSidebar}>
+          <div className="relative transition duration-500 w-96 data-[closed]:w-0">
+            <div className="absolute w-96 h-full">
+              {selectedTransferId != null && <TransferSidebar />}
+            </div>
+          </div>
+        </Transition>
       </Wrapper>
     </DashboardContext.Provider>
   )

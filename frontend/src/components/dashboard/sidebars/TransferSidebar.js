@@ -4,9 +4,14 @@ import { DialogTitle } from "@headlessui/react"
 import BIcon from "../../BIcon"
 import { tryCopyToClipboard } from "../../../utils"
 import { ApplicationContext } from "../../../providers/ApplicationProvider"
-import { getTransferDownloadLink } from "../../../Api"
+import { getTransferDownloadLink, putTransfer } from "../../../Api"
+import { useRevalidator } from "react-router-dom"
+import { humanFileSize } from "../../../transferUtils"
 
 export default function TransferSidebar({ }) {
+
+  const revalidator = useRevalidator()
+
   const { displayNotification } = useContext(ApplicationContext)
   const { selectedTransfer, hideSidebar } = useContext(DashboardContext)
 
@@ -28,6 +33,21 @@ export default function TransferSidebar({ }) {
 
   const handleSubmit = async e => {
     e.preventDefault()
+
+    const formData = new FormData(e.target)
+
+    const name = formData.get("name")
+    const description = formData.get("description")
+
+    await putTransfer(selectedTransfer.id, { name, description })
+
+    displayNotification("Transfer Updated", "The information has been saved!")
+
+    revalidator.revalidate()
+  }
+
+  const handleDelete = async e => {
+    
   }
 
   return (
@@ -93,7 +113,7 @@ export default function TransferSidebar({ }) {
               </div>
               <div>
                 <label htmlFor="description" className="block text-sm font-medium leading-6 text-gray-900">
-                  Description
+                  Message
                 </label>
                 <div className="mt-2">
                   <textarea
@@ -107,24 +127,29 @@ export default function TransferSidebar({ }) {
               </div>
             </div>
             <div className="pb-6 pt-4">
-              {/* <div className="flex text-sm">
-                <a href="#" className="group inline-flex items-center text-gray-500 hover:text-gray-900">
-                  <BIcon
-                    name={"question-circle"}
-                    aria-hidden="true"
-                    className="h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                  />
-                  <span className="ml-2">Learn more about sharing</span>
-                </a>
-              </div> */}
               {selectedTransfer.files.length > 0 &&
-                <span><i className="bi bi-file-earmark me-1"></i>{selectedTransfer.files.length} File{selectedTransfer.files.length > 1 ? "s" : ""}</span>
+                <div className="mb-2">
+                  <span><i className="bi bi-file-earmark me-1"></i>{selectedTransfer.files.length} File{selectedTransfer.files.length > 1 ? "s" : ""}</span>
+                  <p className="text-gray-600">{humanFileSize(selectedTransfer.size, true)}</p>
+                </div>
               }
             </div>
           </div>
         </div>
       </div>
       <div className="flex flex-shrink-0 justify-end px-4 py-4">
+        <button
+          type="button"
+          onClick={handleDelete}
+          className="text-red-500 hover:text-red-400 mr-auto"
+        >
+          <BIcon
+            name={"trash"}
+            aria-hidden="true"
+            className=""
+          />
+          <span className="ms-2">Delete</span>
+        </button>
         <button
           type="button"
           onClick={handleClose}

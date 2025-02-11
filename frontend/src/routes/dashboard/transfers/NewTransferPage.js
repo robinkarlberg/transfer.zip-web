@@ -1,8 +1,8 @@
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { newTransfer, uploadTransferFiles } from "../../../Api";
 import GenericPage from "../../../components/dashboard/GenericPage";
 import FileUpload from "../../../components/elements/FileUpload";
-import { useNavigate, useRevalidator } from "react-router-dom";
+import { useLocation, useNavigate, useRevalidator } from "react-router-dom";
 import Progress from "../../../components/elements/Progress";
 import { DashboardContext } from "../Dashboard";
 
@@ -12,6 +12,7 @@ export default function NewTransferPage({ }) {
   const { setSelectedTransferId } = useContext(DashboardContext)
 
   const navigate = useNavigate()
+  const { state } = useLocation()
 
   const [filesToUpload, setFilesToUpload] = useState(null)
 
@@ -35,12 +36,10 @@ export default function NewTransferPage({ }) {
     setSelectedTransferId(transfer.id)
   }
 
-
-
   return (
     <GenericPage title={"New Transfer"}>
       <div className="w-full max-w-96">
-        <div className="grid grid-cols-3 space-y-6">
+        <div className="grid grid-cols-3 gap-y-6 gap-x-2">
           <div className="col-span-2">
             <label htmlFor="title" className="block text-sm/6 font-medium text-gray-900">
               Title
@@ -50,20 +49,6 @@ export default function NewTransferPage({ }) {
                 id="title"
                 placeholder="Untitled Transfer"
                 name="title"
-                type="text"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
-              />
-            </div>
-          </div>
-          <div className="col-span-full">
-            <label htmlFor="description" className="block text-sm/6 font-medium text-gray-900">
-              Description
-            </label>
-            <div className="mt-2">
-              <textarea
-                id="description"
-                placeholder=""
-                name="description"
                 type="text"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
               />
@@ -80,14 +65,31 @@ export default function NewTransferPage({ }) {
                 name="expires"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
               >
-                <option>7 days</option>
-                <option>14 days</option>
-                <option>30 days</option>
+                <option value={7}>7 days</option>
+                <option value={14}>14 days</option>
+                <option value={30} disabled>30 days</option>
+                <option value={180} disabled>6 months</option>
+                <option value={365} disabled>1 year</option>
               </select>
             </div>
           </div>
           <div className="col-span-full">
-            <FileUpload onFiles={handleFiles} progressElement={<Progress max={totalBytes} now={bytesTransferred} unit={"%"} />} showProgress={!!filesToUpload} />
+            <label htmlFor="description" className="block text-sm/6 font-medium text-gray-900">
+              Message<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>
+            </label>
+            <div className="mt-2">
+              <textarea
+                id="description"
+                placeholder=""
+                name="description"
+                type="text"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
+              />
+            </div>
+          </div>
+          <hr className="col-span-full"/>
+          <div className="col-span-full">
+            <FileUpload initialFiles={state?.files} onFiles={handleFiles} progressElement={<Progress max={totalBytes} now={bytesTransferred} unit={"%"} />} showProgress={!!filesToUpload} />
           </div>
         </div>
       </div>

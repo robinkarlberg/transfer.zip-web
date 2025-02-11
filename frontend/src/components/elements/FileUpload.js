@@ -6,9 +6,9 @@ import { humanFileSize, humanFileType } from "../../transferUtils"
 import { humanFileName } from "../../utils"
 import Progress from "./Progress"
 
-export default function FileUpload({ onFiles, onReceiveClicked, progressElement, showProgress }) {
+export default function FileUpload({ initialFiles, onFiles, onReceiveClicked, progressElement, showProgress }) {
 
-  const [files, setFiles] = useState([])
+  const [files, setFiles] = useState(initialFiles || [])
 
   const fileInputRef = useRef()
   const folderInputRef = useRef()
