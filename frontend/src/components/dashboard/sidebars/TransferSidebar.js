@@ -17,6 +17,19 @@ export default function TransferSidebar({ }) {
 
   const transferLink = useMemo(() => getTransferDownloadLink(selectedTransfer) + "/zip", [selectedTransfer])
 
+  const textarea = useMemo(() => {
+    return (
+      <textarea
+        key={Math.random()}
+        id="description"
+        name="description"
+        rows={4}
+        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+        defaultValue={selectedTransfer?.description}
+      />
+    )
+  }, [selectedTransfer])
+
   if (!selectedTransfer) {
     return <></>
   }
@@ -47,11 +60,11 @@ export default function TransferSidebar({ }) {
   }
 
   const handleDelete = async e => {
-    
+
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl">
+    <form onSubmit={handleSubmit} className="border-s flex h-full flex-col divide-y divide-gray-200 bg-white">
       <div className="h-0 flex-1 overflow-y-auto">
         <div className="bg-primary px-4 py-6 sm:px-6">
           <div className="flex items-center justify-between">
@@ -116,13 +129,7 @@ export default function TransferSidebar({ }) {
                   Message
                 </label>
                 <div className="mt-2">
-                  <textarea
-                    id="description"
-                    name="description"
-                    rows={4}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
-                    defaultValue={selectedTransfer.description}
-                  />
+                  {textarea}
                 </div>
               </div>
             </div>
