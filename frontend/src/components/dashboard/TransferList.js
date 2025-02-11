@@ -13,8 +13,8 @@ const Entry = ({ transfer }) => {
 
   return (
     <button onClick={() => isSelected ? hideSidebar() : setSelectedTransferId(id)} className={`text-start rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-4 py-3 group hover:bg-gray-50`}>
-      <div>
-        <h3 className={`text-xl font-bold me-1 ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
+      <div className="overflow-clip">
+        <h3 className={`text-xl font-bold me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
         <div className="text-sm text-gray-600 font-semibold">
           <span className="">{files.length} file{files.length != 1 ? "s" : ""}</span>
           {transfer.statistics.downloads.length > 1 ?
