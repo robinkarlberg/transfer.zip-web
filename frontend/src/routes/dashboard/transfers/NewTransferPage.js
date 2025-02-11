@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { newTransfer, uploadTransferFiles } from "../../../Api";
 import GenericPage from "../../../components/dashboard/GenericPage";
 import FileUpload from "../../../components/elements/FileUpload";
@@ -16,6 +16,8 @@ export default function NewTransferPage({ }) {
 
   const [filesToUpload, setFilesToUpload] = useState(null)
 
+  const formRef = useRef(null)
+
   const totalBytes = useMemo(() => {
     if (filesToUpload) {
       return filesToUpload.reduce((total, file) => total + file.size, 0);
@@ -25,7 +27,14 @@ export default function NewTransferPage({ }) {
   const [bytesTransferred, setBytesTransferred] = useState(0)
 
   const handleFiles = async files => {
-    const { transfer } = await newTransfer()
+    const formData = new FormData(formRef.current)
+
+    const name = formData.get("name")
+    const description = formData.get("description")
+    const expiresInDays = formData.get("expiresInDays")
+
+    const { transfer } = await newTransfer({ name, description, expiresInDays })
+
     setFilesToUpload(files)
     await uploadTransferFiles(transfer.id, files, progress => {
       console.log(progress)
@@ -39,30 +48,29 @@ export default function NewTransferPage({ }) {
   return (
     <GenericPage title={"New Transfer"}>
       <div className="w-full max-w-96">
-        <div className="grid grid-cols-3 gap-y-6 gap-x-2">
+        <form ref={formRef} className="grid grid-cols-3 gap-y-6 gap-x-2">
           <div className="col-span-2">
-            <label htmlFor="title" className="block text-sm/6 font-medium text-gray-900">
-              Title
+            <label htmlFor="name" className="block text-sm/6 font-medium text-gray-900">
+              Name
             </label>
             <div className="mt-2">
               <input
-                id="title"
+                id="name"
                 placeholder="Untitled Transfer"
-                name="title"
+                name="name"
                 type="text"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
               />
             </div>
           </div>
           <div className="col-span-1">
-            <label htmlFor="expires" className="block text-sm/6 font-medium text-gray-900">
+            <label htmlFor="expiresInDays" className="block text-sm/6 font-medium text-gray-900">
               Expires
             </label>
             <div className="mt-2">
               <select
-                id="expires"
-                placeholder="Untitled Transfer"
-                name="expires"
+                id="expiresInDays"
+                name="expiresInDays"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
               >
                 <option value={7}>7 days</option>
@@ -87,10 +95,10 @@ export default function NewTransferPage({ }) {
               />
             </div>
           </div>
-          <hr className="col-span-full"/>
-          <div className="col-span-full">
-            <FileUpload initialFiles={state?.files} onFiles={handleFiles} progressElement={<Progress max={totalBytes} now={bytesTransferred} unit={"%"} />} showProgress={!!filesToUpload} />
-          </div>
+        </form>
+        <hr className="col-span-full my-6 mx-2" />
+        <div className="col-span-full">
+          <FileUpload initialFiles={state?.files} onFiles={handleFiles} progressElement={<Progress max={totalBytes} now={bytesTransferred} unit={"%"} />} showProgress={!!filesToUpload} />
         </div>
       </div>
     </GenericPage>

@@ -51,13 +51,13 @@ export default function FileUpload({ initialFiles, onFiles, onReceiveClicked, pr
       <div className={`text-start relative w-full rounded-2xl bg-white border shadow-lg flex flex-col min-h-56 ${onReceiveClicked ? "mt-8" : ""}`}>
         {onReceiveClicked && (
           <div className="absolute w-full flex">
-            <button onClick={onReceiveClicked} className="text-sm font-medium text-gray-500 relative mx-auto bg-white border py-1 px-10 rounded-t-lg transition-all h-7 -top-7 hover:h-8 hover:-top-8 hover:text-primary">
+            <button type="button" onClick={onReceiveClicked} className="text-sm font-medium text-gray-500 relative mx-auto bg-white border py-1 px-10 rounded-t-lg transition-all h-7 -top-7 hover:h-8 hover:-top-8 hover:text-primary">
               <BIcon name={"file-earmark-arrow-down"} /> Receive files
             </button>
           </div>
         )}
         <Transition show={files.length == 0}>
-          <button onClick={handlePickFiles} className="absolute left-0 top-0 w-full h-full flex flex-col justify-center items-center group transition data-[closed]:opacity-0">
+          <button type="button" onClick={handlePickFiles} className="absolute left-0 top-0 w-full h-full flex flex-col justify-center items-center group transition data-[closed]:opacity-0">
             <div className="text-white rounded-full bg-primary w-12 h-12 flex group-hover:bg-primary-light">
               <BIcon name={"plus"} center className={"flex-grow text-3xl"} />
             </div>
@@ -74,7 +74,7 @@ export default function FileUpload({ initialFiles, onFiles, onReceiveClicked, pr
                 return (
                   <div className="relative px-2 py-1 overflow-hidden text-md group" key={file.name + file.size + file.lastModified}>
                     <div className="absolute right-0 hidden group-hover:block pe-2">
-                      <button onClick={() => removeFile(file)} className="bg-white border p-1 rounded-lg"><BIcon name={"x"} center /></button>
+                      <button type="button" onClick={() => removeFile(file)} className="bg-white border p-1 rounded-lg"><BIcon name={"x"} center /></button>
                     </div>
                     <p className="text-nowrap">{humanFileName(file.name)}</p>
                     <span className="text-sm text-gray-500">{humanFileSize(file.size, true)}<BIcon name={"dot"} />{humanFileType(file.type)}</span>
@@ -84,12 +84,12 @@ export default function FileUpload({ initialFiles, onFiles, onReceiveClicked, pr
             </div>
             <div className="w-full flex justify-between">
               <div className="flex gap-2">
-                <button className="text-sm pe-3 px-2 rounded-lg border shadow hover:bg-gray-100" onClick={handlePickFiles}><BIcon name={"plus"} /> Files</button>
-                <button className="text-sm px-2 rounded-lg border shadow hover:bg-gray-100" onClick={handleSelectFolder}><BIcon name={"folder-plus"} /> Folder</button>
+                <button type="button" className="text-sm pe-3 px-2 rounded-lg border shadow hover:bg-gray-100" onClick={handlePickFiles}><BIcon name={"plus"} /> Files</button>
+                <button type="button" className="text-sm px-2 rounded-lg border shadow hover:bg-gray-100" onClick={handleSelectFolder}><BIcon name={"folder-plus"} /> Folder</button>
               </div>
               <div>
                 <span className="text-gray-500 text-sm me-2 hidden sm:inline">{humanFileSize(totalFileSize, true)}</span>
-                <button onClick={handleTransferClicked} className="text-white px-2 py-1 rounded-lg shadow bg-primary hover:bg-primary-light">Transfer &rarr;</button>
+                <button type="button" onClick={handleTransferClicked} className="text-white px-2 py-1 rounded-lg shadow bg-primary hover:bg-primary-light">Transfer &rarr;</button>
               </div>
             </div>
           </div>

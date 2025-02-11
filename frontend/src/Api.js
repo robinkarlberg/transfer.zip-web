@@ -218,8 +218,12 @@ export async function putTransfer(transferId, data) {
     return await put(`/transfer/${transferId}`, data)
 }
 
-export async function newTransfer(expiresInDays) {
-    return await post(`/transfer/new`, { expiresInDays })
+export async function newTransfer(data) {
+    return await post(`/transfer/new`, data)
+}
+
+export async function deleteTransfer(transferId) {
+    return await post(`/transfer/${transferId}/delete`)
 }
 
 export const getTransferDownloadLink = (transfer) => {

@@ -4,7 +4,7 @@ import { DialogTitle } from "@headlessui/react"
 import BIcon from "../../BIcon"
 import { tryCopyToClipboard } from "../../../utils"
 import { ApplicationContext } from "../../../providers/ApplicationProvider"
-import { getTransferDownloadLink, putTransfer } from "../../../Api"
+import { deleteTransfer, getTransferDownloadLink, putTransfer } from "../../../Api"
 import { useRevalidator } from "react-router-dom"
 import { humanFileSize } from "../../../transferUtils"
 
@@ -60,7 +60,9 @@ export default function TransferSidebar({ }) {
   }
 
   const handleDelete = async e => {
-
+    await deleteTransfer(selectedTransfer.id)
+    hideSidebar()
+    revalidator.revalidate()
   }
 
   return (
