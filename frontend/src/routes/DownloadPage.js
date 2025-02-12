@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom"
-import { getDownload, getTransferDownloadLink, settings } from "../Api"
+import { getDownload, getTransferAttachmentLink, getTransferDownloadLink, settings } from "../Api"
 import TestimonialCloud from "../components/TestimonialCloud";
 import BIcon from "../components/BIcon";
 import { humanTimeUntil, parseTransferExpiryDate } from "../utils";
@@ -27,7 +27,7 @@ export default function DownloadPage({ }) {
   const expiryDate = useMemo(() => !download ? false : parseTransferExpiryDate(download.expiresAt), [download])
 
   const handleDownloadClicked = async e => {
-    window.open(getTransferDownloadLink(download) + "/zip", "_blank")
+    window.open(getTransferAttachmentLink(download) + "/zip", "_blank")
   }
 
   return (

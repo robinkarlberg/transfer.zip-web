@@ -228,6 +228,11 @@ export async function deleteTransfer(transferId) {
 
 export const getTransferDownloadLink = (transfer) => {
     if(!transfer) return null
+    return `${window.location.protocol}//${window.location.host}/transfer/${transfer.secretCode}`
+}
+
+export const getTransferAttachmentLink = (transfer) => {
+    if(!transfer) return null
     return `${API_URL}/download/${transfer.secretCode}`
 }
 

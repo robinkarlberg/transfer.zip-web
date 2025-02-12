@@ -1,37 +1,60 @@
 import { Link } from "react-router-dom"
-import { humanTimeUntil, parseTransferExpiryDate } from "../../utils"
+import { humanTimeUntil, parseTransferExpiryDate, tryCopyToClipboard } from "../../utils"
 import BIcon from "../BIcon"
-import { useContext } from "react"
+import { useContext, useMemo } from "react"
 import { DashboardContext } from "../../routes/dashboard/Dashboard"
+import { getTransferDownloadLink } from "../../Api"
+import { ApplicationContext } from "../../providers/ApplicationProvider"
 
 const Entry = ({ transfer }) => {
+  const { displayNotification } = useContext(ApplicationContext)
   const { displayedTransferId, setSelectedTransferId, hideSidebar, showSidebar } = useContext(DashboardContext)
+
+  const transferLink = useMemo(() => getTransferDownloadLink(transfer), [transfer])
 
   const { id, name, files, expiresAt } = transfer
   const expiryDate = parseTransferExpiryDate(expiresAt)
   const isSelected = id === displayedTransferId
 
+  const handleCopy = async e => {
+    if (await tryCopyToClipboard(transferLink)) {
+      displayNotification("Copied Link", "The Transfer link was successfully copied to the clipboard!")
+    }
+  }
+
+  const handleCopyLinkClicked = async e => {
+    e.stopPropagation()
+    handleCopy()
+  }
+
   return (
-    <button onClick={() => isSelected ? hideSidebar() : setSelectedTransferId(id)} className={`text-start rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-4 py-3 group hover:bg-gray-50`}>
-      <div className="overflow-clip">
-        <h3 className={`text-xl font-bold me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
-        <div className="text-sm text-gray-600 font-semibold">
-          <span className="">{files.length} file{files.length != 1 ? "s" : ""}</span>
-          {transfer.statistics.downloads.length > 1 ?
-            <span><BIcon name="dot" /><i className="bi bi-arrow-down-circle-fill me-1"></i>{transfer.statistics.downloads.length} downloads</span>
-            :
-            transfer.statistics.downloads.length == 1 ?
-              <span><BIcon name="dot" /><i className="bi bi-arrow-down-circle me-1"></i>Downloaded</span>
+    <button onClick={() => isSelected ? hideSidebar() : setSelectedTransferId(id)} className={`group text-start rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-4 py-3 group hover:bg-gray-50`}>
+      <div className="overflow-clip flex flex-row justify-between">
+        <div>
+          <h3 className={`text-xl font-bold me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
+          <div className="text-sm text-gray-600 font-semibold">
+            <span className="">{files.length} file{files.length != 1 ? "s" : ""}</span>
+            {transfer.statistics.downloads.length > 1 ?
+              <span><BIcon name="dot" /><i className="bi bi-arrow-down-circle-fill me-1"></i>{transfer.statistics.downloads.length} downloads</span>
               :
-              transfer.statistics.views.length >= 1 ?
-                <span><BIcon name="dot" /><i className="bi bi-eye me-1"></i>Viewed</span>
+              transfer.statistics.downloads.length == 1 ?
+                <span><BIcon name="dot" /><i className="bi bi-arrow-down-circle me-1"></i>Downloaded</span>
                 :
-                <span></span>
-          }
-          {expiryDate && <span>
-            <BIcon name="dot" />
-            <i className="bi bi-clock me-1"></i>{humanTimeUntil(expiryDate)}
-          </span>}
+                transfer.statistics.views.length >= 1 ?
+                  <span><BIcon name="dot" /><i className="bi bi-eye me-1"></i>Viewed</span>
+                  :
+                  <span></span>
+            }
+            {expiryDate && <span>
+              <BIcon name="dot" />
+              <i className="bi bi-clock me-1"></i>{humanTimeUntil(expiryDate)}
+            </span>}
+          </div>
+        </div>
+        <div className="items-center hidden group-hover:flex">
+          <button onClick={handleCopyLinkClicked} className="text-sm bg-white border px-2.5 py-2 rounded-lg hover:bg-gray-50">
+            <BIcon name={"copy"} /> Copy Link
+          </button>
         </div>
       </div>
     </button>
@@ -41,11 +64,10 @@ const Entry = ({ transfer }) => {
 export default function TransferList({ transfers }) {
 
   const { displayedTransferId, setSelectedTransferId, hideSidebar, showSidebar } = useContext(DashboardContext)
-  const gridClassNames = showSidebar ? "xl:grid-cols-2 2xl:grid-cols-3" : "md:grid-cols-2 xl:grid-cols-3"
 
   return (
     <div className="">
-      <div key={"asndasundas"} className={`grid grid-cols-1 gap-2 ${gridClassNames}`}>
+      <div key={"asndasundas"} className={`grid grid-cols-1 gap-2`}>
         {transfers.map((transfer, index) => <Entry key={transfer.id} transfer={transfer} />)}
       </div>
       {transfers.length == 0 && (

@@ -20,7 +20,7 @@ export const DashboardContext = createContext({})
 
 const Wrapper = ({ children }) => {
   return (
-    <div className="bg-gray-50 ">
+    <div className="bg-gray-100 ">
       <div className="h-[100vh] --max-w-[96rem] mx-auto flex flex-row">
         {children}
       </div>

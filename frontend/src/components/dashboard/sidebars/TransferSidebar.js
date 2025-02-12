@@ -15,7 +15,7 @@ export default function TransferSidebar({ }) {
   const { displayNotification } = useContext(ApplicationContext)
   const { selectedTransfer, hideSidebar } = useContext(DashboardContext)
 
-  const transferLink = useMemo(() => getTransferDownloadLink(selectedTransfer) + "/zip", [selectedTransfer])
+  const transferLink = useMemo(() => getTransferDownloadLink(selectedTransfer), [selectedTransfer])
 
   const textarea = useMemo(() => {
     return (
@@ -26,6 +26,19 @@ export default function TransferSidebar({ }) {
         rows={4}
         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
         defaultValue={selectedTransfer?.description}
+      />
+    )
+  }, [selectedTransfer])
+
+  const nameInput = useMemo(() => {
+    return (
+      <input
+        defaultValue={selectedTransfer.hasName ? selectedTransfer.name : undefined}
+        placeholder={selectedTransfer.hasName ? "" : "Untitled Transfer"}
+        id="name"
+        name="name"
+        type="text"
+        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
       />
     )
   }, [selectedTransfer])
@@ -116,14 +129,7 @@ export default function TransferSidebar({ }) {
                   Name
                 </label>
                 <div className="mt-2">
-                  <input
-                    defaultValue={selectedTransfer.hasName ? selectedTransfer.name : undefined}
-                    placeholder={selectedTransfer.hasName ? "" : "Untitled Transfer"}
-                    id="name"
-                    name="name"
-                    type="text"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
-                  />
+                  {nameInput}
                 </div>
               </div>
               <div>
