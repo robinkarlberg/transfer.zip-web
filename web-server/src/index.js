@@ -62,7 +62,6 @@ import { SponsorButtonRoute } from "./providers/SponsorButtonProvider";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route element={<AnalyticsHelmet />}>
-      <Route element={<SponsorButtonRoute />}>
         <Route element={<FilePickerProvider />}>
           <Route path="/transfer/:secretCode" element={<DownloadPageNew />} />
           <Route element={<AuthProvider ignoreVerification={true} />}>
@@ -127,7 +126,6 @@ const router = createBrowserRouter(
           <Route path="/change-password" element={<ChangePassword />} />
           <Route path="/join-waitlist" element={<JoinWaitlistPage />} />
         </Route>
-      </Route>
     </Route >
   )
 )
