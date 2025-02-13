@@ -33,6 +33,7 @@ export default function TransferSidebar({ }) {
   const nameInput = useMemo(() => {
     return (
       <input
+        key={Math.random()}
         defaultValue={selectedTransfer.hasName ? selectedTransfer.name : undefined}
         placeholder={selectedTransfer.hasName ? "" : "Untitled Transfer"}
         id="name"
@@ -113,7 +114,7 @@ export default function TransferSidebar({ }) {
                   <input
                     type="url"
                     className="block w-full border-0 py-2.5 ps-4 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-                    defaultValue={transferLink}
+                    value={transferLink}
                     contentEditable="false"
                   />
                   <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">

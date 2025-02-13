@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import GenericPage from "../../components/dashboard/GenericPage";
 import { AuthContext } from "../../providers/AuthProvider";
 import ManageSubscriptionButton from "../../components/ManageSubscriptionButton";
@@ -6,6 +6,9 @@ import { capitalizeFirstLetter } from "../../utils";
 import { Link } from "react-router-dom";
 import moment from 'moment-timezone';
 import { logout } from "../../Api";
+import BIcon from "../../components/BIcon";
+import { Radio, RadioGroup } from "@headlessui/react";
+import pricing from "../../pricing";
 
 const timeZoneOptions = moment.tz.names();
 
@@ -24,6 +27,10 @@ export default function SettingsPage({ }) {
     await logout()
     window.location.href = "/"
   }
+
+  const { tiers } = pricing
+
+  const [selectedMailingLists, setSelectedMailingLists] = useState(tiers[0])
 
   return (
     <GenericPage title={"Account"}>
@@ -56,6 +63,40 @@ export default function SettingsPage({ }) {
             </div>
           </div>
         </div>
+        <fieldset>
+          <legend className="text-sm font-semibold leading-6 text-gray-900">Your plan</legend>
+          <RadioGroup
+            value={selectedMailingLists}
+            onChange={setSelectedMailingLists}
+            className="mt-6 grid grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-4"
+          >
+            {tiers.map((tier) => (
+              <Radio
+                key={tier.name}
+                value={tier}
+                aria-label={tier.name}
+                className="group relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none data-[focus]:border-primary data-[focus]:ring-2 data-[focus]:ring-primary"
+              >
+                <span className="flex flex-1">
+                  <span className="flex flex-col">
+                    <span className="block text-sm font-medium text-gray-900">{tier.name}</span>
+                    {tier.features.map((feature) => <span key={feature} className="mt-1 flex items-center text-sm text-gray-500">{feature}</span>)}
+                  </span>
+                </span>
+                <BIcon
+                  name={"check-circle-fill"}
+                  center
+                  aria-hidden="true"
+                  className="h-5 w-5 text-indigo-600 [.group:not([data-checked])_&]:invisible"
+                />
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -inset-px rounded-lg border-2 border-transparent group-data-[focus]:border group-data-[checked]:border-primary"
+                />
+              </Radio>
+            ))}
+          </RadioGroup>
+        </fieldset>
       </div>
     </GenericPage>
   )

@@ -52,7 +52,7 @@ const Entry = ({ transfer }) => {
           </div>
         </div>
         <div className="items-center hidden group-hover:flex">
-          <button onClick={handleCopyLinkClicked} className="text-sm bg-white border px-2.5 py-2 rounded-lg hover:bg-gray-50">
+          <button onClick={handleCopyLinkClicked} className="text-sm text-primary bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50">
             <BIcon name={"copy"} /> Copy Link
           </button>
         </div>

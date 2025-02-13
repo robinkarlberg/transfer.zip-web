@@ -3,9 +3,17 @@ import BIcon from './BIcon'
 
 const faqs = [
   {
-    question: "How are messages moderated?",
+    question: "Is there really no file size limit?",
     answer:
-      "All messages must undergo a thorough moderation algorithm to ensure compliance and quality standards. Unlike other solutions, site-owners will not need to worry about malicious messages/advertisements. We ensure no malicious or spammy content appears on your site."
+      "There is no file size limit when using Quick Share, because the file is never stored on our servers. For transfers there are limits determined by your plan, because they will be stored on our servers."
+  },
+  {
+    question: "How does Quick-Share work?",
+    answer: "It uses WebRTC for peer-to-peer data transfer, meaning the files are streamed directly between peers and not stored anywhere in the process, not even on transfer.zip servers. To let peers initially discover each other, a signaling server is implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through. In addition, the file data is end-to-end encrypted using AES-GCM with a client-side 256 bit generated key, meaning if someone could impersonate a peer or capture the traffic, they would not be able to decrypt the file without knowing the key. Because the file is streamed directly between peers, there are no file size or bandwidth limitations."
+  },
+  {
+    question: "Is Transfer.zip safe to use?",
+    answer: "Privacy and security is our top priority. The site was founded by an IT-security consultant, with many years of experience. Furthermore, your transfers are stored encrypted on our servers, meaning if an attacker could gain access to our servers hosting the files, they would not be able to steal your data."
   },
   {
     question: "What payment methods are accepted?",
@@ -17,11 +25,6 @@ const faqs = [
     answer:
       "Not at the moment. It will definitely be supported in the future.",
   },
-  // {
-  //   question: "How can I sign up for the service?",
-  //   answer:
-  //     `Currently, ${process.env.REACT_APP_SITE_NAME} is invite-only. You can join the waitlist.`
-  // },
   {
     question: "Is there a free trial available?",
     answer:
@@ -37,7 +40,6 @@ const faqs = [
     answer:
       "Yes, you can cancel your account by contacting support.",
   },
-  // More questions can be added as needed...
 ]
 
 export default function FAQ() {

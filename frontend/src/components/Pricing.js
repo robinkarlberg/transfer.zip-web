@@ -3,33 +3,7 @@ import BIcon from "./BIcon"
 import { useContext } from "react"
 import { ApplicationContext } from "../providers/ApplicationProvider"
 import { isWaitlist } from "../utils"
-
-const tiers = [
-  {
-    name: 'Simple',
-    id: 'our-cut',
-    price: '$9',
-    lifetime: false,
-    description: "We retain a modest 10% to keep the service running and provide customer service.",
-    features: [
-      'Send files of any size',
-      'Store files up to 1TB',
-    ],
-    featured: false
-  },
-  {
-    name: 'Pro',
-    id: 'your-cut',
-    price: '$29',
-    lifetime: false,
-    description: 'Keep 90% of your income, empowering you to keep more of what you earn and invest in your passion.',
-    features: [
-      'Send files of any size',
-      'Store 10TB files',
-    ],
-    featured: true
-  },
-]
+import pricing from "../pricing"
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -38,6 +12,8 @@ function classNames(...classes) {
 export default function Pricing() {
 
   const { setShowWaitlistModal } = useContext(ApplicationContext)
+
+  const { tiers } = pricing
 
   return (
     <div className="relative isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
@@ -50,19 +26,19 @@ export default function Pricing() {
           className="mx-auto aspect-[1155/678] w-[72.1875rem] bg-gradient-to-tr from-primary to-primary-subtle opacity-30"
         />
       </div>
-      <div className="mx-auto max-w-4xl text-center">
+      <div className="mx-auto max-w-xl text-center">
         <h2 className="text-base/7 font-semibold text-primary" id="pricing">Pricing</h2>
         <p className="mt-2 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-6xl">
-          A Fair and Transparent Pricing Model
+          A Fair and Simple Pricing Model
         </p>
       </div>
       <p className="mx-auto mt-6 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 sm:text-xl/8">
-        We employ a pricing strategy that values transparency and fairness, allowing you to focus on what truly matters, as we take care of the business-side of things.
+        We employ a pricing strategy that values transparency and fairness, allowing you to focus on your work, without worrying about hidden fees.
       </p>
       <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
         {tiers.map((tier, tierIdx) => (
           <div
-            key={tier.id}
+            key={tier.name}
             className={classNames(
               tier.featured ? 'relative bg-gray-900 shadow-2xl' : 'bg-white/60 sm:mx-8 lg:mx-0',
               tier.featured
@@ -114,7 +90,7 @@ export default function Pricing() {
             <Link
               to={"/signup"}
               onClick={e => {
-                if(isWaitlist()) {
+                if (isWaitlist()) {
                   e.preventDefault()
                   setShowWaitlistModal(true)
                 }
