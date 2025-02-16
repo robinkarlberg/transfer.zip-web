@@ -34,8 +34,8 @@ export default function TransferSidebar({ }) {
     return (
       <input
         key={Math.random()}
-        defaultValue={selectedTransfer.hasName ? selectedTransfer.name : undefined}
-        placeholder={selectedTransfer.hasName ? "" : "Untitled Transfer"}
+        defaultValue={selectedTransfer?.hasName ? selectedTransfer.name : undefined}
+        placeholder={selectedTransfer?.hasName ? "" : "Untitled Transfer"}
         id="name"
         name="name"
         type="text"

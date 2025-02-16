@@ -120,7 +120,7 @@ export async function joinWaitlist(email) {
 
 // transfer
 
-const CHUNK_SIZE = 10 * 1024 * 1024 // 10MB
+const CHUNK_SIZE = 5 * 1024 * 1024 // 5MB
 
 export function uploadTransferFiles(transferId, files, onProgress) {
     let bytesTransferred = 0
@@ -130,6 +130,8 @@ export function uploadTransferFiles(transferId, files, onProgress) {
         const apiUrlWithoutProtocol = API_URL.replace(/^https?:/, '')
         const wsProtocol = window.location.protocol == "https:" ? "wss:" : "ws:"
         const ws = new WebSocket(`${wsProtocol}//${apiUrlWithoutProtocol}/transfer/upload/${transferId}`)
+
+        let packetBudget = 10  // 50MB
 
         const startFileTransfer = (fileIndex) => {
             const currentFile = files[fileIndex]
@@ -142,9 +144,13 @@ export function uploadTransferFiles(transferId, files, onProgress) {
                 const reader = new FileReader()
 
                 reader.onload = async (e) => {
-                    // TODO: wait if neccessary
+                    while(packetBudget <= 0) {
+                        console.log("PACKET BUDGET == 0:", packetBudget, " - Waiting...")
+                        await new Promise(resolve => setTimeout(resolve, 50))   // ugly af
+                    }
 
                     ws.send(e.target.result)
+                    packetBudget -= 1
                     bytesTransferred += e.target.result.byteLength
 
                     onProgress && onProgress({
@@ -190,6 +196,10 @@ export function uploadTransferFiles(transferId, files, onProgress) {
                     ws.close()
                     resolve()
                 }
+                else if (jsonObject.recv) {
+                    // Chunk received by server
+                    packetBudget += 1
+                }
                 else if (!jsonObject.success) {
                     throw new Error(jsonObject.message)
                 }
@@ -227,12 +237,12 @@ export async function deleteTransfer(transferId) {
 }
 
 export const getTransferDownloadLink = (transfer) => {
-    if(!transfer) return null
+    if (!transfer) return null
     return `${window.location.protocol}//${window.location.host}/transfer/${transfer.secretCode}`
 }
 
 export const getTransferAttachmentLink = (transfer) => {
-    if(!transfer) return null
+    if (!transfer) return null
     return `${API_URL}/download/${transfer.secretCode}`
 }
 

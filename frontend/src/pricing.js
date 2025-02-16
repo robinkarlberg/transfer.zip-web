@@ -8,8 +8,7 @@ export default {
         "Quick-Share files of any size",
         "Store up to 200GB of data",
         "20 transfers per month",
-        "Files expire after 14 days",
-        "Share by QR code or link"
+        "Files expire after 14 days"
       ],
     },
     {
@@ -21,8 +20,6 @@ export default {
         "Store up to 1TB of data",
         "Unlimited transfers",
         "Files stay up for 365 days",
-        "Share by QR code or link",
-        "Share instantly by email",
         "Password protect files",
       ],
       featured: true

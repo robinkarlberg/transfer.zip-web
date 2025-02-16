@@ -68,7 +68,7 @@ export default function OverviewPage({ }) {
                 <dl className={`mt-5 grid grid-cols-1 gap-5 ${gridClassNames}`}>
                     {stats.map((item) => (
                         <div
-                            key={item.id}
+                            key={item.name}
                             className="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6"
                         >
                             <dt>
