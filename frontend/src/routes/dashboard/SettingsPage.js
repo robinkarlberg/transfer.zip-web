@@ -5,7 +5,7 @@ import ManageSubscriptionButton from "../../components/ManageSubscriptionButton"
 import { capitalizeFirstLetter } from "../../utils";
 import { Link } from "react-router-dom";
 import moment from 'moment-timezone';
-import { logout } from "../../Api";
+import { API_URL, logout } from "../../Api";
 import BIcon from "../../components/BIcon";
 import { Radio, RadioGroup } from "@headlessui/react";
 import pricing from "../../pricing";
@@ -97,6 +97,9 @@ export default function SettingsPage({ }) {
             ))}
           </RadioGroup>
         </fieldset>
+        <form method="POST" action={API_URL + "/create-customer-portal-session"}>
+          <button type="submit" className={"text-white px-3.5 py-2 rounded-md shadow-sm bg-primary hover:bg-primary-light"}>Manage &rarr;</button>
+        </form>
       </div>
     </GenericPage>
   )

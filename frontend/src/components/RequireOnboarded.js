@@ -17,7 +17,7 @@ export default function RequireOnboarded({ }) {
     }
   }, [user])
 
-  if (!user) return <><div>Waiting for user...</div></>
+  if (!user) return <><div></div></>
 
   return <Outlet />
 }

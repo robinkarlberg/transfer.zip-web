@@ -1,7 +1,7 @@
 import { Link, Navigate, replace, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { AuthContext } from "../../../providers/AuthProvider";
-import { logout, onboard } from "../../../Api";
+import { createCheckoutSession, logout, onboard } from "../../../Api";
 import logo from "../../../img/icon.png"
 import PricingCards from "../../../components/PricingCards";
 import pricing from "../../../pricing";
@@ -55,8 +55,9 @@ export default function OnboardingPage({ }) {
 
   const { tiers } = pricing
 
-  const handleTierSelected = (tier) => {
-    
+  const handleTierSelected = async (tier) => {
+    const res = await createCheckoutSession(tier)
+    window.location.href = res.url;
   }
 
   return (

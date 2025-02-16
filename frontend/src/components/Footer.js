@@ -16,6 +16,17 @@ export default function Footer({ }) {
           </div>
           <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
             <div>
+              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white">Tools</h2>
+              <ul className="text-gray-500 --dark:text-gray-400 font-medium">
+                <li className="mb-4">
+                  <Link to="/tools/zip-files-online" className="hover:underline ">Zip Files Online</Link>
+                </li>
+                <li>
+                  <Link to="/tools/unzip-files-online" className="hover:underline">Unzip Files Online</Link>
+                </li>
+              </ul>
+            </div>
+            <div>
               <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white">Resources</h2>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 <li className="mb-4">
@@ -37,17 +48,6 @@ export default function Footer({ }) {
                 </li>
                 <li>
                   <Link to="/legal/terms-and-conditions" className="hover:underline">Terms</Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white">Other Projects</h2>
-              <ul className="text-gray-500 --dark:text-gray-400 font-medium">
-                <li className="mb-4">
-                  <a href="https://SponsorApp.io/" className="hover:underline ">SponsorApp</a>
-                </li>
-                <li>
-                  <a href="https://privacypolice.ai/" className="hover:underline">Privacy Police</a>
                 </li>
               </ul>
             </div>

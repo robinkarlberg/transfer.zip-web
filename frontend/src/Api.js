@@ -92,24 +92,8 @@ export async function doVerification(email, token) {
 
 // stripe
 
-export async function createCheckoutSession(tenantId, productId) {
-    return await post(`/create-checkout-session`, { tenantId, productId })
-}
-
-export async function createAccountSession(tenantId) {
-    return await post(`/account-session`, { tenantId })
-}
-
-export async function connectLinkAccount(account) {
-    return await post(`/connect/account_link`, { account })
-}
-
-export async function connectCreateAccount(tenantId) {
-    return await post(`/connect/account_create`, { tenantId })
-}
-
-export async function getStripeAccount(tenantId) {
-    return await get(`/account/tenant/${tenantId}`)
+export async function createCheckoutSession(tier) {
+    return await post(`/create-checkout-session`, { tier })
 }
 
 // waitlist
