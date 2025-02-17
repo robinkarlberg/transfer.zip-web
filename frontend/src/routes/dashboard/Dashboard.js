@@ -145,7 +145,7 @@ export default function Dashboard({ }) {
             }
           </div>
           <div className="mt-auto">
-            <Button icon={"person"} text={"Account"} to={"/app/settings"} className={"w-full"} />
+            <Button icon={"gear-fill"} text={"Settings"} to={"/app/settings"} className={"w-full"} />
           </div>
         </div>
         <div className="grow overflow-y-auto h-[100vh] z-10 mx-auto max-w-6xl">

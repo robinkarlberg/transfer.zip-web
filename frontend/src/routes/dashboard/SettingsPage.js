@@ -33,7 +33,7 @@ export default function SettingsPage({ }) {
   const [selectedMailingLists, setSelectedMailingLists] = useState(tiers[0])
 
   return (
-    <GenericPage title={"Account"}>
+    <GenericPage title={"Settings"}>
       <div className="pt-4">
         <div className="border-b border-gray-900/10 pb-12 max-w-xl">
           <h2 className="text-base/7 font-semibold text-gray-900 ">Account</h2>
@@ -63,43 +63,19 @@ export default function SettingsPage({ }) {
             </div>
           </div>
         </div>
-        <fieldset>
-          <legend className="text-sm font-semibold leading-6 text-gray-900">Your plan</legend>
-          <RadioGroup
-            value={selectedMailingLists}
-            onChange={setSelectedMailingLists}
-            className="mt-6 grid grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-4"
-          >
-            {tiers.map((tier) => (
-              <Radio
-                key={tier.name}
-                value={tier}
-                aria-label={tier.name}
-                className="group relative flex cursor-pointer rounded-lg border border-gray-300 bg-white p-4 shadow-sm focus:outline-none data-[focus]:border-primary data-[focus]:ring-2 data-[focus]:ring-primary"
-              >
-                <span className="flex flex-1">
-                  <span className="flex flex-col">
-                    <span className="block text-sm font-medium text-gray-900">{tier.name}</span>
-                    {tier.features.map((feature) => <span key={feature} className="mt-1 flex items-center text-sm text-gray-500">{feature}</span>)}
-                  </span>
-                </span>
-                <BIcon
-                  name={"check-circle-fill"}
-                  center
-                  aria-hidden="true"
-                  className="h-5 w-5 text-indigo-600 [.group:not([data-checked])_&]:invisible"
-                />
-                <span
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -inset-px rounded-lg border-2 border-transparent group-data-[focus]:border group-data-[checked]:border-primary"
-                />
-              </Radio>
-            ))}
-          </RadioGroup>
-        </fieldset>
-        <form method="POST" action={API_URL + "/create-customer-portal-session"}>
-          <button type="submit" className={"text-white px-3.5 py-2 rounded-md shadow-sm bg-primary hover:bg-primary-light"}>Manage &rarr;</button>
-        </form>
+        <div className="mt-8 border-b border-gray-900/10 pb-12 max-w-xl">
+          <h2 className="text-base/7 font-semibold text-gray-900 ">Billing</h2>
+          {/* <p className="mt-1 text-sm/6 text-gray-600">To change your email or delete your account, <a className="text-primary" href={`mailto:${process.env.REACT_APP_SUPPORT_EMAIL}`}>contact us</a>.</p> */}
+
+          <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+
+            <div className="sm:col-span-4">
+              <form method="POST" action={API_URL + "/create-customer-portal-session"}>
+                <button type="submit" className={"text-white px-2.5 py-1.5 rounded-md text-sm shadow-sm bg-primary hover:bg-primary-light"}>Manage Subscription &rarr;</button>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
     </GenericPage>
   )
