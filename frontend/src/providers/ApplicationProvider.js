@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom"
 import Modal from "../components/elements/Modal";
 import WaitlistModal from "../components/elements/modals/WaitlistModal";
 import Notification from "../components/elements/Notification";
+import SignUpModal from "../components/elements/modals/SignUpModal";
 
 let notificationTimeoutId = null
 
@@ -21,6 +22,8 @@ export const ApplicationProvider = () => {
         setGenericModalProps(props)
         setShowGenericModal(true)
     }
+
+    const [showSignUpModal, setShowSignUpModal] = useState(false)
 
     const displayErrorModal = (description) => {
         displayGenericModal({
@@ -56,11 +59,13 @@ export const ApplicationProvider = () => {
             displayGenericModal,
             displayErrorModal,
             displaySuccessModal,
-            displayNotification
+            displayNotification,
+            setShowSignUpModal
         }}>
             <Notification onHide={clearNotification} {...notificationProps} />
             <Modal show={showGenericModal} onClose={() => setShowGenericModal(false)} {...genericModalProps} />
             <WaitlistModal show={showWaitlistModal} />
+            <SignUpModal show={showSignUpModal} />
             <Outlet />
         </ApplicationContext.Provider >
     );

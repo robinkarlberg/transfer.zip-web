@@ -14,6 +14,7 @@ import Notification from "../../components/elements/Notification";
 import { ApplicationContext } from "../../providers/ApplicationProvider";
 import Progress from "../../components/elements/Progress";
 import { Transition } from "@headlessui/react";
+import { AuthContext } from "../../providers/AuthProvider";
 
 const TRANSFER_STATE_WAIT_FOR_USER = "wait_for_user"
 const TRANSFER_STATE_IDLE = "idle"
@@ -23,7 +24,9 @@ const TRANSFER_STATE_FINISHED = "finished"
 const TRANSFER_STATE_FAILED = "failed"
 
 export default function QuickShareProgress({ }) {
-  const { displayNotification } = useContext(ApplicationContext)
+  
+  const { user } = useContext(AuthContext)
+  const { displayNotification, setShowSignUpModal } = useContext(ApplicationContext)
   const { hasBeenSentLink, files, k, remoteSessionId, transferDirection } = useContext(QuickShareContext)
 
   const navigate = useNavigate()
@@ -277,14 +280,19 @@ export default function QuickShareProgress({ }) {
         }
         <div className="flex md:inline-flex gap-2 border rounded-lg shadow-sm py-2 ps-3 pe-4 bg-blue-50">
           <div className="flex items-center h-6">
-            <BIcon center className={"text-blue-950 text-xs animate-pulse"} name={"circle-fill"} />{" "}
+            <BIcon center className={"text-primary text-xs animate-pulse"} name={"circle-fill"} />{" "}
           </div>
           <div>
             <p className="text-blue-950">
               {hasBeenSentLink ? "Keep your browser window open" : "Link will expire when tab is closed."}
             </p>
             {!hasBeenSentLink && transferDirection == "S" &&
-              <Link to={"/app/transfers/new"} state={{ files }} className="text-primary hover:text-primary-light font-medium">
+              <Link to={"/app/transfers/new"} onClick={e => {
+                if(!user) {
+                  e.preventDefault()
+                  setShowSignUpModal(true)
+                }
+              }} state={{ files }} className="text-primary hover:text-primary-light font-medium">
                 Upload files for longer &rarr;
               </Link>
             }
