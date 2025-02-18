@@ -19,7 +19,7 @@ import { ApplicationContext } from '../providers/ApplicationProvider'
 import { isWaitlist } from '../utils'
 
 const products = [
-  { name: 'About', description: 'Like BuyMeACoffee and AdSense got a baby.', href: '/#features2', icon: "lightbulb" },
+  { name: 'About', description: 'Send files with no size limits in real-time.', href: '/#features2', icon: "lightbulb" },
   { name: 'Use Cases', description: 'For creators, by creators.', href: '/#features1', icon: "grid-fill" },
 ]
 const callsToAction = [
@@ -123,9 +123,9 @@ export default function Header() {
           <Link to="/#pricing" className="text-sm/6 font-semibold text-gray-900">
             Pricing
           </Link>
-          <Link to="/explore" className="text-sm/6 font-semibold text-gray-900">
+          {/* <Link to="/explore" className="text-sm/6 font-semibold text-gray-900">
             Explore
-          </Link>
+          </Link> */}
           <Link to="/legal/privacy-policy" className="text-sm/6 font-semibold text-gray-900">
             Privacy
           </Link>
@@ -192,12 +192,12 @@ export default function Header() {
                 >
                   Pricing
                 </Link>
-                <Link
+                {/* <Link
                   to="/explore"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
                   Explore
-                </Link>
+                </Link> */}
                 <Link
                   to="/legal/privacy-policy"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"

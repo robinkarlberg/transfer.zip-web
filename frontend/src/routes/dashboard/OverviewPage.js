@@ -21,7 +21,7 @@ export default function OverviewPage({ }) {
 
     const { displayErrorModal, displaySuccessModal } = useContext(ApplicationContext)
     const { user } = useContext(AuthContext)
-    const { storage, showSidebar } = useContext(DashboardContext)
+    const { storage, showSidebar, setShowUpgradeModal } = useContext(DashboardContext)
 
     const navigate = useNavigate()
 
@@ -55,7 +55,7 @@ export default function OverviewPage({ }) {
             name: 'Storage', stat: <span>{Math.floor((storage?.usedBytes / storage?.maxBytes)) * 100} <small>%</small></span>,
             icon: "database-fill",
             actionName: "Get More Storage",
-            action: () => { }
+            action: () => setShowUpgradeModal(true)
         },
     ]
 
@@ -69,7 +69,7 @@ export default function OverviewPage({ }) {
                     {stats.map((item) => (
                         <div
                             key={item.name}
-                            className="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6"
+                            className="relative overflow-hidden rounded-lg bg-white px-4 pb-12 pt-5 shadow sm:px-6 sm:pt-6 border"
                         >
                             <dt>
                                 <div className="absolute rounded-md bg-primary p-3">

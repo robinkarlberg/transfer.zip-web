@@ -1,29 +1,7 @@
-"use client"
+import { Link } from "react-router-dom";
+import BIcon from "./BIcon";
 
-import { Link, useNavigate } from "react-router-dom"
-import FileUpload from "./elements/FileUpload"
-import BIcon from "./BIcon"
-
-export default function Example() {
-
-  const navigate = useNavigate()
-
-  const handleFiles = (files) => {
-    navigate("/quick-share/progress", {
-      state: {
-        files,
-        transferDirection: "S"
-      }
-    })
-  }
-
-  const handleReceiveClicked = e => {
-    navigate("/quick-share/progress", {
-      state: {
-        transferDirection: "R"
-      }
-    })
-  }
+export default function GenericToolPage({ title, display, tags, children, subtitle, description, question, steps, related }) {
 
   return (
     <div className="bg-white">
@@ -54,24 +32,23 @@ export default function Example() {
         </svg>
         <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:flex lg:items-center lg:gap-x-10 lg:px-8 lg:py-40">
           <div className="mx-auto max-w-2xl lg:mx-0 lg:flex-auto">
-            <div className="flex">
+            {/* <div className="flex">
               <div className="relative flex items-center gap-x-4 rounded-full px-4 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
                 <span className="font-semibold text-primary">New Version</span>
                 <span aria-hidden="true" className="h-4 w-px bg-gray-900/10" />
                 <a href="#" className="flex items-center gap-x-1">
                   <span aria-hidden="true" className="absolute inset-0" />
-                  Explore new features! &rarr;
+                  Explore more tools &rarr;
                 </a>
               </div>
-            </div>
+            </div> */}
             <h1 className="mt-10 max-w-lg text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-              Send Big Files
-              Without Limits
+              {display}
             </h1>
             <p className="mt-6 text-lg leading-8 text-gray-600 max-w-lg">
-              Send files with <span className="underline decoration-primary decoration-dashed font-semibold">no size limits</span> in real-time, with end-to-end encryption and blazingly fast speeds, all for free.
+              {subtitle}
             </p>
-            <div className="hidden sm:flex mt-10 items-center gap-x-6">
+            {/* <div className="hidden sm:flex mt-10 items-center gap-x-6">
               <Link
                 to="signup"
                 className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -81,23 +58,10 @@ export default function Example() {
               <a href="https://github.com/robinkarlberg/transfer.zip-web" className="text-sm font-semibold leading-6 text-gray-900">
                 <BIcon name={"star"} /> Star on GitHub <span aria-hidden="true">→</span>
               </a>
-            </div>
+            </div> */}
           </div>
           <div className="mt-16 sm:mt-24 lg:mt-0 lg:flex-shrink-0 lg:flex-grow">
-            <div className="mx-auto max-w-sm">
-              <FileUpload onFiles={handleFiles} onReceiveClicked={handleReceiveClicked} />
-            </div>
-          </div>
-          <div className="sm:hidden flex mt-16 justify-center items-center gap-x-6">
-            <Link
-              to="signup"
-              className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              Create Account
-            </Link>
-            <a href="https://github.com/robinkarlberg/transfer.zip-web" className="text-sm font-semibold leading-6 text-gray-900">
-              <BIcon name={"star"} /> Star on GitHub <span aria-hidden="true">→</span>
-            </a>
+            {children}
           </div>
         </div>
       </div>

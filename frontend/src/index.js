@@ -28,6 +28,7 @@ import QuickShareProgress from "./routes/quick-share/QuickShareProgress";
 import QuickShareNew from "./routes/quick-share/QuickShareNew";
 import NewTransferPage from "./routes/dashboard/transfers/NewTransferPage";
 import DownloadPage, { HydrateFallback as DownloadPageHydrateFallback, loader as DownloadPageLoader } from "./routes/DownloadPage";
+import UnzipFilesPage from "./routes/tools/UnzipFilesPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -55,6 +56,9 @@ const router = createBrowserRouter(
               <Route path="/transfer/:secretCode" element={<DownloadPage />} loader={DownloadPageLoader} HydrateFallback={DownloadPageHydrateFallback} />
               <Route path="/legal/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/legal/terms-and-conditions" element={<TermsAndConditionsPage />} />
+              <Route path="/tools">
+                <Route path="unzip-files-online" element={<UnzipFilesPage />} />
+              </Route>
               <Route path="*" element={<NotFoundPage />} />
             </Route>
             <Route path="/login" element={<SignInPage />} />

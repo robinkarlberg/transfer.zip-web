@@ -63,18 +63,19 @@ export default function SettingsPage({ }) {
             </div>
           </div>
         </div>
-        <div className="mt-8 border-b border-gray-900/10 pb-12 max-w-xl">
+        <div className="mt-8 border-gray-900/10 pb-12 max-w-xl">
           <h2 className="text-base/7 font-semibold text-gray-900 ">Subscription</h2>
-          {/* <p className="mt-1 text-sm/6 text-gray-600">To change your email or delete your account, <a className="text-primary" href={`mailto:${process.env.REACT_APP_SUPPORT_EMAIL}`}>contact us</a>.</p> */}
+          <p className="mt-1 text-sm/6 text-gray-600">View and change your subscription details.</p>
 
           <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 
             <div className="sm:col-span-4">
-              <div className="mb-4">
-                <span className="text-white bg-primary-light rounded-lg px-3 py-2">{capitalizeFirstLetter(user.plan)}</span>
+              <div className="mb-2">
+                <span className="font-bold text-gray-800 me-2">Current Plan:</span>
+                <div className="inline-block text-primary font-semibold bg-primary-subtle rounded-lg px-2.5 py-1.5">{capitalizeFirstLetter(user.plan)}</div>
               </div>
               <form method="POST" action={API_URL + "/create-customer-portal-session"}>
-                <button type="submit" className={"text-white px-2.5 py-1.5 rounded-md text-sm shadow-sm bg-primary hover:bg-primary-light"}>Manage Subscription &rarr;</button>
+                <button type="submit" className={"text-primary rounded-md font-medium text-sm hover:text-primary-light"}>Manage Subscription &rarr;</button>
               </form>
             </div>
           </div>

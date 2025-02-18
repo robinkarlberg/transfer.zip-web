@@ -120,7 +120,7 @@ export function isEarlyOffer() {
 export function humanFileName(fileName) {
     // List of common file extensions to remove
     const knownExtensions = [
-        'txt', 'png', 'jpg', 'jpeg', 'gif', 'bmp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'mp3', 'mp4', 'wav', 'avi', 'mov', 'mkv', 'html', 'css', 'js', 'json', 'xml', 'zip', 'rar', '7z'
+        'txt', 'png', 'jpg', 'jpeg', 'gif', 'bmp', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'mp3', 'mp4', 'wav', 'avi', 'mov', 'mkv', 'xml', 'zip', 'rar', '7z'
     ];
 
     // Find the last dot in the file name

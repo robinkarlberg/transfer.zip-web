@@ -6,7 +6,7 @@ import { humanFileSize, humanFileType } from "../../transferUtils"
 import { humanFileName } from "../../utils"
 import Progress from "./Progress"
 
-export default function FileUpload({ initialFiles, onFiles, onReceiveClicked, progressElement, showProgress, buttonText }) {
+export default function FileUpload({ initialFiles, onFiles, onReceiveClicked, progressElement, showProgress, buttonText, singleFile }) {
 
   const _buttonText = buttonText ?? "Transfer"
 
@@ -47,7 +47,7 @@ export default function FileUpload({ initialFiles, onFiles, onReceiveClicked, pr
   return (
     <>
       <form style={{ display: "none" }}>
-        <input ref={fileInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" multiple></input>
+        <input ref={fileInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" multiple={singleFile ? undefined : true}></input>
         <input ref={folderInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" webkitdirectory="true"></input>
       </form>
       <div className={`text-start relative w-full rounded-2xl bg-white border shadow-lg flex flex-col min-h-56 ${onReceiveClicked ? "mt-8" : ""}`}>
@@ -64,9 +64,11 @@ export default function FileUpload({ initialFiles, onFiles, onReceiveClicked, pr
               <BIcon name={"plus"} center className={"flex-grow text-3xl"} />
             </div>
             <span className="font-medium mt-2 text-lg">Pick files</span>
-            <Link onClick={handleSelectFolder} className="text-gray-500 text-sm font-medium mt-2 underline hover:text-primary">
-              or select a folder
-            </Link>
+            {!singleFile && (
+              <Link onClick={handleSelectFolder} className="text-gray-500 text-sm font-medium mt-2 underline hover:text-primary">
+                or select a folder
+              </Link>
+            )}
           </button>
         </Transition>
         <Transition show={files.length > 0}>
@@ -86,8 +88,10 @@ export default function FileUpload({ initialFiles, onFiles, onReceiveClicked, pr
             </div>
             <div className="w-full flex justify-between">
               <div className="flex gap-2">
-                <button type="button" className="text-sm pe-3 px-2 rounded-lg border shadow hover:bg-gray-100" onClick={handlePickFiles}><BIcon name={"plus"} /> Files</button>
-                <button type="button" className="text-sm px-2 rounded-lg border shadow hover:bg-gray-100" onClick={handleSelectFolder}><BIcon name={"folder-plus"} /> Folder</button>
+                {!singleFile && <>
+                  <button type="button" className="text-sm pe-3 px-2 rounded-lg border shadow hover:bg-gray-100" onClick={handlePickFiles}><BIcon name={"plus"} /> Files</button>
+                  <button type="button" className="text-sm px-2 rounded-lg border shadow hover:bg-gray-100" onClick={handleSelectFolder}><BIcon name={"folder-plus"} /> Folder</button>
+                </>}
               </div>
               <div>
                 <span className="text-gray-500 text-sm me-2 hidden sm:inline">{humanFileSize(totalFileSize, true)}</span>

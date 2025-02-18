@@ -10,6 +10,7 @@ import { Transition } from "@headlessui/react";
 import { getTransferList, getUserStorage } from "../../Api";
 import TransferSidebar from "../../components/dashboard/sidebars/TransferSidebar";
 import NewTransferModal from "../../components/elements/modals/NewTransferModal";
+import UpgradeModal from "../../components/elements/modals/UpgradeModal";
 
 export async function loader({ params }) {
   const { transfers } = await getTransferList()
@@ -20,7 +21,7 @@ export const DashboardContext = createContext({})
 
 const Wrapper = ({ children }) => {
   return (
-    <div className="bg-gray-100 ">
+    <div className="bg-white">
       <div className="h-[100vh] --max-w-[96rem] mx-auto flex flex-row">
         {children}
       </div>
@@ -36,6 +37,8 @@ export default function Dashboard({ }) {
 
   const { displayGenericModal } = useContext(ApplicationContext)
   const { user, isGuestUser } = useContext(AuthContext)
+
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
   const { transfers } = useLoaderData()
 
@@ -70,11 +73,12 @@ export default function Dashboard({ }) {
   }, [user])
 
   const Button = ({ icon, text, to, onClick, className }) => {
-    const activeClassParent = ((to != "/app" ? currentPage.startsWith(to) : (currentPage == to || currentPage == `${to}/`)) ? "text-primary bg-body-secondary font-semibold " : "text-secondary font-medium ")
+    const isActive = (to != "/app" && to != "/app/transfers") ? currentPage.startsWith(to) : (currentPage == to || currentPage == `${to}/`)
+    const activeClassParent = isActive ? "text-primary bg-body-secondary font-semibold " : "text-secondary font-semibold "
 
     return (
-      <button onClick={onClick || (() => navigate(to))} className={`hover:bg-body-secondary grow text-start px-4 py-2 flex items-center rounded-lg hover:text-primary ${activeClassParent} ${className}`}>
-        <BIcon className={`text-xl me-2`} name={icon} />{text}
+      <button onClick={onClick || (() => navigate(to))} className={`hover:bg-body-secondary grow text-start text-sm px-4 py-2 flex items-center rounded-lg hover:text-primary ${activeClassParent} ${className}`}>
+        <BIcon className={`text-lg me-2`} name={`${icon}${isActive ? "-fill" : ""}`} />{text}
       </button>
     )
   }
@@ -122,34 +126,37 @@ export default function Dashboard({ }) {
       selectedTransfer,
       hideSidebar,
       showSidebar,
+      setShowUpgradeModal
     }}>
+      <UpgradeModal show={showUpgradeModal} />
       <Wrapper>
         <div className="lg:w-64 py-6 px-6 pt-12 border-r bg-white flex flex-col">
           <Link className="mb-4" to="/">
-            <div className="flex flex-row">
+            <div className="flex flex-row items-center">
               <img
                 alt="Company Logo"
                 src={logo}
-                className="h-8 w-auto me-1"
+                className="h-10 w-auto me-1"
               />
               <h2 className="text-2xl font-bold text-gray-800">{process.env.REACT_APP_SITE_NAME}</h2>
             </div>
           </Link>
-          <div className="flex flex-col gap-y-2">
-            <Link to={"/app/transfers/new"} className="text-center bg-primary hover:bg-primary-light text-white text-sm font-semibold py-2 rounded-lg">Transfer<BIcon className={"ms-2"} name={"send-fill"} /></Link>
+          <div className="flex flex-col gap-y-1">
+            <Link to={"/app/transfers/new"} className="mb-1 text-center bg-primary hover:bg-primary-light text-white text-sm font-medium py-2 rounded-md">New Transfer<BIcon className={"ms-1.5 text-xs"} name={"send-fill"} /></Link>
+            {/* <span className="text-sm font-medium text-gray-500 my-1">Pages</span> */}
             {
               [
-                { icon: "house-fill", text: "Overview", to: "/app" },
-                { icon: "send-fill", text: "Transfers", to: "/app/transfers" },
+                { icon: "house", text: "Overview", to: "/app" },
+                { icon: "send", text: "Transfers", to: "/app/transfers" },
               ].map((value, index) => <Button key={value.to} {...value} />)
             }
           </div>
           <div className="mt-auto">
-            <Button icon={"gear-fill"} text={"Settings"} to={"/app/settings"} className={"w-full"} />
+            <Button icon={"gear"} text={"Settings"} to={"/app/settings"} className={"w-full"} />
           </div>
         </div>
         <div className="grow overflow-y-auto h-[100vh] z-10 mx-auto max-w-6xl">
-          <Outlet/>
+          <Outlet />
         </div>
         <Transition show={showSidebar}>
           <div className="overflow-hidden relative transition-all duration-300 w-96 data-[closed]:w-0">

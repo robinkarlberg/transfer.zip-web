@@ -28,8 +28,8 @@ const Entry = ({ transfer }) => {
   }
 
   return (
-    <button onClick={() => isSelected ? hideSidebar() : setSelectedTransferId(id)} className={`group text-start rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-4 py-3 group hover:bg-gray-50`}>
-      <div className="overflow-clip flex flex-row justify-between">
+    <button onClick={() => isSelected ? hideSidebar() : setSelectedTransferId(id)} className={`group text-start shadow-sm rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-4 py-3 group hover:bg-gray-50`}>
+      <div className="flex flex-row justify-between">
         <div>
           <h3 className={`text-xl font-bold me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
           <div className="text-sm text-gray-600 font-semibold">
