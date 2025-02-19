@@ -160,6 +160,57 @@ export function parseTransferExpiryDate(expiresAt) {
     return date
 }
 
+export function buildNestedStructure(files) {
+    if (!files) return null
+
+    const root = { directories: [], files: [] };
+
+    files.forEach(file => {
+        const parts = (file.info.relativePath || file.info.name).split('/');
+        let current = root;
+
+        parts.forEach((part, index) => {
+            if (index === parts.length - 1) {
+                // This is a file, add it to the current directory's files array
+                current.files.push({ ...file, info: { ...file.info, name: getFileNameFromPath(file.info.name) } });
+            } else {
+                // This is a directory
+                let dir = current.directories.find(d => d.name === part + "/");
+                if (!dir) {
+                    // If the directory does not exist, create it
+                    dir = { name: part + "/", directories: [], files: [] };
+                    current.directories.push(dir);
+                }
+                current = dir; // Move to the found or created directory
+            }
+        });
+    });
+
+    return root;
+}
+
+export function removeLastEntry(path) {
+    const parts = path.split('/');
+    if (parts.pop() == "") {
+        parts.pop();
+    }
+    return parts.join('/').replace(/\/+$/, '') + "/";
+}
+
+export function getFileNameFromPath(path) {
+    return path.split('/').pop();
+}
+
+export function createRichFileObject(file) {
+    const { name, size, type } = file
+    return {
+        nativeFile: file,
+        info: {
+            name, size, type
+        }
+    }
+}
+
 // ChatGPT ;)
 export function humanTimeUntil(targetDate) {
     const now = new Date();
