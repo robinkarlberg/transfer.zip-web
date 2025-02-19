@@ -29,6 +29,12 @@ export default function NewTransferPage({ }) {
   const handleFiles = async files => {
     const formData = new FormData(formRef.current)
 
+    const form = formRef.current;
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
     const name = formData.get("name")
     const description = formData.get("description")
     const expiresInDays = formData.get("expiresInDays")
@@ -59,6 +65,7 @@ export default function NewTransferPage({ }) {
                 placeholder="Untitled Transfer"
                 name="name"
                 type="text"
+                required={true}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
               />
             </div>
