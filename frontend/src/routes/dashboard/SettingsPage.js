@@ -5,15 +5,19 @@ import ManageSubscriptionButton from "../../components/ManageSubscriptionButton"
 import { capitalizeFirstLetter } from "../../utils";
 import { Link } from "react-router-dom";
 import moment from 'moment-timezone';
-import { API_URL, logout } from "../../Api";
+import { API_URL, changeSubscription, logout } from "../../Api";
 import BIcon from "../../components/BIcon";
 import { Radio, RadioGroup } from "@headlessui/react";
 import pricing from "../../pricing";
+import Modal from "../../components/elements/Modal";
+import { DashboardContext } from "./Dashboard";
 
 const timeZoneOptions = moment.tz.names();
 
 export default function SettingsPage({ }) {
   const { user, isFreeUser } = useContext(AuthContext)
+
+  const { setShowUpgradeModal } = useContext(DashboardContext)
 
   const planValidUntil = new Date(user.planValidUntil)
   const options = {
@@ -31,6 +35,10 @@ export default function SettingsPage({ }) {
   const { tiers } = pricing
 
   const [selectedMailingLists, setSelectedMailingLists] = useState(tiers[0])
+
+  const handleUpgrade = async e => {
+    setShowUpgradeModal(true)
+  }
 
   return (
     <GenericPage title={"Settings"}>
@@ -74,8 +82,9 @@ export default function SettingsPage({ }) {
                 <span className="font-bold text-gray-800 me-2">Current Plan:</span>
                 <div className="inline-block text-primary font-semibold bg-primary-subtle rounded-lg px-2.5 py-1.5">{capitalizeFirstLetter(user.plan)}</div>
               </div>
+              {user.plan == "starter" && <button type="button" onClick={handleUpgrade} className={"text-primary rounded-md font-medium text-sm hover:text-primary-light mb-2"}>Upgrade Subscription &rarr;</button>}
               <form method="POST" action={API_URL + "/create-customer-portal-session"}>
-                <button type="submit" className={"text-primary rounded-md font-medium text-sm hover:text-primary-light"}>Manage Subscription &rarr;</button>
+                <button type="submit" className={"text-primary rounded-md font-medium text-sm hover:text-primary-light"}>Manage Billing</button>
               </form>
             </div>
           </div>

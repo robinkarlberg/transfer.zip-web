@@ -23,6 +23,8 @@ export default function OverviewPage({ }) {
     const { user } = useContext(AuthContext)
     const { storage, showSidebar, setShowUpgradeModal } = useContext(DashboardContext)
 
+    const storagePercent = storage?.maxBytes ? Math.floor((storage?.usedBytes / storage?.maxBytes)) * 100 : 0
+
     const navigate = useNavigate()
 
     const getUsedStorage = () => {
@@ -52,7 +54,7 @@ export default function OverviewPage({ }) {
         //     action: () => { }
         // },
         {
-            name: 'Storage', stat: <span>{Math.floor((storage?.usedBytes / storage?.maxBytes)) * 100} <small>%</small></span>,
+            name: 'Storage', stat: <span>{storagePercent} <small>%</small></span>,
             icon: "database-fill",
             actionName: "Get More Storage",
             action: () => setShowUpgradeModal(true)

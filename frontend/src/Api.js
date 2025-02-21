@@ -96,6 +96,10 @@ export async function createCheckoutSession(tier) {
     return await post(`/create-checkout-session`, { tier })
 }
 
+export async function changeSubscription(tier) {
+    return await post(`/change-subscription`, { tier })
+}
+
 // waitlist
 
 export async function joinWaitlist(email) {

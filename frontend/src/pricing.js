@@ -22,7 +22,7 @@ export default {
         "Files stay up for 365 days",
         "Password protect files",
       ],
-      featured: true
+      featured: true,
     }
   ]
 }
