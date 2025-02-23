@@ -4,7 +4,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import Checkmark from "../Checkmark";
 import { Transition } from "@headlessui/react";
 
-export default function Progress({ now, max, unit }) {
+export default function Progress({ now, max }) {
   const percent = useMemo(() => !max ? 0 : Math.floor(now / max * 100), [now, max])
 
   const showCheckmark = max && max === now
@@ -17,7 +17,7 @@ export default function Progress({ now, max, unit }) {
       </Transition>
       <Transition show={!showCheckmark}>
         <div className="absolute top-0 left-0 transition data-[closed]:opacity-0">
-          <CircularProgressbar value={percent} text={max ? `${percent}${unit}` : ""}
+          <CircularProgressbar value={percent} text={max ? `${percent}%` : ""}
             styles={buildStyles({
               textSize: "16px",
               textColor: "currentColor",

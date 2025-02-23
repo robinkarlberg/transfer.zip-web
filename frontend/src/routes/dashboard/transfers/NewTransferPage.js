@@ -105,7 +105,7 @@ export default function NewTransferPage({ }) {
         </form>
         <hr className="col-span-full my-6 mx-2" />
         <div className="col-span-full">
-          <FileUpload initialFiles={state?.files} onFiles={handleFiles} progressElement={<Progress max={totalBytes} now={bytesTransferred} unit={"%"} />} showProgress={!!filesToUpload} />
+          <FileUpload initialFiles={state?.files} onFiles={handleFiles} progressElement={<Progress max={totalBytes} now={bytesTransferred} />} showProgress={!!filesToUpload} />
         </div>
       </div>
     </GenericPage>

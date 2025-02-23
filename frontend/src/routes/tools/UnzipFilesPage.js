@@ -5,6 +5,9 @@ import TestimonialCloud from "../../components/TestimonialCloud";
 import FileBrowser from "../../components/elements/FileBrowser";
 import { useState } from "react";
 import * as zip from "@zip.js/zip.js";
+import { Transition } from "@headlessui/react";
+import streamSaver from "../../lib/StreamSaver"
+import EmptySpace from "../../components/elements/EmptySpace";
 
 const unzip = async (zipFile) => {
   const _files = []
@@ -32,24 +35,34 @@ const unzip = async (zipFile) => {
 }
 
 export default function UnzipFilesPage({ }) {
-
-  // const [zipFile, setZipFile] = useState(null)
-
   const [richFiles, setRichFiles] = useState(null)
+  const [zipFile, setZipFile] = useState(null)
 
   const handleFiles = async files => {
     if (files.length == 0) return
     const file = files[0]
 
+    setZipFile(file)
     // TODO: Maybe validate file is zip file
     setRichFiles(await unzip(file))
+  }
+
+  const handleAction = async (action, richFile) => {
+    if (action == "click") {
+      const fileStream = streamSaver.createWriteStream(richFile.info.name, {
+        size: richFile.info.size
+      })
+      const tee = richFile.entry.readable.tee()
+      richFile.entry.readable = tee[0]
+      tee[1].pipeTo(fileStream)
+    }
   }
 
   return (
     <div>
       <GenericToolPage
         title={"Unzip Files Online"}
-        display={<span><span className="text-primary">Easily</span> open your zip files online.</span>}
+        display={<span><span className="text-primary">Easily</span> open your zip file online.</span>}
         subtitle={"Decompress and view even the largest zip files with this online tool. We can not read your files, as everything is handled locally in your browser."}
         description={"Effortlessly decompress and view even the largest zip files with our online tool. Simply upload a zip file from your computer, and it will be unpacked instantly, allowing you to view its contents. You can also choose to download or share individual files for free if needed."}
         question={"How to unzip zip file"}
@@ -67,11 +80,15 @@ export default function UnzipFilesPage({ }) {
           <FileUpload onFiles={handleFiles} buttonText={"Unzip"} singleFile={true} />
         </div>
       </GenericToolPage>
-      <div>
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <FileBrowser richFiles={richFiles} />
-        </div>
+      <div className="mx-auto max-w-7xl px-6 lg:px-8 mb-16">
+        <Transition show={!!richFiles}>
+          <div>
+            <h3 className="text-2xl font-bold mb-2">{zipFile?.name}</h3>
+            <FileBrowser richFiles={richFiles} onAction={handleAction} />
+          </div>
+        </Transition>
+        {!richFiles && <EmptySpace title={`Select a ZIP file to get started`} subtitle={`Your files will be displayed here, allowing you to browse the archive.`} />}
       </div>
-    </div>
+    </div >
   )
 }

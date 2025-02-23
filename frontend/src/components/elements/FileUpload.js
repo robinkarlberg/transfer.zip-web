@@ -63,7 +63,7 @@ export default function FileUpload({ initialFiles, onFiles, onReceiveClicked, pr
             <div className="text-white rounded-full bg-primary w-12 h-12 flex group-hover:bg-primary-light">
               <BIcon name={"plus"} center className={"flex-grow text-3xl"} />
             </div>
-            <span className="font-medium mt-2 text-lg">Pick files</span>
+            <span className="font-medium mt-2 text-lg">{singleFile ? "Pick a file" : "Pick files"}</span>
             {!singleFile && (
               <Link onClick={handleSelectFolder} className="text-gray-500 text-sm font-medium mt-2 underline hover:text-primary">
                 or select a folder

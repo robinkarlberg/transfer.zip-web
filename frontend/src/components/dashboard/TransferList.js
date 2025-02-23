@@ -5,6 +5,7 @@ import { useContext, useMemo } from "react"
 import { DashboardContext } from "../../routes/dashboard/Dashboard"
 import { getTransferDownloadLink } from "../../Api"
 import { ApplicationContext } from "../../providers/ApplicationProvider"
+import EmptySpace from "../elements/EmptySpace"
 
 const Entry = ({ transfer }) => {
   const { displayNotification } = useContext(ApplicationContext)
@@ -71,12 +72,13 @@ export default function TransferList({ transfers }) {
         {transfers.map((transfer, index) => <Entry key={transfer.id} transfer={transfer} />)}
       </div>
       {transfers.length == 0 && (
-        <div className="text-center py-16 rounded-xl border-dashed border-2">
-          <h3 className="font-semibold text-2xl mb-1">Your transfers will appear here</h3>
-          <p className="text-gray-600">
-            You can see views and download statistics, edit, send or delete them.
-          </p>
-        </div>
+        <EmptySpace title={"Your transfers will appear here"} subtitle={"You can see views and download statistics, edit, send or delete them."}/>
+        // <div className="text-center py-16 rounded-xl border-dashed border-2">
+        //   <h3 className="font-semibold text-2xl mb-1">Your transfers will appear here</h3>
+        //   <p className="text-gray-600">
+        //     You can see views and download statistics, edit, send or delete them.
+        //   </p>
+        // </div>
       )}
     </div>
   )

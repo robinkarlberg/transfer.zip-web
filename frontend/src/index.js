@@ -29,6 +29,7 @@ import QuickShareNew from "./routes/quick-share/QuickShareNew";
 import NewTransferPage from "./routes/dashboard/transfers/NewTransferPage";
 import DownloadPage, { HydrateFallback as DownloadPageHydrateFallback, loader as DownloadPageLoader } from "./routes/DownloadPage";
 import UnzipFilesPage from "./routes/tools/UnzipFilesPage";
+import ZipFilesPage from "./routes/tools/ZipFilesPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -58,6 +59,7 @@ const router = createBrowserRouter(
               <Route path="/legal/terms-and-conditions" element={<TermsAndConditionsPage />} />
               <Route path="/tools">
                 <Route path="unzip-files-online" element={<UnzipFilesPage />} />
+                <Route path="zip-files-online" element={<ZipFilesPage />} />
               </Route>
               <Route path="*" element={<NotFoundPage />} />
             </Route>
