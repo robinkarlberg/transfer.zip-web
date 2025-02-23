@@ -7,14 +7,17 @@ import { ApplicationContext } from "../../providers/ApplicationProvider";
 
 import logo from "../../img/icon.png"
 import { Transition } from "@headlessui/react";
-import { getTransferList, getUserStorage } from "../../Api";
+import { getTransferList, getUserStorage, getSettings } from "../../Api";
 import TransferSidebar from "../../components/dashboard/sidebars/TransferSidebar";
 import NewTransferModal from "../../components/elements/modals/NewTransferModal";
 import UpgradeModal from "../../components/elements/modals/UpgradeModal";
 
 export async function loader({ params }) {
-  const { transfers } = await getTransferList()
-  return { transfers }
+  const [{ transfers }, settings] = await Promise.all([
+    getTransferList(),
+    getSettings()
+  ])
+  return { transfers, settings }
 }
 
 export const DashboardContext = createContext({})

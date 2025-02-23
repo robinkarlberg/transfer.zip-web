@@ -240,6 +240,6 @@ export async function getDownload(secretCode) {
     return await get(`/download/${secretCode}`)
 }
 
-export async function settings() {
+export async function getSettings() {
     return await get("/settings")
 }

@@ -2,14 +2,19 @@ import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { newTransfer, uploadTransferFiles } from "../../../Api";
 import GenericPage from "../../../components/dashboard/GenericPage";
 import FileUpload from "../../../components/elements/FileUpload";
-import { useLocation, useNavigate, useRevalidator } from "react-router-dom";
+import { useLocation, useNavigate, useRevalidator, useRouteLoaderData } from "react-router-dom";
 import Progress from "../../../components/elements/Progress";
 import { DashboardContext } from "../Dashboard";
+import { AuthContext } from "../../../providers/AuthProvider";
+import BIcon from "../../../components/BIcon";
 
 export default function NewTransferPage({ }) {
-
   const revalidator = useRevalidator()
+  const { user } = useContext(AuthContext)
   const { setSelectedTransferId } = useContext(DashboardContext)
+  const { settings } = useRouteLoaderData("dashboard")
+
+  const { EXPIRATION_TIMES } = settings
 
   const navigate = useNavigate()
   const { state } = useLocation()
@@ -53,60 +58,71 @@ export default function NewTransferPage({ }) {
 
   return (
     <GenericPage title={"New Transfer"}>
-      <div className="w-full max-w-96">
-        <form ref={formRef} className="grid grid-cols-3 gap-y-6 gap-x-2">
-          <div className="col-span-2">
-            <label htmlFor="name" className="block text-sm/6 font-medium text-gray-900">
-              Name
-            </label>
-            <div className="mt-2">
-              <input
-                id="name"
-                placeholder="Untitled Transfer"
-                name="name"
-                type="text"
-                required={true}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
-              />
+      <div className="flex flex-col-reverse lg:flex-row gap-4">
+        <div className="w-full max-w-96">
+          <form ref={formRef} className="grid grid-cols-3 gap-y-6 gap-x-2">
+            <div className="col-span-2">
+              <label htmlFor="name" className="block text-sm/6 font-medium text-gray-900">
+                Name
+              </label>
+              <div className="mt-2">
+                <input
+                  id="name"
+                  placeholder="Untitled Transfer"
+                  name="name"
+                  type="text"
+                  required={true}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
+                />
+              </div>
             </div>
-          </div>
-          <div className="col-span-1">
-            <label htmlFor="expiresInDays" className="block text-sm/6 font-medium text-gray-900">
-              Expires
-            </label>
-            <div className="mt-2">
-              <select
-                id="expiresInDays"
-                name="expiresInDays"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
-              >
-                <option value={7}>7 days</option>
+            <div className="col-span-1">
+              <label htmlFor="expiresInDays" className="block text-sm/6 font-medium text-gray-900">
+                Expires
+              </label>
+              <div className="mt-2">
+                <select
+                  id="expiresInDays"
+                  name="expiresInDays"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
+                >
+                  {/* <option value={7}>7 days</option>
                 <option value={14}>14 days</option>
                 <option value={30} disabled>30 days</option>
                 <option value={180} disabled>6 months</option>
-                <option value={365} disabled>1 year</option>
-              </select>
+                <option value={365} disabled>1 year</option> */}
+                  {EXPIRATION_TIMES.map(item => <option key={item.days} value={item.days} disabled={!item[user.plan]}>{item.period}</option>)}
+                </select>
+              </div>
             </div>
-          </div>
+            <div className="col-span-full">
+              <label htmlFor="description" className="block text-sm/6 font-medium text-gray-900">
+                Message<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>
+              </label>
+              <div className="mt-2">
+                <textarea
+                  id="description"
+                  placeholder=""
+                  name="description"
+                  type="text"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
+                />
+              </div>
+            </div>
+          </form>
+          <hr className="col-span-full my-6 mx-2" />
           <div className="col-span-full">
-            <label htmlFor="description" className="block text-sm/6 font-medium text-gray-900">
-              Message<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>
-            </label>
-            <div className="mt-2">
-              <textarea
-                id="description"
-                placeholder=""
-                name="description"
-                type="text"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
-              />
-            </div>
+            <FileUpload initialFiles={state?.files} onFiles={handleFiles} progressElement={<Progress max={totalBytes} now={bytesTransferred} />} showProgress={!!filesToUpload} />
           </div>
-        </form>
-        <hr className="col-span-full my-6 mx-2" />
-        <div className="col-span-full">
-          <FileUpload initialFiles={state?.files} onFiles={handleFiles} progressElement={<Progress max={totalBytes} now={bytesTransferred} />} showProgress={!!filesToUpload} />
         </div>
+        {/* <div className="w-full max-w-96">
+          <button className="w-full shadow-sm text-start rounded-lg text-white bg-blue-500 px-4 py-3 group transition-colors hover:bg-blue-600">
+            <h5 className="font-semibold text-sm"><span className="group-hover:underline">Store files for 1 year</span> <span className="group-hover:ms-1 transition-all">&rarr;</span></h5>
+            <p className="font-medium text-sm">
+              Upgrade your subscription to store files for longer.
+            </p>
+          </button>
+        </div> */}
       </div>
     </GenericPage>
   )

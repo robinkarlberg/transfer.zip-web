@@ -16,8 +16,8 @@ function classNames(...classes) {
 export default function OverviewPage({ }) {
 
     const { transfers } = useRouteLoaderData("dashboard")
-
-    const recentTransfers = useMemo(() => transfers.slice(0, 9), [transfers])
+    
+    const recentTransfers = useMemo(() => transfers && transfers.slice(0, 9), [transfers])
 
     const { displayErrorModal, displaySuccessModal } = useContext(ApplicationContext)
     const { user } = useContext(AuthContext)

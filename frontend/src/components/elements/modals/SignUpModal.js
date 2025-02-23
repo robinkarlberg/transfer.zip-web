@@ -59,7 +59,7 @@ export default function SignUpModal({ show }) {
       <div className="p-4">
         <h2 className="text-3xl font-bold mb-2">Create an account</h2>
         <p className="text-md text-gray-800 mb-6 font-medium">
-          You need an account to do that!
+          Sign up to do that, it takes just a minute.
         </p>
         <form onSubmit={handleSubmit} action="#" method="POST" className="space-y-6">
           <div>
@@ -117,7 +117,7 @@ export default function SignUpModal({ show }) {
 
         <p className="mt-10 text-center text-sm/6 text-gray-500">
           Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-primary hover:text-primary-light">
+          <Link onClick={() => setShowSignUpModal(false)} to="/login" className="font-semibold text-primary hover:text-primary-light">
             Sign in
           </Link>
         </p>

@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom"
-import { getDownload, getTransferAttachmentLink, getTransferDownloadLink, settings } from "../Api"
+import { getDownload, getTransferAttachmentLink, getTransferDownloadLink, getSettings } from "../Api"
 import TestimonialCloud from "../components/TestimonialCloud";
 import BIcon from "../components/BIcon";
 import { humanTimeUntil, parseTransferExpiryDate } from "../utils";
@@ -9,7 +9,7 @@ import { humanFileSize } from "../transferUtils";
 export async function loader({ params }) {
   const [downloadResponse, settingsResponse] = await Promise.all([
     getDownload(params.secretCode),
-    settings()
+    getSettings()
   ]);
 
   const { download } = downloadResponse;
