@@ -2,6 +2,16 @@ import { useContext } from "react"
 import { ApplicationContext } from "../providers/ApplicationProvider"
 import pricing from "../pricing"
 import PricingCards from "./PricingCards"
+import BIcon from "./BIcon"
+import { Link } from "react-router-dom"
+
+const features = [
+  { name: "No file size limit!", good: true },
+  { name: "Full access to Quick Share", good: true },
+  { name: "No account required", good: true },
+  { name: "Transfers expire when browser is closed", good: false },
+  { name: "No storage", good: false },
+]
 
 export default function Pricing() {
 
@@ -29,6 +39,48 @@ export default function Pricing() {
       </p>
       <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
         <PricingCards tiers={tiers} />
+        <div className="col-span-full mt-16">
+          <div className="border shadow rounded-3xl p-10 w-full flex flex-col lg:flex-row justify-between">
+            <div>
+              <h3 className="text-base/7 font-semibold text-primary">Free</h3>
+              <p className="mt-4 flex items-baseline gap-x-2">
+                <span
+                  className={'text-gray-900 text-5xl font-semibold tracking-tight'}
+                >
+                  $0
+                </span>
+              </p>
+              <p className={`text-gray-600 mt-6 text-base/7 max-w-md`}>
+                <span className="hidden md:inline"> Send files without size limits, with end-to-end encryption.</span> Transfer.zip can be used without an account!
+              </p>
+            </div>
+            <div>
+              <ul
+                role="list"
+                className={'text-gray-600 mt-2 space-y-3 text-sm/6 sm:mt-3'}
+              >
+                {features.map((feature) => (
+                  <li key={feature.name} className="flex gap-x-3">
+                    <BIcon
+                      name={feature.good ? "check-lg" : "x-lg"}
+                      aria-hidden="true"
+                      className={`h-5 w-5 flex-none ${feature.good ? "text-primary" : "text-red-600"}`}
+                    />
+                    {feature.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {/* <Link
+              to={"/"}
+              className={'text-primary ring-1 ring-inset ring-primary-200 hover:ring-primary-300 focus-visible:outline-primary mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10'}
+            >
+              Try it out!
+            </Link> */}
+          </div>
+        </div>
+      </div>
+      <div>
       </div>
     </div>
   )

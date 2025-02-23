@@ -55,7 +55,7 @@ export default function QuickSharePage({ }) {
       {/* <div>
         <h2></h2>
       </div> */}
-      <TestimonialCloud/>
+      {/* <TestimonialCloud/> */}
     </div>
   )
 }

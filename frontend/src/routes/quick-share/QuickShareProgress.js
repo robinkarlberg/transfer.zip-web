@@ -24,7 +24,7 @@ const TRANSFER_STATE_FINISHED = "finished"
 const TRANSFER_STATE_FAILED = "failed"
 
 export default function QuickShareProgress({ }) {
-  
+
   const { user } = useContext(AuthContext)
   const { displayNotification, setShowSignUpModal } = useContext(ApplicationContext)
   const { hasBeenSentLink, files, k, remoteSessionId, transferDirection } = useContext(QuickShareContext)
@@ -278,26 +278,28 @@ export default function QuickShareProgress({ }) {
           :
           <p className="text-danger"><b className="text-danger">Error: </b>{errorMessage}</p>
         }
-        <div className="flex md:inline-flex gap-2 border rounded-lg shadow-sm py-2 ps-3 pe-4 bg-blue-50">
-          <div className="flex items-center h-6">
-            <BIcon center className={"text-primary text-xs animate-pulse"} name={"circle-fill"} />{" "}
+        {!isSelfHosted() && transferState != TRANSFER_STATE_FINISHED && (
+          <div className="flex md:inline-flex gap-2 border rounded-lg shadow-sm py-2 ps-3 pe-4 bg-blue-50">
+            <div className="flex items-center h-6">
+              <BIcon center className={"text-primary text-xs animate-pulse"} name={"circle-fill"} />{" "}
+            </div>
+            <div>
+              <p className="text-blue-950">
+                {hasBeenSentLink ? "Keep your browser window open" : "Link will expire when tab is closed."}
+              </p>
+              {!hasBeenSentLink && transferDirection == "S" &&
+                <Link to={"/app/transfers/new"} onClick={e => {
+                  if (!user) {
+                    e.preventDefault()
+                    setShowSignUpModal(true)
+                  }
+                }} state={{ files }} className="text-primary hover:text-primary-light font-medium">
+                  Upload files for longer &rarr;
+                </Link>
+              }
+            </div>
           </div>
-          <div>
-            <p className="text-blue-950">
-              {hasBeenSentLink ? "Keep your browser window open" : "Link will expire when tab is closed."}
-            </p>
-            {!hasBeenSentLink && transferDirection == "S" &&
-              <Link to={"/app/transfers/new"} onClick={e => {
-                if(!user) {
-                  e.preventDefault()
-                  setShowSignUpModal(true)
-                }
-              }} state={{ files }} className="text-primary hover:text-primary-light font-medium">
-                Upload files for longer &rarr;
-              </Link>
-            }
-          </div>
-        </div>
+        )}
       </div>
     </div>
   )

@@ -51,12 +51,10 @@ export default function UnzipFilesPage({ }) {
     console.log("action", action, richFile)
     if (action == "click") {
       console.log("createWriteStream", richFile.info.name)
-      const fileStream = streamSaver.createWriteStream(richFile.info.name, {
-        size: richFile.entry.uncompressedSize
-      })
-      const tee = richFile.entry.readable.tee()
-      richFile.entry.readable = tee[0]
-      tee[1].pipeTo(fileStream)
+      const fileStream = streamSaver.createWriteStream(richFile.info.name)
+      // const tee = richFile.entry.readable.tee()
+      // richFile.entry.readable = tee[0]
+      richFile.entry.readable.pipeTo(fileStream)
     }
   }
 

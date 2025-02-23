@@ -30,6 +30,9 @@ import NewTransferPage from "./routes/dashboard/transfers/NewTransferPage";
 import DownloadPage, { HydrateFallback as DownloadPageHydrateFallback, loader as DownloadPageLoader } from "./routes/DownloadPage";
 import UnzipFilesPage from "./routes/tools/UnzipFilesPage";
 import ZipFilesPage from "./routes/tools/ZipFilesPage";
+import { isSelfHosted } from "./utils";
+import HashInterceptor from "./components/HashInterceptor";
+import SelfHostApp from "./routes/selfhost/SelfHostApp";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -75,9 +78,29 @@ const router = createBrowserRouter(
   )
 );
 
+const selfhostRouter = createBrowserRouter(
+  createRoutesFromElements(
+    <>
+      <Route element={<ApplicationProvider />}>
+        <Route path="/" element={<SelfHostApp />} >
+          <Route path="/quick-share" element={<QuickSharePage />}>
+            <Route index element={<QuickShareNew />} />
+            <Route path="/quick-share/progress" element={<QuickShareProgress />} />
+          </Route>
+          <Route path="/tools">
+            <Route path="unzip-files-online" element={<UnzipFilesPage />} />
+            <Route path="zip-files-online" element={<ZipFilesPage />} />
+          </Route>
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+      </Route>
+    </>
+  )
+)
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <>
-    <RouterProvider router={router} />
+    <RouterProvider router={isSelfHosted() ? selfhostRouter : router} />
   </>
 );
