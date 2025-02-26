@@ -1,18 +1,17 @@
 services:
-  mongo:
-    image: mongo
-    restart: unless-stopped
-    volumes:
-      - ./db:/data/db
-    ports:
-      - 127.0.0.1:${MONGODB_FORWARD_PORT:-27017}:27017
-    env_file:
-      - .env
-
   frontend:
     build:
       context: frontend
     restart: unless-stopped
     ports:
-      - 127.0.0.1:${WEB_SERVER_FORWARD_PORT:-10000}:80
+      - 127.0.0.1:${WEB_SERVER_FORWARD_PORT:-9001}:80
     
+  signaling-server:
+    build: signaling-server
+    restart: unless-stopped
+    ports:
+      - 127.0.0.1:9002:8001
+    deploy:
+      resources:
+        limits:
+          memory: 2700M
