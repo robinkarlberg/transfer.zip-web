@@ -9,26 +9,20 @@ import { Transition } from "@headlessui/react";
 import streamSaver from "../../lib/StreamSaver"
 import EmptySpace from "../../components/elements/EmptySpace";
 
+let zipFileReader
+let zipReader
+
 const unzip = async (zipFile) => {
   const _files = []
 
-  const onEntry = (entry) => {
+  zipFileReader = new zip.BlobReader(zipFile)
+  zipReader = new zip.ZipReader(zipFileReader)
+
+  const entries = await zipReader.getEntries()
+  for (const entry of entries) {
     const split = entry.filename.split("/")
 
     if (!entry.directory) _files.push({ info: { name: split[split.length - 1], size: entry.uncompressedSize, relativePath: entry.filename, type: "application/octet-stream" }, entry })
-  }
-
-  if (window.streamSaverUseFallback) {
-    const entries = await (new zip.ZipReader(new zip.BlobReader(zipFile))).getEntries()
-    for (const entry of entries) {
-      onEntry(entry)
-    }
-  }
-  else {
-    const fileStream = zipFile.stream()
-    for await (const entry of (fileStream.pipeThrough(new zip.ZipReaderStream()))) {
-      onEntry(entry)
-    }
   }
 
   return _files
@@ -52,9 +46,10 @@ export default function UnzipFilesPage({ }) {
     if (action == "click") {
       console.log("createWriteStream", richFile.info.name)
       const fileStream = streamSaver.createWriteStream(richFile.info.name)
+      await richFile.entry.getData(fileStream)
       // const tee = richFile.entry.readable.tee()
       // richFile.entry.readable = tee[0]
-      richFile.entry.readable.pipeTo(fileStream)
+      // tee[1].pipeTo(fileStream)
     }
   }
 
