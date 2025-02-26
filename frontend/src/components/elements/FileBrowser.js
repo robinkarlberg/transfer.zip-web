@@ -67,13 +67,24 @@ const mapEntriesFromPath = (nestedStructure, openedPaths, toggleDirectoryOpen, o
     );
   };
 
-  return nestedStructure.directories.map(directory => mapDirectory(directory));
+  return [
+    ...nestedStructure.directories.map(directory => mapDirectory(directory, "")),
+    ...nestedStructure.files.map(file => (
+      <FileBrowserEntry
+        key={file.info.name}
+        richFile={file}
+        isOpen={false}
+        onClick={() => onRichFileClick(file)}
+      />
+    )),
+  ];
 };
 
 export default function FileBrowser({ richFiles, onAction }) {
   const [openedPaths, setOpenedPaths] = useState([]);
 
   const nestedStructure = useMemo(() => buildNestedStructure(richFiles), [richFiles]);
+  console.log(nestedStructure)
 
   const toggleDirectoryOpen = useCallback((path) => {
     setOpenedPaths(prev =>

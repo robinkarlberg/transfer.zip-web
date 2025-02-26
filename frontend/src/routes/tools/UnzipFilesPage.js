@@ -20,6 +20,7 @@ const unzip = async (zipFile) => {
 
   const entries = await zipReader.getEntries()
   for (const entry of entries) {
+    console.log(entry)
     const split = entry.filename.split("/")
 
     if (!entry.directory) _files.push({ info: { name: split[split.length - 1], size: entry.uncompressedSize, relativePath: entry.filename, type: "application/octet-stream" }, entry })
