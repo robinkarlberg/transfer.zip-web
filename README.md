@@ -27,13 +27,13 @@ On Firefox mobile, sending files using Quick Share does not work at the moment. 
 Sending files from some Safari browsers is buggy at the moment, it has something to do with Safari terminating the WebSocket connection when unfocusing the window.
 
 ## Self-Hosting
-To setup self-hosting, copy the file `web-server/example.env` to `web-server/.env`. This will enable only the core features for Quick Share and the relay to function.
+To setup self-hosting, run  `./createenv.sh` to create the env-files needed. This will enable only the core features for Quick Share and the relay to function.
 
 Then, to build and deploy transfer.zip, use docker compose.
 ```
 docker compose build && docker compose up
 ```
-This will listen for connections on `localhost:9001`, the signaling server will be proxied through the web-server on the `/ws` endpoint on the same port. When self-hosting, it is recommended to put transfer.zip behind a reverse-proxy with https.
+This will by default listen for connections on `localhost:9001`, the signaling server will be proxied through the web-server on the `/ws` endpoint on the same port. When self-hosting, it is recommended to put transfer.zip behind a reverse-proxy with https.
 For Apache, the configuration needs to include these lines for the reverse proxy to function:
 ```
 ProxyPreserveHost On
@@ -45,13 +45,34 @@ ProxyPass / http://localhost:9001/
 ProxyPassReverse / http://localhost:9001/
 ```
 
+For NGINX:
+```
+# Put this at the top
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+}
+
+# Put this in your server-block
+# server {
+# ...
+    location /ws {
+        proxy_pass http://localhost:9001/ws;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_set_header Host $host;
+    }
+# ...
+# }
+```
+
 ## Local Development and Contributing
 > [!NOTE]
 > This project is tested with Docker Compose V2. Docker Compose V1 will most likely fail to build.
 
-When developing, install all dependencies with `cd web-server && npm i`, then run the `dev.sh` script. It will start the signalling server and the web server for you.
+When developing, install all dependencies with `./setup.sh`. Then run the `local-dev.sh` script, it will start the signalling server and the web server for you.
 ```
-./dev.sh
+./local-dev.sh
 ```
 
 
