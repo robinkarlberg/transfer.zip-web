@@ -44,9 +44,8 @@ Disallow: /
 User-agent: *
 Disallow: /norobots
 
-Disallow: /api
-Disallow: /dashboard
+Disallow: /app
+Disallow: /onboarding
 
-Disallow: /checkout
-Disallow: /reset-password
+Disallow: /transfer/
 Disallow: /change-password

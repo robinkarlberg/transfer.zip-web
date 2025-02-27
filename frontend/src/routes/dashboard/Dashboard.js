@@ -32,6 +32,14 @@ const Wrapper = ({ children }) => {
   )
 }
 
+const SmallLink = ({ icon, text, to }) => {
+  return (
+    <Link to={to} className={`hover:bg-body-secondary grow text-start text-sm px-4 py-1 flex items-center rounded-lg hover:text-primary text-secondary font-semibold`}>
+      <BIcon className={`text-lg me-2`} name={`${icon}`} />{text}
+    </Link>
+  )
+}
+
 export default function Dashboard({ }) {
   const location = useLocation()
   const currentPage = location.pathname
@@ -146,12 +154,20 @@ export default function Dashboard({ }) {
           </Link>
           <div className="flex flex-col gap-y-1">
             <Link to={"/app/transfers/new"} className="mb-1 text-center bg-primary hover:bg-primary-light text-white text-sm font-medium py-2 rounded-md">New Transfer<BIcon className={"ms-1.5 text-xs"} name={"send-fill"} /></Link>
-            {/* <span className="text-sm font-medium text-gray-500 my-1">Pages</span> */}
+            <span className="text-sm font-medium text-gray-500 my-1">Dashboard</span>
             {
               [
                 { icon: "house", text: "Overview", to: "/app" },
                 { icon: "send", text: "Transfers", to: "/app/transfers" },
               ].map((value, index) => <Button key={value.to} {...value} />)
+            }
+            <span className="text-sm font-medium text-gray-500 my-1">Tools</span>
+            {
+              [
+                { icon: "lightning", text: "Quick Share", to: "/quick-share" },
+                { icon: "file-earmark-zip", text: "Create Zip", to: "/tools/zip-files-online" },
+                { icon: "file-earmark-zip", text: "View Zip", to: "/tools/unzip-files-online" },
+              ].map((value, index) => <SmallLink key={value.to} {...value} />)
             }
           </div>
           <div className="mt-auto">

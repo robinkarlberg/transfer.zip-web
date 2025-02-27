@@ -69,7 +69,7 @@ const router = createBrowserRouter(
             <Route path="/login" element={<SignInPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/change-password" element={<ChangePasswordPage />} />
-            <Route path="/verify-account" element={<VerifyAccountPage />} />
+            {/* <Route path="/verify-account" element={<VerifyAccountPage />} /> */}
           </Route>
           {/* <Route path="reset-password" element={<PasswordResetRequestPage />} /> */}
         </Route>
