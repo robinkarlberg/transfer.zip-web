@@ -8,6 +8,7 @@ import * as zip from "@zip.js/zip.js";
 import { Transition } from "@headlessui/react";
 import streamSaver from "../../lib/StreamSaver"
 import EmptySpace from "../../components/elements/EmptySpace";
+import RelatedLinks from "../../components/RelatedLinks";
 
 let zipFileReader
 let zipReader
@@ -67,10 +68,7 @@ export default function UnzipFilesPage({ }) {
           { step: 2, icon: "bi-hourglass-split", text: "Unzip and wait" },
           { step: 3, icon: "bi-cloud-arrow-down-fill", text: <span>View, download or <Link to={"/"}>share files</Link></span> },
         ]}
-        related={[
-          { to: "/tools/zip-files-online", title: "Zip Files Online" },
-          // { to: "/tools/send-zip-file", title: "Send Zip File" }
-        ]}>
+      >
 
         <div className="mx-auto max-w-sm">
           <FileUpload onFiles={handleFiles} buttonText={"Unzip"} singleFile={true} />
@@ -84,6 +82,12 @@ export default function UnzipFilesPage({ }) {
           </div>
         </Transition>
         {!richFiles && <EmptySpace title={`Select a ZIP file to get started`} subtitle={`Your files will be displayed here, allowing you to browse the archive.`} />}
+        <div className="mt-16">
+          <RelatedLinks links={[
+            { to: "/tools/zip-files-online", title: "Zip Files Online" },
+            // { to: "/tools/send-zip-file", title: "Send Zip File" }
+          ]} />
+        </div>
       </div>
     </div >
   )

@@ -9,6 +9,7 @@ import { Transition } from "@headlessui/react";
 import streamSaver from "../../lib/StreamSaver"
 import EmptySpace from "../../components/elements/EmptySpace";
 import Progress from "../../components/elements/Progress";
+import RelatedLinks from "../../components/RelatedLinks";
 
 const readFileTillEnd = async (file, cbData) => {
   return new Promise((resolve, reject) => {
@@ -104,17 +105,19 @@ export default function ZipFilesPage({ }) {
           { step: 2, icon: "bi-hourglass-split", text: "Unzip and wait" },
           { step: 3, icon: "bi-cloud-arrow-down-fill", text: <span>View, download or <Link to={"/"}>share files</Link></span> },
         ]}
-        related={[
-          { to: "/tools/zip-files-online", title: "Zip Files Online" },
-          // { to: "/tools/send-zip-file", title: "Send Zip File" }
-        ]}>
+      >
 
         <div className="mx-auto max-w-sm">
           <FileUpload onFiles={handleFiles} buttonText={"Zip"} showProgress={!!maxBytes} progressElement={<Progress max={maxBytes} now={progressBytes} />} />
         </div>
       </GenericToolPage>
       <div className="mx-auto max-w-7xl px-6 lg:px-8 mb-16">
-
+        <div>
+          <RelatedLinks links={[
+            { to: "/tools/unzip-files-online", title: "Unzip Files Online" },
+            // { to: "/tools/send-zip-file", title: "Send Zip File" }
+          ]} />
+        </div>
       </div>
     </div >
   )
