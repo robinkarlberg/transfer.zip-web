@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* * {
+  font-family: "Gabarito", sans-serif;
+  font-optical-sizing: auto;
+} */
+
+@keyframes fade-scale-in {
+  0% {
+    transform: translateY(-5px);
+    opacity: 0.8;
+    scale: 0.95;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+    scale: 1;
+  }
+
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.fade-in {
+  animation: fade-scale-in 0.2s forwards;
+}
+
+.fade-out {
+  /* animation: fade-out 0.5s both;
+  transition: opacity .25s ease-in-out; */
+}
+
+/* Sorry filip */
+.HoverButton:hover {
+  background-color: var(--bs-secondary-bg) !important;
+}
+
+.HoverButtonTertiary:hover {
+  background-color: var(--bs-tertiary-bg) !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}

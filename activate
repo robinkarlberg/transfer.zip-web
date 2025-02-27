@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Check if nvm is installed by checking the existence of ~/.nvm/nvm.sh
+if [ -f ~/.nvm/nvm.sh ]; then
+  . ~/.nvm/nvm.sh
+  nvm use lts/iron
+else
+  echo "nvm is not installed. Please install nvm to proceed."
+fi
