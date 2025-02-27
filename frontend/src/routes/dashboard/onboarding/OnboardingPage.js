@@ -86,6 +86,7 @@ export default function OnboardingPage({ }) {
         <div className="mt-1 text-xs">
           <p className="text-center text-gray-500">
             {/* Got regrets?{' '} */}
+            You are logged in as {user?.email}{" "}
             <Link onClick={handleLogout} className="font-semibold text-primary-dark">
               <BIcon name={"box-arrow-left"} className={"me-1"} />
               Log out
