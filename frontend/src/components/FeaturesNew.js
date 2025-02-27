@@ -25,11 +25,12 @@ export default function FeaturesNew() {
           <h2 className="text-base/7 font-semibold text-primary">Quick Share</h2>
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
             {/* Unlimited File Size -<br/>Unlimited Privacy */}
-            Keep Your Tab Open -<br />Send Terabytes
+            Keep Your Tab Open -<br />Send Without Limits
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
             Use <Link to={"/quick-share"} className="text-primary hover:underline">Quick Share</Link> to send large files.
-            It has <b>no file size limit</b> whatsoever, and also ensures your data is protected with end-to-end encryption,
+            It has <b>no file size limit</b> whatsoever - as long as your browser tab is open, you are good to go. 
+            Your data is also protected with end-to-end encryption,
             keeping your files secure and private - even from us.
           </p>
         </div>

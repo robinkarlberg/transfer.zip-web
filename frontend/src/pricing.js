@@ -20,7 +20,8 @@ export default {
         "Unlimited transfers",
         "Store up to 1TB of data",
         "Files stay up for 365 days",
-        "Password protect files",
+        "Priority support",
+        // "Password protect files",
       ],
       featured: true,
     }

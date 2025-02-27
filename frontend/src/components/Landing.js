@@ -3,6 +3,7 @@
 import { Link, useNavigate } from "react-router-dom"
 import FileUpload from "./elements/FileUpload"
 import BIcon from "./BIcon"
+import { useEffect, useState } from "react"
 
 export default function Example() {
 
@@ -24,6 +25,19 @@ export default function Example() {
       }
     })
   }
+
+  const [stars, setStars] = useState(null)
+
+  useEffect(() => {
+    fetch("https://api.github.com/repos/robinkarlberg/transfer.zip-web", {
+      "credentials": "omit",
+      "method": "GET"
+    }).then(res => res.json()).then(json => {
+      setStars(json.stargazers_count)
+    }).catch(err => {
+      console.log("GitHub stars fetch error :(")
+    })
+  }, [])
 
   return (
     <div className="bg-white">
@@ -79,7 +93,7 @@ export default function Example() {
                 Create Account
               </Link>
               <a href="https://github.com/robinkarlberg/transfer.zip-web" className="text-sm font-semibold leading-6 text-gray-900">
-                <BIcon name={"star"} /> Star on GitHub <span aria-hidden="true">→</span>
+                <BIcon name={"star"} /> Star on GitHub {stars ? `(${stars})` : ""} <span aria-hidden="true">→</span>
               </a>
             </div>
           </div>
