@@ -28,7 +28,7 @@ const faqs = [
   {
     question: "Is there a free trial available?",
     answer:
-      "Our product is already free to use for site-owners. There is no need for a free trial!"
+      "Not at the moment, it will be added in the future based on feedback."
   },
   {
     question: "How do I contact support if I encounter an issue?",
