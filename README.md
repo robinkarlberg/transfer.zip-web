@@ -1,6 +1,6 @@
 # Transfer.zip
 
-![Quick Share Screenshot](https://cdn.transfer.zip/QuickShare.png)
+<img src='https://cdn.transfer.zip/QuickShare.png' width="80%"></img>
 
 #### A self-hostable web application that allows you to easily and securely transfer files between devices **with no size limit**. Also available on, you guessed it, [https://transfer.zip](https://transfer.zip/).
 
