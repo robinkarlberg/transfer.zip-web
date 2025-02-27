@@ -6,10 +6,10 @@ import BIcon from "./BIcon"
 import { Link } from "react-router-dom"
 
 const features = [
-  { name: "No file size limit!", good: true },
   { name: "Full access to Quick Share", good: true },
-  { name: "No account required", good: true },
-  { name: "Transfers expire when browser is closed", good: false },
+  { name: "Use without an account", good: true },
+  { name: "No limit on file size", good: true },
+  { name: "Transfers expire when browser tab is closed", good: false },
   { name: "No storage", good: false },
 ]
 

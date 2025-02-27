@@ -6,8 +6,8 @@ export default {
       description: "Enjoy effortless file sharing with no size limits and ample storage.",
       features: [
         "Quick-Share files of any size",
+        "Unlimited transfers",
         "Store up to 200GB of data",
-        "20 transfers per month",
         "Files expire after 14 days"
       ],
     },
@@ -17,8 +17,8 @@ export default {
       description: "Empower your passion with more storage and advanced features.",
       features: [
         "Quick-Share files of any size",
-        "Store up to 1TB of data",
         "Unlimited transfers",
+        "Store up to 1TB of data",
         "Files stay up for 365 days",
         "Password protect files",
       ],
