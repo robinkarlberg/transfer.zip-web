@@ -51,7 +51,7 @@ export default function OverviewPage({ }) {
         //     action: () => { }
         // },
         {
-            name: 'Storage', stat: <span>{storagePercent} <small>%</small></span>,
+            name: 'Used Storage', stat: <span>{storagePercent} <small>%</small></span>,
             icon: "database-fill",
             actionName: user.plan == "pro" ? "Request More Storage" : "Get More Storage",
             action: handleMoreStorageClicked
