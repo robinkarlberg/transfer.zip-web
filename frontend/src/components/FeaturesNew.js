@@ -1,14 +1,18 @@
 import BIcon from "./BIcon"
 
+import ProductDemoScreenshot from "../img/ProductDemoScreenshot.png"
+import ProductDemo from "../img/ProductDemo.mp4"
+import { Link } from "react-router-dom"
+
 const features = [
   {
     name: 'Much Larger Files',
-    description: '',
+    description: 'Quick Share supports files over 100GB, because the data is never stored on our servers.',
     icon: "database-fill-up"
   },
   {
     name: 'Much Faster Transfers',
-    description: '',
+    description: 'The data is streamed in real-time between your devices. There is no overhead on our side.',
     icon: "fast-forward-fill",
   },
 ]
@@ -18,12 +22,15 @@ export default function FeaturesNew() {
     <div className="bg-white py-24 sm:py-32" id="features2">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className="text-base/7 font-semibold text-primary">Transfer without limits</h2>
+          <h2 className="text-base/7 font-semibold text-primary">Quick Share</h2>
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Unlimited File Size -<br/>Unlimited Privacy
+            {/* Unlimited File Size -<br/>Unlimited Privacy */}
+            Keep Your Tab Open -<br />Send Terabytes
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            Quick Share ensures your data is protected with end-to-end encryption, keeping your files secure and private - even from us, all while being larger than 100GB.
+            Use <Link to={"/quick-share"} className="text-primary hover:underline">Quick Share</Link> to send large files.
+            It has <b>no file size limit</b> whatsoever, and also ensures your data is protected with end-to-end encryption,
+            keeping your files secure and private - even from us.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
@@ -40,19 +47,6 @@ export default function FeaturesNew() {
               </div>
             ))}
           </dl>
-        </div>
-        <div className="mx-auto mt-16">
-          <video
-            // autoPlay
-            width={2432}
-            height={1442}
-            className="mx-auto rounded-xl w-full max-w-4xl"
-            loop
-            controls
-          // poster={SponsorDemoScreenshot}
-          >
-            {/* <source src={product_video} type="video/mp4" /> */}
-          </video>
         </div>
       </div>
     </div>

@@ -41,6 +41,15 @@ export default function OverviewPage({ }) {
 
     }
 
+    const handleMoreStorageClicked = () => {
+        if(user.plan != "pro") {
+            setShowUpgradeModal(true)
+        }
+        else {
+            displaySuccessModal("Request More Storage", `You are already on the Pro plan. To request more, send an email to ${process.env.REACT_APP_SUPPORT_EMAIL}. We make decisions on a case-by-case basis.`)
+        }
+    }
+
     const stats = [
         {
             name: 'Transfers', stat: transfers.length,
@@ -56,8 +65,8 @@ export default function OverviewPage({ }) {
         {
             name: 'Storage', stat: <span>{storagePercent} <small>%</small></span>,
             icon: "database-fill",
-            actionName: "Get More Storage",
-            action: () => setShowUpgradeModal(true)
+            actionName: user.plan == "pro" ? "Request More Storage" : "Get More Storage",
+            action: handleMoreStorageClicked
         },
     ]
 

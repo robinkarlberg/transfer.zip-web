@@ -51,7 +51,7 @@ export default function Pricing() {
                 </span>
               </p>
               <p className={`text-gray-600 mt-6 text-base/7 max-w-md`}>
-                <span className="hidden md:inline"> Send files without size limits, with end-to-end encryption.</span> Transfer.zip can be used without an account!
+                <span className="hidden md:inline"> Send files without size limits, with end-to-end encryption.</span> Transfer.zip can be used without an account, but without storing files for very long.
               </p>
             </div>
             <div>
