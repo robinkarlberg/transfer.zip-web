@@ -25,21 +25,9 @@ export default function OverviewPage({ }) {
 
     const storagePercent = storage?.maxBytes ? Math.floor((storage?.usedBytes / storage?.maxBytes)) * 100 : 0
 
+    console.log(storage)
+
     const navigate = useNavigate()
-
-    const getUsedStorage = () => {
-        if (!storage) return <div>...<small>B</small></div>
-        const { amount, unit } = humanFileSizePair(storage.usedBytes, true)
-        return <span>{amount}<small>{unit}</small></span>
-    }
-
-    const getMaxStorage = () => {
-        return storage ? humanFileSize(storage.maxBytes, true) : "0GB"
-    }
-
-    const storageStat = () => {
-
-    }
 
     const handleMoreStorageClicked = () => {
         if(user.plan != "pro") {
