@@ -72,10 +72,10 @@ export default function Example() {
               <div className="relative flex items-center gap-x-4 rounded-full px-4 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
                 <span className="font-semibold text-primary">New Version</span>
                 <span aria-hidden="true" className="h-4 w-px bg-gray-900/10" />
-                <a href="#about" className="flex items-center gap-x-1">
+                <Link to="#about" className="flex items-center gap-x-1">
                   <span aria-hidden="true" className="absolute inset-0" />
                   Explore new features! &rarr;
-                </a>
+                </Link>
               </div>
             </div>
             <h1 className="mt-10 max-w-lg text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
