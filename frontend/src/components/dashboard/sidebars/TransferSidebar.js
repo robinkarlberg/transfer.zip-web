@@ -80,7 +80,7 @@ export default function TransferSidebar({ }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border-s flex h-full flex-col divide-y divide-gray-200 bg-white">
+    <form onSubmit={handleSubmit} className="md:border-s flex h-full flex-col divide-y divide-gray-200 bg-white">
       <div className="h-0 flex-1 overflow-y-auto">
         <div className="bg-primary px-4 py-6 sm:px-6">
           <div className="flex items-center justify-between">

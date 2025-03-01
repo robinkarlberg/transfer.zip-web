@@ -65,10 +65,6 @@ export default function SettingsPage({ }) {
                 />
               </div>
             </div>
-
-            <div className="sm:col-span-6 text-red-500">
-              <Link className="text-sm" onClick={handleLogout}>Logout</Link>
-            </div>
           </div>
         </div>
         <div className="mt-8 border-gray-900/10 pb-12 max-w-xl">
@@ -88,6 +84,9 @@ export default function SettingsPage({ }) {
               </form>
             </div>
           </div>
+        </div>
+        <div className="sm:col-span-6 text-red-500">
+          <Link className="text-sm" onClick={handleLogout}>&larr; Logout</Link>
         </div>
       </div>
     </GenericPage>
