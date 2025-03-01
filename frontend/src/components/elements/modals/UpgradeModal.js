@@ -35,13 +35,13 @@ export default function UpgradeModal({ show }) {
       { title: "Cancel", onClick: () => setShowUpgradeModal(false) }
     ]} style={"info"} icon={"arrow-up"} loading={loading}>
       <p className="text-sm text-gray-500 mb-2">
-        Upgrade your subscription by switching to the Pro plan, giving you more features and 5 times as much storage.
+        Up your storage to 1TB, and get access to more features.
       </p>
       <p className="text-sm text-gray-500 mb-2">
-        Your upgrade includes proration, meaning any unused time on your current plan will be credited towards your upgraded Pro plan.
+        Any unused time on your current plan will be credited towards your upgraded Pro plan.
       </p>
       <p className="text-sm text-gray-500 font-medium">
-        By pressing "Upgrade" you increase your subcription price to $19/month.
+        By pressing "Upgrade" you increase your subcription price to $19/month and agree to the <a href="/legal/terms-and-conditions" className="text-primary hover:underline" target="_blank">Terms</a>.
       </p>
     </Modal>
   )

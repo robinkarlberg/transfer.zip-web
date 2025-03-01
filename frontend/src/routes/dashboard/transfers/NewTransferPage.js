@@ -11,7 +11,7 @@ import BIcon from "../../../components/BIcon";
 export default function NewTransferPage({ }) {
   const revalidator = useRevalidator()
   const { user } = useContext(AuthContext)
-  const { setSelectedTransferId } = useContext(DashboardContext)
+  const { storage, setSelectedTransferId, setShowUpgradeModal } = useContext(DashboardContext)
   const { settings } = useRouteLoaderData("dashboard")
 
   const { EXPIRATION_TIMES } = settings
@@ -20,6 +20,7 @@ export default function NewTransferPage({ }) {
   const { state } = useLocation()
 
   const [filesToUpload, setFilesToUpload] = useState(null)
+  const [uploadingFiles, setUploadingFiles] = useState(false)
 
   const formRef = useRef(null)
 
@@ -30,6 +31,8 @@ export default function NewTransferPage({ }) {
     return 0;
   }, [filesToUpload]);
   const [bytesTransferred, setBytesTransferred] = useState(0)
+  
+  const tooLittleStorage = useMemo(() => storage ? totalBytes > storage.maxBytes - storage.usedBytes : false, [totalBytes, storage])
 
   const handleFiles = async files => {
     const formData = new FormData(formRef.current)
@@ -40,13 +43,15 @@ export default function NewTransferPage({ }) {
       return;
     }
 
+    setFilesToUpload(files) // Just to be safe
+    setUploadingFiles(true)
+
     const name = formData.get("name")
     const description = formData.get("description")
     const expiresInDays = formData.get("expiresInDays")
 
     const { transfer } = await newTransfer({ name, description, expiresInDays })
 
-    setFilesToUpload(files)
     await uploadTransferFiles(transfer.id, files, progress => {
       console.log(progress)
       setBytesTransferred(progress.bytesTransferred)
@@ -112,17 +117,19 @@ export default function NewTransferPage({ }) {
           </form>
           <hr className="col-span-full my-6 mx-2" />
           <div className="col-span-full">
-            <FileUpload initialFiles={state?.files} onFiles={handleFiles} progressElement={<Progress max={totalBytes} now={bytesTransferred} />} showProgress={!!filesToUpload} />
+            <FileUpload initialFiles={state?.files} onFilesChange={setFilesToUpload} onFiles={handleFiles} progressElement={<Progress max={totalBytes} now={bytesTransferred} />} showProgress={uploadingFiles} disabled={tooLittleStorage} />
           </div>
         </div>
-        {/* <div className="w-full max-w-96">
-          <button className="w-full shadow-sm text-start rounded-lg text-white bg-blue-500 px-4 py-3 group transition-colors hover:bg-blue-600">
-            <h5 className="font-semibold text-sm"><span className="group-hover:underline">Store files for 1 year</span> <span className="group-hover:ms-1 transition-all">&rarr;</span></h5>
-            <p className="font-medium text-sm">
-              Upgrade your subscription to store files for longer.
-            </p>
-          </button>
-        </div> */}
+        {tooLittleStorage && (
+          <div className="w-full max-w-96">
+            <button onClick={() => setShowUpgradeModal(true)} className="w-full shadow-sm text-start rounded-lg text-white bg-red-500 px-4 py-3 group transition-colors hover:bg-red-600">
+              <h5 className="font-semibold text-sm"><span className="group-hover:underline">Storage full</span> <span className="group-hover:ms-1 transition-all">&rarr;</span></h5>
+              <p className="font-medium text-sm">
+                Upgrade your subscription to store up to 1TB of files.
+              </p>
+            </button>
+          </div>
+        )}
       </div>
     </GenericPage>
   )

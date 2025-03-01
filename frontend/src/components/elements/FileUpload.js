@@ -6,7 +6,7 @@ import { humanFileSize, humanFileType } from "../../transferUtils"
 import { humanFileName } from "../../utils"
 import Progress from "./Progress"
 
-export default function FileUpload({ initialFiles, onFiles, onReceiveClicked, progressElement, showProgress, buttonText, singleFile }) {
+export default function FileUpload({ initialFiles, onFilesChange, onFiles, onReceiveClicked, progressElement, showProgress, buttonText, singleFile, disabled }) {
 
   const _buttonText = buttonText ?? "Transfer"
 
@@ -16,8 +16,9 @@ export default function FileUpload({ initialFiles, onFiles, onReceiveClicked, pr
   const folderInputRef = useRef()
 
   const handleFileInputChange = (e) => {
-    console.log(e)
-    setFiles([...files, ...e.target.files])
+    const newFiles = [...files, ...e.target.files]
+    setFiles(newFiles)
+    onFilesChange && onFilesChange(newFiles)
   }
 
   const handlePickFiles = e => {
@@ -95,7 +96,7 @@ export default function FileUpload({ initialFiles, onFiles, onReceiveClicked, pr
               </div>
               <div>
                 <span className="text-gray-500 text-sm me-2 hidden sm:inline">{humanFileSize(totalFileSize, true)}</span>
-                <button type="button" onClick={handleTransferClicked} className="text-white px-2 py-1 rounded-lg shadow bg-primary hover:bg-primary-light">{_buttonText} &rarr;</button>
+                <button disabled={disabled} type="button" onClick={handleTransferClicked} className="text-white px-2 py-1 rounded-lg shadow bg-primary hover:bg-primary-light disabled:bg-primary-lighter">{_buttonText} &rarr;</button>
               </div>
             </div>
           </div>
