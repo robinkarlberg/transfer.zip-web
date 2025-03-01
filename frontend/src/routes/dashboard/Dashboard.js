@@ -272,7 +272,7 @@ export default function Dashboard({ }) {
           <Outlet />
         </div>
         <Transition show={showSidebar}>
-          <div className="z-20 --overflow-hidden duration-0 data-[closed]:w-0 data-[leave]:overflow-hidden data-[enter]:overflow-hidden fixed top-0 w-[100vw] h-[100vh] md:relative md:w-96 md:h-auto md:duration-300">
+          <div className="z-20 --overflow-hidden duration-0 data-[closed]:w-0 data-[leave]:overflow-hidden data-[enter]:overflow-hidden fixed top-0 w-[100vw] h-full md:relative md:w-96 md:h-auto md:duration-300">
             <div className="absolute h-full w-full md:w-96">
               {selectedTransferId != null && <TransferSidebar />}
             </div>
