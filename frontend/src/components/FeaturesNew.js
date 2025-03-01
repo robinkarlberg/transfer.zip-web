@@ -19,7 +19,7 @@ const features = [
 
 export default function FeaturesNew() {
   return (
-    <div className="bg-white py-24 sm:py-32" id="features2">
+    <div className="bg-white py-24 sm:py-32" id="about-quick-share">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base/7 font-semibold text-primary">Quick Share</h2>

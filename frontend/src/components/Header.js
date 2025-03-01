@@ -19,8 +19,8 @@ import { ApplicationContext } from '../providers/ApplicationProvider'
 import { isWaitlist } from '../utils'
 
 const products = [
-  { name: 'About', description: 'Send files with no size limits in real-time.', href: '/#features2', icon: "lightbulb" },
-  { name: 'Use Cases', description: 'For creators, by creators.', href: '/#features1', icon: "grid-fill" },
+  { name: 'About', description: 'Storage and Encryption - for a whole year.', href: '/#about', icon: "lightbulb" },
+  { name: 'Quick Share', description: 'Keep Your Tab Open - Send Without Limits', href: '/#about-quick-share', icon: "grid-fill" },
 ]
 const callsToAction = [
   { name: 'FAQ', href: "/#faq", icon: "question-lg" },
