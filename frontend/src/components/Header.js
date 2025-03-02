@@ -46,6 +46,10 @@ export default function Header() {
     }
   }
 
+  const handleLinkClicked = e => {
+    setMobileMenuOpen(false)
+  }
+
   return (
     <header className="backdrop-blur bg-gray-50 bg-opacity-70 fixed top-0 left-0 w-full z-10 border-b">
       <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8">
@@ -176,6 +180,7 @@ export default function Header() {
                   <DisclosurePanel className="mt-2 space-y-2">
                     {[...products, ...callsToAction].map((item) => (
                       <DisclosureButton
+                        onClick={handleLinkClicked}
                         key={item.name}
                         as="a"
                         href={item.href}
@@ -187,6 +192,7 @@ export default function Header() {
                   </DisclosurePanel>
                 </Disclosure>
                 <Link
+                  onClick={handleLinkClicked}
                   to="/#pricing"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
@@ -199,6 +205,7 @@ export default function Header() {
                   Explore
                 </Link> */}
                 <Link
+                  onClick={handleLinkClicked}
                   to="/legal/privacy-policy"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
