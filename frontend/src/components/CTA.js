@@ -37,7 +37,7 @@ export default function CTA() {
                 to={isWaitlist() ? "" : "/signup"}
                 className="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
-                Get started! &rarr;
+                Send Large Files Now &rarr;
               </Link>
               {/* <a href="#" className="text-sm/6 font-semibold text-white">
                 Learn more <span aria-hidden="true">→</span>

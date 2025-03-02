@@ -22,9 +22,11 @@ export default function TestimonialCloud() {
   return (
     <div className="bg-gray-50 mb-8 mt-12 border border-dashed">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        {/* <h2 className="text-center text-2xl font-medium text-gray-900">
-          Trusted by more than 11k users every month.
-        </h2> */}
+        {/* <div className="pt-8 text-center">
+          <h2 className="inline-block text-lg text-gray-400">
+            Trusted by more than 11 thousand users every month!
+          </h2>
+        </div> */}
         <div className="mx-auto pb-10 pt-12 grid max-w-lg grid-cols-1 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:gap-x-10 lg:mx-0 md:max-w-none md:grid-cols-3">
           {testimonials.map(testimonial => {
             return (
