@@ -1,3 +1,4 @@
+import moment from "moment-timezone"
 
 export function capitalizeFirstLetter(string) {
     if (typeof string !== 'string' || string.length === 0) {
@@ -263,4 +264,43 @@ export function humanTimeUntil(targetDate) {
 
 export function addSecondsToCurrentDate(seconds) {
     return new Date(Date.now() + (seconds * 1000))
+}
+
+/**
+ * Get the user's country based on their time zone.
+ * @param {string} userTimeZone - The user's time zone.
+ * @returns {string} The user's country or the original time zone if not found.
+ */
+export function getCountryByTimeZone(userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone) {
+    // Get a list of countries from moment-timezone
+    const countries = moment.tz.countries();
+
+    // Iterate through the countries and check if the time zone is associated with any country
+    for (const country of countries) {
+        const timeZones = moment.tz.zonesForCountry(country);
+
+        if (timeZones.includes(userTimeZone)) {
+            // Use Intl.DisplayNames to get the full country name
+            // const countryName = new Intl.DisplayNames(['en'], { type: 'region' }).of(country);
+            return country;
+        }
+    }
+
+    // Return the original time zone if no matching country is found
+    return null;
+}
+
+/**
+ * Check if the user's time zone is within an EU country.
+ * @returns {boolean} True if the user is in the EU, false otherwise.
+ */
+export function isInEU() {
+    const euCountries = [
+        'AT', 'BE', 'BG', 'HR', 'CY', 'CZ', 'DK', 'EE', 'FI', 'FR',
+        'DE', 'GR', 'HU', 'IE', 'IT', 'LV', 'LT', 'LU', 'MT', 'NL',
+        'PL', 'PT', 'RO', 'SK', 'SI', 'ES', 'SE', 'EU'
+    ];
+
+    const country = getCountryByTimeZone();
+    return euCountries.includes(country);
 }

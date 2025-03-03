@@ -25,11 +25,11 @@ const faqs = [
     answer:
       "We accept all major credit cards using our payment processor Stripe.",
   },
-  {
-    question: "Do you accept PayPal?",
-    answer:
-      "Yes!",
-  },
+  // {
+  //   question: "Do you accept PayPal?",
+  //   answer:
+  //     "Yes!",
+  // },
   {
     question: "Is there a free trial available?",
     answer:

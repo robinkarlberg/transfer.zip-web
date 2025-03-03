@@ -6,6 +6,7 @@ import FeaturesNew from "../components/FeaturesNew";
 import Pricing from "../components/Pricing";
 import Features3 from "../components/Features3";
 import Features1 from "../components/Features1";
+import Features2 from "../components/Features2";
 
 export default function HomePage({ }) {
   return (
@@ -13,6 +14,7 @@ export default function HomePage({ }) {
       <Landing />
       <TestimonialCloud/>
       <Features1/>
+      {/* <Features2/> */}
       <Features3/>
       <FeaturesNew/>
       <TestimonialCloud/>
