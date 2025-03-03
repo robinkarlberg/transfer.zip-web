@@ -19,8 +19,9 @@ import { ApplicationContext } from '../providers/ApplicationProvider'
 import { isWaitlist } from '../utils'
 
 const products = [
-  { name: 'About', description: 'Storage and Encryption - for a whole year.', href: '/#about', icon: "lightbulb" },
-  { name: 'Quick Share', description: 'Keep Your Tab Open - Send Without Limits', href: '/#about-quick-share', icon: "grid-fill" },
+  { name: 'Limitless File Sharing', description: 'Send Your Files in Seconds', href: '/#about', icon: "lightbulb" },
+  { name: '365 Days Expiration Time', description: 'Big Files That Don\'t Expire', href: '/#features', icon: "clock" },
+  { name: 'Quick Share', description: 'Keep Your Tab Open - Send Without Limits', href: '/#about-quick-share', icon: "lightning-fill" },
 ]
 const callsToAction = [
   { name: 'FAQ', href: "/#faq", icon: "question-lg" },

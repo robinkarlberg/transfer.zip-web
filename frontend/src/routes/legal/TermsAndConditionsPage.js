@@ -69,7 +69,7 @@ export default function TermsAndConditionsPage({ }) {
                 Refund requests must be made within 7 days of the initial subscription purchase.
               </li>
               <li>
-                Refunds will only be considered for users who have not significantly utilized the service during this period. Significant utilization is defined as exceeding 20% of the storage limits allowed under the subscribed plan.
+                Refunds will only be considered for users who have not significantly utilized the service during this period. Significant utilization is defined as exceeding 10% of the storage limits allowed under the subscribed plan, or receiving 2 or more downloads.
               </li>
               <li>
                 By default, refunds account for 100% of the invoiced amount, but decisions could be made on a case-by-case basis, especially if our service was heavily utilized.

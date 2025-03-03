@@ -63,7 +63,7 @@ export default function OnboardingPage({ }) {
   return (
     <>
       <div className="flex min-h-[100vh] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <Link to={"/"} className="absolute top-8 text-xl me-1 text-primary hover:text-primary-light">&larr; Try for Free</Link>
+        <Link to={"/"} className="absolute top-8 text-xl me-1 text-primary hover:text-primary-light">&larr; Back</Link>
         <div className="sm:mx-auto sm:w-full sm:max-w-lg text-center">
           <img
             alt="Your Company"
@@ -71,20 +71,20 @@ export default function OnboardingPage({ }) {
             className="mx-auto h-10 w-auto"
           />
           <h1 className="text-3xl mb-2 font-bold tracking-tight text-gray-900">
-            You're Almost Ready! 🎉
+            You're Almost Ready!
           </h1>
           <p className="text-gray-700">
-            To get the most out of Transfer.zip, choose the plan that suits you. You can send files immediately upon purchase.
+            Get the most out of Transfer.zip by choosing a plan that fits your needs. <b>Send files instantly</b> upon purchase.
           </p>
         </div>
         <p className="text-primary text-center text-sm mt-4">
-          <BIcon name={"patch-check-fill"} className={"text-xs"} /> If you're not completely satisfied within 7 days, we'll refund your full payment.
+          <BIcon name={"patch-check-fill"} className={"text-xs"} /> 7 day money-back guarantee - no risk, no commitment.
         </p>
         <div className="mx-auto mt-8 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-12 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
-          <PricingCards tiers={tiers} compact={true} buttonText={"Subscribe"} onTierSelected={handleTierSelected} />
+          <PricingCards tiers={tiers} compact={false} buttonText={"Subscribe"} onTierSelected={handleTierSelected} />
         </div>
         <p className="text-xs text-center mt-12 text-gray-500">
-          Payments are handled through our secure payment provider Stripe. <Link className="text-primary-dark" target="_blank" to={"/legal/terms-and-conditions"}>Terms</Link> and <Link className="text-primary-dark" target="_blank" to={"/legal/privacy-policy"}>Privacy</Link> apply.
+          Secure payments via Stripe. <Link className="text-primary-dark" target="_blank" to={"/legal/terms-and-conditions"}>Terms</Link> and <Link className="text-primary-dark" target="_blank" to={"/legal/privacy-policy"}>Privacy</Link> apply.
         </p>
         <div className="mt-1 text-xs">
           <p className="text-center text-gray-500">

@@ -3,7 +3,7 @@ export default {
     {
       name: "Starter",
       price: "$9",
-      description: "Enjoy effortless file sharing with no size limits and ample storage.",
+      description: "For personal use and quick file sharing.",
       features: [
         "Quick-Share files of any size",
         "Unlimited transfers",
@@ -14,7 +14,7 @@ export default {
     {
       name: "Pro",
       price: "$19",
-      description: "Empower your passion with more storage and advanced features.",
+      description: "For power users & professionals.",
       features: [
         "Quick-Share files of any size",
         "Unlimited transfers",
