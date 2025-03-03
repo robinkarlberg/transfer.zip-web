@@ -28,7 +28,7 @@ const faqs = [
   {
     question: "Do you accept PayPal?",
     answer:
-      "Not at the moment. It will definitely be supported in the future.",
+      "Yes!",
   },
   {
     question: "Is there a free trial available?",
