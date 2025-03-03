@@ -31,10 +31,9 @@ export default function Features3() {
     <div className="bg-white py-24 sm:py-32" id="about">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-base/7 font-semibold text-primary">1TB Storage and Privacy</h2>
+          <h2 className="text-base/7 font-semibold text-primary">365 Days Expiration Time</h2>
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Storage and Encryption - <br />
-            for a whole year
+            Big Files That Don't Expire
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
             With the Pro plan, you can store up to 1TB of files for 365 days before they expire, ensuring they are always downloaded in time.
