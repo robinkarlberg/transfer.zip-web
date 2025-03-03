@@ -64,17 +64,17 @@ export default function OnboardingPage({ }) {
     <>
       <div className="flex min-h-[100vh] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <Link to={"/"} className="absolute top-8 text-xl me-1 text-primary hover:text-primary-light">&larr; Back</Link>
-        <div className="sm:mx-auto sm:w-full sm:max-w-lg text-center">
+        <div className="sm:mx-auto sm:w-full sm:max-w-xl text-center">
           <img
             alt="Your Company"
             src={logo}
             className="mx-auto h-10 w-auto"
           />
           <h1 className="text-3xl mb-2 font-bold tracking-tight text-gray-900">
-            You're Almost Ready!
+            Welcome to Transfer.zip! 🎉
           </h1>
           <p className="text-gray-700">
-            Get the most out of Transfer.zip by choosing a plan that fits your needs. <b>Send files instantly</b> upon purchase.
+            Choose a plan that fits your needs. <b>Send files instantly</b> upon purchase.
           </p>
         </div>
         <p className="text-primary text-center text-sm mt-4">
