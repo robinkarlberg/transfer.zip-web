@@ -36,7 +36,7 @@ export default function Features3() {
             Big Files That Don't Expire
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            With the Pro plan, you can store up to 1TB of files for 365 days before they expire, ensuring they are always downloaded in time.
+            With the Pro plan, you can transfer up to 1TB of files for 365 days before they expire, ensuring they are always downloaded in time.
             All files are encrypted regardless of what plan you choose. Unlike many services, <Link to="/legal/privacy-policy" className="text-primary hover:underline">we value your privacy</Link>.
           </p>
         </div>
