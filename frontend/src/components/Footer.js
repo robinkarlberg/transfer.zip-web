@@ -35,9 +35,9 @@ export default function Footer({ }) {
                 <li className="mb-4">
                   <a href={`mailto:${process.env.REACT_APP_SUPPORT_EMAIL}`} className="hover:underline">Support</a>
                 </li>
-                {/* <li>
-                  <a href="#" className="hover:underline">Blog</a>
-                </li> */}
+                <li>
+                  <a href="https://github.com/robinkarlberg/transfer.zip-web?tab=readme-ov-file#self-hosting" className="hover:underline">Self Hosting</a>
+                </li>
               </ul>
             </div>
             <div>
