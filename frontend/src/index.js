@@ -42,7 +42,7 @@ const router = createBrowserRouter(
           <Route element={<ApplicationProvider />}>
             <Route path="/onboarding" element={<OnboardingPage />} />
             <Route element={<RequireOnboarded />}>
-              <Route path="/app" element={<Dashboard />} id="dashboard" loader={DashboardLoader}>
+              <Route path="/app" element={<Dashboard />} id="dashboard" loader={DashboardLoader} errorElement={<Navigate to={"/login"} replace/>}>
                 {/* <Route index element={<Navigate to="/app/overview" replace />} /> */}
                 <Route index element={<OverviewPage />} />
                 <Route path="transfers" element={<TransfersPage />} />

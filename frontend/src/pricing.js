@@ -7,7 +7,7 @@ export default {
       features: [
         "Quick-Share files of any size",
         "Unlimited transfers",
-        "Store up to 200GB of data",
+        "Up to 200GB per transfer",
         "Files expire after 14 days"
       ],
     },
@@ -18,8 +18,9 @@ export default {
       features: [
         "Quick-Share files of any size",
         "Unlimited transfers",
-        "Store up to 1TB of data",
+        "Up to 1TB per transfer",
         "Files stay up for 365 days",
+        "Eearly access to new features",
         "Priority support",
         // "Password protect files",
       ],

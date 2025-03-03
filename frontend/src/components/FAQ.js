@@ -3,6 +3,11 @@ import BIcon from './BIcon'
 
 const faqs = [
   {
+    question: "Why pay for Transfer.zip when Quick Share is free?",
+    answer:
+      "Using Transfer.zip for free is already great for most people. However, if you are a professional or just want your files to be more accessible, you can pay for a subscription. This gives you access to the dashboard, and lets you share files that don't expire when you close the browser tab. The paid plan is also cheaper and faster than other sites like WeTransfer or Dropbox."
+  },
+  {
     question: "Is there really no file size limit?",
     answer:
       "There is no file size limit when using Quick Share, because the file is never stored on our servers. For transfers there are limits determined by your plan, because they will be stored on our servers."

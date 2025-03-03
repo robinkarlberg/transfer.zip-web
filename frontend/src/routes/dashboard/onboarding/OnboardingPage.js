@@ -63,7 +63,7 @@ export default function OnboardingPage({ }) {
   return (
     <>
       <div className="flex min-h-[100vh] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        {/* <Link className="absolute top-8 text-xl me-1 text-primary hover:text-primary-light" onClick={() => window.history.back()}>&larr; Back</Link> */}
+        <Link to={"/"} className="absolute top-8 text-xl me-1 text-primary hover:text-primary-light">&larr; Try for Free</Link>
         <div className="sm:mx-auto sm:w-full sm:max-w-lg text-center">
           <img
             alt="Your Company"
@@ -87,7 +87,7 @@ export default function OnboardingPage({ }) {
           <p className="text-center text-gray-500">
             {/* Got regrets?{' '} */}
             You are logged in as {user?.email}{" "}
-            <Link onClick={handleLogout} className="font-semibold text-primary-dark">
+            <Link onClick={handleLogout} className="font-semibold text-primary-dark text-nowrap">
               <BIcon name={"box-arrow-left"} className={"me-1"} />
               Log out
             </Link>

@@ -28,7 +28,7 @@ export default function Features3() {
   const { setShowWaitlistModal } = useContext(ApplicationContext)
 
   return (
-    <div className="bg-white py-24 sm:py-32" id="about">
+    <div className="bg-white py-24 sm:py-32" id="features">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-base/7 font-semibold text-primary">365 Days Expiration Time</h2>
@@ -61,19 +61,6 @@ export default function Features3() {
               </div>
             ))}
           </dl>
-        </div>
-        <div className="mx-auto mt-16">
-          <video
-            // autoPlay
-            width={2432}
-            height={1442}
-            className="mx-auto rounded-xl w-full max-w-4xl"
-            loop
-            controls
-            poster={ProductDemoScreenshot}
-          >
-            <source src={ProductDemo} type="video/mp4" />
-          </video>
         </div>
       </div>
     </div>

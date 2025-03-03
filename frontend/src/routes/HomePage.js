@@ -5,12 +5,14 @@ import TestimonialCloud from "../components/TestimonialCloud";
 import FeaturesNew from "../components/FeaturesNew";
 import Pricing from "../components/Pricing";
 import Features3 from "../components/Features3";
+import Features1 from "../components/Features1";
 
 export default function HomePage({ }) {
   return (
     <div>
       <Landing />
       <TestimonialCloud/>
+      <Features1/>
       <Features3/>
       <FeaturesNew/>
       <TestimonialCloud/>
