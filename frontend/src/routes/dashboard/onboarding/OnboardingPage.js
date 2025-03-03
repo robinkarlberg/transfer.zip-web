@@ -74,7 +74,7 @@ export default function OnboardingPage({ }) {
             You're Almost Ready! 🎉
           </h1>
           <p className="text-gray-700">
-            To get the most out of Transfer.zip, choose the plan that suits you. You can start sending files immediately upon purchase.
+            To get the most out of Transfer.zip, choose the plan that suits you. You can send files immediately upon purchase.
           </p>
         </div>
         <p className="text-primary text-center text-sm mt-4">
