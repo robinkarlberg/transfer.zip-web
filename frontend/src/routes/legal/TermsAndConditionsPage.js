@@ -66,10 +66,10 @@ export default function TermsAndConditionsPage({ }) {
             <p><strong className="font-semibold text-gray-900">Refund Policy.</strong> At transfer.zip, we strive to provide the best possible experience for our users. If you are not satisfied with our paid services, you may be eligible for a refund under the following conditions:</p>
             <ul className="list-disc pl-6">
               <li>
-                Refund requests must be made within 14 days of the initial subscription purchase.
+                Refund requests must be made within 7 days of the initial subscription purchase.
               </li>
               <li>
-                Refunds will only be considered for users who have not significantly utilized the service during this period. Significant utilization is defined as exceeding 40% of the bandwidth or storage limits allowed under the subscribed plan.
+                Refunds will only be considered for users who have not significantly utilized the service during this period. Significant utilization is defined as exceeding 20% of the storage limits allowed under the subscribed plan.
               </li>
               <li>
                 By default, refunds account for 100% of the invoiced amount, but decisions could be made on a case-by-case basis, especially if our service was heavily utilized.

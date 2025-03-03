@@ -70,13 +70,16 @@ export default function OnboardingPage({ }) {
             src={logo}
             className="mx-auto h-10 w-auto"
           />
-          <h1 className="text-3xl mb-1 font-bold tracking-tight text-gray-900">
-            Welcome to {process.env.REACT_APP_SITE_NAME}!
+          <h1 className="text-3xl mb-2 font-bold tracking-tight text-gray-900">
+            You're Almost Ready! 🎉
           </h1>
           <p className="text-gray-700">
-            Select the subscription plan that best suits your needs. Access will be granted immediately upon purchase.
+            To get the most out of Transfer.zip, choose the plan that suits you. Your access starts immediately upon purchase.
           </p>
         </div>
+        <p className="text-primary text-center text-sm mt-4">
+          <BIcon name={"patch-check-fill"} className={"text-xs"} /> If you're not completely satisfied within 7 days, we'll refund your full payment.
+        </p>
         <div className="mx-auto mt-8 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-12 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
           <PricingCards tiers={tiers} compact={true} buttonText={"Subscribe"} onTierSelected={handleTierSelected} />
         </div>
