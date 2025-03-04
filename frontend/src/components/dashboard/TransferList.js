@@ -35,12 +35,12 @@ const Entry = ({ transfer }) => {
   }
 
   return (
-    <button onClick={() => isSelected ? hideSidebar() : setSelectedTransferId(id)} className={`group text-start shadow-sm rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-4 py-3 group hover:bg-gray-50`}>
+    <button disabled={files.length == 0} onClick={() => isSelected ? hideSidebar() : setSelectedTransferId(id)} className={`group text-start shadow-sm rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-4 py-3 group hover:bg-gray-50`}>
       <div className="flex flex-row justify-between">
         <div>
           <h3 className={`text-xl font-bold me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
           <div className="text-sm text-gray-600 font-semibold">
-            <span className="">{files.length} file{files.length != 1 ? "s" : ""}</span>
+            <span className="">{files.length == 0 ? <><BIcon name={"file-earmark-excel"} /> Incomplete</> : <>{files.length} file{files.length != 1 ? "s" : ""}</>}</span>
             {transfer.statistics.downloads.length > 1 ?
               <span><BIcon name="dot" /><i className="bi bi-arrow-down-circle-fill me-1"></i>{transfer.statistics.downloads.length} downloads</span>
               :
@@ -58,14 +58,14 @@ const Entry = ({ transfer }) => {
             </span>}
           </div>
         </div>
-        <div className="hidden items-center gap-2 group-hover:flex">
+        {files.length != 0 && <div className="hidden items-center gap-2 group-hover:flex">
           <Link onClick={handleCopyLinkClicked} className="text-sm text-primary bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50">
             <BIcon name={"copy"} /> Copy Link
           </Link>
           {/* <Link onClick={handleSendByEmailClicked} className="text-sm text-primary bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50">
             <BIcon name={"send"} /> Send by Email
           </Link> */}
-        </div>
+        </div>}
       </div>
     </button>
   )
