@@ -71,6 +71,7 @@ export default function TransferSidebar({ }) {
 
     displayNotification("Email sent", `The Transfer link was successfully sent to ${email}!`)
     emailRef.current.value = ""
+    revalidator.revalidate()
   }
 
   const handleSubmit = async e => {
@@ -154,6 +155,11 @@ export default function TransferSidebar({ }) {
                     </button>
                   </div>
                 </div>
+                {selectedTransfer.emailsSharedWith && selectedTransfer.emailsSharedWith.length > 0 && (
+                  <div className="mt-2 text-xs text-gray-600">
+                    Last shared with {selectedTransfer.emailsSharedWith[selectedTransfer.emailsSharedWith.length - 1].email}
+                  </div>
+                )}
               </div>
               {/* <hr /> */}
               <div>

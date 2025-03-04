@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { newTransfer, uploadTransferFiles } from "../../../Api";
+import { newTransfer, sendTransferByEmail, uploadTransferFiles } from "../../../Api";
 import GenericPage from "../../../components/dashboard/GenericPage";
 import FileUpload from "../../../components/elements/FileUpload";
 import { useLocation, useNavigate, useRevalidator, useRouteLoaderData } from "react-router-dom";
@@ -47,15 +47,19 @@ export default function NewTransferPage({ }) {
     setUploadingFiles(true)
 
     const name = formData.get("name")
+    const email = formData.get("email")
     const description = formData.get("description")
     const expiresInDays = formData.get("expiresInDays")
 
-    const { transfer } = await newTransfer({ name, description, expiresInDays })
+    const { transfer } = await newTransfer({ name, email, description, expiresInDays })
 
     await uploadTransferFiles(transfer.id, files, progress => {
       console.log(progress)
       setBytesTransferred(progress.bytesTransferred)
     })
+    if (email) {
+      await sendTransferByEmail(transfer.id, [email])
+    }
     revalidator.revalidate()
     navigate(`/app/transfers`, { replace: true })
     setSelectedTransferId(transfer.id)

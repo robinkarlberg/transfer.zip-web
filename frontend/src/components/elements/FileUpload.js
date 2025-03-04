@@ -103,7 +103,7 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
         </Transition>
         <Transition show={showProgress || false}>
           <div className="rounded-2xl bg-white absolute left-0 top-0 w-full h-full p-8 flex flex-row justify-center items-center group transition data-[closed]:opacity-0">
-            <div className="relative w-full h-full max-w-52 max-h-52">
+            <div className="relative w-full h-full max-w-44 max-h-44">
               {progressElement}
             </div>
           </div>
