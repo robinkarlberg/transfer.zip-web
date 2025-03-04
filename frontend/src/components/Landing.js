@@ -85,7 +85,7 @@ export default function Example() {
             </h1>
             <p className="mt-6 text-lg leading-8 text-gray-600 max-w-lg">
               {/* Send files with <span className="underline decoration-primary decoration-dashed font-semibold">no size limit</span> in real-time, with end-to-end encryption and blazingly fast speeds. */}
-              Ultrafast, secure and limitless file transfers - all without size limits or tracking cookies. {isInEU() && "Hosted in the EU 🇪🇺"}
+              Ultrafast, secure and limitless file transfers - {isInEU() ? "" : "all "}without size limits or tracking cookies{isInEU() ? " - all hosted in the EU 🇪🇺" : "."}
             </p>
             <div className="hidden sm:flex mt-10 items-center gap-x-6">
               <Link

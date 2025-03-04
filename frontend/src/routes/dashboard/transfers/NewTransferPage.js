@@ -31,7 +31,7 @@ export default function NewTransferPage({ }) {
     return 0;
   }, [filesToUpload]);
   const [bytesTransferred, setBytesTransferred] = useState(0)
-  
+
   const tooLittleStorage = useMemo(() => storage ? totalBytes > storage.maxBytes - storage.usedBytes : false, [totalBytes, storage])
 
   const handleFiles = async files => {
@@ -100,6 +100,20 @@ export default function NewTransferPage({ }) {
                 </select>
               </div>
             </div>
+            <div className="col-span-2">
+              <label htmlFor="name" className="block text-sm/6 font-medium text-gray-900">
+                Receipient Email<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>
+              </label>
+              <div className="mt-2">
+                <input
+                  id="email"
+                  placeholder="user@example.com"
+                  name="email"
+                  type="email"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
+                />
+              </div>
+            </div>
             <div className="col-span-full">
               <label htmlFor="description" className="block text-sm/6 font-medium text-gray-900">
                 Message<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>
@@ -125,7 +139,7 @@ export default function NewTransferPage({ }) {
             <button onClick={() => setShowUpgradeModal(true)} className="w-full shadow-sm text-start rounded-lg text-white bg-red-500 px-4 py-3 group transition-colors hover:bg-red-600">
               <h5 className="font-semibold text-sm"><span className="group-hover:underline">Storage full</span> <span className="group-hover:ms-1 transition-all">&rarr;</span></h5>
               <p className="font-medium text-sm">
-                Upgrade your subscription to store up to 1TB of files.
+                Upgrade your subscription to send up to 1TB of files.
               </p>
             </button>
           </div>

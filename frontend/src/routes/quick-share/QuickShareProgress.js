@@ -279,26 +279,31 @@ export default function QuickShareProgress({ }) {
           <p className="text-danger"><b className="text-danger">Error: </b>{errorMessage}</p>
         }
         {!isSelfHosted() && transferState != TRANSFER_STATE_FINISHED && (
-          <div className="flex md:inline-flex gap-2 border rounded-lg shadow-sm py-2 ps-3 pe-4 bg-blue-50">
+          <Link
+            to={"/app/transfers/new"}
+            onClick={e => {
+              if (!user) {
+                e.preventDefault()
+                if (window.sa_loaded) window.sa_event("quick-share_upsell_clicked")
+                setShowSignUpModal(true)
+              }
+            }}
+            state={{ files }}
+            className="text-start flex md:inline-flex gap-2 border rounded-lg shadow-sm py-2 ps-3 pe-4 bg-purple-50 group">
             <div className="flex items-center h-6">
-              <BIcon center className={"text-primary text-xs animate-pulse"} name={"circle-fill"} />{" "}
+              <BIcon center className={"text-purple-500 text-sm animate-pulse group-hover:animate-none mt-1"} name={"lightning-fill"} />{" "}
             </div>
             <div>
-              <p className="text-blue-950">
-                {hasBeenSentLink ? "Keep your browser window open" : "Link will expire when tab is closed."}
+              <p className="sm:text-lg font-bold text-purple-500">
+                {hasBeenSentLink ? "Keep your browser window open" : "This link will expire when tab is closed."}
               </p>
               {!hasBeenSentLink && transferDirection == "S" &&
-                <Link to={"/app/transfers/new"} onClick={e => {
-                  if (!user) {
-                    e.preventDefault()
-                    setShowSignUpModal(true)
-                  }
-                }} state={{ files }} className="text-primary hover:text-primary-light font-medium">
-                  Upload files for longer &rarr;
-                </Link>
+                <span className="text-purple-500 font-medium">
+                  Make the files available for 365 days <span className="transition-all group-hover:ms-1">&rarr;</span>
+                </span>
               }
             </div>
-          </div>
+          </Link>
         )}
       </div>
     </div>

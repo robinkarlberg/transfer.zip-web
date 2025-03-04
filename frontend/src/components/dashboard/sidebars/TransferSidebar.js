@@ -1,10 +1,10 @@
-import { useContext, useMemo } from "react"
+import { useContext, useMemo, useRef } from "react"
 import { DashboardContext } from "../../../routes/dashboard/Dashboard"
 import { DialogTitle } from "@headlessui/react"
 import BIcon from "../../BIcon"
 import { tryCopyToClipboard } from "../../../utils"
 import { ApplicationContext } from "../../../providers/ApplicationProvider"
-import { deleteTransfer, getTransferDownloadLink, putTransfer } from "../../../Api"
+import { deleteTransfer, getTransferDownloadLink, putTransfer, sendTransferByEmail } from "../../../Api"
 import { useRevalidator } from "react-router-dom"
 import { humanFileSize } from "../../../transferUtils"
 
@@ -16,6 +16,8 @@ export default function TransferSidebar({ }) {
   const { selectedTransfer, hideSidebar } = useContext(DashboardContext)
 
   const transferLink = useMemo(() => getTransferDownloadLink(selectedTransfer), [selectedTransfer])
+
+  const emailRef = useRef(null)
 
   const textarea = useMemo(() => {
     return (
@@ -56,6 +58,19 @@ export default function TransferSidebar({ }) {
     if (await tryCopyToClipboard(transferLink)) {
       displayNotification("Copied Link", "The Transfer link was successfully copied to the clipboard!")
     }
+  }
+
+  const handleSendByEmail = async e => {
+    const email = emailRef.current.value
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailPattern.test(email)) {
+      return
+    }
+
+    await sendTransferByEmail(selectedTransfer.id, [email])
+
+    displayNotification("Email sent", `The Transfer link was successfully sent to ${email}!`)
+    emailRef.current.value = ""
   }
 
   const handleSubmit = async e => {
@@ -113,13 +128,29 @@ export default function TransferSidebar({ }) {
                 <div className="relative mt-2 flex items-center">
                   <input
                     type="url"
-                    className="block w-full border-0 py-2.5 ps-4 pr-14 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                    className="block w-full border-0 py-2.5 ps-4 pr-28 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
                     value={transferLink}
                     contentEditable="false"
                   />
                   <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
                     <button type="button" onClick={handleCopy} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
                       <BIcon name={"copy"} className={"mr-1 ms-1"} />Copy Link
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div className="relative mt-2 flex items-center">
+                  <input
+                    ref={emailRef}
+                    type="email"
+                    className="block w-full border-0 py-2.5 ps-4 pr-28 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                    // value={transferLink}
+                    placeholder="user@example.com"
+                  />
+                  <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
+                    <button type="button" onClick={handleSendByEmail} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
+                      <BIcon name={"send"} className={"mr-1 ms-1"} />Send Email
                     </button>
                   </div>
                 </div>

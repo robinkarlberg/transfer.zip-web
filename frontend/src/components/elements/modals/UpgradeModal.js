@@ -31,7 +31,7 @@ export default function UpgradeModal({ show }) {
 
   return (
     <Modal show={show} onClose={() => { }} title="Upgrade to Pro" buttons={[
-      { title: "Upgrade for $19/mo", onClick: handleUpgrade },
+      { title: "Upgrade to $19/mo", onClick: handleUpgrade },
       { title: "Cancel", onClick: () => setShowUpgradeModal(false) }
     ]} style={"info"} icon={"arrow-up"} loading={loading}>
       <p className="text-sm text-gray-500 mb-2">

@@ -216,6 +216,10 @@ export async function putTransfer(transferId, data) {
     return await put(`/transfer/${transferId}`, data)
 }
 
+export async function sendTransferByEmail(transferId, emails) {
+    return await post(`/transfer/${transferId}/sendbyemail`, { emails })
+}
+
 export async function newTransfer(data) {
     return await post(`/transfer/new`, data)
 }

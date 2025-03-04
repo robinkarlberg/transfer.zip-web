@@ -6,6 +6,25 @@ import logo from "../../../img/icon.png"
 import PricingCards from "../../../components/PricingCards";
 import pricing from "../../../pricing";
 import BIcon from "../../../components/BIcon";
+import TestimonialCloud from "../../../components/TestimonialCloud";
+
+const testimonials = [
+  {
+    quote: "Love how simple and no-BS Transfer.zip is.",
+    author: "maddogmdd",
+    proof: "https://www.reddit.com/r/techsupport/comments/bjqmm6/comment/kilzfob/",
+  },
+  {
+    quote: "... after spending hours browsing for a simple way to send a 23 GB file, this is the answer.",
+    author: "amca12006",
+    proof: "https://www.reddit.com/r/techsupport/comments/bjqmm6/comment/lgjz9lh/"
+  },
+  {
+    quote: "F*****g THANK you. ...",
+    author: "Bravo-Xray",
+    proof: "https://www.reddit.com/r/techsupport/comments/bjqmm6/comment/lj01kxe/"
+  },
+]
 
 export default function OnboardingPage({ }) {
   const { user, isGuestUser, isFreeUser, refreshUser } = useContext(AuthContext)
@@ -80,10 +99,33 @@ export default function OnboardingPage({ }) {
         <div className="mx-auto mt-8 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-12 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
           <PricingCards tiers={tiers} compact={false} buttonText={"Subscribe"} onTierSelected={handleTierSelected} />
         </div>
-        <p className="text-primary text-center text-sm mt-4">
+        <div className={``}>
+          <div className="mx-auto max-w-4xl px-6 lg:px-8 pt-16 mb-8">
+            {/* <div className="mb-8 text-center">
+              <h2 className="inline-block font-medium text-lg text-gray-500">
+                Trusted by more than 11k users every month!
+              </h2>
+            </div> */}
+            <div className="mx-auto grid max-w-lg grid-cols-1 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:gap-x-10 lg:mx-0 md:max-w-none md:grid-cols-3">
+              {testimonials.map(testimonial => {
+                return (
+                  <div key={testimonial.proof} className="col-span-1 text-center h-32">
+                    <div className="text-blue-500 mb-2"><BIcon name={"reddit"} className={"me-1.5 text-orange-600"} />{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div>
+                    <div className="text-gray-600 mb-2 hover:underline"><a target="_blank" href={testimonial.proof}><BIcon name={"quote"} /> {testimonial.quote}</a></div>
+                    {/* <div className="font-bold text-gray-700">
+                      
+                      <a className="hover:underline" target="_blank" href={testimonial.proof}>{testimonial.author}</a>
+                    </div> */}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+        <p className="text-primary text-center text-sm mb-2">
           <a href="/legal/terms-and-conditions" target="_blank" className="hover:underline"><BIcon name={"patch-check-fill"} className={"text-xs"} /> 7 day money-back guarantee</a>
         </p>
-        <p className="text-xs text-center mt-12 text-gray-500">
+        <p className="text-xs text-center mt-4 text-gray-500">
           Secure payments via Stripe. <Link className="text-primary-dark" target="_blank" to={"/legal/terms-and-conditions"}>Terms</Link> and <Link className="text-primary-dark" target="_blank" to={"/legal/privacy-policy"}>Privacy</Link> apply.
         </p>
         <div className="mt-1 text-xs">

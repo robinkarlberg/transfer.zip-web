@@ -304,3 +304,7 @@ export function isInEU() {
     const country = getCountryByTimeZone();
     return euCountries.includes(country);
 }
+
+export function classNames(...classes) {
+    return classes.filter(Boolean).join(' ')
+}

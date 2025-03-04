@@ -3,7 +3,7 @@ import { humanTimeUntil, parseTransferExpiryDate, tryCopyToClipboard } from "../
 import BIcon from "../BIcon"
 import { useContext, useMemo } from "react"
 import { DashboardContext } from "../../routes/dashboard/Dashboard"
-import { getTransferDownloadLink } from "../../Api"
+import { getTransferDownloadLink, sendTransferByEmail } from "../../Api"
 import { ApplicationContext } from "../../providers/ApplicationProvider"
 import EmptySpace from "../elements/EmptySpace"
 
@@ -26,6 +26,12 @@ const Entry = ({ transfer }) => {
   const handleCopyLinkClicked = async e => {
     e.stopPropagation()
     handleCopy()
+  }
+
+  const handleSendByEmailClicked = async e => {
+    e.stopPropagation()
+    // send by email
+    // await sendTransferByEmail(id, )
   }
 
   return (
@@ -52,10 +58,13 @@ const Entry = ({ transfer }) => {
             </span>}
           </div>
         </div>
-        <div className="items-center hidden group-hover:flex">
+        <div className="hidden items-center gap-2 group-hover:flex">
           <Link onClick={handleCopyLinkClicked} className="text-sm text-primary bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50">
             <BIcon name={"copy"} /> Copy Link
           </Link>
+          {/* <Link onClick={handleSendByEmailClicked} className="text-sm text-primary bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50">
+            <BIcon name={"send"} /> Send by Email
+          </Link> */}
         </div>
       </div>
     </button>
@@ -72,7 +81,7 @@ export default function TransferList({ transfers }) {
         {transfers.map((transfer, index) => <Entry key={transfer.id} transfer={transfer} />)}
       </div>
       {transfers.length == 0 && (
-        <EmptySpace title={"Your transfers will appear here"} subtitle={"You can see views and download statistics, edit, send or delete them."}/>
+        <EmptySpace title={"Your transfers will appear here"} subtitle={"You can see views and download statistics, edit, send or delete them."} />
         // <div className="text-center py-16 rounded-xl border-dashed border-2">
         //   <h3 className="font-semibold text-2xl mb-1">Your transfers will appear here</h3>
         //   <p className="text-gray-600">

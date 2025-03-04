@@ -1,3 +1,5 @@
+import { isInEU } from "./utils";
+
 export default {
   tiers: [
     {
@@ -8,7 +10,9 @@ export default {
         // "Quick-Share files of any size",
         "Unlimited transfers",
         "Up to 200GB per transfer",
-        "Files expire after 14 days"
+        "Files expire after 14 days",
+        "Send files by email",
+        isInEU() ? "Proudly hosted in the EU 🇪🇺" : "Ultrafast and secure",
       ],
     },
     {
@@ -20,8 +24,9 @@ export default {
         "Unlimited transfers",
         "Up to 1TB per transfer",
         "Files stay up for 365 days",
-        "Eearly access to new features",
+        "Send files to 200 emails",
         "Priority support",
+        isInEU() ? "Proudly hosted in the EU 🇪🇺" : "Ultrafast and secure",
         // "Password protect files",
       ],
       featured: true,

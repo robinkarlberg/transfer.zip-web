@@ -18,9 +18,9 @@ const testimonials = [
   }
 ]
 
-export default function TestimonialCloud() {
+export default function TestimonialCloud({ className }) {
   return (
-    <div className="bg-gray-50 mb-8 mt-12 border border-dashed">
+    <div className={`bg-gray-50 mb-8 mt-12 border border-dashed ${className}`}>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {/* <div className="pt-8 text-center">
           <h2 className="inline-block text-lg text-gray-400">
