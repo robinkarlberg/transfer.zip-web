@@ -1,13 +1,15 @@
-import { Link } from "react-router-dom"
+import { Link, useRevalidator } from "react-router-dom"
 import { humanTimeUntil, parseTransferExpiryDate, tryCopyToClipboard } from "../../utils"
 import BIcon from "../BIcon"
 import { useContext, useMemo } from "react"
 import { DashboardContext } from "../../routes/dashboard/Dashboard"
-import { getTransferDownloadLink, sendTransferByEmail } from "../../Api"
+import { deleteTransfer, getTransferDownloadLink, sendTransferByEmail } from "../../Api"
 import { ApplicationContext } from "../../providers/ApplicationProvider"
 import EmptySpace from "../elements/EmptySpace"
 
 const Entry = ({ transfer }) => {
+  const revalidator = useRevalidator()
+
   const { displayNotification } = useContext(ApplicationContext)
   const { displayedTransferId, setSelectedTransferId, hideSidebar, showSidebar } = useContext(DashboardContext)
 
@@ -34,8 +36,24 @@ const Entry = ({ transfer }) => {
     // await sendTransferByEmail(id, )
   }
 
+  const handleDelete = async e => {
+    e.stopPropagation()
+    await deleteTransfer(id)
+    if (setSelectedTransferId == id) hideSidebar()
+    revalidator.revalidate()
+  }
+
+  const handleClicked = async e => {
+    if (files.length == 0) {
+
+    }
+    else {
+      isSelected ? hideSidebar() : setSelectedTransferId(id)
+    }
+  }
+
   return (
-    <button disabled={files.length == 0} onClick={() => isSelected ? hideSidebar() : setSelectedTransferId(id)} className={`group text-start shadow-sm rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-4 py-3 group hover:bg-gray-50`}>
+    <button onClick={handleClicked} className={`group text-start shadow-sm rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-4 py-3 group hover:bg-gray-50`}>
       <div className="flex flex-row justify-between">
         <div>
           <h3 className={`text-xl font-bold me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
@@ -58,16 +76,23 @@ const Entry = ({ transfer }) => {
             </span>}
           </div>
         </div>
-        {files.length != 0 && <div className="hidden items-center gap-2 group-hover:flex">
-          <Link onClick={handleCopyLinkClicked} className="text-sm text-primary bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50">
-            <BIcon name={"copy"} /> Copy Link
-          </Link>
+        <div className="hidden items-center gap-2 group-hover:flex">
+          {
+            files.length == 0 ?
+              <Link onClick={handleDelete} className="text-sm text-red-500 bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50">
+                <BIcon name={"trash"} />
+              </Link>
+              :
+              <Link onClick={handleCopyLinkClicked} className="text-sm text-primary bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50">
+                <BIcon name={"copy"} /> Copy Link
+              </Link>
+          }
           {/* <Link onClick={handleSendByEmailClicked} className="text-sm text-primary bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50">
             <BIcon name={"send"} /> Send by Email
           </Link> */}
-        </div>}
+        </div>
       </div>
-    </button>
+    </button >
   )
 }
 
