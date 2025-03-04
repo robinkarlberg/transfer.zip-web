@@ -5,7 +5,7 @@ export default {
       price: "$9",
       description: "For personal use and quick file sharing.",
       features: [
-        "Quick-Share files of any size",
+        // "Quick-Share files of any size",
         "Unlimited transfers",
         "Up to 200GB per transfer",
         "Files expire after 14 days"
@@ -16,7 +16,7 @@ export default {
       price: "$19",
       description: "For power users & professionals.",
       features: [
-        "Quick-Share files of any size",
+        // "Quick-Share files of any size",
         "Unlimited transfers",
         "Up to 1TB per transfer",
         "Files stay up for 365 days",
