@@ -62,7 +62,7 @@ export default function TermsAndConditionsPage({ }) {
             <strong className="font-semibold text-gray-900">Limitation of Liability.</strong> While transfer.zip is committed to maintaining the functionality and security of our site, we are not liable for any damages or losses resulting from the use of our services. Users acknowledge that the use of Transfer.zip is at their own risk.
           </p>
 
-          <div className="mt-8">
+          <div className="mt-8" id="refund-policy">
             <p><strong className="font-semibold text-gray-900">Refund Policy.</strong> At transfer.zip, we strive to provide the best possible experience for our users. If you are not satisfied with our paid services, you may be eligible for a refund under the following conditions:</p>
             <ul className="list-disc pl-6">
               <li>
