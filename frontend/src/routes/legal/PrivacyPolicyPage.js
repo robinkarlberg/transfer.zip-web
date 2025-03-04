@@ -27,8 +27,8 @@ export default function PrivacyPolicyPage({ }) {
             <li className="flex gap-x-3">
               <BIcon name={"check-circle"} aria-hidden="true" className="mt-1 h-5 w-5 flex-none text-primary" />
               <span>
-                <strong className="font-semibold text-gray-900">Email.</strong> If you create an account, your email address is used solely for communication
-                purposes and will not be shared with third parties.
+                <strong className="font-semibold text-gray-900">Email.</strong> If you create an account, your email address is used for communication
+                purposes, occasionally for promotional purposes (reminder to finish signup), and will not be shared with third parties.
               </span>
             </li>
             <li className="flex gap-x-3">
