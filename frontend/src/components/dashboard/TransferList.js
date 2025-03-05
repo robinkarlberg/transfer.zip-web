@@ -58,7 +58,7 @@ const Entry = ({ transfer }) => {
         <div>
           <h3 className={`text-xl font-bold me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
           <div className="text-sm text-gray-600 font-semibold">
-            <span className="">{files.length == 0 ? <><BIcon name={"file-earmark-excel"} /> Incomplete</> : <>{files.length} file{files.length != 1 ? "s" : ""}</>}</span>
+            <span className="">{files.length == 0 ? <><BIcon name={"file-earmark-arrow-up"} /> Incomplete</> : <>{files.length} file{files.length != 1 ? "s" : ""}</>}</span>
             {transfer.statistics.downloads.length > 1 ?
               <span><BIcon name="dot" /><i className="bi bi-arrow-down-circle-fill me-1"></i>{transfer.statistics.downloads.length} downloads</span>
               :
