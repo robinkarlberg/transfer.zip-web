@@ -132,7 +132,7 @@ export default function TransferSidebar({ }) {
         { title: "Ok", onClick: () => setShowEmailList(false) }
       ]} show={showEmailList} onClose={() => setShowEmailList(false)}>
         {/* <p className="text-sm font-medium mb-1"></p> */}
-        <ul className="text-sm text-gray-600 list-inside list-disc">
+        <ul className="text-start text-sm text-gray-600 list-inside list-disc min-w-60">
           {selectedTransfer.emailsSharedWith.map((entry, index) => <li key={index}>{entry.email}</li>)}
         </ul>
       </Modal>
