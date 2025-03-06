@@ -95,6 +95,20 @@ export default function TransferSidebar({ }) {
     revalidator.revalidate()
   }
 
+  const handleLinkKeyDown = async e => {
+    if (e.key === "Enter") {
+      handleCopy()
+      e.preventDefault()
+    }
+  }
+
+  const handleEmailKeyDown = async e => {
+    if (e.key === "Enter") {
+      handleSendByEmail()
+      e.preventDefault()
+    }
+  }
+
   return (
     <form onSubmit={handleSubmit} className="md:border-s flex h-full flex-col divide-y divide-gray-200 bg-white">
       <div className="h-0 flex-1 overflow-y-auto">
@@ -128,6 +142,7 @@ export default function TransferSidebar({ }) {
                 </label> */}
                 <div className="relative mt-2 flex items-center">
                   <input
+                    onKeyDown={handleLinkKeyDown}
                     type="url"
                     className="block w-full border-0 py-2.5 ps-4 pr-28 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
                     value={transferLink}
@@ -143,6 +158,7 @@ export default function TransferSidebar({ }) {
               <div>
                 <div className="relative mt-2 flex items-center">
                   <input
+                    onKeyDown={handleEmailKeyDown}
                     ref={emailRef}
                     type="email"
                     className="block w-full border-0 py-2.5 ps-4 pr-28 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
