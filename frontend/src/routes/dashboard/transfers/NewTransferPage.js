@@ -104,18 +104,19 @@ export default function NewTransferPage({ }) {
                 </select>
               </div>
             </div>
-            <div className="col-span-2">
-              <label htmlFor="name" className="block text-sm/6 font-medium text-gray-900">
-                Receipient Email<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>
+            <div className="col-span-3">
+              <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
+                Receipients<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>
               </label>
-              <div className="mt-2">
+              <div className="mt-2 flex gap-2">
                 <input
                   id="email"
                   placeholder="user@example.com"
                   name="email"
                   type="email"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
+                  className="grow block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
                 />
+                <button className="grow text-sm bg-primary shadow-sm text-white rounded-lg hover:bg-primary-light">Add <BIcon name={"plus-lg"}/></button>
               </div>
             </div>
             <div className="col-span-full">
