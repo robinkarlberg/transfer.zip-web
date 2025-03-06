@@ -5,6 +5,10 @@ import BIcon from "../components/BIcon";
 import { humanTimeUntil, parseTransferExpiryDate } from "../utils";
 import { useMemo } from "react";
 import { humanFileSize } from "../transferUtils";
+import Features1 from "../components/Features1";
+import Features2 from "../components/Features2";
+import Features3 from "../components/Features3";
+import FAQ from "../components/FAQ";
 
 export async function loader({ params }) {
   const [downloadResponse, settingsResponse] = await Promise.all([
@@ -57,9 +61,9 @@ export default function DownloadPage({ }) {
           </svg>
           <rect fill="url(#83fd4e5a-9d52-42fc-97b6-718e5d7ee527)" width="100%" height="100%" strokeWidth={0} />
         </svg>
-        <div className="backdrop-blur-sm rounded-2xl border p-6 shadow-xl w-full max-w-80 min-h-96 flex flex-col justify-between">
+        <div className="bg-white backdrop-blur-sm rounded-2xl border p-6 shadow-xl w-full max-w-80 min-h-96 flex flex-col justify-between">
           <div>
-            <h1 className="text-balance text-3xl font-bold tracking-tight text-gray-900 text-center mb-4"><BIcon name={"send-fill"} className={"text-3xl"} /> You got files!</h1>
+            {/* <h1 className="text-3xl font-semibold tracking-tight text-gray-900 text-start mb-4">You got files!</h1> */}
             <h2 className="font-bold text-xl/8 text-gray-800">{download.name}</h2>
             <p className="text-gray-600">{download.description || "No description"}</p>
             <hr className="my-2" />
@@ -83,7 +87,7 @@ export default function DownloadPage({ }) {
           <h2></h2>
         </div> */}
       <TestimonialCloud />
-
+      {/* <FAQ/> */}
     </div>
   )
 }
