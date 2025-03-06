@@ -5,7 +5,7 @@ import Checkmark from "../Checkmark";
 import { Transition } from "@headlessui/react";
 import { humanFileSizePair, humanFileSizeWithUnit } from "../../transferUtils";
 
-export default function Progress({ now, max }) {
+export default function Progress({ now, max, showUnits }) {
   const percent = useMemo(() => !max ? 0 : Math.floor(now / max * 100), [now, max])
 
   const humanMax = humanFileSizePair(max, true)
@@ -27,7 +27,7 @@ export default function Progress({ now, max }) {
               textColor: "currentColor",
               pathColor: "currentColor"
             })} >
-              <span className="text-sm mt-12 text-gray-500">{humanNowAmount}{humanMax.unit} of {humanMax.amount}{humanMax.unit}</span>
+              {showUnits && <span className="text-sm mt-12 text-gray-500">{humanNowAmount} of {humanMax.amount}{humanMax.unit}</span>}
           </CircularProgressbarWithChildren>
         </div>
       </Transition>
