@@ -57,7 +57,7 @@ export default function OnboardingPage({ }) {
         {/* <Link className="absolute top-8 text-xl me-1 text-primary hover:text-primary-light" onClick={() => window.history.back()}>&larr; Back</Link> */}
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
-            alt="Your Company"
+            alt="Transfer.zip logo"
             src={logo}
             className=" h-10 w-auto"
           />

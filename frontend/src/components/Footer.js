@@ -14,7 +14,7 @@ export default function Footer({ }) {
               <span className="self-center text-2xl font-semibold whitespace-nowrap --dark:text-white">{process.env.REACT_APP_SITE_NAME}</span>
             </a>
           </div>
-          <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3 lg:grid-cols-4">
             <div>
               <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white">Tools</h2>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
@@ -23,6 +23,17 @@ export default function Footer({ }) {
                 </li>
                 <li>
                   <Link to="/tools/unzip-files-online" className="hover:underline">Unzip Files Online</Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><a className="hover:underline" href="https://blog.transfer.zip/">Blog</a></h2>
+              <ul className="text-gray-500 --dark:text-gray-400 font-medium">
+                <li className="mb-4">
+                  <Link to="https://blog.transfer.zip/posts/best-mediafire-alternatives-to-store-files-in-2024/" className="hover:underline ">Mediafire Alternative</Link>
+                </li>
+                <li>
+                  <Link to="https://blog.transfer.zip/posts/how-to-send-large-audio-files/" className="hover:underline">Send Large Audio Files</Link>
                 </li>
               </ul>
             </div>
@@ -55,7 +66,7 @@ export default function Footer({ }) {
         </div>
         <hr className="my-6 border-gray-200 sm:mx-auto --dark:border-gray-700 lg:my-8" />
         <div className="sm:flex sm:items-center sm:justify-between">
-          <span className="text-sm text-gray-500 sm:text-center --dark:text-gray-400"><a className="hover:underline" href="#">Shipped with <BIcon name={"heart-fill"} className={"text-red-500"} /></a> from 🇸🇪<BIcon name={"dot"}/>&copy; 2025 <a target="_blank" href={process.env.REACT_APP_AUTHOR_URL} className="hover:underline">{process.env.REACT_APP_AUTHOR}</a>. {/*All Rights Reserved.*/}
+          <span className="text-sm text-gray-500 sm:text-center --dark:text-gray-400"><a className="hover:underline" href="#">Shipped with <BIcon name={"heart-fill"} className={"text-red-500"} /></a> from 🇸🇪<BIcon name={"dot"} />&copy; 2025 <a target="_blank" href={process.env.REACT_APP_AUTHOR_URL} className="hover:underline">{process.env.REACT_APP_AUTHOR}</a>. {/*All Rights Reserved.*/}
           </span>
           <div className="flex mt-4 sm:justify-center sm:mt-0">
             {process.env.REACT_APP_FACEBOOK_URL && <a href={process.env.REACT_APP_FACEBOOK_URL} className="text-gray-500 hover:text-gray-900 --dark:hover:text-white">

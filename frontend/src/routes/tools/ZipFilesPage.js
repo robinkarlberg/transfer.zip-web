@@ -10,6 +10,8 @@ import streamSaver from "../../lib/StreamSaver"
 import EmptySpace from "../../components/elements/EmptySpace";
 import Progress from "../../components/elements/Progress";
 import RelatedLinks from "../../components/RelatedLinks";
+import { isSelfHosted } from "../../utils";
+import MultiStepAction from "../../components/MultiStepAction";
 
 const readFileTillEnd = async (file, cbData) => {
   return new Promise((resolve, reject) => {
@@ -97,22 +99,43 @@ export default function ZipFilesPage({ }) {
       <GenericToolPage
         title={"Zip Files Online"}
         display={<span><span className="text-primary">Easily</span> create zip files online.</span>}
-        subtitle={"Effortlessly compress even the biggest files with our online file and folder zip tool. You can also choose to share the zip file for free afterwards, if you need to."}
-        description={"Effortlessly decompress and view even the largest zip files with our online tool. Simply upload a zip file from your computer, and it will be unpacked instantly, allowing you to view its contents. You can also choose to download or share individual files for free if needed."}
-        question={"How to unzip zip file"}
-        steps={[
-          { step: 1, icon: "bi-file-earmark-plus-fill", text: "Pick your zip file" },
-          { step: 2, icon: "bi-hourglass-split", text: "Unzip and wait" },
-          { step: 3, icon: "bi-cloud-arrow-down-fill", text: <span>View, download or <Link to={"/"}>share files</Link></span> },
-        ]}
+        subtitle={"Effortlessly compress even the biggest files with this online file and folder zip tool. You can also choose to share the zip file for free afterwards, if you need to."}
       >
-
         <div className="mx-auto max-w-sm">
           <FileUpload onFiles={handleFiles} buttonText={"Zip"} showProgress={!!maxBytes} progressElement={<Progress max={maxBytes} now={progressBytes} />} />
         </div>
       </GenericToolPage>
       <div className="mx-auto max-w-7xl px-6 lg:px-8 mb-16">
-        <div>
+        {!isSelfHosted() && (
+          <>
+            <div className="mt-16">
+              <h2 className="inline-block text-2xl mb-4 font-bold">How does it work?</h2>
+              <p className="text-lg mb-2">
+                Simply pick files and folder from your computer, and they will be compressed instantly into one zip file.
+              </p>
+              <p className="text-lg mb-2">
+                You can then choose to download or share the newly created zip file for free if needed.
+              </p>
+              <p className="text-lg mb-2">
+                <b>Your files never leave your computer</b> - everything is processed in your browser only.
+              </p>
+              <p className="text-lg mb-2">
+                Want to check for yourself? <a className="text-primary hover:underline" href="https://github.com/robinkarlberg/transfer.zip-web">Check the code on GitHub &rarr;</a>
+              </p>
+            </div>
+            <div className="mt-16">
+              <h2 className="inline-block text-2xl mb-4 font-bold">How do I use the tool?</h2>
+              <span className="ms-2 text-gray-500">3 steps</span>
+
+              <MultiStepAction steps={[
+                { step: 1, icon: "hand-index", text: "Pick your files or select a folder" },
+                { step: 2, icon: "hourglass-split", text: "Click 'Zip' and wait" },
+                { step: 3, icon: "cloud-arrow-down-fill", text: <span>Download or <Link className="text-primary hover:underline" to={"/quick-share"}>share your zip file</Link></span> },
+              ]} />
+            </div>
+          </>
+        )}
+        <div className="mt-16">
           <RelatedLinks links={[
             { to: "/tools/unzip-files-online", title: "Unzip Files Online" },
             // { to: "/tools/send-zip-file", title: "Send Zip File" }
