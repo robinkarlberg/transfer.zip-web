@@ -7,10 +7,21 @@ import Progress from "../../../components/elements/Progress";
 import { DashboardContext } from "../Dashboard";
 import { AuthContext } from "../../../providers/AuthProvider";
 import BIcon from "../../../components/BIcon";
+import { ApplicationContext } from "../../../providers/ApplicationProvider";
+
+function AddedEmailField({ email, onAction }) {
+  return (
+    <li className="px-2 py-1 text-sm group flex relative">
+      <span className="text-gray-600">{email}</span>
+      <button type="button" onClick={() => onAction("delete", email)} className="bg-white rounded border px-1 absolute right-2 opacity-0 group-hover:opacity-100"><BIcon name={"x-lg"} /></button>
+    </li>
+  )
+}
 
 export default function NewTransferPage({ }) {
   const revalidator = useRevalidator()
   const { user } = useContext(AuthContext)
+  const { displayErrorModal } = useContext(ApplicationContext)
   const { storage, setSelectedTransferId, setShowUpgradeModal } = useContext(DashboardContext)
   const { settings } = useRouteLoaderData("dashboard")
 
@@ -21,8 +32,10 @@ export default function NewTransferPage({ }) {
 
   const [filesToUpload, setFilesToUpload] = useState(null)
   const [uploadingFiles, setUploadingFiles] = useState(false)
+  const [emailRecipients, setEmailRecipients] = useState([])
 
   const formRef = useRef(null)
+  const emailRef = useRef(null)
 
   const totalBytes = useMemo(() => {
     if (filesToUpload) {
@@ -47,22 +60,57 @@ export default function NewTransferPage({ }) {
     setUploadingFiles(true)
 
     const name = formData.get("name")
-    const email = formData.get("email")
     const description = formData.get("description")
     const expiresInDays = formData.get("expiresInDays")
 
-    const { transfer } = await newTransfer({ name, email, description, expiresInDays })
+    const { transfer } = await newTransfer({ name, description, expiresInDays })
 
     await uploadTransferFiles(transfer.id, files, progress => {
       console.log(progress)
       setBytesTransferred(progress.bytesTransferred)
     })
-    if (email) {
-      await sendTransferByEmail(transfer.id, [email])
+    if (emailRecipients.length > 0) {
+      await sendTransferByEmail(transfer.id, emailRecipients)
     }
     revalidator.revalidate()
     navigate(`/app/transfers`, { replace: true })
     setSelectedTransferId(transfer.id)
+  }
+
+  const handleEmailAdd = () => {
+    if (user.plan == "starter" && emailRecipients.length >= 25) {
+      displayErrorModal("With the Starter plan, you can only send a file transfer to up to 25 email recipients at once. Upgrade to Pro to send up to 200 emails per transfer.")
+      return
+    }
+    if (user.plan == "pro" && emailRecipients.length >= 200) {
+      displayErrorModal("With the Pro plan, you can only send a file transfer to up to 200 email recipients at once.")
+      return
+    }
+
+    const value = emailRef.current.value.trim();
+
+    // Basic email validation regex pattern
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (emailPattern.test(value) && emailRecipients.indexOf(value) == -1) {
+      setEmailRecipients([...emailRecipients, value]);
+      emailRef.current.value = "";
+    } else {
+      // alert("Please enter a valid email address.");
+    }
+  }
+
+  const handleEmailFieldAction = (action, email) => {
+    if (action == "delete") {
+      setEmailRecipients(emailRecipients.filter(v => v !== email))
+    }
+  }
+
+  const handleEmailInputKeyDown = e => {
+    if (e.key === "Enter") {
+      handleEmailAdd()
+      e.preventDefault()
+    }
   }
 
   return (
@@ -104,20 +152,29 @@ export default function NewTransferPage({ }) {
                 </select>
               </div>
             </div>
-            <div className="col-span-3">
+            <div className="col-span-2">
               <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
-                Receipients<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>
+                Recipients<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>
               </label>
-              <div className="mt-2 flex gap-2">
+              <div className="relative mt-2 flex items-center">
                 <input
+                  ref={emailRef}
+                  onKeyDown={handleEmailInputKeyDown}
                   id="email"
                   placeholder="user@example.com"
                   name="email"
                   type="email"
-                  className="grow block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
+                  className="block w-full rounded-md border-0 py-1.5 pr-16 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
                 />
-                <button className="grow text-sm bg-primary shadow-sm text-white rounded-lg hover:bg-primary-light">Add <BIcon name={"plus-lg"}/></button>
+                <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
+                  <button type="button" onClick={handleEmailAdd} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
+                    <BIcon name={"plus-lg"} className={"mr-1 ms-1"} />Add
+                  </button>
+                </div>
               </div>
+              <ul className="max-h-40 overflow-y-auto overflow-x-hidden">
+                {emailRecipients.map((email, index) => <AddedEmailField key={index} email={email} onAction={handleEmailFieldAction} />)}
+              </ul>
             </div>
             <div className="col-span-full">
               <label htmlFor="description" className="block text-sm/6 font-medium text-gray-900">
