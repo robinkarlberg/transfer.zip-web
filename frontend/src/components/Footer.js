@@ -16,7 +16,7 @@ export default function Footer({ }) {
           </div>
           <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3 lg:grid-cols-4">
             <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white">Tools</h2>
+              <h5 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white">Tools</h5>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 <li className="mb-4">
                   <Link to="/tools/zip-files-online" className="hover:underline ">Zip Files Online</Link>
@@ -27,7 +27,7 @@ export default function Footer({ }) {
               </ul>
             </div>
             <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><a className="hover:underline" href="https://blog.transfer.zip/">Blog</a></h2>
+              <h5 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><a className="hover:underline" href="https://blog.transfer.zip/">Blog</a></h5>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 <li className="mb-4">
                   <Link to="https://blog.transfer.zip/posts/best-mediafire-alternatives-to-store-files-in-2024/" className="hover:underline ">Mediafire Alternative</Link>
@@ -38,7 +38,7 @@ export default function Footer({ }) {
               </ul>
             </div>
             <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white">Resources</h2>
+              <h5 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white">Resources</h5>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 <li className="mb-4">
                   <a href={`mailto:${process.env.REACT_APP_CONTACT_EMAIL}`} className="hover:underline">Contact</a>
@@ -52,7 +52,7 @@ export default function Footer({ }) {
               </ul>
             </div>
             <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white">Legal</h2>
+              <h5 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white">Legal</h5>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 <li className="mb-4">
                   <Link to="/legal/privacy-policy" className="hover:underline">Privacy Policy</Link>
