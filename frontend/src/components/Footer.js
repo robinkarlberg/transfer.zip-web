@@ -30,10 +30,10 @@ export default function Footer({ }) {
               <h5 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><a className="hover:underline" href="https://blog.transfer.zip/">Blog</a></h5>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 <li className="mb-4">
-                  <Link to="https://blog.transfer.zip/posts/best-mediafire-alternatives-to-store-files-in-2024/" className="hover:underline ">Mediafire Alternative</Link>
+                  <Link to="https://blog.transfer.zip/2025/03/07/how-send-100gb-files-for-free.html" className="hover:underline ">Send 100GB Files Free</Link>
                 </li>
                 <li>
-                  <Link to="https://blog.transfer.zip/posts/how-to-send-large-audio-files/" className="hover:underline">Send Large Audio Files</Link>
+                  <Link to="https://blog.transfer.zip/2025/03/08/how-send-large-audio-files.html" className="hover:underline">Send Large Audio Files</Link>
                 </li>
               </ul>
             </div>
