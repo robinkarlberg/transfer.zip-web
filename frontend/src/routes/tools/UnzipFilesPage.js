@@ -66,7 +66,7 @@ export default function UnzipFilesPage({ }) {
       >
 
         <div className="mx-auto max-w-sm">
-          <FileUpload onFiles={handleFiles} buttonText={"Unzip"} singleFile={true} />
+          <FileUpload onFiles={handleFiles} buttonText={"Unzip"} singleFile={true} accept={".zip"} />
         </div>
       </GenericToolPage>
       <div className="mx-auto max-w-7xl px-6 lg:px-8 mb-16">
