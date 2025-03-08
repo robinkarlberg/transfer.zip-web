@@ -7,6 +7,7 @@ import PricingCards from "../../../components/PricingCards";
 import pricing from "../../../pricing";
 import BIcon from "../../../components/BIcon";
 import TestimonialCloud from "../../../components/TestimonialCloud";
+import PricingToggle from "../../../components/PricingToggle";
 
 const testimonials = [
   {
@@ -65,6 +66,12 @@ export default function OnboardingPage({ }) {
     return () => clearInterval(intervalId);
   }, []);
 
+  const [period, setPeriod] = useState("monthly")
+  const handlePeriodChange = p => {
+    setPeriod(p)
+    console.log(p)
+  }
+
   if (!user) return <></>
 
   const handleLogout = async () => {
@@ -75,7 +82,7 @@ export default function OnboardingPage({ }) {
   const { tiers } = pricing
 
   const handleTierSelected = async (tier) => {
-    const res = await createCheckoutSession(tier)
+    const res = await createCheckoutSession(tier, period)
     window.location.href = res.url;
   }
 
@@ -96,8 +103,11 @@ export default function OnboardingPage({ }) {
             Choose a plan that fits your needs. <b>Send files instantly</b> upon purchase.
           </p>
         </div>
-        <div className="mx-auto mt-8 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-12 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
-          <PricingCards tiers={tiers} compact={false} buttonText={"Subscribe"} onTierSelected={handleTierSelected} />
+        <div className="mt-12">
+          <PricingToggle onChange={handlePeriodChange} />
+        </div>
+        <div className="mx-auto mt-4 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-8 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
+          <PricingCards period={period} tiers={tiers} compact={false} buttonText={"Subscribe"} onTierSelected={handleTierSelected} />
         </div>
         <div className={``}>
           <div className="mx-auto max-w-4xl px-6 lg:px-8 pt-16 mb-8">

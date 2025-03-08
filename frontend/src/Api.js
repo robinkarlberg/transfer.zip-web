@@ -92,8 +92,8 @@ export async function doVerification(email, token) {
 
 // stripe
 
-export async function createCheckoutSession(tier) {
-    return await post(`/create-checkout-session`, { tier })
+export async function createCheckoutSession(tier, period) {
+    return await post(`/create-checkout-session`, { tier, period })
 }
 
 export async function changeSubscription(tier) {

@@ -1,9 +1,10 @@
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { ApplicationContext } from "../providers/ApplicationProvider"
 import pricing from "../pricing"
 import PricingCards from "./PricingCards"
 import BIcon from "./BIcon"
 import { Link } from "react-router-dom"
+import PricingToggle from "./PricingToggle"
 
 const features = [
   { name: "Full access to Quick Share", good: true },
@@ -16,6 +17,12 @@ const features = [
 export default function Pricing() {
 
   const { tiers } = pricing
+
+  const [period, setPeriod] = useState("monthly")
+  const handlePeriodChange = p => {
+    setPeriod(p)
+    console.log(p)
+  }
 
   return (
     <div className="relative isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
@@ -37,8 +44,11 @@ export default function Pricing() {
       <p className="mx-auto mt-6 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 sm:text-xl/8">
         We employ a pricing strategy that values transparency and fairness, allowing you to focus on your work, without worrying about hidden fees.
       </p>
-      <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
-        <PricingCards tiers={tiers} />
+      <div className="mt-16">
+        <PricingToggle onChange={handlePeriodChange} />
+      </div>
+      <div className="mx-auto mt-4 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-8 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
+        <PricingCards period={period} tiers={tiers} />
         <div className="col-span-full mt-16">
           <div className="border shadow rounded-3xl p-10 w-full flex flex-col lg:flex-row justify-between">
             <div>

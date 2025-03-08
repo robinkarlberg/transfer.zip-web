@@ -1,14 +1,15 @@
 import { Link } from "react-router-dom"
 import BIcon from "./BIcon"
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { ApplicationContext } from "../providers/ApplicationProvider"
 import { isWaitlist } from "../utils"
+import { Radio, RadioGroup } from "@headlessui/react"
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function PricingCards({ tiers, compact, buttonText, onTierSelected }) {
+export default function PricingCards({ tiers, compact, buttonText, onTierSelected, period }) {
 
   const _buttonText = buttonText ?? "Get started today"
 
@@ -40,10 +41,13 @@ export default function PricingCards({ tiers, compact, buttonText, onTierSelecte
             'text-5xl font-semibold tracking-tight',
           )}
         >
-          {tier.price}
+          {period == "monthly" ? tier.price : tier.priceYearlyMonthly}
         </span>
         <span className={classNames(tier.featured ? 'text-gray-400' : 'text-gray-500', 'text-base')}>{tier.lifetime ? "once" : "/month"}</span>
       </p>
+      {period == "yearly" && <p className={classNames(tier.featured ? 'text-gray-400' : 'text-gray-500', 'text-base mt-2')}>
+        {tier.priceYearly}/year
+      </p>}
       {!compact && (<p className={classNames(tier.featured ? 'text-gray-300' : 'text-gray-600', 'mt-6 text-base/7')}>
         {tier.description}
       </p>)}

@@ -5,6 +5,8 @@ export default {
     {
       name: "Starter",
       price: "$9",
+      priceYearly: "$72",
+      priceYearlyMonthly: "$6",
       description: "For personal use and quick file sharing.",
       features: [
         // "Quick-Share files of any size",
@@ -18,6 +20,8 @@ export default {
     {
       name: "Pro",
       price: "$19",
+      priceYearly: "$144",
+      priceYearlyMonthly: "$12",
       description: "For power users & professionals.",
       features: [
         // "Quick-Share files of any size",
