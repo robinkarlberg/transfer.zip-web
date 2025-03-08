@@ -6,7 +6,7 @@ import { humanFileSize, humanFileType } from "../../transferUtils"
 import { humanFileName } from "../../utils"
 import Progress from "./Progress"
 
-export default function FileUpload({ initialFiles, onFilesChange, onFiles, onReceiveClicked, progressElement, showProgress, buttonText, singleFile, disabled }) {
+export default function FileUpload({ initialFiles, onFilesChange, onFiles, onReceiveClicked, progressElement, showProgress, buttonText, singleFile, disabled, accept }) {
 
   const _buttonText = buttonText ?? "Transfer"
 
@@ -48,7 +48,7 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
   return (
     <>
       <form style={{ display: "none" }}>
-        <input ref={fileInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" multiple={singleFile ? undefined : true}></input>
+        <input ref={fileInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" multiple={singleFile ? undefined : true} accept={accept}></input>
         <input ref={folderInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" webkitdirectory="true"></input>
       </form>
       <div className={`text-start relative w-full rounded-2xl bg-white border shadow-lg flex flex-col min-h-56 ${onReceiveClicked ? "mt-8" : ""}`}>

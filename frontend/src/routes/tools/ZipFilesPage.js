@@ -10,29 +10,8 @@ import streamSaver from "../../lib/StreamSaver"
 import EmptySpace from "../../components/elements/EmptySpace";
 import Progress from "../../components/elements/Progress";
 import RelatedLinks from "../../components/RelatedLinks";
-import { isSelfHosted } from "../../utils";
+import { isSelfHosted, readFileTillEnd } from "../../utils";
 import MultiStepAction from "../../components/MultiStepAction";
-
-const readFileTillEnd = async (file, cbData) => {
-  return new Promise((resolve, reject) => {
-    let offset = 0
-
-    const readSlice = async o => {
-      const fileSliceBuffer = await file.slice(offset, o + 16384 * 10).arrayBuffer()
-
-      cbData(new Uint8Array(fileSliceBuffer))
-      offset += fileSliceBuffer.byteLength;
-
-      if (offset < file.size) {
-        readSlice(offset);
-      }
-      else {
-        resolve()
-      }
-    };
-    readSlice(0)
-  })
-}
 
 export default function ZipFilesPage({ }) {
   const [files, setFiles] = useState(null)
@@ -138,7 +117,7 @@ export default function ZipFilesPage({ }) {
         <div className="mt-16">
           <RelatedLinks links={[
             { to: "/tools/unzip-files-online", title: "Unzip Files Online" },
-            // { to: "/tools/send-zip-file", title: "Send Zip File" }
+            { to: "/tools/heic-convert", title: "Convert HEIC to JPG" }
           ]} />
         </div>
       </div>

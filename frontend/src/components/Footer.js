@@ -21,8 +21,11 @@ export default function Footer({ }) {
                 <li className="mb-4">
                   <Link to="/tools/zip-files-online" className="hover:underline ">Zip Files Online</Link>
                 </li>
-                <li>
+                <li className="mb-4">
                   <Link to="/tools/unzip-files-online" className="hover:underline">Unzip Files Online</Link>
+                </li>
+                <li>
+                  <Link to="/tools/heic-convert" className="hover:underline">Convert HEIC to JPG</Link>
                 </li>
               </ul>
             </div>

@@ -33,6 +33,7 @@ import ZipFilesPage from "./routes/tools/ZipFilesPage";
 import { isSelfHosted } from "./utils";
 import HashInterceptor from "./components/HashInterceptor";
 import SelfHostApp from "./routes/selfhost/SelfHostApp";
+import HeicConvertPage from "./routes/tools/HeicConvertPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -63,6 +64,7 @@ const router = createBrowserRouter(
               <Route path="/tools">
                 <Route path="unzip-files-online" element={<UnzipFilesPage />} />
                 <Route path="zip-files-online" element={<ZipFilesPage />} />
+                <Route path="heic-convert" element={<HeicConvertPage />} />
               </Route>
               <Route path="*" element={<NotFoundPage />} />
             </Route>
@@ -90,6 +92,7 @@ const selfhostRouter = createBrowserRouter(
           <Route path="/tools">
             <Route path="unzip-files-online" element={<UnzipFilesPage />} />
             <Route path="zip-files-online" element={<ZipFilesPage />} />
+            <Route path="heic-convert" element={<HeicConvertPage />} />
           </Route>
           <Route path="*" element={<NotFoundPage />} />
         </Route>

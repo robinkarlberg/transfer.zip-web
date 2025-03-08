@@ -110,7 +110,7 @@ export default function UnzipFilesPage({ }) {
         <div className="mt-16">
           <RelatedLinks links={[
             { to: "/tools/zip-files-online", title: "Zip Files Online" },
-            // { to: "/tools/send-zip-file", title: "Send Zip File" }
+            { to: "/tools/heic-convert", title: "Convert HEIC to JPG" }
           ]} />
         </div>
       </div>

@@ -18,6 +18,7 @@ const products = [
   { name: 'Quick Share', description: 'Send and receive end-to-end encrypted files.', href: '/quick-share', icon: "grid-fill" },
   { name: 'Zip', description: 'Create zip archives in the browser.', href: '/tools/zip-files-online', icon: "lightbulb" },
   { name: 'Unzip', description: 'View zip archives in the browser.', href: '/tools/unzip-files-online', icon: "grid-fill" },
+  { name: 'HEIC to JPG', description: 'Convert HEIC files in the browser.', href: '/tools/heic-convert', icon: "transparency" },
 ]
 const callsToAction = [
   // { name: 'FAQ', href: "/#faq", icon: "question-lg" },

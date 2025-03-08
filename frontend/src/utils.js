@@ -308,3 +308,24 @@ export function isInEU() {
 export function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
+
+export const readFileTillEnd = async (file, cbData) => {
+  return new Promise((resolve, reject) => {
+    let offset = 0
+
+    const readSlice = async o => {
+      const fileSliceBuffer = await file.slice(offset, o + 16384 * 10).arrayBuffer()
+
+      cbData(new Uint8Array(fileSliceBuffer))
+      offset += fileSliceBuffer.byteLength;
+
+      if (offset < file.size) {
+        readSlice(offset);
+      }
+      else {
+        resolve()
+      }
+    };
+    readSlice(0)
+  })
+}
