@@ -211,7 +211,9 @@ export default function QuickShareProgress({ }) {
     // Setup WebRtc websocket connection, and close it when leaving page.
     // startProgress is run before websocket connects, but webrtc.js code handles the waiting for us
     // so nothing to worry about here
-
+    if(transferDirection === undefined) {
+      return navigate("/quick-share")
+    }
     WebRtc.createWebSocket()
     startProgress()
     return () => {
