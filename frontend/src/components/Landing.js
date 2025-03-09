@@ -73,7 +73,7 @@ export default function Example() {
               <div className="relative flex items-center gap-x-4 rounded-full px-4 py-1 text-sm leading-6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
                 <span className="font-semibold text-primary">New Version</span>
                 <span aria-hidden="true" className="h-4 w-px bg-gray-900/10" />
-                <Link to="#about" className="flex items-center gap-x-1">
+                <Link to="https://blog.transfer.zip/2025/03/08/transfer-zip-3.0-released.html" className="flex items-center gap-x-1">
                   <span aria-hidden="true" className="absolute inset-0" />
                   Explore new features! &rarr;
                 </Link>
