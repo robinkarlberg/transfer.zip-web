@@ -9,7 +9,7 @@ import { Link } from "react-router-dom"
 import * as zip from "@zip.js/zip.js";
 import streamSaver from "../../lib/StreamSaver"
 
-import * as convert from "heic-convert/browser"
+// import * as convert from "heic-convert/browser"
 import Progress from "../../components/elements/Progress"
 
 export default function HeicConvertPage({ }) {
@@ -20,11 +20,14 @@ export default function HeicConvertPage({ }) {
   const doConvert = async file => {
     const buffer = await file.bytes()
 
-    const outputBuffer = await convert({
-      buffer,
-      format: "JPEG",
-      quality: 0.9
-    });
+    const outputBuffer = await (async () => {
+      const { default: convert } = await import("heic-convert/browser");
+      return convert({
+        buffer,
+        format: "JPEG",
+        quality: 0.9
+      });
+    })();
 
     return outputBuffer
   }
@@ -89,7 +92,7 @@ export default function HeicConvertPage({ }) {
             <div className="mt-16">
               <h2 className="inline-block text-2xl mb-4 font-bold">How does it work?</h2>
               <p className="text-lg mb-2">
-                Simply choose the HEIC files from your computer, and they will be converted instantly. 
+                Simply choose the HEIC files from your computer, and they will be converted instantly.
               </p>
               <p className="text-lg mb-2">
                 You can then choose to share individual photos for free if needed.
