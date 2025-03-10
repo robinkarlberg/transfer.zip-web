@@ -41,7 +41,8 @@ export default function Features1() {
           {/* <p className="text-base/7 font-semibold text-primary">Benefits</p> */}
           <h2 className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
             {/* Send Your Files in Seconds */}
-            Why Choose Transfer.zip?
+            {/* Why Choose Transfer.zip? */}
+            The Best Way to Send Files
           </h2>
           <p className="mt-6 text-lg/8 text-gray-600">
             <span className="font-bold">We do things differently here:</span> We have no cookie popups, no terms of service box and no user tracking - just fast and secure file sharing.
