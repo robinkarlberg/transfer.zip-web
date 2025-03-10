@@ -86,6 +86,7 @@ export default function SignUpPage() {
               loop
               controls={false}
               autoPlay
+              playsInline
             >
               <source src={SignUpDemo} type="video/mp4" />
             </video>
