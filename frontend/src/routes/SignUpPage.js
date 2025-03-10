@@ -68,7 +68,6 @@ export default function SignUpPage() {
   return (
     <>
       <div className="flex min-h-[100vh]">
-        <Link className="absolute left-6 top-6 text-xl me-1 text-primary hover:text-primary-light bg-white px-4 py-2 rounded-lg" onClick={() => window.history.back()}>&larr; Back</Link>
         <div className="grow hidden md:flex flex-col bg-gray-600 relative">
           {/* <div className="grid grid-cols-2 gap-4 p-4 mt-auto">
             {features.map((entry, index) => (
@@ -92,7 +91,9 @@ export default function SignUpPage() {
             </video>
           </div>
         </div>
-        <div className="flex flex-1 flex-col justify-center px-6 py-12 lg:px-8 z-10">
+        <div className="relative flex flex-1 flex-col justify-center px-6 py-12 lg:px-8 z-10">
+          <Link className="z-10 absolute top-6 text-xl me-1 text-primary hover:text-primary-light" onClick={() => window.history.back()}>&larr; Back</Link>
+
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">
             <img
               alt="Transfer.zip logo"
