@@ -7,13 +7,13 @@ import { Link } from "react-router-dom"
 const features = [
   {
     name: 'Much Larger Files',
-    description: 'Quick Share supports files over 100GB, because the data is never stored on our servers.',
+    description: 'Quick Share supports files over 100GB, because the data is never stored on our servers. Instead it is streamed in real-time between your devices.',
     icon: "database-fill-up"
   },
   {
-    name: 'Much Faster Transfers',
-    description: 'The data is streamed in real-time between your devices. There is no overhead on our side.',
-    icon: "fast-forward-fill",
+    name: 'End-to-end Encryption',
+    description: 'Files sent with Quick Share is protected with end-to-end encryption, keeping your files secure and private - even from us.',
+    icon: "lock-fill",
   },
 ]
 
@@ -25,13 +25,11 @@ export default function FeaturesNew() {
           <h2 className="text-base/7 font-semibold text-primary">Quick Share</h2>
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
             {/* Unlimited File Size -<br/>Unlimited Privacy */}
-            Keep Your Tab Open -<br />Send Without Limits
+            Keep Your Tab Open -<br />Send Without Limits <span className="bg-primary-200 px-2 text-primary rounded-xl">for Free</span>
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            Use <Link to={"/quick-share"} className="text-primary hover:underline">Quick Share</Link> to send large files.
-            It has <b>no file size limit</b> whatsoever - as long as your browser tab is open, you are good to go. 
-            Your data is also protected with end-to-end encryption,
-            keeping your files secure and private - even from us.
+            Use <Link to={"/quick-share"} className="text-primary hover:underline">Quick Share</Link> to send large files for free.
+            It has <b>no file size limit</b> whatsoever - as long as your browser tab is open, you are good to go.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
