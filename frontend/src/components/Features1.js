@@ -2,26 +2,32 @@ import { useContext } from "react"
 import BIcon from "./BIcon"
 import { ApplicationContext } from "../providers/ApplicationProvider"
 import { Link } from "react-router-dom"
-import { isWaitlist } from "../utils"
+import { isInEU, isWaitlist } from "../utils"
 import ProductDemoScreenshot from "../img/ProductDemoScreenshot.png"
 import ProductDemo from "../img/ProductDemo.mp4"
+import logo from "../img/icon.png"
 
 const features = [
   {
-    name: 'Tough Encryption',
+    name: 'Privacy by Default',
     description: 'Your files are protected by AES-256, the same algorithm used by militaries and governments around the world.',
     icon: "lock",
   },
   {
-    name: 'Large Storage',
-    description: "No other file transfer service supports storing such large files, for such a small price.",
-    icon: "database",
+    name: 'Keep files for 365 days',
+    description: 'With the Pro plan, your transfers are available for 365 days before they expire, ensuring they are always downloaded in time.',
+    icon: "clock",
   },
-  // {
-  //   name: 'Statistics',
-  //   description: 'Easily see if people have viewed or downloaded your files. ',
-  //   icon: "bar-chart",
-  // },
+  {
+    name: 'No Tracking',
+    description: `Unlike many services, we value your privacy. ${isInEU() ? "Everything is hosted in the EU." : "We do not share your information with third parties."}`,
+    icon: "ban",
+  },
+  {
+    name: 'Statistics',
+    description: 'Easily see when people have clicked your link or downloaded your files.',
+    icon: "bar-chart",
+  },
 ]
 
 export default function Features1() {
@@ -30,34 +36,33 @@ export default function Features1() {
   return (
     <div className="bg-white py-24 sm:py-32" id="about">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-base/7 font-semibold text-primary">Limitless File Sharing</h2>
-          <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Send Your Files in Seconds
-          </p>
+        <div className="mx-auto max-w-xl text-center">
+          <img src={logo} className="w-16 mx-auto"></img>
+          {/* <p className="text-base/7 font-semibold text-primary">Benefits</p> */}
+          <h2 className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
+            {/* Send Your Files in Seconds */}
+            Why Choose Transfer.zip?
+          </h2>
           <p className="mt-6 text-lg/8 text-gray-600">
-            {/* Tired of hitting file size limits on email, Discord, or WeTransfer?
-            With our Pro plan, you can send up to 1TB per transfer.  */}
-            No cookie popup, no terms of service box, no user tracking - just fast and secure file sharing. With our Pro plan, you can send up to 1TB per transfer.
+            <span className="font-bold">We do things differently here:</span> We have no cookie popups, no terms of service box and no user tracking - just fast and secure file sharing.
+            {/* With our Pro plan, you can send up to 1TB per transfer. */}
           </p>
         </div>
-        {/* <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
-          <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-2">
+        <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
+          <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16">
             {features.map((feature) => (
-              <div key={feature.name} className="flex flex-col">
-                <dt className="text-base font-semibold leading-7 text-gray-900">
-                  <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-                    <BIcon center name={feature.icon} aria-hidden="true" className="h-6 w-6 text-white" />
+              <div key={feature.name} className="relative pl-16">
+                <dt className="text-lg font-bold text-gray-900">
+                  <div className="absolute left-0 top-0 flex size-10 items-center justify-center rounded-lg bg-primary">
+                    <BIcon center name={feature.icon} aria-hidden="true" className="size-6 text-white" />
                   </div>
                   {feature.name}
                 </dt>
-                <dd className="mt-1 flex flex-auto flex-col text-base leading-7 text-gray-600">
-                  <p className="flex-auto">{feature.description}</p>
-                </dd>
+                <dd className="mt-2 text-base/7 text-gray-600">{feature.description}</dd>
               </div>
             ))}
           </dl>
-        </div> */}
+        </div>
         <div className="mx-auto mt-16">
           <video
             // autoPlay

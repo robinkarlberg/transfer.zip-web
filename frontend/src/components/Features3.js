@@ -8,20 +8,19 @@ import ProductDemo from "../img/ProductDemo.mp4"
 
 const features = [
   {
-    name: 'Tough Encryption',
-    description: 'Your files are protected by AES-256, the same algorithm used by militaries and governments around the world.',
-    icon: "lock",
+    name: 'Track Views and Downloads',
+    description: "The dashboard allows you to track when download links are clicked, and files downloaded - ensuring you have full visibility over the distribution of your files.",
+    icon: "envelope-fill",
+    cta: "Send Files By Email",
+    href: "/signup"
   },
   {
-    name: 'Large Storage',
-    description: "No other file transfer service supports storing such large files, for such a small price.",
-    icon: "database",
+    name: 'Blazing Fast Speeds',
+    description: "All files are downloaded from the same high-speed servers, ensuring your ideas get shared as quickly as possible.",
+    icon: "fast-forward-fill",
+    cta: "Send Files Fast",
+    href: "/signup"
   },
-  // {
-  //   name: 'Statistics',
-  //   description: 'Easily see if people have viewed or downloaded your files. ',
-  //   icon: "bar-chart",
-  // },
 ]
 
 export default function Features3() {
@@ -30,13 +29,13 @@ export default function Features3() {
   return (
     <div className="bg-white py-24 sm:py-32" id="features">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-base/7 font-semibold text-primary">365 Days Expiration Time</h2>
+        <div className="mx-auto max-w-xl text-center">
+          <h2 className="text-base/7 font-semibold text-primary">Send Files By Email</h2>
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Big Files That Don't Expire
+            Share Files with Your Whole Organisation.
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            With the Pro plan, your transfers are available for 365 days before they expire, ensuring they are always downloaded in time.
+            Transfer files to as many as 200 email addresses simultaneously - directly from the dashboard.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
@@ -51,11 +50,11 @@ export default function Features3() {
                 </dt>
                 <dd className="mt-1 flex flex-auto flex-col text-base leading-7 text-gray-600">
                   <p className="flex-auto">{feature.description}</p>
-                  {/* <p className="mt-6">
-                    <a href={feature.href} className="text-sm font-semibold leading-6 text-primary">
-                      Learn more <span aria-hidden="true">→</span>
-                    </a>
-                  </p> */}
+                  <p className="mt-6">
+                    <Link to={feature.href} className="text-sm font-semibold leading-6 text-primary">
+                      {feature.cta} <span aria-hidden="true">→</span>
+                    </Link>
+                  </p>
                 </dd>
               </div>
             ))}
