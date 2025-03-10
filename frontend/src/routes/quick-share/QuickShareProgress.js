@@ -211,7 +211,7 @@ export default function QuickShareProgress({ }) {
     // Setup WebRtc websocket connection, and close it when leaving page.
     // startProgress is run before websocket connects, but webrtc.js code handles the waiting for us
     // so nothing to worry about here
-    if(transferDirection === undefined) {
+    if (transferDirection === undefined) {
       return navigate("/quick-share")
     }
     WebRtc.createWebSocket()
@@ -299,9 +299,13 @@ export default function QuickShareProgress({ }) {
               <p className="sm:text-lg font-bold text-purple-500">
                 {hasBeenSentLink ? "Keep your browser window open" : "This link will expire when tab is closed."}
               </p>
-              {!hasBeenSentLink && transferDirection == "S" &&
+              {!hasBeenSentLink &&
                 <span className="text-purple-500 font-medium">
-                  Make the files available for 365 days <span className="transition-all group-hover:ms-1">&rarr;</span>
+                  {transferDirection == "S" ?
+                    "Make the files available for 365 days" :
+                    "Make the link available for 365 days"
+                  }
+                  <span className="transition-all group-hover:ms-1">&rarr;</span>
                 </span>
               }
             </div>
