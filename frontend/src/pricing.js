@@ -12,7 +12,7 @@ export default {
         "Up to 200GB per transfer",
         "Files expire after 14 days",
         "Send files by email",
-        isInEU() ? "Proudly hosted in the EU 🇪🇺" : "Ultrafast and secure",
+        isInEU() ? "Proudly hosted in the EU 🇪🇺" : "Track views and downloads",
       ],
     },
     {
@@ -26,7 +26,7 @@ export default {
         "Files stay up for 365 days",
         "Send files to 200 emails",
         "Priority support",
-        isInEU() ? "Proudly hosted in the EU 🇪🇺" : "Ultrafast and secure",
+        isInEU() ? "Proudly hosted in the EU 🇪🇺" : "Track views and downloads",
         // "Password protect files",
       ],
       featured: true,
