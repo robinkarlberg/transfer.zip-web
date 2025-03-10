@@ -8,7 +8,7 @@ export default {
       description: "For personal use and quick file sharing.",
       features: [
         // "Quick-Share files of any size",
-        "Unlimited transfers",
+        <span><b>Unlimited transfers</b></span>,
         "Up to 200GB per transfer",
         "Files expire after 14 days",
         "Send files by email",
@@ -22,7 +22,7 @@ export default {
       features: [
         // "Quick-Share files of any size",
         <span><b>Unlimited transfers</b></span>,
-        <span>Up to <b>1TB per transfer</b></span>,
+        <span>Up to <b>1TB</b> per transfer</span>,
         <span>Files stay up for <b>365 days</b></span>,
         <span>Send files to <b>200 emails</b></span>,
         "Priority support",

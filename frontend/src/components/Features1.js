@@ -38,7 +38,7 @@ export default function Features1() {
           <p className="mt-6 text-lg/8 text-gray-600">
             {/* Tired of hitting file size limits on email, Discord, or WeTransfer?
             With our Pro plan, you can send up to 1TB per transfer.  */}
-            No cookie popup, no terms of service box, no user tracking - just fast and secure file sharing. With our Pro plan, you can send up to 1TB per transfer. 
+            No cookie popup, no terms of service box, no user tracking - just fast and secure file sharing. With our Pro plan, you can send up to 1TB per transfer.
           </p>
         </div>
         {/* <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
