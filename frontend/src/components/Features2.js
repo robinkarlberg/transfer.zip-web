@@ -36,7 +36,7 @@ export default function Features2() {
             Privacy By Default
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            All files are encrypted regardless of what plan you choose. <Link to="/legal/privacy-policy" className="text-primary hover:underline">We value your privacy</Link>.
+            All files are encrypted regardless of what plan you choose. Unlike many services, <Link to="/legal/privacy-policy" className="text-primary hover:underline">we value your privacy</Link>.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">

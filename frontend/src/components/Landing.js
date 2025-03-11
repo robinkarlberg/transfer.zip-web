@@ -92,7 +92,7 @@ export default function Example() {
                 to="signup"
                 className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
-                Create Account
+                Send Large Files &rarr;
               </Link>
               <a href="https://github.com/robinkarlberg/transfer.zip-web" className="text-sm font-semibold leading-6 text-gray-900">
                 <BIcon name={"star"} /> Star on GitHub {stars ? `(${stars})` : ""} <span aria-hidden="true">→</span>

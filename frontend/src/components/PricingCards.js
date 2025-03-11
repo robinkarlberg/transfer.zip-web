@@ -54,8 +54,8 @@ export default function PricingCards({ tiers, compact, buttonText, onTierSelecte
           'mt-8 space-y-3 text-sm/6 sm:mt-10',
         )}
       >
-        {tier.features.map((feature) => (
-          <li key={feature} className="flex gap-x-3">
+        {tier.features.map((feature, index) => (
+          <li key={index} className="flex gap-x-3">
             <BIcon
               name={"check-lg"}
               aria-hidden="true"
