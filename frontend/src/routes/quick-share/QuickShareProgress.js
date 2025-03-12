@@ -93,6 +93,7 @@ export default function QuickShareProgress({ }) {
         // zipStream.readable.pipeTo(fileStream)
         // console.log(fileList[0].name)
         let currentZipWriter = zipStream.writable(fileList[0].relativePath).getWriter()
+
         zipStream.readable.pipeTo(fileStream)
 
         fileTransfer.onfiledata = (data, fileInfo) => {
@@ -119,17 +120,61 @@ export default function QuickShareProgress({ }) {
         }
       }
       else {
-        const fileWriter = fileStream.getWriter()
+        // const fileWriter = fileStream.getWriter();
+
+        // Create a TransformStream to handle chunking the data
+        const chunkSize = 524288; // 524,288 bytes
+        const transformer = new TransformStream({
+          start(controller) {
+            this.chunk = new Uint8Array(chunkSize);
+            this.offset = 0;
+          },
+          transform(data, controller) {
+            let dataOffset = 0;
+            while (dataOffset < data.length) {
+              let remainingSpaceInChunk = chunkSize - this.offset;
+              let bytesToWrite = Math.min(remainingSpaceInChunk, data.length - dataOffset);
+
+              this.chunk.set(data.slice(dataOffset, dataOffset + bytesToWrite), this.offset);
+              this.offset += bytesToWrite;
+              dataOffset += bytesToWrite;
+
+              if (this.offset === chunkSize) {
+                controller.enqueue(this.chunk);
+                this.chunk = new Uint8Array(chunkSize);
+                this.offset = 0;
+              }
+            }
+          },
+          flush(controller) {
+            if (this.offset > 0) {
+              controller.enqueue(this.chunk.slice(0, this.offset));
+            }
+          }
+        });
+
+        const chunkStream = transformer.readable;
+        const writer = transformer.writable.getWriter();
+
+        // Connect the chunk stream to the file writer
+        chunkStream.pipeTo(fileStream);
+
         fileTransfer.onfiledata = (data, fileInfo) => {
-          fileWriter.write(data)
-        }
+          writer.write(data).catch(err => {
+            console.error("Error writing chunk:", err);
+            setTransferState(TRANSFER_STATE_FAILED);
+          });
+        };
 
         fileTransfer.onfilefinished = (fileInfo) => {
-          fileWriter.close()
-          filesDone++
-
-          setTransferState(TRANSFER_STATE_FINISHED)
-        }
+          writer.close().then(() => {
+            filesDone++;
+            setTransferState(TRANSFER_STATE_FINISHED);
+          }).catch(err => {
+            console.error("Error closing writer:", err);
+            setTransferState(TRANSFER_STATE_FAILED);
+          });
+        };
       }
     }
 
