@@ -6,7 +6,7 @@ import { humanFileSize, humanFileType } from "../../transferUtils"
 import { humanFileName } from "../../utils"
 import Progress from "./Progress"
 
-export default function FileUpload({ initialFiles, onFilesChange, onFiles, onReceiveClicked, progressElement, showProgress, buttonText, singleFile, disabled, accept, children }) {
+export default function FileUpload({ initialFiles, onFilesChange, onFiles, onReceiveClicked, progressElement, showProgress, buttonText, singleFile, disabled, accept, headless, children }) {
 
   const _buttonText = buttonText ?? "Transfer"
 
@@ -51,7 +51,7 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
         <input ref={fileInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" multiple={singleFile ? undefined : true} accept={accept}></input>
         <input ref={folderInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" webkitdirectory="true"></input>
       </form>
-      <div className={`text-start relative w-full rounded-2xl bg-white border shadow-lg flex flex-col min-h-56 ${onReceiveClicked ? "mt-8" : ""}`}>
+      <div className={`text-start relative w-full flex flex-col min-h-56 ${headless ? "" : "rounded-2xl bg-white border shadow-lg"} ${onReceiveClicked ? "mt-8" : ""}`}>
         {onReceiveClicked && (
           <div className="absolute w-full flex">
             <button type="button" onClick={onReceiveClicked} className="text-sm font-medium text-gray-500 relative mx-auto bg-white border py-1 px-10 rounded-t-lg transition-all h-7 -top-7 hover:h-8 hover:-top-8 hover:text-primary">

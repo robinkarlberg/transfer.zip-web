@@ -42,7 +42,7 @@ const Wrapper = ({ children }) => {
         <div className="h-16 border-b flex items-center justify-between px-4">
           <div>
             <a href="#" className="">
-              <span className="sr-only">Your Company</span>
+              <span className="sr-only">Transfer.zip</span>
               <img
                 alt="Logo"
                 src={logo}
@@ -66,7 +66,7 @@ const Wrapper = ({ children }) => {
           <DialogPanel className="fixed inset-y-0 right-0 z-20 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center justify-between">
               <a href="#" className="-m-1.5 p-1.5">
-                <span className="sr-only">Your Company</span>
+                <span className="sr-only">Transfer.zip</span>
                 <img
                   alt="Logo"
                   src={logo}
@@ -269,7 +269,7 @@ export default function Dashboard({ }) {
             <Button icon={"gear"} text={"Settings"} to={"/app/settings"} className={"w-full"} />
           </div>
         </div>
-        <div className="grow overflow-y-auto md:h-[100vh] z-10 mx-auto max-w-6xl">
+        <div className="grow overflow-y-auto md:h-[100vh] z-10 mx-auto">
           <Outlet />
         </div>
         <Transition show={showSidebar}>
