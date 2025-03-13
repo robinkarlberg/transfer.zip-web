@@ -1,4 +1,4 @@
-import { Link, Outlet, useLoaderData, useRouteLoaderData } from "react-router-dom";
+import { Link, Outlet, useLoaderData, useLocation, useRouteLoaderData } from "react-router-dom";
 import BIcon from "../../components/BIcon";
 import GenericPage from "../../components/dashboard/GenericPage";
 import TransferList from "../../components/dashboard/TransferList";
@@ -15,7 +15,9 @@ export default function TransfersPage({ }) {
 
   const { transfers } = useRouteLoaderData("dashboard")
 
-  const [selectedTab, setSelectedTab] = useState(tabs[0])
+  const { state } = useLocation()
+
+  const [selectedTab, setSelectedTab] = useState(tabs[state?.tabIndex ?? 0])
 
   const filteredTransfers = useMemo(() => transfers.filter(transfer => transfer.direction == (selectedTab.name == "Sent" ? "send" : "receive")), [transfers, selectedTab])
 

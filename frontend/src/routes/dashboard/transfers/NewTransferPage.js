@@ -55,8 +55,6 @@ export default function NewTransferPage({ }) {
   const tooLittleStorage = useMemo(() => storage ? totalBytes > storage.maxBytes - storage.usedBytes : false, [totalBytes, storage])
 
   const handleFiles = async files => {
-    const formData = new FormData(formRef.current)
-
     const form = formRef.current;
     if (!form.checkValidity()) {
       form.reportValidity();
@@ -66,26 +64,47 @@ export default function NewTransferPage({ }) {
     setFilesToUpload(files) // Just to be safe
     setUploadingFiles(true)
 
+    const formData = new FormData(formRef.current)
     const name = formData.get("name")
     const description = formData.get("description")
     const expiresInDays = formData.get("expiresInDays")
 
-    const { transfer } = await newTransfer({ name, description, expiresInDays })
+    const { transfer } = await newTransfer({ name, description, expiresInDays, direction })
 
-    await uploadTransferFiles(transfer.id, files, progress => {
+    await uploadTransferFiles(transfer.secretCode, files, progress => {
       console.log(progress)
       setBytesTransferred(progress.bytesTransferred)
     })
     if (emailRecipients.length > 0) {
       await sendTransferByEmail(transfer.id, emailRecipients)
     }
+
     revalidator.revalidate()
-    navigate(`/app/transfers`, { replace: true })
+    navigate(`/app/transfers`, { replace: true, state: { tabIndex: 0 } })
     setSelectedTransferId(transfer.id)
   }
 
   const handleCreateLinkClicked = async e => {
-    
+    const form = formRef.current;
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const formData = new FormData(formRef.current)
+    const name = formData.get("name")
+    const email = formData.get("email")
+    const description = formData.get("description")
+    const expiresInDays = formData.get("expiresInDays")
+
+    const { transfer } = await newTransfer({ name, description, expiresInDays, direction })
+    if (email) {
+      await sendTransferByEmail(transfer.id, email)
+    }
+
+    revalidator.revalidate()
+    navigate(`/app/transfers`, { replace: true, state: { tabIndex: 1 } })
+    setSelectedTransferId(transfer.id)
   }
 
   const handleEmailAdd = () => {
@@ -170,7 +189,7 @@ export default function NewTransferPage({ }) {
                   Create a link where others can send files to you.
                 </p>
               </div>}
-              {direction == "send" && <div className="col-span-2">
+              <div className="col-span-2">
                 <label htmlFor="name" className="block text-sm/6 font-medium text-gray-900">
                   Name
                 </label>
@@ -184,21 +203,7 @@ export default function NewTransferPage({ }) {
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
                   />
                 </div>
-              </div>}
-              {direction == "receive" && <div className="col-span-2">
-                <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
-                  Recipient<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>
-                </label>
-                <div className="relative mt-2 flex items-center">
-                  <input
-                    id="email"
-                    placeholder="user@example.com"
-                    name="email"
-                    type="email"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
-              </div>}
+              </div>
               <div className="col-span-1">
                 <label htmlFor="expiresInDays" className="block text-sm/6 font-medium text-gray-900">
                   Expires
@@ -218,6 +223,20 @@ export default function NewTransferPage({ }) {
                   </select>
                 </div>
               </div>
+              {direction == "receive" && <div className="col-span-2">
+                <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
+                  Recipient<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>
+                </label>
+                <div className="relative mt-2 flex items-center">
+                  <input
+                    id="email"
+                    placeholder="user@example.com"
+                    name="email"
+                    type="email"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>}
               {direction == "send" && <div className="col-span-full">
                 <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
                   Recipients<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>

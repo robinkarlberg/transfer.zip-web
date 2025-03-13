@@ -19,9 +19,9 @@ const MAIN_MENU = [
 
 const SECONDARY_MENU = [
   { icon: "lightning", text: "Quick Share", to: "/quick-share" },
-  { icon: "file-earmark-zip", text: "Create Zip", to: "/tools/zip-files-online" },
-  { icon: "file-earmark-zip", text: "View Zip", to: "/tools/unzip-files-online" },
-  { icon: "transparency", text: "HEIC to JPG", to: "/tools/heic-convert" },
+  // { icon: "file-earmark-zip", text: "Create Zip", to: "/tools/zip-files-online" },
+  // { icon: "file-earmark-zip", text: "View Zip", to: "/tools/unzip-files-online" },
+  // { icon: "transparency", text: "HEIC to JPG", to: "/tools/heic-convert" },
 ]
 
 export async function loader({ params }) {

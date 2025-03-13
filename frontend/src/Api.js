@@ -110,14 +110,14 @@ export async function joinWaitlist(email) {
 
 const CHUNK_SIZE = 5 * 1024 * 1024 // 5MB
 
-export function uploadTransferFiles(transferId, files, onProgress) {
+export function uploadTransferFiles(secretCode, files, onProgress) {
     let bytesTransferred = 0
     let currentFileIndex = 0
     return new Promise((resolve, reject) => {
         // Initialize the WebSocket connection
         const apiUrlWithoutProtocol = API_URL.replace(/^https?:/, '')
         const wsProtocol = window.location.protocol == "https:" ? "wss:" : "ws:"
-        const ws = new WebSocket(`${wsProtocol}//${apiUrlWithoutProtocol}/transfer/upload/${transferId}`)
+        const ws = new WebSocket(`${wsProtocol}//${apiUrlWithoutProtocol}/transfer/upload/${secretCode}`)
 
         let packetBudget = 10  // 50MB
 

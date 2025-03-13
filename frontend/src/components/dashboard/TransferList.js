@@ -15,9 +15,11 @@ const Entry = ({ transfer }) => {
 
   const transferLink = useMemo(() => getTransferDownloadLink(transfer), [transfer])
 
-  const { id, name, files, expiresAt } = transfer
+  const { id, name, files, expiresAt, direction } = transfer
   const expiryDate = parseTransferExpiryDate(expiresAt)
   const isSelected = id === displayedTransferId
+
+  const disabled = direction == "send" && files.length == 0
 
   const handleCopy = async e => {
     if (await tryCopyToClipboard(transferLink)) {
@@ -44,7 +46,7 @@ const Entry = ({ transfer }) => {
   }
 
   const handleClicked = async e => {
-    if (files.length == 0) {
+    if (disabled) {
 
     }
     else {
@@ -58,7 +60,7 @@ const Entry = ({ transfer }) => {
         <div>
           <h3 className={`text-xl font-bold me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
           <div className="text-sm text-gray-600 font-semibold">
-            <span className="">{files.length == 0 ? <><BIcon name={"file-earmark-arrow-up"} /> Incomplete</> : <>{files.length} file{files.length != 1 ? "s" : ""}</>}</span>
+            <span className="">{files.length == 0 ? (direction == "send" ? <><BIcon name={"file-earmark-arrow-up"} /> Incomplete</> : <><BIcon name={"hourglass-split"} /> Waiting for files...</>) : <>{files.length} file{files.length != 1 ? "s" : ""}</>}</span>
             {transfer.statistics.downloads.length > 1 ?
               <span><BIcon name="dot" /><i className="bi bi-arrow-down-circle-fill me-1"></i>{transfer.statistics.downloads.length} downloads</span>
               :
@@ -78,14 +80,21 @@ const Entry = ({ transfer }) => {
         </div>
         <div className="hidden items-center gap-2 group-hover:flex">
           {
-            files.length == 0 ?
+            disabled ?
               <Link onClick={handleDelete} className="text-sm text-red-500 bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50">
                 <BIcon name={"trash"} />
               </Link>
               :
-              <Link onClick={handleCopyLinkClicked} className="text-sm text-primary bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50">
-                <BIcon name={"copy"} /> Copy Link
-              </Link>
+              (
+                direction == "receive" && files.length > 0 ?
+                  <Link onClick={handleCopyLinkClicked} className="text-sm text-primary bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50">
+                    <BIcon name={"download"} /> Download
+                  </Link>
+                  :
+                  <Link onClick={handleCopyLinkClicked} className="text-sm text-primary bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50">
+                    <BIcon name={"copy"} /> Copy Link
+                  </Link>
+              )
           }
           {/* <Link onClick={handleSendByEmailClicked} className="text-sm text-primary bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50">
             <BIcon name={"send"} /> Send by Email
