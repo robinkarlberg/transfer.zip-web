@@ -257,8 +257,12 @@ export const getTransferRequestUploadLink = (transferRequest) => {
     return `${window.location.protocol}//${window.location.host}/upload/${transferRequest.secretCode}`
 }
 
-export async function deleteTransferRequest(transferRequestId) {
-    return await post(`/transferrequest/${transferRequestId}/delete`)
+export async function activateTransferRequest(transferRequestId) {
+    return await post(`/transferrequest/${transferRequestId}/activate`)
+}
+
+export async function deactivateTransferRequest(transferRequestId) {
+    return await post(`/transferrequest/${transferRequestId}/deactivate`)
 }
 
 // upload
