@@ -97,6 +97,8 @@ const Entry = ({ transfer }) => {
             {transfer.hasTransferRequest ?
               <>
                 <Link onClick={handleDownloadClicked} className="underline hover:text-primary">Download Files</Link>
+                <BIcon name="dot" />
+                <Link onClick={handleDelete} className="underline hover:text-red-600">Delete</Link>
               </>
               :
               <>
@@ -104,8 +106,6 @@ const Entry = ({ transfer }) => {
                 <BIcon name="dot" />
                 <Link onClick={handleCopyLinkClicked} className="underline hover:text-primary">Copy Link</Link>
               </>}
-                <BIcon name="dot" />
-                <Link onClick={handleDelete} className="underline hover:text-red-600">Delete</Link>
           </div>
         </div>
         {/* <div className="flex items-center gap-2">
