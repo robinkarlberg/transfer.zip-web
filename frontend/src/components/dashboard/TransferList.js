@@ -63,7 +63,12 @@ const Entry = ({ transfer }) => {
     <button onClick={handleClicked} className={`group text-start shadow-sm rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-4 py-3 group hover:bg-gray-50`}>
       <div className="">
         <div>
-          <h3 className={`text-lg font-bold me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
+          <div className="flex">
+            <h3 className={`text-lg font-bold me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
+            {hasTransferRequest && <div className="ms-1">
+              <span className="text-xs bg-gray-400 text-white font-semibold rounded-full px-1.5 py-0.5">Requested</span>
+            </div>}
+          </div>
           <div className="text-sm text-gray-600 font-medium group-hover:hidden">
             <span className="">
               {!finishedUploading ?
@@ -92,17 +97,15 @@ const Entry = ({ transfer }) => {
             {transfer.hasTransferRequest ?
               <>
                 <Link onClick={handleDownloadClicked} className="underline hover:text-primary">Download Files</Link>
-                <BIcon name="dot" />
-                <Link onClick={handleDelete} className="underline hover:text-primary">Delete</Link>
               </>
               :
               <>
                 <Link className="underline hover:text-primary">Edit</Link>
                 <BIcon name="dot" />
                 <Link onClick={handleCopyLinkClicked} className="underline hover:text-primary">Copy Link</Link>
-                <BIcon name="dot" />
-                <Link onClick={handleDelete} className="underline hover:text-primary">Delete</Link>
               </>}
+                <BIcon name="dot" />
+                <Link onClick={handleDelete} className="underline hover:text-red-600">Delete</Link>
           </div>
         </div>
         {/* <div className="flex items-center gap-2">

@@ -9,17 +9,16 @@ import { deleteTransferRequest, getTransferRequestUploadLink } from "../../Api"
 
 const Entry = ({ transferRequest }) => {
   const revalidator = useRevalidator()
+  const navigate = useNavigate()
 
   const { displayNotification } = useContext(ApplicationContext)
   const { displayedTransferId, setSelectedTransferId, hideSidebar, showSidebar } = useContext(DashboardContext)
 
   const uploadLink = useMemo(() => getTransferRequestUploadLink(transferRequest), [transferRequest])
 
-  const { id, name, files, expiresAt, hasTransferRequest, finishedUploading } = transferRequest
-  const expiryDate = parseTransferExpiryDate(expiresAt)
+  const { id, name } = transferRequest
+  
   const isSelected = id === displayedTransferId
-
-  const disabled = !hasTransferRequest && !finishedUploading
 
   const handleCopy = async e => {
     if (await tryCopyToClipboard(uploadLink)) {
@@ -45,12 +44,7 @@ const Entry = ({ transferRequest }) => {
   }
 
   const handleClicked = async e => {
-    if (disabled) {
-
-    }
-    else {
-
-    }
+    // navigate("/app/transfers", { replace: true, state: { tabIndex: 2 } })
   }
 
   return (
@@ -60,7 +54,13 @@ const Entry = ({ transferRequest }) => {
           <h3 className={`text-lg font-bold me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
           <div className="text-sm text-gray-600 font-medium group-hover:hidden">
             <span className="">
-              <><BIcon name={"hourglass-split"} /> Waiting for files...</>
+              {
+                transferRequest.receivedTransfersCount == 0 ?
+                <><BIcon name={"hourglass-split"} /> Waiting for files...</>
+                :
+                <><BIcon name={"arrow-down"} /> {transferRequest.receivedTransfersCount} transfer{transferRequest.receivedTransfersCount != 1 && "s"} received</>
+              }
+              
             </span>
             {/* {transfer.statistics.downloads.length > 1 ?
               <span><BIcon name="dot" /><i className="bi bi-arrow-down-circle-fill me-1"></i>{transfer.statistics.downloads.length} downloads</span>
@@ -83,7 +83,7 @@ const Entry = ({ transferRequest }) => {
             <BIcon name="dot" /> */}
             <Link onClick={handleCopyLinkClicked} className="underline hover:text-primary">Copy Link</Link>
             <BIcon name="dot" />
-            <Link onClick={handleDelete} className="underline hover:text-primary">Delete Link</Link>
+            <Link onClick={handleDelete} className="underline hover:text-red-600">Delete Link</Link>
           </div>
         </div>
       </div>
