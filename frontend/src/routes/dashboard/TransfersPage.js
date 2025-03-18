@@ -5,21 +5,24 @@ import TransferList from "../../components/dashboard/TransferList";
 import { getTransferList } from "../../Api";
 import { classNames } from "../../utils";
 import { useMemo, useState } from "react";
+import TransferRequestList from "../../components/dashboard/TransferRequestList";
 
 const tabs = [
   { name: 'Sent', icon: "file-earmark-arrow-up" },
+  { name: 'Requests', icon: "envelope-arrow-down" },
   { name: 'Received', icon: "file-earmark-arrow-down" },
 ]
 
 export default function TransfersPage({ }) {
 
-  const { transfers } = useRouteLoaderData("dashboard")
+  const { transfers, transferRequests } = useRouteLoaderData("dashboard")
 
   const { state } = useLocation()
 
   const [selectedTab, setSelectedTab] = useState(tabs[state?.tabIndex ?? 0])
 
-  const filteredTransfers = useMemo(() => transfers.filter(transfer => transfer.direction == (selectedTab.name == "Sent" ? "send" : "receive")), [transfers, selectedTab])
+  const sentTransfers = useMemo(() => transfers.filter(transfer => !transfer.hasTransferRequest), [transfers])
+  const receivedTransfers = useMemo(() => transfers.filter(transfer => transfer.hasTransferRequest), [transfers])
 
   return (
     <GenericPage title={"Transfers"}>
@@ -75,7 +78,9 @@ export default function TransfersPage({ }) {
           </div>
         </div>
       </div>
-      <TransferList transfers={filteredTransfers} />
+      {selectedTab.name == "Sent" && <TransferList transfers={sentTransfers} />}
+      {selectedTab.name == "Requests" && <TransferRequestList transferRequests={transferRequests} />}
+      {selectedTab.name == "Received" && <TransferList transfers={receivedTransfers} />}
       <Outlet />
     </GenericPage>
   )

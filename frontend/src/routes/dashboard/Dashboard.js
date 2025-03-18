@@ -7,7 +7,7 @@ import { ApplicationContext } from "../../providers/ApplicationProvider";
 
 import logo from "../../img/icon.png"
 import { Dialog, DialogPanel, Disclosure, DisclosureButton, DisclosurePanel, Transition } from "@headlessui/react";
-import { getTransferList, getUserStorage, getSettings } from "../../Api";
+import { getTransferList, getUserStorage, getSettings, getTransferRequestList } from "../../Api";
 import TransferSidebar from "../../components/dashboard/sidebars/TransferSidebar";
 import NewTransferModal from "../../components/elements/modals/NewTransferModal";
 import UpgradeModal from "../../components/elements/modals/UpgradeModal";
@@ -15,6 +15,7 @@ import UpgradeModal from "../../components/elements/modals/UpgradeModal";
 const MAIN_MENU = [
   { icon: "house", text: "Overview", to: "/app" },
   { icon: "send", text: "Transfers", to: "/app/transfers" },
+  // { icon: "envelope-arrow-down", text: "Requests", to: "/app/requests" },
 ]
 
 const SECONDARY_MENU = [
@@ -25,11 +26,12 @@ const SECONDARY_MENU = [
 ]
 
 export async function loader({ params }) {
-  const [{ transfers }, settings] = await Promise.all([
+  const [{ transfers }, settings, { transferRequests }] = await Promise.all([
     getTransferList(),
-    getSettings()
+    getSettings(),
+    getTransferRequestList()
   ])
-  return { transfers, settings }
+  return { transfers, settings, transferRequests }
 }
 
 export const DashboardContext = createContext({})

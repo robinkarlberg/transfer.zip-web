@@ -27,13 +27,16 @@ import QuickSharePage from "./routes/QuickSharePage";
 import QuickShareProgress from "./routes/quick-share/QuickShareProgress";
 import QuickShareNew from "./routes/quick-share/QuickShareNew";
 import NewTransferPage from "./routes/dashboard/transfers/NewTransferPage";
-import DownloadPage, { HydrateFallback as DownloadPageHydrateFallback, loader as DownloadPageLoader } from "./routes/DownloadPage";
+import DownloadPage from "./routes/DownloadPage";
 import UnzipFilesPage from "./routes/tools/UnzipFilesPage";
 import ZipFilesPage from "./routes/tools/ZipFilesPage";
 import { isSelfHosted } from "./utils";
 import HashInterceptor from "./components/HashInterceptor";
 import SelfHostApp from "./routes/selfhost/SelfHostApp";
 import HeicConvertPage from "./routes/tools/HeicConvertPage";
+import DownloadPageSuccess, { loader as DownloadPageLoader } from "./components/DownloadPageSuccess";
+import DownloadPageError from "./components/DownloadPageError";
+import DownloadPageUpload, { loader as UploadPageLoader } from "./components/DownloadPageUpload";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -43,7 +46,7 @@ const router = createBrowserRouter(
           <Route element={<ApplicationProvider />}>
             <Route path="/onboarding" element={<OnboardingPage />} />
             <Route element={<RequireOnboarded />}>
-              <Route path="/app" element={<Dashboard />} id="dashboard" loader={DashboardLoader} errorElement={<Navigate to={"/login"} replace/>}>
+              <Route path="/app" element={<Dashboard />} id="dashboard" loader={DashboardLoader} errorElement={<Navigate to={"/login"} replace />}>
                 {/* <Route index element={<Navigate to="/app/overview" replace />} /> */}
                 <Route index element={<OverviewPage />} />
                 <Route path="transfers" element={<TransfersPage />} />
@@ -58,7 +61,12 @@ const router = createBrowserRouter(
                 <Route index element={<QuickShareNew />} />
                 <Route path="progress" element={<QuickShareProgress />} />
               </Route>
-              <Route path="/transfer/:secretCode" element={<DownloadPage />} loader={DownloadPageLoader} HydrateFallback={DownloadPageHydrateFallback} />
+              <Route path="/transfer/:secretCode" element={<DownloadPage />}>
+                <Route index element={<DownloadPageSuccess />} loader={DownloadPageLoader} errorElement={<DownloadPageError/>} />
+              </Route>
+              <Route path="/upload/:secretCode" element={<DownloadPage />}>
+                <Route index element={<DownloadPageUpload />} loader={UploadPageLoader} errorElement={<DownloadPageError/>} />
+              </Route>
               <Route path="/legal/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/legal/terms-and-conditions" element={<TermsAndConditionsPage />} />
               <Route path="/tools">

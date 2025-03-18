@@ -238,6 +238,36 @@ export const getTransferAttachmentLink = (transfer) => {
     return `${API_URL}/download/${transfer.secretCode}`
 }
 
+// transferrequest
+
+export async function getTransferRequestList() {
+    return await get(`/transferrequest/list`)
+}
+
+export async function newTransferRequest(data) {
+    return await post(`/transferrequest/new`, data)
+}
+
+export async function sendTransferRequestByEmail(transferRequestId, emails) {
+    return await post(`/transferrequest/${transferRequestId}/sendbyemail`, { emails })
+}
+
+export const getTransferRequestUploadLink = (transferRequest) => {
+    if (!transferRequest) return null
+    return `${window.location.protocol}//${window.location.host}/upload/${transferRequest.secretCode}`
+}
+
+export async function deleteTransferRequest(transferRequestId) {
+    return await post(`/transferrequest/${transferRequestId}/delete`)
+}
+
+// upload
+
+
+export async function getUpload(secretCode) {
+    return await get(`/upload/${secretCode}`)
+}
+
 // download
 
 export async function getDownload(secretCode) {

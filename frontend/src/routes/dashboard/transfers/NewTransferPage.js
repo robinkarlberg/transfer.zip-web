@@ -1,5 +1,5 @@
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { newTransfer, sendTransferByEmail, uploadTransferFiles } from "../../../Api";
+import { newTransfer, newTransferRequest, sendTransferByEmail, sendTransferRequestByEmail, uploadTransferFiles } from "../../../Api";
 import GenericPage from "../../../components/dashboard/GenericPage";
 import FileUpload from "../../../components/elements/FileUpload";
 import { useLocation, useNavigate, useRevalidator, useRouteLoaderData } from "react-router-dom";
@@ -31,11 +31,8 @@ export default function NewTransferPage({ }) {
   const navigate = useNavigate()
   const { state } = useLocation()
 
-  const [filesToUpload, setFilesToUpload] = useState(null)
-  const [uploadingFiles, setUploadingFiles] = useState(false)
   const [emailRecipients, setEmailRecipients] = useState([])
-
-  const [direction, setDirection] = useState("send")
+  const [direction, setDirection] = useState(state?.direction || "send")
 
   const formRef = useRef(null)
   const emailRef = useRef(null)
@@ -43,6 +40,9 @@ export default function NewTransferPage({ }) {
   useEffect(() => {
     hideSidebar()
   }, [])
+
+  const [uploadingFiles, setUploadingFiles] = useState(false)
+  const [filesToUpload, setFilesToUpload] = useState(null)
 
   const totalBytes = useMemo(() => {
     if (filesToUpload) {
@@ -69,7 +69,7 @@ export default function NewTransferPage({ }) {
     const description = formData.get("description")
     const expiresInDays = formData.get("expiresInDays")
 
-    const { transfer } = await newTransfer({ name, description, expiresInDays, direction })
+    const { transfer } = await newTransfer({ name, description, expiresInDays })
 
     await uploadTransferFiles(transfer.secretCode, files, progress => {
       console.log(progress)
@@ -93,18 +93,15 @@ export default function NewTransferPage({ }) {
 
     const formData = new FormData(formRef.current)
     const name = formData.get("name")
-    const email = formData.get("email")
     const description = formData.get("description")
-    const expiresInDays = formData.get("expiresInDays")
 
-    const { transfer } = await newTransfer({ name, description, expiresInDays, direction })
-    if (email) {
-      await sendTransferByEmail(transfer.id, email)
+    const { transferRequest } = await newTransferRequest({ name, description })
+    if (emailRecipients.length > 0) {
+      await sendTransferRequestByEmail(transferRequest.id, emailRecipients)
     }
 
     revalidator.revalidate()
     navigate(`/app/transfers`, { replace: true, state: { tabIndex: 1 } })
-    setSelectedTransferId(transfer.id)
   }
 
   const handleEmailAdd = () => {
@@ -178,7 +175,7 @@ export default function NewTransferPage({ }) {
                     value={"receive"}
                     className="cursor-pointer rounded-full px-2.5 py-1 text-gray-500 data-[checked]:bg-primary data-[checked]:text-white"
                   >
-                    Receive
+                    Request
                   </Radio>
                 </RadioGroup>
               </fieldset>
@@ -191,12 +188,12 @@ export default function NewTransferPage({ }) {
               </div>}
               <div className="col-span-2">
                 <label htmlFor="name" className="block text-sm/6 font-medium text-gray-900">
-                  Name
+                  Title
                 </label>
                 <div className="mt-2">
                   <input
                     id="name"
-                    placeholder="Untitled Transfer"
+                    placeholder={direction == "send" ? "Untitled Transfer" : "Send Me Files"}
                     name="name"
                     type="text"
                     required={true}
@@ -204,7 +201,7 @@ export default function NewTransferPage({ }) {
                   />
                 </div>
               </div>
-              <div className="col-span-1">
+              {direction == "send" && <div className="col-span-1">
                 <label htmlFor="expiresInDays" className="block text-sm/6 font-medium text-gray-900">
                   Expires
                 </label>
@@ -222,22 +219,8 @@ export default function NewTransferPage({ }) {
                     {EXPIRATION_TIMES.map(item => <option key={item.days} value={item.days} disabled={!item[user.plan]}>{item.period}</option>)}
                   </select>
                 </div>
-              </div>
-              {direction == "receive" && <div className="col-span-2">
-                <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
-                  Recipient<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>
-                </label>
-                <div className="relative mt-2 flex items-center">
-                  <input
-                    id="email"
-                    placeholder="user@example.com"
-                    name="email"
-                    type="email"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-                  />
-                </div>
               </div>}
-              {direction == "send" && <div className="col-span-full">
+              <div className="col-span-full">
                 <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
                   Recipients<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>
                 </label>
@@ -259,7 +242,7 @@ export default function NewTransferPage({ }) {
                 <ul className="max-h-40 overflow-y-auto overflow-x-hidden">
                   {emailRecipients.map((email, index) => <AddedEmailField key={index} email={email} onAction={handleEmailFieldAction} />)}
                 </ul>
-              </div>}
+              </div>
               <div className="col-span-full">
                 <label htmlFor="description" className="block text-sm/6 font-medium text-gray-900">
                   Message<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>
