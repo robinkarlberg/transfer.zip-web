@@ -19,7 +19,7 @@ const Entry = ({ transfer }) => {
   const expiryDate = parseTransferExpiryDate(expiresAt)
   const isSelected = id === displayedTransferId
 
-  const disabled = !hasTransferRequest && !finishedUploading
+  const disabled = !finishedUploading || hasTransferRequest
 
   const handleCopy = async e => {
     if (await tryCopyToClipboard(transferLink)) {
