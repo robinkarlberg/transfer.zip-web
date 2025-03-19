@@ -90,7 +90,7 @@ export default function OverviewPage({ }) {
                     ))}
                 </dl>
             </div>
-            <h3 className="font-bold text-xl mb-1">Recent Transfers</h3>
+            <h3 className="font-semibold mb-1 text-gray-500">Recent</h3>
             <TransferList transfers={recentTransfers} />
         </GenericPage>
     )

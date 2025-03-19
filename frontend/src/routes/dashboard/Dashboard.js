@@ -7,7 +7,7 @@ import { ApplicationContext } from "../../providers/ApplicationProvider";
 
 import logo from "../../img/icon.png"
 import { Dialog, DialogPanel, Disclosure, DisclosureButton, DisclosurePanel, Transition } from "@headlessui/react";
-import { getTransferList, getUserStorage, getSettings } from "../../Api";
+import { getTransferList, getUserStorage, getSettings, getTransferRequestList } from "../../Api";
 import TransferSidebar from "../../components/dashboard/sidebars/TransferSidebar";
 import NewTransferModal from "../../components/elements/modals/NewTransferModal";
 import UpgradeModal from "../../components/elements/modals/UpgradeModal";
@@ -15,21 +15,23 @@ import UpgradeModal from "../../components/elements/modals/UpgradeModal";
 const MAIN_MENU = [
   { icon: "house", text: "Overview", to: "/app" },
   { icon: "send", text: "Transfers", to: "/app/transfers" },
+  // { icon: "envelope-arrow-down", text: "Requests", to: "/app/requests" },
 ]
 
 const SECONDARY_MENU = [
   { icon: "lightning", text: "Quick Share", to: "/quick-share" },
-  { icon: "file-earmark-zip", text: "Create Zip", to: "/tools/zip-files-online" },
-  { icon: "file-earmark-zip", text: "View Zip", to: "/tools/unzip-files-online" },
-  { icon: "transparency", text: "HEIC to JPG", to: "/tools/heic-convert" },
+  // { icon: "file-earmark-zip", text: "Create Zip", to: "/tools/zip-files-online" },
+  // { icon: "file-earmark-zip", text: "View Zip", to: "/tools/unzip-files-online" },
+  // { icon: "transparency", text: "HEIC to JPG", to: "/tools/heic-convert" },
 ]
 
 export async function loader({ params }) {
-  const [{ transfers }, settings] = await Promise.all([
+  const [{ transfers }, settings, { transferRequests }] = await Promise.all([
     getTransferList(),
-    getSettings()
+    getSettings(),
+    getTransferRequestList()
   ])
-  return { transfers, settings }
+  return { transfers, settings, transferRequests }
 }
 
 export const DashboardContext = createContext({})
@@ -42,7 +44,7 @@ const Wrapper = ({ children }) => {
         <div className="h-16 border-b flex items-center justify-between px-4">
           <div>
             <a href="#" className="">
-              <span className="sr-only">Your Company</span>
+              <span className="sr-only">Transfer.zip</span>
               <img
                 alt="Logo"
                 src={logo}
@@ -66,7 +68,7 @@ const Wrapper = ({ children }) => {
           <DialogPanel className="fixed inset-y-0 right-0 z-20 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center justify-between">
               <a href="#" className="-m-1.5 p-1.5">
-                <span className="sr-only">Your Company</span>
+                <span className="sr-only">Transfer.zip</span>
                 <img
                   alt="Logo"
                   src={logo}
@@ -269,7 +271,7 @@ export default function Dashboard({ }) {
             <Button icon={"gear"} text={"Settings"} to={"/app/settings"} className={"w-full"} />
           </div>
         </div>
-        <div className="grow overflow-y-auto md:h-[100vh] z-10 mx-auto max-w-6xl">
+        <div className="grow overflow-y-auto md:h-[100vh] z-10 mx-auto">
           <Outlet />
         </div>
         <Transition show={showSidebar}>
