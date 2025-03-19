@@ -259,7 +259,7 @@ export default function NewTransferPage({ }) {
               </div>
             </form>
             <div className={`col-span-full ${direction == "send" ? "block" : "hidden"}`}>
-              <FileUpload headless initialFiles={state?.files} onFilesChange={setFilesToUpload} onFiles={handleFiles} progressElement={<Progress max={totalBytes} now={bytesTransferred} showUnits={true} />} showProgress={uploadingFiles} disabled={tooLittleStorage} />
+              <FileUpload headless initialFiles={state?.files} onFilesChange={setFilesToUpload} onFiles={handleFiles} progressElement={<Progress max={totalBytes} now={bytesTransferred} showUnits={true} finishedText={"Processing files, wait a minute."} />} showProgress={uploadingFiles} disabled={tooLittleStorage} />
             </div>
             {direction == "receive" && <div className="col-span-full">
               <div className="pb-4 flex px-6 mt-4">

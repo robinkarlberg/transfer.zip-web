@@ -49,7 +49,7 @@ export default function DownloadPageUpload({ }) {
       </div>
       <hr className="my-2 mx-6" />
       <div>
-        <FileUpload headless onFilesChange={setFilesToUpload} onFiles={handleFiles} progressElement={<Progress max={totalBytes} now={bytesTransferred} showUnits={true} />} showProgress={uploadingFiles} />
+        <FileUpload headless onFilesChange={setFilesToUpload} onFiles={handleFiles} progressElement={<Progress max={totalBytes} now={bytesTransferred} showUnits={true} finishedText={"Files sent! You can now close this window."} />} showProgress={uploadingFiles} />
       </div>
     </div>
   )
