@@ -686,9 +686,9 @@ export class RtcSession {
 		}
 	}
 
-	async call(recipientId, currentUserCanFallback) {
+	async call(recipientId, forceFallback) {
 		await this.waitForWebsocket()
-		return this._call(recipientId, currentUserCanFallback)
+		return this._call(recipientId, forceFallback)
 	}
 
 	close() {
