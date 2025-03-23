@@ -133,7 +133,7 @@ export function uploadTransferFiles(secretCode, files, onProgress) {
 
                 reader.onload = async (e) => {
                     while(packetBudget <= 0) {
-                        console.log("PACKET BUDGET == 0:", packetBudget, " - Waiting...")
+                        // console.log("PACKET BUDGET == 0:", packetBudget, " - Waiting...")
                         await new Promise(resolve => setTimeout(resolve, 5))   // ugly af
                     }
 
