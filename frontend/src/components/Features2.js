@@ -8,14 +8,18 @@ import ProductDemo from "../img/ProductDemo.mp4"
 
 const features = [
   {
-    name: 'Tough Encryption',
-    description: 'Your files are protected by AES-256, the same algorithm used by militaries and governments around the world.',
-    icon: "lock",
+    name: 'The Easiest Way to Receive Files',
+    description: 'No Transfer.zip account is needed for others - simply provide them with an upload link. It is the easiest way to receive files on the web.',
+    icon: "arrow-down",
+    cta: "Easily Receive Files",
+    href: "/signup"
   },
   {
-    name: 'Large Storage',
-    description: "No other file transfer service supports storing such large files, for such a small price.",
-    icon: "database",
+    name: 'Complete Control',
+    description: "You can disable or re-enable your personal links at any time. Create as many links as you desire.",
+    icon: "toggle-on",
+    cta: "Create Your First Link",
+    href: "/signup"
   },
   // {
   //   name: 'Statistics',
@@ -31,12 +35,12 @@ export default function Features2() {
     <div className="bg-white py-24 sm:py-32" id="features">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-base/7 font-semibold text-primary">User Privacy</h2>
+          <h2 className="text-base/7 font-semibold text-primary">Receive Files with a Link</h2>
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Privacy By Default
+            Easily Receive Files from Anyone
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            All files are encrypted regardless of what plan you choose. Unlike many services, <Link to="/legal/privacy-policy" className="text-primary hover:underline">we value your privacy</Link>.
+            Generate dedicated links for others to upload files directly to you. You can embed these upload links on your website, distribute them, or email them.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
@@ -51,11 +55,11 @@ export default function Features2() {
                 </dt>
                 <dd className="mt-1 flex flex-auto flex-col text-base leading-7 text-gray-600">
                   <p className="flex-auto">{feature.description}</p>
-                  {/* <p className="mt-6">
-                    <a href={feature.href} className="text-sm font-semibold leading-6 text-primary">
-                      Learn more <span aria-hidden="true">→</span>
-                    </a>
-                  </p> */}
+                  <p className="mt-6">
+                    <Link to={feature.href} className="text-sm font-semibold leading-6 text-primary">
+                      {feature.cta} <span aria-hidden="true">→</span>
+                    </Link>
+                  </p>
                 </dd>
               </div>
             ))}

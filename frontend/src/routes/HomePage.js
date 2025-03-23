@@ -14,8 +14,8 @@ export default function HomePage({ }) {
       <Landing />
       <TestimonialCloud/>
       <Features1/>
+      <Features2/>
       <Features3/>
-      {/* <Features2/> */}
       <FeaturesNew/>
       <TestimonialCloud/>
       <Pricing/>
