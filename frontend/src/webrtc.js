@@ -521,12 +521,12 @@ export class RtcSession {
 		}
 	}
 
-	async _call(recipientId, currentUserCanFallback) {
+	async _call(recipientId, forceFallback) {
 		if (this.closed) {
 			console.warn("[RtcSession] _call was called after close")
 			return null
 		}
-		console.log("[RtcSession] _call, currentUserCanFallback:", currentUserCanFallback)
+		console.log("[RtcSession] _call, forceFallback:", forceFallback)
 		const peerConnection = new RTCPeerConnection(RTC_CONF);
 		this.peerConnection = peerConnection;
 
@@ -563,7 +563,7 @@ export class RtcSession {
 		let doFallbackTimeoutId = -1//canUseFallback ? setTimeout(_doFallback, 8500) : -1
 		let peerConnectionFailedTimeoutId = -1
 
-		let useFallback = currentUserCanFallback
+		let useFallback = forceFallback
 
 		const doFallback = () => {
 			clearTimeout(doFallbackTimeoutId)
@@ -574,10 +574,10 @@ export class RtcSession {
 			this.onmessage = async data => {
 				if (data.type == SPKT_ANSWER && data.answer) {
 					console.log("Got answer:", data.answer)
-					if (data.currentUserCanFallback || currentUserCanFallback) {
+					if (data.currentUserCanFallback || forceFallback) {
 						useFallback = true
 						console.log("useFallback:", true)
-						doFallbackTimeoutId = setTimeout(_doFallback, 8200)
+						doFallbackTimeoutId = setTimeout(_doFallback,  forceFallback ? 1500 : 8200)
 					}
 					else {
 						console.log("useFallback:", false)
@@ -590,11 +590,11 @@ export class RtcSession {
 						}, 8200)
 					}
 					const remoteDesc = data.answer;
-					await peerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc));
+					if(!forceFallback) await peerConnection.setRemoteDescription(new RTCSessionDescription(remoteDesc));
 				}
 				else if (data.type == SPKT_CANDIDATE && data.candidate) {
 					console.log("Got candidate:", data.candidate)
-					await peerConnection.addIceCandidate(data.candidate)
+					if(!forceFallback) await peerConnection.addIceCandidate(data.candidate)
 				}
 				else if (data.type == SPKT_SWITCH_TO_FALLBACK_ACK) {
 					if (data.success) {
