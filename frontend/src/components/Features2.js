@@ -32,7 +32,7 @@ export default function Features2() {
   const { setShowWaitlistModal } = useContext(ApplicationContext)
 
   return (
-    <div className="bg-white py-24 sm:py-32" id="features">
+    <div className="bg-white py-24 sm:py-32" id="features-receive">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-base/7 font-semibold text-primary">Receive Files with a Link</h2>
