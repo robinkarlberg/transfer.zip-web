@@ -10,10 +10,16 @@ import BIcon from "../../../components/BIcon";
 import { ApplicationContext } from "../../../providers/ApplicationProvider";
 import { Radio, RadioGroup } from "@headlessui/react";
 
+const getMaxRecipientsForPlan = (plan) => {
+  if(plan == "pro") return 200;
+  else if(plan == "starter") return 25
+  else return 25
+}
+
 function AddedEmailField({ email, onAction }) {
   return (
-    <li className="px-2 py-1 text-sm group flex relative">
-      <span className="text-gray-600">{email}</span>
+    <li className="pt-1 text-sm group flex relative">
+      <span className="text-gray-800 font-medium bg-gray-200 px-2 py-0.5 rounded-full">{email}</span>
       <button type="button" onClick={() => onAction("delete", email)} className="bg-white rounded border px-1 absolute right-2 opacity-0 group-hover:opacity-100"><BIcon name={"x-lg"} /></button>
     </li>
   )
@@ -127,6 +133,10 @@ export default function NewTransferPage({ }) {
     }
   }
 
+  const handleEmailBlur = e => {
+    handleEmailAdd()
+  }
+
   const handleEmailFieldAction = (action, email) => {
     if (action == "delete") {
       setEmailRecipients(emailRecipients.filter(v => v !== email))
@@ -222,12 +232,13 @@ export default function NewTransferPage({ }) {
               </div>}
               <div className="col-span-full">
                 <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
-                  Recipients<span className="ms-2 text-gray-400 font-normal text-xs">Optional</span>
+                  Recipients<span className="ms-2 text-gray-400 font-normal text-xs">{emailRecipients.length > 0 ? (emailRecipients.length + " / " + getMaxRecipientsForPlan(user.plan)) : "Optional"}</span>
                 </label>
                 <div className="relative mt-2 flex items-center">
                   <input
                     ref={emailRef}
                     onKeyDown={handleEmailInputKeyDown}
+                    onBlur={handleEmailBlur}
                     id="email"
                     placeholder="user@example.com"
                     type="email"
