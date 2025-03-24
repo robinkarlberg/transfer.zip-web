@@ -54,10 +54,10 @@ const Entry = ({ transferRequest }) => {
   }
 
   return (
-    <button onClick={handleClicked} className={`group text-start shadow-sm rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-4 py-3 group hover:bg-gray-50`}>
+    <button onClick={handleClicked} className={`hover:cursor-default group text-start shadow-sm rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-5 py-4 group`}>
       <div className="">
         <div>
-          <h3 className={`text-lg font-bold me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
+          <h3 className={`text-lg font-bold mb-0.5 me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
           <div className="text-sm text-gray-600 font-medium group-hover:hidden">
             <span className="">
               {
