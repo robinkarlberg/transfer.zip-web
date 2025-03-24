@@ -58,13 +58,13 @@ export default function OverviewPage({ }) {
         },
     ]
 
-    const gridClassNames = showSidebar ? "xl:grid-cols-3" : "lg:grid-cols-3"
+    const gridClassNames = showSidebar ? "xl:grid-cols-2" : "lg:grid-cols-2"
 
     return (
         <GenericPage title={"Overview"}>
             <div className="mb-4">
                 {/* <h3 className="text-base font-semibold leading-6 text-gray-900">Statistics</h3> */}
-                <dl className={`mt-5 grid grid-cols-1 gap-5 ${gridClassNames}`}>
+                <dl className={`mt-5 grid grid-cols-1 gap-5 ${gridClassNames} max-w-xl`}>
                     {stats.map((item) => (
                         <div
                             key={item.name}
