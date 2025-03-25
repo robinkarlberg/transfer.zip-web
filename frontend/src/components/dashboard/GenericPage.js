@@ -9,7 +9,7 @@ export default function GenericPage({ title, category, side, children, flex, ful
                 <div className="pb-4 flex flex-row justify-between">
                     <div>
                         {category && <h5 className="font-semibold text-primary">{category}</h5>}
-                        <h1 className="text-3xl font-bold">{title}</h1>
+                        <h1 className="text-4xl font-semibold tracking-tight">{title}</h1>
                     </div>
                     <div>
                         {side}

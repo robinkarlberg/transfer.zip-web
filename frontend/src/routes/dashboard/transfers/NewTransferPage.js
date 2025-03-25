@@ -153,7 +153,7 @@ export default function NewTransferPage({ }) {
   return (
     <div className="min-h-screen flex flex-col items-stretch sm:bg-gray-50">
       <div className="">
-        <h1 className="text-3xl sm:text-4xl font-bold text-center mt-4 mb-2 sm:mt-12 sm:mb-8">New Transfer</h1>
+        <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-center mt-4 mb-2 sm:mt-12 sm:mb-8">New Transfer</h1>
         <div className="flex flex-col gap-4">
           {tooLittleStorage && (
             <div className="w-full max-w-96 px-4 sm:px-0">
