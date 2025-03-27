@@ -156,6 +156,7 @@ export const tryCopyToClipboard = async (value) => {
 }
 
 export function parseTransferExpiryDate(expiresAt) {
+    if(!expiresAt) return false
     const date = new Date(expiresAt)
     if (date.getTime() == 0) return false
     return date

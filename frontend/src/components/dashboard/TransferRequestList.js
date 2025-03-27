@@ -121,6 +121,9 @@ export default function TransferRequestList({ transferRequests }) {
 
   return (
     <div className="">
+      {transferRequests.length == 0 && (
+        <EmptySpace onClick={() => navigate("/app/transfers/new", { state: { direction: "receive" } })} buttonText={"Create Request Link"} title={"Your request links will appear here"} subtitle={"You can view or revoke invdividual links."} />
+      )}
       <div className={`grid grid-cols-1 gap-2 mb-2`}>
         {activeRequests.map((transferRequest, index) => <Entry key={transferRequest.id} transferRequest={transferRequest} />)}
       </div>
@@ -128,15 +131,6 @@ export default function TransferRequestList({ transferRequests }) {
       <div className={`grid grid-cols-1 gap-2`}>
         {inactiveRequests.map((transferRequest, index) => <Entry key={transferRequest.id} transferRequest={transferRequest} />)}
       </div>
-      {transferRequests.length == 0 && (
-        <EmptySpace onClick={() => navigate("/app/transfers/new", { state: { direction: "receive" } })} buttonText={"Create Request Link"} title={"Your request links will appear here"} subtitle={"You can view or revoke invdividual links."} />
-        // <div className="text-center py-16 rounded-xl border-dashed border-2">
-        //   <h3 className="font-semibold text-2xl mb-1">Your transfers will appear here</h3>
-        //   <p className="text-gray-600">
-        //     You can see views and download statistics, edit, send or delete them.
-        //   </p>
-        // </div>
-      )}
     </div>
   )
 }

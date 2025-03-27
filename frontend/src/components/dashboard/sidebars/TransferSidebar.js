@@ -2,10 +2,10 @@ import { useContext, useMemo, useRef, useState } from "react"
 import { DashboardContext } from "../../../routes/dashboard/Dashboard"
 import { DialogTitle } from "@headlessui/react"
 import BIcon from "../../BIcon"
-import { tryCopyToClipboard } from "../../../utils"
+import { parseTransferExpiryDate, tryCopyToClipboard } from "../../../utils"
 import { ApplicationContext } from "../../../providers/ApplicationProvider"
 import { deleteTransfer, getTransferDownloadLink, putTransfer, sendTransferByEmail } from "../../../Api"
-import { useRevalidator } from "react-router-dom"
+import { useRevalidator, useRouteLoaderData } from "react-router-dom"
 import { humanFileSize } from "../../../transferUtils"
 import { AuthContext } from "../../../providers/AuthProvider"
 import Modal from "../../elements/Modal"
@@ -27,6 +27,9 @@ export default function TransferSidebar({ }) {
   const { displayNotification, displayErrorModal } = useContext(ApplicationContext)
   const { selectedTransfer, hideSidebar } = useContext(DashboardContext)
 
+  const { settings } = useRouteLoaderData("dashboard")
+  const { EXPIRATION_TIMES } = settings
+
   const [showEmailList, setShowEmailList] = useState(false)
   const [showForwardTransfer, setShowForwardTransfer] = useState(false)
 
@@ -37,6 +40,35 @@ export default function TransferSidebar({ }) {
   const [editingMessage, setEditingMessage] = useState(false)
 
   const transferLink = useMemo(() => getTransferDownloadLink(selectedTransfer), [selectedTransfer])
+
+  const expiryDate = parseTransferExpiryDate(selectedTransfer?.expiresAt)
+  const formattedExpiryDate = expiryDate ? expiryDate.toISOString().split('T')[0] : ''
+
+  const maxPlanExpirationDays = useMemo(() =>
+    EXPIRATION_TIMES.filter(t => (user.plan == "pro" ? t.pro : t.starter)).reduce((max, current) =>
+      current.days > max.days ? current : max, { days: -1 }).days, [EXPIRATION_TIMES])
+
+  const maxExpiryDate = new Date(selectedTransfer?.createdAt || 0);
+  maxExpiryDate.setDate(maxExpiryDate.getDate() + maxPlanExpirationDays);
+  const formattedMaxExpiryDate = maxExpiryDate ? maxExpiryDate.toISOString().split('T')[0] : ''
+  const formattedMinExpiryDate = new Date().toISOString().split('T')[0]
+
+  const handleDateInputChange = async e => {
+    const elem = e.target
+    const value = elem.value
+
+    const expiresAt = new Date(value)
+
+    if (expiresAt <= new Date(formattedMinExpiryDate) || expiresAt > maxExpiryDate) {
+      // elem.value = formattedExpiryDate
+      return;
+    }
+
+    await putTransfer(selectedTransfer.id, { expiresAt })
+
+    displayNotification("Expiration Change", `The expiration date was successfully changed to ${expiresAt.toLocaleDateString()}`)
+    revalidator.revalidate()
+  }
 
   const textarea = useMemo(() => {
     return (
@@ -52,16 +84,18 @@ export default function TransferSidebar({ }) {
     )
   }, [selectedTransfer])
 
-  const nameInput = useMemo(() => {
+  const dateInput = useMemo(() => {
     return (
       <input
         key={Math.random()}
-        defaultValue={selectedTransfer?.hasName ? selectedTransfer.name : undefined}
-        placeholder={selectedTransfer?.hasName ? "" : "Untitled Transfer"}
-        id="name"
-        name="name"
-        type="text"
-        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6"
+        onChange={handleDateInputChange}
+        defaultValue={formattedExpiryDate}
+        id="expirationDate"
+        name="expirationDate"
+        type="date"
+        min={formattedMinExpiryDate}
+        max={formattedMaxExpiryDate}
+        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
       />
     )
   }, [selectedTransfer])
@@ -199,7 +233,9 @@ export default function TransferSidebar({ }) {
               <div className="mt-2 text-sm text-gray-600">
                 <span>{selectedTransfer.files.length} File{selectedTransfer.files.length > 1 ? "s" : ""}</span>
                 <BIcon name={"dot"} />
-                <span className="text-gray-600">{humanFileSize(selectedTransfer.size, true)}</span>
+                <span>{humanFileSize(selectedTransfer.size, true)}</span>
+                <BIcon name={"dot"} />
+                <span>Created {new Date(selectedTransfer.createdAt).toLocaleDateString()}</span>
               </div>
             }
           </div>
@@ -256,6 +292,14 @@ export default function TransferSidebar({ }) {
                       </div>
                     )}
                     <button onClick={() => setShowForwardTransfer(true)} className="sm:text-sm text-primary hover:text-primary-light hover:underline">Forward &rarr;</button>
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="expirationDate" className="block text-base font-bold leading-6 text-gray-900">
+                    Expiration Date
+                  </label>
+                  <div className="mt-2 max-w-52 min-w-40 w-fit">
+                    {dateInput}
                   </div>
                 </div>
               </div>

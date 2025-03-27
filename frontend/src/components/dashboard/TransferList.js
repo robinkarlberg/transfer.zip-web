@@ -59,6 +59,8 @@ const Entry = ({ transfer }) => {
     }
   }
 
+  const expiresSoon = expiryDate && (expiryDate - new Date() <= 3 * 24 * 60 * 60 * 1000)
+
   return (
     <button onClick={handleClicked} className={`group text-start shadow-sm rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-5 py-4 group ${hasTransferRequest ? "hover:cursor-default" : "hover:bg-gray-50"}`}>
       <div className="">
@@ -90,7 +92,11 @@ const Entry = ({ transfer }) => {
             }
             {expiryDate && <span>
               <BIcon name="dot" />
-              <i className="bi bi-clock me-1"></i>{humanTimeUntil(expiryDate)}
+              {expiresSoon ?
+                <span className="text-red-500"><i className="bi bi-clock-fill me-1"></i>Expires in {humanTimeUntil(expiryDate)}</span>
+                :
+                <><i className="bi bi-clock me-1"></i>{humanTimeUntil(expiryDate)}</>
+              }
             </span>}
           </div>
           <div className="text-sm text-gray-600 font-medium hidden group-hover:block">
