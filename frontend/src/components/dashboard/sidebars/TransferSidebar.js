@@ -66,7 +66,7 @@ export default function TransferSidebar({ }) {
 
     await putTransfer(selectedTransfer.id, { expiresAt })
 
-    displayNotification("Expiration Change", `The expiration date was successfully changed to ${expiresAt.toLocaleDateString()}`)
+    displayNotification("Expiration Changed", `The expiration date was successfully changed to ${expiresAt.toLocaleDateString()}`)
     revalidator.revalidate()
   }
 
