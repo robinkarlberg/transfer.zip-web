@@ -577,7 +577,7 @@ export class RtcSession {
 					if (data.currentUserCanFallback || forceFallback) {
 						useFallback = true
 						console.log("useFallback:", true)
-						doFallbackTimeoutId = setTimeout(_doFallback,  forceFallback ? 1500 : 8200)
+						doFallbackTimeoutId = setTimeout(_doFallback,  forceFallback ? 800 : 8200)
 					}
 					else {
 						console.log("useFallback:", false)

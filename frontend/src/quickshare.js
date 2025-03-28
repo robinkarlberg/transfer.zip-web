@@ -42,7 +42,7 @@ export const fileTransferServeFiles = async (fileTransfer, files) => {
   ///// CUT
 }
 
-export const call = async (recipientId, k) => {
+export const call = async (recipientId, k, forceFallback) => {
   const key = await crypto.subtle.importKey("jwk", {
       alg: "A256GCM",
       ext: true,
@@ -57,7 +57,7 @@ export const call = async (recipientId, k) => {
       console.log("[QuickShareProvider] [call] onclose")
   }
 
-  const channel = await rtcSession.call(recipientId, true)
+  const channel = await rtcSession.call(recipientId, forceFallback)
   return new FileTransfer(channel, key)
 }
 

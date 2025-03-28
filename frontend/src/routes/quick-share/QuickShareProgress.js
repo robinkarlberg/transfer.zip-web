@@ -220,7 +220,7 @@ export default function QuickShareProgress({ }) {
       setTransferState(TRANSFER_STATE_CONNECTING)
       // User has been sent a link, assuming upload on behalf or receive files
 
-      call(remoteSessionId, k).then(fileTransfer => {
+      call(remoteSessionId, k, totalBytes > 10_000_000).then(fileTransfer => {
         if (transferDirection == "R")
           fileTransferGetFileList(fileTransfer).then(fileList => recvDirection(fileTransfer, fileList))
         else
