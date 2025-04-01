@@ -37,6 +37,7 @@ import HeicConvertPage from "./routes/tools/HeicConvertPage";
 import DownloadPageSuccess, { loader as DownloadPageLoader } from "./components/DownloadPageSuccess";
 import DownloadPageError from "./components/DownloadPageError";
 import DownloadPageUpload, { loader as UploadPageLoader } from "./components/DownloadPageUpload";
+import ImpressumPage from "./routes/legal/ImpressumPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -67,6 +68,7 @@ const router = createBrowserRouter(
               <Route path="/upload/:secretCode" element={<DownloadPage />}>
                 <Route index element={<DownloadPageUpload />} loader={UploadPageLoader} errorElement={<DownloadPageError/>} />
               </Route>
+              <Route path="/legal/impressum" element={<ImpressumPage />} />
               <Route path="/legal/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/legal/terms-and-conditions" element={<TermsAndConditionsPage />} />
               <Route path="/tools">

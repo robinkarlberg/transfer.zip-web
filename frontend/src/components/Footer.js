@@ -60,8 +60,11 @@ export default function Footer({ }) {
                 <li className="mb-4">
                   <Link to="/legal/privacy-policy" className="hover:underline">Privacy Policy</Link>
                 </li>
-                <li>
+                <li className="mb-4">
                   <Link to="/legal/terms-and-conditions" className="hover:underline">Terms</Link>
+                </li>
+                <li>
+                  <Link to="/legal/impressum" className="hover:underline">Impressum</Link>
                 </li>
               </ul>
             </div>
