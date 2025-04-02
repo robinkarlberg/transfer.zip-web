@@ -90,6 +90,12 @@ export async function doVerification(email, token) {
     return await post("/auth/verification/do", { email, token })
 }
 
+// branding
+
+export async function getBrandingList() {
+    return await get(`/branding/list`)
+}
+
 // stripe
 
 export async function createCheckoutSession(tier) {

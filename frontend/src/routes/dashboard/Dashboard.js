@@ -7,7 +7,7 @@ import { ApplicationContext } from "../../providers/ApplicationProvider";
 
 import logo from "../../img/icon.png"
 import { Dialog, DialogPanel, Disclosure, DisclosureButton, DisclosurePanel, Transition } from "@headlessui/react";
-import { getTransferList, getUserStorage, getSettings, getTransferRequestList } from "../../Api";
+import { getTransferList, getUserStorage, getSettings, getTransferRequestList, getBrandingList } from "../../Api";
 import TransferSidebar from "../../components/dashboard/sidebars/TransferSidebar";
 import NewTransferModal from "../../components/elements/modals/NewTransferModal";
 import UpgradeModal from "../../components/elements/modals/UpgradeModal";
@@ -15,6 +15,7 @@ import UpgradeModal from "../../components/elements/modals/UpgradeModal";
 const MAIN_MENU = [
   { icon: "house", text: "Overview", to: "/app" },
   { icon: "send", text: "Transfers", to: "/app/transfers" },
+  { icon: "globe", selectedIcon: "globe", text: "Branding & Domains", to: "/app/branding" },
   // { icon: "envelope-arrow-down", text: "Requests", to: "/app/requests" },
 ]
 
@@ -26,12 +27,13 @@ const SECONDARY_MENU = [
 ]
 
 export async function loader({ params }) {
-  const [{ transfers }, settings, { transferRequests }] = await Promise.all([
+  const [{ transfers }, settings, { transferRequests }, { brandingList }] = await Promise.all([
     getTransferList(),
     getSettings(),
-    getTransferRequestList()
+    getTransferRequestList(),
+    getBrandingList()
   ])
-  return { transfers, settings, transferRequests }
+  return { transfers, settings, transferRequests, brandingList }
 }
 
 export const DashboardContext = createContext({})
@@ -187,13 +189,13 @@ export default function Dashboard({ }) {
     refreshStorage()
   }, [user])
 
-  const Button = ({ icon, text, to, onClick, className }) => {
+  const Button = ({ icon, selectedIcon, text, to, onClick, className }) => {
     const isActive = (to != "/app" && to != "/app/transfers") ? currentPage.startsWith(to) : (currentPage == to || currentPage == `${to}/`)
     const activeClassParent = isActive ? "text-primary bg-body-secondary font-semibold " : "text-secondary font-semibold "
 
     return (
       <button onClick={onClick || (() => navigate(to))} className={`hover:bg-body-secondary grow text-start text-sm px-4 py-2 flex items-center rounded-lg hover:text-primary ${activeClassParent} ${className}`}>
-        <BIcon className={`text-lg me-2`} name={`${icon}${isActive ? "-fill" : ""}`} />{text}
+        <BIcon className={`text-lg me-2`} name={selectedIcon ? (isActive ? selectedIcon : icon) : `${icon}${isActive ? "-fill" : ""}`} />{text}
       </button>
     )
   }

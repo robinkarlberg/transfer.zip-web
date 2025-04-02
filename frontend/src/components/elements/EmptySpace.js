@@ -5,7 +5,7 @@ export default function EmptySpace({ title, subtitle, onClick, buttonText }) {
       <p className="text-gray-600">
         {subtitle}
       </p>
-      {onClick && <button className="mt-4 bg-primary px-2 py-1 text-white rounded-lg shadow-sm" onClick={onClick}>{buttonText} &rarr;</button>}
+      {onClick && <button className="mt-4 bg-primary px-2 py-1 text-white rounded-lg shadow-sm hover:bg-primary-light" onClick={onClick}>{buttonText} &rarr;</button>}
     </div>
   )
 }

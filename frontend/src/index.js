@@ -38,6 +38,7 @@ import DownloadPageSuccess, { loader as DownloadPageLoader } from "./components/
 import DownloadPageError from "./components/DownloadPageError";
 import DownloadPageUpload, { loader as UploadPageLoader } from "./components/DownloadPageUpload";
 import ImpressumPage from "./routes/legal/ImpressumPage";
+import BrandingPage from "./routes/dashboard/branding/BrandingPage";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -53,6 +54,7 @@ const router = createBrowserRouter(
                 <Route path="transfers" element={<TransfersPage />} />
                 {/* <Route path="transfers/:id" element={<TransfersPage />} /> */}
                 <Route path="transfers/new" element={<NewTransferPage />} />
+                <Route path="branding" element={<BrandingPage />} />
                 <Route path="settings" element={<SettingsPage />} />
               </Route>
             </Route>
@@ -63,10 +65,10 @@ const router = createBrowserRouter(
                 <Route path="progress" element={<QuickShareProgress />} />
               </Route>
               <Route path="/transfer/:secretCode" element={<DownloadPage />}>
-                <Route index element={<DownloadPageSuccess />} loader={DownloadPageLoader} errorElement={<DownloadPageError/>} />
+                <Route index element={<DownloadPageSuccess />} loader={DownloadPageLoader} errorElement={<DownloadPageError />} />
               </Route>
               <Route path="/upload/:secretCode" element={<DownloadPage />}>
-                <Route index element={<DownloadPageUpload />} loader={UploadPageLoader} errorElement={<DownloadPageError/>} />
+                <Route index element={<DownloadPageUpload />} loader={UploadPageLoader} errorElement={<DownloadPageError />} />
               </Route>
               <Route path="/legal/impressum" element={<ImpressumPage />} />
               <Route path="/legal/privacy-policy" element={<PrivacyPolicyPage />} />
