@@ -96,6 +96,10 @@ export async function getBrandingList() {
     return await get(`/branding/list`)
 }
 
+export function getBrandingNewPostUrl() {
+    return `${API_URL}/branding/new`
+}
+
 // stripe
 
 export async function createCheckoutSession(tier) {

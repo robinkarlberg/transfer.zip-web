@@ -4,6 +4,8 @@ import BIcon from "../../../components/BIcon";
 import EmptySpace from "../../../components/elements/EmptySpace";
 import Modal from "../../../components/elements/Modal";
 import { useRef, useState } from "react";
+import QuestionCircle from "../../../components/elements/QuestionCircle";
+import { getBrandingNewPostUrl } from "../../../Api";
 
 export default function BrandingPage({ }) {
 
@@ -33,37 +35,41 @@ export default function BrandingPage({ }) {
     coverPhotoInputRef.current.click()
   }
 
-  const handleIconInputChange = (e) => {
-    const file = e.target.files[0];
+  const handleFile = (file, setBlob) => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setIconBlob(reader.result);
+        setBlob(reader.result);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleIconInputChange = (e) => {
+    const file = e.target.files[0];
+    handleFile(file, setIconBlob);
   }
 
   const handleCoverPhotoInputChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setCoverPhotoBlob(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
+    handleFile(file, setCoverPhotoBlob);
+  };
 
-  }
+  const handleCoverPhotoDrop = (e) => {
+    e.preventDefault();
+    const [file] = e.dataTransfer.files;
+    handleFile(file, setCoverPhotoBlob);
+  };
 
   return (
     <GenericPage title={"Branding & Domains"}>
-      <Modal show={showNewBrandModal} title={"New Brand Profile"} icon={"plus-lg"} size={"sm:max-w-xl"} buttons={[
+      <Modal show={showNewBrandModal} title={"New Brand Profile"} icon={"plus-lg"} size={"w-[36rem] sm:max-w-xl"} buttons={[
         { title: "Create", form: "newBrandForm" },
         { title: "Cancel", onClick: () => setShowNewBrandModal(false) }
       ]}>
         <div className="w-full">
-          <form onSubmit={handleSubmit} id="newBrandForm" className="grid grid-cols-5 gap-y-6 gap-x-2">
+          {/* <p className="text-gray-600 text-sm mb-4">Use personalized branding for transfers.</p> */}
+          <form method="POST" action={getBrandingNewPostUrl()} onSubmit={handleSubmit} id="newBrandForm" className="grid grid-cols-1 sm:grid-cols-5 gap-y-6 sm:gap-x-2 text-start">
             <div className="col-span-full mt-1">
               {/* <label htmlFor="photo" className="block text-sm font-medium leading-6 text-gray-900">
                 Brand Icon
@@ -110,13 +116,13 @@ export default function BrandingPage({ }) {
             </div>
             <div className="col-span-full">
               <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
-                Cover photo
+                Cover photo <QuestionCircle className={"text-gray-400"} text={"The cover photo will be displayed on the download page, as a background."} />
               </label>
-              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+              <div onDrop={handleCoverPhotoDrop} onDragOver={e => e.preventDefault()} className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                 {
                   coverPhotoBlob ?
                     <div>
-                      <button onClick={() => setCoverPhotoBlob(null)}><BIcon name={"x-lg"}/></button>
+                      <button onClick={() => setCoverPhotoBlob(null)}><BIcon name={"x-lg"} /></button>
                       <img className="w-full" src={coverPhotoBlob}></img>
                     </div>
                     :
@@ -125,7 +131,7 @@ export default function BrandingPage({ }) {
                       <div className="mt-4 flex text-sm leading-6 text-gray-600">
                         <label
                           onClick={handleChooseCoverPhoto}
-                          htmlFor="file-upload"
+                          htmlFor="cover-photo-upload"
                           className="relative cursor-pointer rounded-md bg-white font-semibold text-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 hover:text-primary-light"
                         >
                           <span>Upload a file</span>
@@ -136,6 +142,19 @@ export default function BrandingPage({ }) {
                       <p className="text-xs leading-5 text-gray-600">PNG or JPG up to 10MB</p>
                     </div>
                 }
+              </div>
+            </div>
+            <div className="col-span-full">
+              <label htmlFor="domain" className="block text-sm/6 font-medium text-gray-900">
+                Custom Domain <QuestionCircle className={"text-gray-400"} text={<span>Use your own domain, like <code>files.yourcompany.com</code> for transfers.</span>} />
+              </label>
+              <div className="mt-2">
+                <button
+                  type="button"
+                  className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                >
+                  Connect Domain
+                </button>
               </div>
             </div>
           </form>
