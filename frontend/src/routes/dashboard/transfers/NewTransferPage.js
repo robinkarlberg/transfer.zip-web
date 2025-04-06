@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { newTransfer, newTransferRequest, sendTransferByEmail, sendTransferRequestByEmail, uploadTransferFiles } from "../../../Api";
 import GenericPage from "../../../components/dashboard/GenericPage";
 import FileUpload from "../../../components/elements/FileUpload";
-import { useLocation, useNavigate, useRevalidator, useRouteLoaderData } from "react-router-dom";
+import { Link, useLocation, useNavigate, useRevalidator, useRouteLoaderData } from "react-router-dom";
 import Progress from "../../../components/elements/Progress";
 import { DashboardContext } from "../Dashboard";
 import { AuthContext } from "../../../providers/AuthProvider";
@@ -11,8 +11,8 @@ import { ApplicationContext } from "../../../providers/ApplicationProvider";
 import { Radio, RadioGroup } from "@headlessui/react";
 
 const getMaxRecipientsForPlan = (plan) => {
-  if(plan == "pro") return 200;
-  else if(plan == "starter") return 25
+  if (plan == "pro") return 200;
+  else if (plan == "starter") return 25
   else return 25
 }
 

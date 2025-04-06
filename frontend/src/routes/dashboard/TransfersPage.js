@@ -26,9 +26,9 @@ export default function TransfersPage({ }) {
 
   return (
     <GenericPage title={"Transfers"}>
-      {/* <div className="flex gap-2 mb-3">
+      <div className="md:hidden flex gap-2 mb-3">
         <Link to="new" className="bg-primary text-white text-sm rounded-lg py-1.5 px-3 shadow hover:bg-primary-light"><BIcon name={"plus-lg"} className={"me-2"} />New Transfer</Link>
-      </div> */}
+      </div>
       <div className="mb-2">
         <div className="sm:hidden">
           <label htmlFor="tabs" className="sr-only">
