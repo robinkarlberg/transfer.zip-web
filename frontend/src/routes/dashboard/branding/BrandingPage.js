@@ -5,7 +5,9 @@ import EmptySpace from "../../../components/elements/EmptySpace";
 import Modal from "../../../components/elements/Modal";
 import { useRef, useState } from "react";
 import QuestionCircle from "../../../components/elements/QuestionCircle";
-import { getBrandingNewPostUrl } from "../../../Api";
+import { checkDomainName, getBrandingNewPostUrl } from "../../../Api";
+import Spinner from "../../../components/Spinner";
+import Alert from "../../../components/elements/Alert";
 
 export default function BrandingPage({ }) {
 
@@ -18,6 +20,9 @@ export default function BrandingPage({ }) {
 
   const [iconBlob, setIconBlob] = useState(null)
   const [coverPhotoBlob, setCoverPhotoBlob] = useState(null)
+
+  const [domainState, setDomainState] = useState(null)
+  const domainInputRef = useRef(null)
 
   const handleSubmit = async e => {
 
@@ -61,6 +66,44 @@ export default function BrandingPage({ }) {
     handleFile(file, setCoverPhotoBlob);
   };
 
+  // Initialize the ref to keep track of timeout ID
+  const verifyTimeoutRef = useRef(null);
+
+  const handleDomainChange = (e) => {
+    const domainValue = e.target.value.trim();
+
+    if (isValidDomain(domainValue)) {
+      setDomainState("loading");
+
+      // Clear the previous timer if the user keeps typing
+      if (verifyTimeoutRef.current) {
+        clearTimeout(verifyTimeoutRef.current);
+      }
+
+      // Set a new timer to verify domain after 2 seconds if user stops typing
+      verifyTimeoutRef.current = setTimeout(() => {
+        verifyDomain(domainValue);
+      }, 2000);
+    } else {
+      setDomainState(null);
+    }
+  };
+
+  const isValidDomain = (domain) => {
+    const domainPattern = /^(?!:\/\/)([a-zA-Z0-9-_]+\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\.[a-zA-Z]{2,11}?$/;
+    return domainPattern.test(domain);
+  };
+
+  const verifyDomain = async (domain) => {
+    try {
+      await checkDomainName(domain);
+      setDomainState("verified"); // Assuming you want to set a success state when the domain is verified
+    } catch (error) {
+      console.error("Error verifying domain:", error);
+      setDomainState("failed"); // Assuming you want to set an error state if something goes wrong
+    }
+  };
+
   return (
     <GenericPage title={"Branding & Domains"}>
       <Modal show={showNewBrandModal} title={"New Brand Profile"} icon={"plus-lg"} size={"w-[36rem] sm:max-w-xl"} buttons={[
@@ -69,7 +112,7 @@ export default function BrandingPage({ }) {
       ]}>
         <div className="w-full">
           {/* <p className="text-gray-600 text-sm mb-4">Use personalized branding for transfers.</p> */}
-          <form method="POST" action={getBrandingNewPostUrl()} onSubmit={handleSubmit} id="newBrandForm" className="grid grid-cols-1 sm:grid-cols-5 gap-y-6 sm:gap-x-2 text-start">
+          <form method="POST" action={getBrandingNewPostUrl()} onSubmit={handleSubmit} id="newBrandForm" className="grid grid-cols-2 sm:grid-cols-5 gap-y-6 sm:gap-x-2 text-start">
             <div className="col-span-full mt-1">
               {/* <label htmlFor="photo" className="block text-sm font-medium leading-6 text-gray-900">
                 Brand Icon
@@ -116,7 +159,7 @@ export default function BrandingPage({ }) {
             </div>
             <div className="col-span-full">
               <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
-                Cover photo <QuestionCircle className={"text-gray-400"} text={"The cover photo will be displayed on the download page, as a background."} />
+                Background Image <QuestionCircle className={"text-gray-400"} text={"The image will be displayed on the download page, as a background."} />
               </label>
               <div onDrop={handleCoverPhotoDrop} onDragOver={e => e.preventDefault()} className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                 {
@@ -149,13 +192,41 @@ export default function BrandingPage({ }) {
                 Custom Domain <QuestionCircle className={"text-gray-400"} text={<span>Use your own domain, like <code>files.yourcompany.com</code> for transfers.</span>} />
               </label>
               <div className="mt-2">
-                <button
-                  type="button"
-                  className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                >
-                  Connect Domain
-                </button>
+                <div className="relative mt-2 flex items-center">
+                  <input
+                    ref={domainInputRef}
+                    name="domain"
+                    id="domain"
+                    type="text"
+                    placeholder="yourcompany.com"
+                    onChange={handleDomainChange}
+                    className="block w-full rounded-md border-0 py-1.5 pr-20 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                  />
+                  <div className="absolute right-2 flex">
+                    {domainState ?
+                      (
+                        domainState == "loading" ?
+                          <Spinner className={"text-gray-600"} />
+                          :
+                          (domainState == "verified" ?
+                            <span className="text-sm text-primary"><BIcon className={"text-base"} name={"check-lg"} /> Verified</span>
+                            :
+                            <></>
+                          )
+                      )
+                      :
+                      <></>
+                    }
+                  </div>
+                </div>
               </div>
+              {domainState == "failed" && <div className="mt-2">
+                <Alert title={"No CNAME Record"}>
+                  <p className="mb-1">To configure your domain correctly, add a CNAME record pointing to transfer.zip. You can still create a Brand Profile, but the domain will not work yet.</p>
+                  {/* <button type="button" className="hover:underline" onClick={() => verifyDomain(domainInputRef.current.value)}>Try Again &rarr;</button> */}
+                  <a target="_blank" className="hover:underline" href="https://support.google.com/a/answer/47283">Get Help <BIcon name={"box-arrow-up-right"} /></a>
+                </Alert>
+              </div>}
             </div>
           </form>
         </div>

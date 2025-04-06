@@ -100,6 +100,10 @@ export function getBrandingNewPostUrl() {
     return `${API_URL}/branding/new`
 }
 
+export async function checkDomainName(domainName) {
+    return await post("/branding/check-domain", { domainName })
+}
+
 // stripe
 
 export async function createCheckoutSession(tier) {
