@@ -71,6 +71,17 @@ map $http_upgrade $connection_upgrade {
 # }
 ```
 
+For Caddy (Thanks [7MinSec](https://github.com/7MinSec)):
+```
+zip.yourdomain.com {
+    reverse_proxy 127.0.0.1:9001
+
+    log {
+        output file /var/log/caddy/zip.log
+    }
+}
+```
+
 ## Local Development and Contributing
 > [!NOTE]
 > This project is tested with Docker Compose V2. Docker Compose V1 will most likely fail to build.
