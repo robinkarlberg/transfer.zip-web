@@ -74,9 +74,21 @@ export default function OnboardingPage({ }) {
 
   const { tiers } = pricing
 
+  const [isRequesting, setIsRequesting] = useState(false);
+
   const handleTierSelected = async (tier) => {
-    const res = await createCheckoutSession(tier)
-    window.location.href = res.url;
+    if (isRequesting) return; // If a request is already in progress, exit the function.
+
+    setIsRequesting(true); // Set the state to indicate a request is in progress.
+
+    try {
+      const res = await createCheckoutSession(tier);
+      window.location.href = res.url;
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+    } finally {
+      setIsRequesting(false); // Reset the state after the request is complete.
+    }
   }
 
   return (
