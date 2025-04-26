@@ -65,6 +65,8 @@ export default function OnboardingPage({ }) {
     return () => clearInterval(intervalId);
   }, []);
 
+  const [isRequesting, setIsRequesting] = useState(false);
+
   if (!user) return <></>
 
   const handleLogout = async () => {
@@ -73,8 +75,6 @@ export default function OnboardingPage({ }) {
   }
 
   const { tiers } = pricing
-
-  const [isRequesting, setIsRequesting] = useState(false);
 
   const handleTierSelected = async (tier) => {
     if (isRequesting) return; // If a request is already in progress, exit the function.
