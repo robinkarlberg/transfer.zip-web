@@ -35,9 +35,9 @@ export default function Footer({ }) {
                 <li className="mb-4">
                   <Link to="https://blog.transfer.zip/2025/04/05/how-to-send-large-video-files.html" className="hover:underline ">Send Large Video Files</Link>
                 </li>
-                <li className="mb-4">
+                {/* <li className="mb-4">
                   <Link to="https://blog.transfer.zip/2025/04/01/android-file-transfer-for-mac.html" className="hover:underline ">Android to Mac File Transfer</Link>
-                </li>
+                </li> */}
                 <li className="mb-4">
                   <Link to="https://blog.transfer.zip/2025/03/07/how-send-100gb-files-for-free.html" className="hover:underline ">Send 100GB Files Free</Link>
                 </li>
