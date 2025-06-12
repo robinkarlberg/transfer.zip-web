@@ -38,6 +38,16 @@
     }
   </script>
 
+  <script>
+    // Simulating condition check in HTML
+    if ('%REACT_APP_SELFHOST%' !== 'true') {
+      var script = document.createElement('script');
+      script.src = 'https://chatbot.w0bb.com/embed.js';
+      script.dataset.pub = "684ae46600ca6058a0e52a4e"
+      document.head.appendChild(script);
+    }
+  </script>
+
 </head>
 
 <body>
