@@ -3,6 +3,7 @@ import crypto from "crypto"
 
 import WaitlistEntry from './WaitlistEntry';
 import Transfer from './Transfer';
+import { getMaxStorageForPlan } from '@/lib/utils';
 
 const UserSchema = new mongoose.Schema({
     username: {
@@ -134,6 +135,21 @@ UserSchema.methods.isReadyToSendPromoEmail = function () {
 
 UserSchema.methods.registerPromoEmailSent = function () {
     this.lastPromoEmail = new Date();
+}
+
+UserSchema.methods.getStorage = async function () {
+    const transfers = await Transfer.find({ author: this._id })
+
+    const usedStorageBytes = transfers.reduce((total, transfer) => total + transfer.size, 0)
+    const maxStorageBytes = getMaxStorageForPlan(this.getPlan())
+
+    const storagePercent = Math.floor((usedStorageBytes / maxStorageBytes)) * 100
+
+    return {
+        usedStorageBytes,
+        maxStorageBytes,
+        storagePercent
+    }
 }
 
 UserSchema.virtual("verified").get(function () {

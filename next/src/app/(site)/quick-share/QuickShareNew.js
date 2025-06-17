@@ -1,16 +1,14 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import FileUpload from "../../components/elements/FileUpload";
-import { useContext, useEffect, useState } from "react";
-import { QuickShareContext } from "../QuickSharePage";
-import BIcon from "../../components/BIcon";
+"use client"
 
-export default function QuickShareNew({ }) {
+import BIcon from "@/components/BIcon"
+import FileUpload from "@/components/elements/FileUpload"
+import { QuickShareContext } from "@/context/QuickShareProvider"
+import { useContext } from "react"
+
+export default function ({ stars }) {
   const { hasBeenSentLink, k, remoteSessionId, transferDirection } = useContext(QuickShareContext)
 
-  const navigate = useNavigate()
-
   const handleFiles = (files) => {
-
     if (hasBeenSentLink) {
       navigate("progress", {
         state: {
@@ -52,7 +50,7 @@ export default function QuickShareNew({ }) {
       </div>
       <FileUpload onFiles={handleFiles} onReceiveClicked={hasBeenSentLink ? undefined : onReceiveClicked} />
       <p className="text-gray-500 text-xs mt-2">
-        We do not use cookies. Your files are protected with end-to-end encryption, meaning they remain unreadable by anyone but you.<br /><a href="https://github.com/robinkarlberg/transfer.zip-web" className="text-primary hover:underline">GitHub {stars && <span>({stars} <BIcon name={"star"}/>)</span>} </a>
+        We do not use cookies. Your files are protected with end-to-end encryption, meaning they remain unreadable by anyone but you.<br /><a href="https://github.com/robinkarlberg/transfer.zip-web" className="text-primary hover:underline">GitHub {stars && <span>({stars} <BIcon name={"star"} />)</span>} </a>
       </p>
     </div>
   )

@@ -59,8 +59,6 @@ export default function SignUpPage() {
     }
     catch (err) {
       setMessage(err.msg || err.message)
-    }
-    finally {
       setLoading(false)
     }
   }

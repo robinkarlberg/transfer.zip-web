@@ -6,7 +6,9 @@ export default function GenericPage({ title, children, side }) {
     return (
         <div>
             <div className="flex justify-between items-center">
-                <DashH2>{title}</DashH2>
+                <div className="mb-4">
+                    <DashH2>{title}</DashH2>
+                </div>
                 <div>
                     {side}
                 </div>

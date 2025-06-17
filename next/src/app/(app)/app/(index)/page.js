@@ -11,10 +11,7 @@ export default async function ({ }) {
 
   const transfers = await Transfer.find({ author: auth.user._id })
 
-  const usedStorageBytes = transfers.reduce((total, transfer) => total + transfer.size, 0)
-  const maxStorageBytes = getMaxStorageForPlan(auth.user.getPlan())
-
-  const storagePercent = Math.floor((usedStorageBytes / maxStorageBytes)) * 100
+  const { storagePercent } = await auth.user.getStorage()
 
   return (
     <GenericPage title={"Overview"}>

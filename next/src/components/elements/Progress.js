@@ -3,7 +3,7 @@ import { buildStyles, CircularProgressbar, CircularProgressbarWithChildren } fro
 import 'react-circular-progressbar/dist/styles.css';
 import Checkmark from "../Checkmark";
 import { Transition } from "@headlessui/react";
-import { humanFileSizePair, humanFileSizeWithUnit } from "../../transferUtils";
+import { humanFileSizePair, humanFileSizeWithUnit } from "@/lib/transferUtils";
 
 export default function Progress({ now, max, showUnits, finishedText }) {
   const percent = useMemo(() => !max ? 0 : Math.floor(now / max * 100), [now, max])

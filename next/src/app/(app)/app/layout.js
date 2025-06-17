@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 import ApplicationProvider from "@/context/ApplicationContext";
 import Sidebar from "./Sidebar";
+import { FileProvider } from "@/context/FileProvider";
 
 export const metadata = {
   title: "Dashboard"

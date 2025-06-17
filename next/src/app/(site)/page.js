@@ -7,6 +7,7 @@ import FeaturesNew from "@/components/FeaturesNew";
 import Landing from "@/components/Landing";
 import Pricing from "@/components/Pricing";
 import TestimonialCloud from "@/components/TestimonialCloud";
+import { FileProvider } from "@/context/FileProvider";
 
 export default async function () {
   const res = await fetch("https://api.github.com/repos/robinkarlberg/transfer.zip-web",

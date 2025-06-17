@@ -1,3 +1,5 @@
+"use client"
+
 import { useEffect } from "react"
 import { Outlet, useLocation, useNavigate } from "react-router-dom"
 

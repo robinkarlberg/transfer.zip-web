@@ -61,9 +61,10 @@ export default function SignInPage() {
     }
     catch (err) {
       setMessage(err.msg || err.message)
+      setLoading(false)
     }
     finally {
-      setLoading(false)
+      // setLoading(false)
     }
   }
 

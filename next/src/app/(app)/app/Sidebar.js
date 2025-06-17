@@ -9,6 +9,9 @@ import { usePathname, useSelectedLayoutSegment } from "next/navigation";
 import { ROLE_ADMIN } from "@/lib/roles";
 import BIcon from "@/components/BIcon";
 
+import icon from "@/img/icon.png"
+import Image from "next/image";
+
 // const DashButton = ({ children }) => {
 //   return (
 //     <div className="relative overflow-clip group rounded-lg bg-primary-100 hover:bg-white transition-colors duration-75">
@@ -93,7 +96,7 @@ export default function Sidebar({ user }) {
                     src="https://tailwindui.com/img/logos/mark.svg?color=primary&shade=600"
                     className="h-8 w-auto"
                   /> */}
-                  <h1 className="text-gray-900 text-2xl text-center font-semibold"><Link href="/">{process.env.NEXT_PUBLIC_SITE_NAME}</Link></h1>
+                  <h1 className="text-gray-900 text-2xl text-center font-bold"><Link href="/">{process.env.NEXT_PUBLIC_SITE_NAME}</Link></h1>
                 </div>
                 <nav className="flex flex-1 flex-col">
                   <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -165,14 +168,14 @@ export default function Sidebar({ user }) {
         {/* Static sidebar for desktop */}
         <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-gray-50 px-6">
+          <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
             <div className="flex h-16 shrink-0 items-center">
-              {/* <img
+              <Image
                 alt="Your Company"
-                src="https://tailwindui.com/img/logos/mark.svg?color=primary&shade=600"
-                className="h-8 w-auto"
-              /> */}
-              <h1 className="text-gray-900 text-2xl text-center font-semibold"><Link href="/">{process.env.NEXT_PUBLIC_SITE_NAME}</Link></h1>
+                src={icon}
+                className="h-8 w-auto me-2"
+              />
+              <h1 className="text-gray-900 text-2xl text-center font-bold"><Link href="/">{process.env.NEXT_PUBLIC_SITE_NAME}</Link></h1>
             </div>
             <nav className={`flex flex-1 flex-col`}>
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -184,8 +187,8 @@ export default function Sidebar({ user }) {
                           href={item.href}
                           className={classNames(
                             (item.href.split("/").length > 2 ? pathname.startsWith(item.href) : pathname == item.href)
-                              ? 'bg-white text-primary-600'
-                              : 'text-gray-700 hover:bg-white hover:text-primary-600',
+                              ? 'bg-gray-50 text-primary-600'
+                              : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600',
                             'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
                           )}
                         >
@@ -260,7 +263,7 @@ export default function Sidebar({ user }) {
                 </li> */}
                 <li className="-mx-6 mt-auto">
                   <Link
-                    href="/dashboard/account"
+                    href="/app/settings"
                     className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
                   >
                     {/* <img
@@ -268,9 +271,9 @@ export default function Sidebar({ user }) {
                       src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                       className="h-8 w-8 rounded-full bg-gray-50"
                     /> */}
-                    <BIcon name={"person"} className={"text-lg"} />
-                    <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">Account</span>
+                    <BIcon name={"gear"} className={"text-lg"} />
+                    <span className="sr-only">Settings</span>
+                    <span aria-hidden="true">Settings</span>
                   </Link>
                 </li>
               </ul>
@@ -285,8 +288,8 @@ export default function Sidebar({ user }) {
           </button>
           <div className="flex-1 text-sm font-bold leading-6 text-gray-900">{process.env.NEXT_PUBLIC_SITE_NAME}</div>
           <Link href="#">
-            <span className="sr-only">Your profile</span>
-            <BIcon name={"person"} className={"text-lg"} />
+            <span className="sr-only">Settings</span>
+            <BIcon name={"gear"} className={"text-lg"} />
             {/* <img
               alt=""
               src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"

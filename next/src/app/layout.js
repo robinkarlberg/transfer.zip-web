@@ -1,6 +1,7 @@
 import { Playfair_Display, Roboto } from "next/font/google";
 import "./globals.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { FileProvider } from "@/context/FileProvider";
 
 const playfairDisplay = Playfair_Display({
   weight: ['400', '500', '600', '700', '800', '900'],
@@ -23,7 +24,9 @@ export default function RootLayout({ children }) {
       <body
         className={`${roboto.className} antialiased`} // ${roboto.className} ${playfairDisplay.className} 
       >
-        {children}
+        {/* <FileProvider> */}
+          {children}
+        {/* </FileProvider> */}
       </body>
     </html>
   );
