@@ -1,3 +1,5 @@
+"use client"
+
 import { Link, Outlet, useLoaderData, useLocation, useRouteLoaderData } from "react-router-dom";
 import BIcon from "../../components/BIcon";
 import GenericPage from "../../components/dashboard/GenericPage";
@@ -17,8 +19,6 @@ export default function TransfersPage({ }) {
 
   const { transfers, transferRequests } = useRouteLoaderData("dashboard")
 
-  const { state } = useLocation()
-
   const [selectedTab, setSelectedTab] = useState(tabs[state?.tabIndex ?? 0])
 
   const sentTransfers = useMemo(() => transfers.filter(transfer => !transfer.hasTransferRequest), [transfers])
@@ -27,7 +27,7 @@ export default function TransfersPage({ }) {
   return (
     <GenericPage title={"Transfers"}>
       <div className="md:hidden flex gap-2 mb-3">
-        <Link to="new" className="bg-primary text-white text-sm rounded-lg py-1.5 px-3 shadow hover:bg-primary-light"><BIcon name={"plus-lg"} className={"me-2"} />New Transfer</Link>
+        <Link href="new" className="bg-primary text-white text-sm rounded-lg py-1.5 px-3 shadow hover:bg-primary-light"><BIcon name={"plus-lg"} className={"me-2"} />New Transfer</Link>
       </div>
       <div className="mb-2">
         <div className="sm:hidden">
@@ -81,7 +81,6 @@ export default function TransfersPage({ }) {
       {selectedTab.name == "Sent" && <TransferList transfers={sentTransfers} />}
       {selectedTab.name == "Requests" && <TransferRequestList transferRequests={transferRequests} />}
       {selectedTab.name == "Received" && <TransferList transfers={receivedTransfers} />}
-      <Outlet />
     </GenericPage>
   )
 }

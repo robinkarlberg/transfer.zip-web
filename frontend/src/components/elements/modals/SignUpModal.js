@@ -7,7 +7,7 @@ import { DashboardContext } from "../../../routes/dashboard/Dashboard";
 import { AuthContext } from "../../../providers/AuthProvider";
 import Spinner from "../../Spinner";
 import SignInWithGoogleButton from "../../SignInWithGoogleButton";
-import { Link, useNavigate } from "react-router-dom";
+import Link from 'next/link';
 import BIcon from "../../BIcon";
 
 const features = [

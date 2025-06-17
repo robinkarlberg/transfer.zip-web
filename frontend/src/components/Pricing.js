@@ -3,7 +3,7 @@ import { ApplicationContext } from "../providers/ApplicationProvider"
 import pricing from "../pricing"
 import PricingCards from "./PricingCards"
 import BIcon from "./BIcon"
-import { Link } from "react-router-dom"
+import Link from 'next/link'
 
 const features = [
   { name: "Full access to Quick Share", good: true },

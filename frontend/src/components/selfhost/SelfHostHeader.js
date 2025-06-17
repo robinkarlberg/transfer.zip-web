@@ -11,7 +11,7 @@ import {
   PopoverPanel,
 } from '@headlessui/react'
 import BIcon from '../BIcon'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 
 import logo from "../../img/icon.png"
 const products = [
@@ -35,7 +35,7 @@ export default function SelfHostHeader() {
     <header className="backdrop-blur bg-gray-50 bg-opacity-70 fixed top-0 left-0 w-full z-10 border-b">
       <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8">
         <div className="flex lg:flex-1">
-          <Link to="/" className="-m-1.5 p-1.5 flex items-center gap-x-1">
+          <Link href="/" className="-m-1.5 p-1.5 flex items-center gap-x-1">
             {/* <span className="sr-only">{process.env.REACT_APP_SITE_NAME}</span> */}
             <img
               alt="Logo"

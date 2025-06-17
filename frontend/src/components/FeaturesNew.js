@@ -2,7 +2,7 @@ import BIcon from "./BIcon"
 
 import ProductDemoScreenshot from "../img/ProductDemoScreenshot.png"
 import ProductDemo from "../img/ProductDemo.mp4"
-import { Link } from "react-router-dom"
+import Link from 'next/link'
 
 const features = [
   {

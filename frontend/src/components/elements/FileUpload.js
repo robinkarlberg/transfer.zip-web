@@ -1,10 +1,7 @@
 import { useMemo, useRef, useState } from "react"
 import BIcon from "../BIcon"
-import { Link } from "react-router-dom"
+import Link from 'next/link'
 import { Transition } from "@headlessui/react"
-import { humanFileSize, humanFileType } from "../../transferUtils"
-import { humanFileName } from "../../utils"
-import Progress from "./Progress"
 
 export default function FileUpload({ initialFiles, onFilesChange, onFiles, onReceiveClicked, progressElement, showProgress, buttonText, singleFile, disabled, accept, headless, children }) {
 

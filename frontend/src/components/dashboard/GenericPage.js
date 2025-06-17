@@ -1,7 +1,3 @@
-import { useContext } from "react"
-import { DashboardContext } from "../../routes/dashboard/Dashboard"
-import BIcon from "../BIcon"
-
 export default function GenericPage({ title, category, side, children, flex, full, className, ...props }) {
     return (
         <div className={`mx-auto h-full flex flex-col p-4 md:p-12 pb-0 ${full ? "" : "max-w-6xl"} ${className}`} {...props}>

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from 'next/link';
 import FileUpload from "../../components/elements/FileUpload";
 import GenericToolPage from "../../components/GenericToolPage";
 import TestimonialCloud from "../../components/TestimonialCloud";

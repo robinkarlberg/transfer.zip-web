@@ -3,7 +3,7 @@ import GenericPage from "../../components/dashboard/GenericPage";
 import { AuthContext } from "../../providers/AuthProvider";
 import ManageSubscriptionButton from "../../components/ManageSubscriptionButton";
 import { capitalizeFirstLetter } from "../../utils";
-import { Link } from "react-router-dom";
+import Link from 'next/link';
 import moment from 'moment-timezone';
 import { API_URL, changeSubscription, logout } from "../../Api";
 import BIcon from "../../components/BIcon";

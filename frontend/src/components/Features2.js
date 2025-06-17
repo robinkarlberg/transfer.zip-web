@@ -1,7 +1,7 @@
 import { useContext } from "react"
 import BIcon from "./BIcon"
 import { ApplicationContext } from "../providers/ApplicationProvider"
-import { Link } from "react-router-dom"
+import Link from 'next/link'
 import { isWaitlist } from "../utils"
 import ProductDemoScreenshot from "../img/ProductDemoScreenshot.png"
 import ProductDemo from "../img/ProductDemo.mp4"

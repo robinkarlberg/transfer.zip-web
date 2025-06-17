@@ -1,3 +1,9 @@
+# ! DEV BRANCH !
+
+This is the dev branch for a completely open-source version, with support for you to self-host everything yourself.
+
+It aims to become the best way to setup your own file transfer server, in addition to our managed solution ;)
+
 # Transfer.zip
 
 <img src='https://cdn.transfer.zip/QuickShare.png' width="80%"></img>

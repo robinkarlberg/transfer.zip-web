@@ -1,6 +1,6 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import BIcon from '../BIcon'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 
 export default function Dropdown({ title, items, className, ...props }) {
   return (

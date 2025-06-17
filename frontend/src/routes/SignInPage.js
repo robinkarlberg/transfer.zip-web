@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import Link from 'next/link';
 import Header from "../components/Header";
 import { useContext, useState } from "react";
 import { AuthContext } from "../providers/AuthProvider";
@@ -197,7 +197,7 @@ export default function SignInPage() {
 
           <p className="mt-10 text-center text-sm/6 text-gray-500">
             Don't have an account?{' '}
-            <Link to="/signup" className="font-semibold text-primary hover:text-primary-light">
+            <Link href="/signup" className="font-semibold text-primary hover:text-primary-light">
               Sign up
             </Link>
           </p>

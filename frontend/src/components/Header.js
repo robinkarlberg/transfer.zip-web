@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useMemo, useContext } from 'react'
 import {
   Dialog,
@@ -12,7 +14,7 @@ import {
 } from '@headlessui/react'
 import BIcon from './BIcon'
 import { AuthContext } from '../providers/AuthProvider'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 
 import logo from "../img/icon.png"
 import { ApplicationContext } from '../providers/ApplicationProvider'
@@ -56,7 +58,7 @@ export default function Header() {
     <header className="backdrop-blur bg-gray-50 bg-opacity-70 fixed top-0 left-0 w-full z-10 border-b">
       <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8">
         <div className="flex lg:flex-1">
-          <Link to="/" className="-m-1.5 p-1.5 flex items-center gap-x-1">
+          <Link href="/" className="-m-1.5 p-1.5 flex items-center gap-x-1">
             {/* <span className="sr-only">{process.env.REACT_APP_SITE_NAME}</span> */}
             <img
               alt="Logo"
@@ -126,13 +128,13 @@ export default function Header() {
             </PopoverPanel>
           </Popover>
 
-          <Link to="/#pricing" className="text-sm/6 font-semibold text-gray-900">
+          <Link href="/#pricing" className="text-sm/6 font-semibold text-gray-900">
             Pricing
           </Link>
-          {/* <Link to="/explore" className="text-sm/6 font-semibold text-gray-900">
+          {/* <Link href="/explore" className="text-sm/6 font-semibold text-gray-900">
             Explore
           </Link> */}
-          <Link to="/legal/privacy-policy" className="text-sm/6 font-semibold text-gray-900">
+          <Link href="/legal/privacy-policy" className="text-sm/6 font-semibold text-gray-900">
             Privacy
           </Link>
         </PopoverGroup>

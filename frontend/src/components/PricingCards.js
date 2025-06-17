@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import Link from 'next/link'
 import BIcon from "./BIcon"
 import { useContext } from "react"
 import { ApplicationContext } from "../providers/ApplicationProvider"

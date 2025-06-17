@@ -5,7 +5,7 @@ import FileBrowser from "../../components/elements/FileBrowser"
 import FileUpload from "../../components/elements/FileUpload"
 import RelatedLinks from "../../components/RelatedLinks"
 import MultiStepAction from "../../components/MultiStepAction"
-import { Link } from "react-router-dom"
+import Link from 'next/link'
 import * as zip from "@zip.js/zip.js";
 import streamSaver from "../../lib/StreamSaver"
 

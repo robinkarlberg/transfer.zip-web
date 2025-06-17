@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from 'next/link';
 import BIcon from "./BIcon";
 
 export default function GenericToolPage({ title, display, tags, children, subtitle, description, question, steps, related }) {

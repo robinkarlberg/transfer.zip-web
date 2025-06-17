@@ -1,11 +1,7 @@
 import { useContext } from "react";
-import { Link } from "react-router-dom";
-import { ApplicationContext } from "../providers/ApplicationProvider";
-import { isWaitlist } from "../utils";
+import Link from 'next/link';
 
 export default function CTA() {
-  const { setShowWaitlistModal } = useContext(ApplicationContext)
-
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-7xl py-24 sm:px-6 sm:py-32 lg:px-8">
@@ -33,7 +29,7 @@ export default function CTA() {
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link
-                onClick={e => { if (isWaitlist()) { e.preventDefault(); setShowWaitlistModal(true) } }}
+                onClick={e => { if (isWaitlist()) { e.preventDefault(); } }}
                 to={isWaitlist() ? "" : "/signup"}
                 className="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >

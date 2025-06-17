@@ -1,10 +1,22 @@
 services:
-  frontend:
-    build:
-      context: frontend
+  mongo:
+    image: mongo
     restart: unless-stopped
+    volumes:
+      - ./db:/data/db
     ports:
-      - 127.0.0.1:${WEB_SERVER_FORWARD_PORT:-9001}:80
+      - 127.0.0.1:${MONGODB_FORWARD_PORT:-27017}:27017
+    env_file:
+      - .env
+
+  next:
+    build: next
+    restart: unless-stopped
+    env_file:
+      - .env
+      - next/.env
+    ports:
+      - 127.0.0.1:${WEB_SERVER_FORWARD_PORT:-9001}:3000
     
   signaling-server:
     build: signaling-server

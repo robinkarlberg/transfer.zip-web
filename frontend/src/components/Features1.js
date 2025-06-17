@@ -1,10 +1,9 @@
 import { useContext } from "react"
 import BIcon from "./BIcon"
 import { ApplicationContext } from "../providers/ApplicationProvider"
-import { Link } from "react-router-dom"
+import Link from 'next/link'
 import { isInEU, isWaitlist } from "../utils"
 import ProductDemoScreenshot from "../img/ProductDemoScreenshot.png"
-import ProductDemo from "../img/ProductDemo.mp4"
 import logo from "../img/icon.png"
 
 const features = [
@@ -74,7 +73,7 @@ export default function Features1() {
             controls
             poster={ProductDemoScreenshot}
           >
-            <source src={ProductDemo} type="video/mp4" />
+            <source src={"/img/ProductDemo.mp4"} type="video/mp4" />
           </video>
         </div>
       </div>
