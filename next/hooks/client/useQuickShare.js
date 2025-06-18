@@ -9,7 +9,12 @@ export function useQuickShare() {
   const [info, setInfo] = useState({})
 
   useEffect(() => {
-    setInfo(tryParseQuickShareHash(window.location.hash))
+    if(typeof window === "undefined") {
+      setInfo({})
+    }
+    else {
+      setInfo(tryParseQuickShareHash(window.location.hash))
+    }
   }, [params])
 
   const { k, remoteSessionId, transferDirection } = info
