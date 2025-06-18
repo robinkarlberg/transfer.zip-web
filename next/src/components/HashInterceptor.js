@@ -1,40 +1,22 @@
 "use client"
 
+import { getComputedNewLocation } from "@/lib/client/hash"
+import { useQuickShare } from "hooks/client/useQuickShare"
+import { useRouter } from "next/navigation"
 import { useEffect } from "react"
-import { Outlet, useLocation, useNavigate } from "react-router-dom"
 
-export default function HashInterceptor({ onPass }) {
-  const { hash, pathname } = useLocation()
+export default function HashInterceptor({ }) {
 
-  const navigate = useNavigate()
+  const router = useRouter()
+
+  const { transferDirection } = useQuickShare()
 
   useEffect(() => {
-    console.log("render")
-    if (!hash) return onPass && onPass()
-    const hashList = hash.slice(1).split(",")
-    if (hash && hashList.length === 3) {
-      const [k, remoteSessionId, transferDirection] = hashList
-
-      if (remoteSessionId.length !== 36 && (transferDirection !== "R" && transferDirection !== "S")) {
-        throw new Error("The URL parameters are malformed. Did you copy the URL correctly?")
-      }
-
-      const state = {
-        k,
-        remoteSessionId,
-        transferDirection
-      }
-
-      window.location.hash = ""
-      let newLocation = transferDirection == "R" ? "/quick-share/progress" : "/quick-share"
-
-      navigate(newLocation, { state, replace: true })
-      // return <Navigate href={newLocation} state={state} replace={true} />
+    if(transferDirection == "S" || transferDirection == "R") {
+      console.log(getComputedNewLocation(transferDirection) + window.location.hash)
+      router.replace(getComputedNewLocation(transferDirection) + window.location.hash)
     }
-    else {
-      onPass && onPass()
-    }
-  }, [hash, pathname])
+  }, [transferDirection])
 
-  return <></>
+  return undefined
 }

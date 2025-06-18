@@ -35,9 +35,9 @@ const decodeString = (arr) => {
 
 const wss = new WebSocketServer({
     host: "0.0.0.0",
-    port: 8001,
+    port: 9002,
 }, () => {
-    console.log("WebSocket server is listening on ws://0.0.0.0:8001");
+    console.log("WebSocket server is listening on ws://0.0.0.0:9002");
 });
 
 const sessions = new Map();

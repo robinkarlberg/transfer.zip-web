@@ -12,11 +12,11 @@ export default function () {
 
   const handleFiles = (files) => {
     setFiles(files)
-    router.push("/quick-share/progress?dir=S")
+    router.push("/quick-share/progress#S")
   }
 
   const handleReceiveClicked = e => {
-    router.push("/quick-share/progress?dir=R")
+    router.push("/quick-share/progress#R")
   }
 
   return <FileUpload onFiles={handleFiles} onReceiveClicked={handleReceiveClicked} />

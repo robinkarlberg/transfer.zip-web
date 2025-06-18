@@ -4,6 +4,7 @@ import Features1 from "@/components/Features1";
 import Features2 from "@/components/Features2";
 import Features3 from "@/components/Features3";
 import FeaturesNew from "@/components/FeaturesNew";
+import HashInterceptor from "@/components/HashInterceptor";
 import Landing from "@/components/Landing";
 import Pricing from "@/components/Pricing";
 import TestimonialCloud from "@/components/TestimonialCloud";
@@ -20,6 +21,7 @@ export default async function () {
 
   return (
     <div>
+      <HashInterceptor/>
       <Landing stars={json.stargazers_count} />
       <TestimonialCloud />
       <Features1 />

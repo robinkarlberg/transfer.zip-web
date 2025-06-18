@@ -60,7 +60,7 @@ const SPKT_RELAY_BUDGET = 99
 
 let WS_URL
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
-	WS_URL = "ws://localhost:8001"
+	WS_URL = "ws://localhost:9002"
 } else {
 	WS_URL = (window.location.protocol.includes("s") ? "wss://" : "ws://") + window.location.host + "/ws"
 }
@@ -129,7 +129,7 @@ export const createWebSocket = () => {
 
 	ws.addEventListener("close", e => {
 		clearInterval(keepAliveIntervalId)
-		console.error("WebSocket closed! code:", e.code)
+		console.warn("WebSocket closed! code:", e.code)
 		if (!isWsSupposedToClose) {
 			setTimeout(createWebSocket, 1000)
 		}

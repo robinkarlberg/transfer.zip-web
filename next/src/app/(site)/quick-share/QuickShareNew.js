@@ -2,38 +2,30 @@
 
 import BIcon from "@/components/BIcon"
 import FileUpload from "@/components/elements/FileUpload"
-import { QuickShareContext } from "@/context/QuickShareProvider"
+import { FileContext } from "@/context/FileProvider"
+import { useQuickShare } from "hooks/client/useQuickShare"
+import { useRouter } from "next/navigation"
 import { useContext } from "react"
 
 export default function ({ stars }) {
-  const { hasBeenSentLink, k, remoteSessionId, transferDirection } = useContext(QuickShareContext)
+
+  const { setFiles } = useContext(FileContext)
+  const { hasBeenSentLink, k, remoteSessionId, transferDirection } = useQuickShare()
+
+  const router = useRouter()
 
   const handleFiles = (files) => {
+    setFiles(files)
     if (hasBeenSentLink) {
-      navigate("progress", {
-        state: {
-          files,
-          // These fields are prepopulated from link
-          k, remoteSessionId, transferDirection
-        }
-      })
+      router.push("/quick-share/progress#R")
     }
     else {
-      navigate("progress", {
-        state: {
-          files,
-          transferDirection: "S"
-        }
-      })
+      router.push("/quick-share/progress#S")
     }
   }
 
   const onReceiveClicked = e => {
-    navigate("progress", {
-      state: {
-        transferDirection: "R"
-      }
-    })
+    router.push("/quick-share/progress#R")
   }
 
   return (

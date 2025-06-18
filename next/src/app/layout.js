@@ -24,9 +24,9 @@ export default function RootLayout({ children }) {
       <body
         className={`${roboto.className} antialiased`} // ${roboto.className} ${playfairDisplay.className} 
       >
-        {/* <FileProvider> */}
+        <FileProvider>
           {children}
-        {/* </FileProvider> */}
+        </FileProvider>
       </body>
     </html>
   );

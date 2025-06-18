@@ -1,5 +1,3 @@
-import { QuickShareProvider } from "@/context/QuickShareProvider";
-
 export default function ({ children }) {
   return (
     <div>
@@ -30,9 +28,7 @@ export default function ({ children }) {
         </svg>
         <div className="backdrop-blur-sm rounded-xl">
           {/* <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">Quick Share</h1> */}
-          <QuickShareProvider>
-            {children}
-          </QuickShareProvider>
+          {children}
         </div>
       </main>
       {/* <div>
