@@ -62,7 +62,12 @@ let WS_URL
 if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
 	WS_URL = "ws://localhost:9002"
 } else {
-	WS_URL = (window.location.protocol.includes("s") ? "wss://" : "ws://") + window.location.host + "/ws"
+	if(typeof window === "undefined") {
+		WS_URL = undefined
+	}
+	else {
+		WS_URL = (window.location.protocol.includes("s") ? "wss://" : "ws://") + window.location.host + "/ws"
+	}
 }
 
 /**
