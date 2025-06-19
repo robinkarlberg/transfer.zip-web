@@ -1,5 +1,8 @@
 node_modules/
 .env
-db/
+
+_db/
+_local_dev_api_data/
+
 /data/
 .DS_Store

@@ -3,7 +3,7 @@ services:
     image: mongo
     restart: unless-stopped
     volumes:
-      - ./db:/data/db
+      - ./_db:/data/db
     ports:
       - 127.0.0.1:${MONGODB_FORWARD_PORT:-27017}:27017
     env_file:
@@ -17,13 +17,14 @@ services:
       - next/.env
     ports:
       - 127.0.0.1:${WEB_SERVER_FORWARD_PORT:-9001}:3000
+    volumes:
+      - api_data:/api_data
     
   signaling-server:
     build: signaling-server
     restart: unless-stopped
     ports:
       - 127.0.0.1:9002:9002
-    deploy:
-      resources:
-        limits:
-          memory: 2700M
+
+volumes:
+  api_data
