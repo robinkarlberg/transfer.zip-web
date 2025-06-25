@@ -9,7 +9,7 @@ const Entry = ({ transferRequest }) => {
   const router = useRouter()
 
   const { displayNotification } = useContext(ApplicationContext)
-  const { displayedTransferId, setSelectedTransferId, hideSidebar, showSidebar } = useContext(DashboardContext)
+  const { displayedTransferId, hideSidebar, showSidebar } = useContext(DashboardContext)
 
   const uploadLink = useMemo(() => getTransferRequestUploadLink(transferRequest), [transferRequest])
 

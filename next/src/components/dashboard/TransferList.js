@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useParams, useRouter, useSelectedLayoutSegment, useSelectedLayoutSegments } from "next/navigation"
 import EmptySpace from "../elements/EmptySpace"
 import { ApplicationContext } from "@/context/ApplicationContext"
 import { useContext, useMemo } from "react"
@@ -13,8 +13,10 @@ import Link from "next/link"
 const Entry = ({ transfer }) => {
   const router = useRouter()
 
+  const { transferId: displayedTransferId } = useParams()
+
   const { displayNotification } = useContext(ApplicationContext)
-  const { displayedTransferId, setSelectedTransferId, hideSidebar, showSidebar } = useContext(DashboardContext)
+  const { hideSidebar, showSidebar } = useContext(DashboardContext)
 
   const transferLink = useMemo(() => getTransferDownloadLink(transfer), [transfer])
 
@@ -49,8 +51,7 @@ const Entry = ({ transfer }) => {
   const handleDelete = async e => {
     e.stopPropagation()
     await deleteTransfer(id)
-    if (setSelectedTransferId == id) hideSidebar()
-    router.refresh()
+    router.replace("../")
   }
 
   const handleClicked = async e => {
@@ -58,14 +59,14 @@ const Entry = ({ transfer }) => {
 
     }
     else {
-      isSelected ? hideSidebar() : setSelectedTransferId(id)
+      isSelected ? router.replace(".") : router.push(`/app/transfers/${id}`)
     }
   }
 
   const expiresSoon = expiryDate && (expiryDate - new Date() <= 3 * 24 * 60 * 60 * 1000)
 
   return (
-    <button onClick={handleClicked} className={`group text-start shadow-sm rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-5 py-4 group ${hasTransferRequest ? "hover:cursor-default" : "hover:bg-gray-50"}`}>
+    <div onClick={handleClicked} className={`cursor-pointer group text-start shadow-sm rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-5 py-4 group ${hasTransferRequest ? "hover:cursor-default" : "hover:bg-gray-50"}`}>
       <div className="">
         <div>
           <div className="flex">
@@ -137,7 +138,7 @@ const Entry = ({ transfer }) => {
           }
         </div> */}
       </div>
-    </button >
+    </div >
   )
 }
 
