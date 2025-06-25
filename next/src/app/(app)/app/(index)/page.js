@@ -3,13 +3,15 @@ import Stats from "./Stats";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 import Transfer from "@/lib/server/mongoose/models/Transfer";
 import { getMaxStorageForPlan } from "@/lib/utils";
+import TransferList from "@/components/dashboard/TransferList";
+import { listTransfersForUser } from "@/lib/server/serverUtils";
 
 export default async function ({ }) {
   let auth = await useServerAuth();
 
   const _user = auth.user.friendlyObj()
 
-  const transfers = await Transfer.find({ author: auth.user._id })
+  const transfers = await listTransfersForUser(auth.user)
 
   const { storagePercent } = await auth.user.getStorage()
 
@@ -20,7 +22,7 @@ export default async function ({ }) {
         <Stats user={_user} transfers={transfers.map(transfer => transfer.friendlyObj())} storagePercent={storagePercent} />
       </div>
       <h3 className="font-semibold mb-1 text-gray-500">Recent</h3>
-      {/* <TransferList transfers={recentTransfers} /> */}
+      <TransferList transfers={transfers.slice(0, 5).map(transfer => transfer.friendlyObj())} />
     </GenericPage>
   )
 }

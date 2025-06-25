@@ -6,10 +6,13 @@ import Progress from "@/components/elements/Progress";
 import { ApplicationContext } from "@/context/ApplicationContext";
 import { DashboardContext } from "@/context/DashboardContext";
 import { FileContext } from "@/context/FileProvider";
+import { getUploadToken, markTransferComplete, newTransfer, newTransferRequest, signTransferUpload } from "@/lib/client/Api";
 import { EXPIRATION_TIMES } from "@/lib/constants";
 import { Radio, RadioGroup } from "@headlessui/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { Upload } from "tus-js-client";
+import pLimit from "p-limit"
 
 const getMaxRecipientsForPlan = (plan) => {
   if (plan == "pro") return 200;
@@ -44,10 +47,6 @@ export default function NewTransferPage({ user, storage }) {
   const formRef = useRef(null)
   const emailRef = useRef(null)
 
-  // useEffect(() => {
-  //   hideSidebar()
-  // }, [])
-
   const [uploadingFiles, setUploadingFiles] = useState(false)
   const [filesToUpload, setFilesToUpload] = useState(null)
 
@@ -76,18 +75,87 @@ export default function NewTransferPage({ user, storage }) {
     const description = formData.get("description")
     const expiresInDays = formData.get("expiresInDays")
 
-    const { transfer } = await newTransfer({ name, description, expiresInDays })
+    files.forEach(f => f.tmpId = crypto.randomUUID())
 
-    await uploadTransferFiles(transfer.secretCode, files, progress => {
-      console.log(progress)
-      setBytesTransferred(progress.bytesTransferred)
-    })
-    if (emailRecipients.length > 0) {
-      await sendTransferByEmail(transfer.id, emailRecipients)
+    const transferFiles = files.map(file => ({
+      tmpId: file.tmpId,
+      relativePath: file.webkitRelativePath || file.name,
+      name: file.name,
+      type: file.type,
+      size: file.size
+    }))
+
+    // response: { idMap: [{ tmpId, id }, ...] } - what your API returned
+    const { transfer, idMap } = await newTransfer({ name, description, expiresInDays, files: transferFiles })
+
+    // We need to give each local file its given id from the server so that we can
+    // upload the right file to the right place, based on its id
+
+    // This converts the array of pairs into a lookup object
+    const fileIdMap = Object.fromEntries(idMap.map(m => [m.tmpId, m.id]))
+
+    // Then applies mapping to each file
+    files.forEach(f => f.id = fileIdMap[f.tmpId])
+
+    // Assert no unmapped files - idk if it can happen but good to assert
+    const unmapped = files.filter(f => !f.id);
+    if (unmapped.length) {
+      throw new Error(
+        `ID mapping failed for ${unmapped.length} file(s): ` +
+        unmapped.map(f => `"${f.name}"`).join(', ')
+      );
     }
 
-    router.replace(`/app/transfers`)
-    setSelectedTransferId(transfer.id)
+    const { nodeUrl, secretCode } = transfer
+    const { token } = await getUploadToken(secretCode)
+
+    const endpoint = `${nodeUrl}/upload`
+
+    const CHUNK_MB = 64
+    const chunkSize = CHUNK_MB * 1024 * 1024
+    const MAX_CONCURRENT_FILES = 4
+
+    const limit = pLimit(MAX_CONCURRENT_FILES)
+
+    const uploads = files.map(file =>
+      limit(() =>
+        new Promise((resolve, reject) => {
+          const upload = new Upload(file, {
+            endpoint,
+            chunkSize,
+            retryDelays: [0, 1000, 3000, 5000, 10000],
+            headers: { Authorization: `Bearer ${token}` },
+            metadata: {   // server’s namingFunction will use this
+              id: file.id,
+              name: file.name,
+              type: file.type,
+            },
+            onError(error) { console.error(`${file.name}`, error); reject(error) },
+            onSuccess() { console.log(`${file.name} done`); resolve() },
+            onProgress(bytes, total) {
+              const pct = ((bytes / total) * 100).toFixed(1)
+              console.log(`${file.name}: ${pct}%`)
+
+            },
+          })
+
+          upload.start()
+        })
+      )
+    )
+
+    await Promise.all(uploads)
+
+    await markTransferComplete(secretCode)
+
+    router.replace(`/app/transfers/${transfer.id}`)
+
+    // if (emailRecipients.length > 0) {
+    //   await sendTransferByEmail(transfer.id, emailRecipients)
+    // }
+
+    // router.replace(`/app/transfers`)
+    // setSelectedTransferId(transfer.id)
   }
 
   const handleCreateLinkClicked = async e => {

@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
 import crypto from "crypto"
 
+// These keys are not protecting anything critical. It is just so that the Transfer password is
+// not in plain-text in the database. We also do not want to hash it, as we need to let the user
+// reveal it if they forget it.
 const PASSWORD_ENC_IV = Buffer.from("K5NeL91lHm+U8QL057Q9EA==", "base64")
 const PASSWORD_ENC_KEY = Buffer.from("J3x/R0ju5baxntP/qmu0TzHTwlFBmFLqxIXG/PzksFY=", "base64")
 
@@ -22,7 +25,17 @@ const File = new mongoose.Schema({
     name: String,
     size: Number,
     type: String
-}, { _id: false })
+}, { _id: true })
+
+File.methods.friendlyObj = function () {
+    return {
+        id: this._id?.toString(),
+        relativePath: this.relativePath,
+        name: this.name,
+        size: this.size,
+        type: this.type
+    }
+}
 
 const TransferSchema = new mongoose.Schema({
     transferRequest: { type: mongoose.Schema.Types.ObjectId, ref: "TransferRequest" },
@@ -43,7 +56,10 @@ const TransferSchema = new mongoose.Schema({
     encryptionKey: { type: Buffer },
     encryptionIV: { type: Buffer },
 
-    storageLocation: String,
+    storageLocation: String, // deprecated, still used for a few transfers (maybe migrate?)
+    nodeUrl: String,
+
+    finishedUploading: { type: Boolean, default: false }
 }, { timestamps: true })
 
 function encPassword(pass) {
@@ -107,7 +123,7 @@ TransferSchema.methods.registerFile = function (fileInfo) {
 TransferSchema.methods.friendlyObj = function () {
     const { _id, name, description, expiresAt, secretCode, emailsSharedWith, createdAt, downloads, views, files, size } = this
     return {
-        id: _id,
+        id: _id.toString(),
         name: name || "Untitled Transfer",
         description,
         expiresAt,
@@ -119,28 +135,30 @@ TransferSchema.methods.friendlyObj = function () {
             downloads: { length: downloads?.length },
             views: { length: views?.length },
         },
-        files,
+        files: this.files.map(file => file.friendlyObj()),
         size,
         createdAt,
         hasName: !!name,
         hasTransferRequest: !!this.transferRequest,
-        finishedUploading: files.length > 0
+        finishedUploading: this.finishedUploading,
+        nodeUrl: this.nodeUrl
     }
 }
 
 TransferSchema.methods.downloadObj = function () {
     const { _id, name, description, expiresAt, secretCode, files, size } = this
     return {
-        id: _id,
+        id: _id.toString(),
         name: name || "Untitled Transfer",
         description,
         expiresAt,
         secretCode,
         hasPassword: this.hasPassword(),
-        files,
+        files: this.files.map(file => file.friendlyObj()),
         size,
         hasName: !!name,
-        finishedUploading: files.length > 0
+        finishedUploading: this.finishedUploading,
+        nodeUrl: this.nodeUrl
     }
 }
 

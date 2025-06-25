@@ -1,7 +1,7 @@
 "use server"
 
 import { promises as fs } from 'fs'
-import path from 'path'
+import { importPKCS8 } from 'jose'
 
 let cached = global.keys
 
@@ -10,14 +10,15 @@ if (!cached) {
 }
 
 export async function getPrivateKey() {
-  const privateKeyPath = process.env.NODE_ENV == "development" ? "./_local_dev_api_data/private.pem" :  "/api_data/private.pem"
+  const privateKeyPath = process.env.NODE_ENV == "development" ? "../_local_dev_api_data/private.pem" : "/api_data/private.pem"
   if (cached.privateKey) {
     return cached.privateKey
   }
   if (!cached.privatePromise) {
-    cached.privatePromise = fs.readFile(privateKeyPath, 'utf8').then((data) => {
-      cached.privateKey = data
-      return data
+    cached.privatePromise = fs.readFile(privateKeyPath, 'utf8').then(async (data) => {
+      const keyData = await importPKCS8(data, "RS256")
+      cached.privateKey = keyData
+      return keyData
     })
   }
   cached.privateKey = await cached.privatePromise
@@ -25,7 +26,7 @@ export async function getPrivateKey() {
 }
 
 export async function getPublicKey() {
-  const publicKeyPath = process.env.NODE_ENV == "development" ? "./_local_dev_api_data/public.pem" :  "/api_data/public.pem"
+  const publicKeyPath = process.env.NODE_ENV == "development" ? "../_local_dev_api_data/public.pem" : "/api_data/public.pem"
   if (cached.publicKey) {
     return cached.publicKey
   }

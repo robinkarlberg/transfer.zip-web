@@ -5,10 +5,11 @@ import TransfersPage from "./TransfersPage"
 import Transfer from "@/lib/server/mongoose/models/Transfer"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
 import TransferRequest from "@/lib/server/mongoose/models/TransferRequest"
+import { listTransfersForUser } from "@/lib/server/serverUtils"
 
 export default async function ({ }) {
   const auth = await useServerAuth()
-  const transfers = await Transfer.find({ author: auth.user._id })
+  const transfers = await listTransfersForUser(auth.user)
   const transferRequests = await TransferRequest.find({ author: auth.user._id })
 
   return (

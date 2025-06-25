@@ -1,7 +1,7 @@
 {
   "name": "signaling-server",
   "version": "1.0.0",
-  "description": "Signaling server for transfer.zip",
+  "description": "Signaling server for Transfer.zip",
   "main": "index.js",
   "scripts": {
     "start": "node ."

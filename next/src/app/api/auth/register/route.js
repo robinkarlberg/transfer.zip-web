@@ -18,7 +18,7 @@ export async function POST(req, res) {
   await dbConnect()
 
   const user = new User({ email })
-  user.addRole(ROLE_ADMIN)
+  // user.addRole(ROLE_ADMIN)
   user.setPassword(pass)
 
   try {

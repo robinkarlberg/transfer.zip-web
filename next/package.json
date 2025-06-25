@@ -21,18 +21,21 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.15.0",
     "heic-convert": "^2.1.0",
+    "jose": "^6.0.11",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.514.0",
     "moment-timezone": "^0.5.48",
     "mongoose": "^8.13.2",
     "next": "15.2.5",
+    "p-limit": "^6.2.0",
     "react": "^19.0.0",
     "react-circular-progressbar": "^2.2.0",
     "react-dom": "^19.0.0",
     "react-qr-code": "^2.0.16",
     "recharts": "^2.15.3",
     "sharp": "^0.34.2",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "tus-js-client": "^4.3.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

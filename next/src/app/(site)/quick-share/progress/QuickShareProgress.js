@@ -16,7 +16,7 @@ import QRCode from "react-qr-code"
 import { call, fileTransferGetFileList, fileTransferServeFiles, listen } from "@/lib/client/quickshare"
 import * as WebRtc from "@/lib/client/webrtc"
 import * as zip from "@zip.js/zip.js"
-import { useQuickShare } from "hooks/client/useQuickShare"
+import { useQuickShare } from "@/hooks/client/useQuickShare"
 
 const TRANSFER_STATE_WAIT_FOR_USER = "wait_for_user"
 const TRANSFER_STATE_IDLE = "idle"

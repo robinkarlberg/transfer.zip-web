@@ -1,5 +1,14 @@
+"use client"
+
 import { useRouter } from "next/navigation"
 import EmptySpace from "../elements/EmptySpace"
+import { ApplicationContext } from "@/context/ApplicationContext"
+import { useContext, useMemo } from "react"
+import { DashboardContext } from "@/context/DashboardContext"
+import { getTransferDownloadLink } from "@/lib/client/Api"
+import { humanTimeUntil, parseTransferExpiryDate } from "@/lib/utils"
+import BIcon from "../BIcon"
+import Link from "next/link"
 
 const Entry = ({ transfer }) => {
   const router = useRouter()
@@ -96,15 +105,15 @@ const Entry = ({ transfer }) => {
           <div className="text-sm text-gray-600 font-medium hidden group-hover:block">
             {transfer.hasTransferRequest ?
               <>
-                <Link onClick={handleDownloadClicked} className="underline hover:text-primary">Download Files</Link>
+                <button onClick={handleDownloadClicked} className="underline hover:text-primary">Download Files</button>
                 <BIcon name="dot" />
-                <Link onClick={handleDelete} className="underline hover:text-red-600">Delete</Link>
+                <button onClick={handleDelete} className="underline hover:text-red-600">Delete</button>
               </>
               :
               <>
-                <Link className="underline hover:text-primary">Edit</Link>
+                <button className="underline hover:text-primary">Edit</button>
                 <BIcon name="dot" />
-                <Link onClick={handleCopyLinkClicked} className="underline hover:text-primary">Copy Link</Link>
+                <button onClick={handleCopyLinkClicked} className="underline hover:text-primary">Copy Link</button>
               </>}
           </div>
         </div>

@@ -132,7 +132,7 @@ export function uploadTransferFiles(secretCode, files, onProgress) {
                 const reader = new FileReader()
 
                 reader.onload = async (e) => {
-                    while(packetBudget <= 0) {
+                    while (packetBudget <= 0) {
                         // console.log("PACKET BUDGET == 0:", packetBudget, " - Waiting...")
                         await new Promise(resolve => setTimeout(resolve, 5))   // ugly af
                     }
@@ -238,6 +238,10 @@ export const getTransferAttachmentLink = (transfer) => {
     return `${API_URL}/download/${transfer.secretCode}`
 }
 
+export async function markTransferComplete(secretCode) {
+    return await post(`/transfer/${secretCode}/complete`, {})
+}
+
 // transferrequest
 
 export async function getTransferRequestList() {
@@ -266,7 +270,6 @@ export async function deactivateTransferRequest(transferRequestId) {
 }
 
 // upload
-
 
 export async function getUpload(secretCode) {
     return await get(`/upload/${secretCode}`)

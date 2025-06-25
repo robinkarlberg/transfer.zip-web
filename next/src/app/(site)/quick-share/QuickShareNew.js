@@ -3,7 +3,7 @@
 import BIcon from "@/components/BIcon"
 import FileUpload from "@/components/elements/FileUpload"
 import { FileContext } from "@/context/FileProvider"
-import { useQuickShare } from "hooks/client/useQuickShare"
+import { useQuickShare } from "@/hooks/client/useQuickShare"
 import { useRouter } from "next/navigation"
 import { useContext } from "react"
 
@@ -17,7 +17,7 @@ export default function ({ stars }) {
   const handleFiles = (files) => {
     setFiles(files)
     if (hasBeenSentLink) {
-      router.push("/quick-share/progress#R")
+      router.push("/quick-share/progress" + window.location.hash)
     }
     else {
       router.push("/quick-share/progress#S")

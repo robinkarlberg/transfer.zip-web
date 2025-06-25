@@ -337,3 +337,7 @@ export const getMaxStorageForPlan = (plan) => {
     }
     else return 0
 }
+
+export const addMilliscondsToCurrentTime = (add) => {
+    return Math.floor(new Date().getTime()) + add
+}

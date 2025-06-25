@@ -1,7 +1,7 @@
 "use client"
 
 import { getComputedNewLocation } from "@/lib/client/hash"
-import { useQuickShare } from "hooks/client/useQuickShare"
+import { useQuickShare } from "@/hooks/client/useQuickShare"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 

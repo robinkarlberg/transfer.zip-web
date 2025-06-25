@@ -1,6 +1,6 @@
 services:
   mongo:
-    image: mongo
+    image: mongo:8.0-noble
     restart: unless-stopped
     volumes:
       - ./_db:/data/db
@@ -24,7 +24,7 @@ services:
     build: signaling-server
     restart: unless-stopped
     ports:
-      - 127.0.0.1:9002:9002
+      - 127.0.0.1:${SIGNALING_SERVER_FORWARD_PORT:-9002}:9002
 
 volumes:
-  api_data
+  api_data: {}

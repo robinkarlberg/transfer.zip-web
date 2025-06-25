@@ -1,3 +1,6 @@
+import "server-only"
+import Transfer from "./mongoose/models/Transfer"
+
 export const IS_DEV = process.env.NODE_ENV == "development"
 
 export const resp = (json) => {
@@ -15,24 +18,22 @@ export const createCookieParams = () => {
   )
 }
 
-export const fetchScreenshot = async (url) => {
-  try {
-    const response = await fetch(`${process.env.BOT_API_URL}/screenshot`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
+export const listTransfersForUser = async (user) => {
+  const transfers = await Transfer.find({
+    $or: [
+      { author: user._id },
+      { transferRequest: { $exists: true } } // Only consider transfers with a transferRequest
+    ]
+  })
+    .populate({
+      path: 'transferRequest', // Populate the transferRequest field
+      populate: {
+        path: 'author', // Populate the author within transferRequest
       },
-      body: JSON.stringify({ url })
-    });
+    })
+    .sort({ createdAt: -1 })
 
-    if (!response.ok) {
-      throw new Error('Network response was not ok.');
-    }
+  const filteredTransfers = transfers.filter(transfer => !transfer.transferRequest || (transfer.transferRequest && transfer.transferRequest.author._id.toString() === user._id.toString()))
 
-    const buffer = await response.arrayBuffer();
-    const data = new Uint8Array(buffer);
-    return data
-  } catch (error) {
-    return resp(error.message);
-  }
+  return filteredTransfers
 }

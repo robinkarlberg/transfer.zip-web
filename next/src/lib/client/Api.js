@@ -132,7 +132,7 @@ export function uploadTransferFiles(secretCode, files, onProgress) {
                 const reader = new FileReader()
 
                 reader.onload = async (e) => {
-                    while(packetBudget <= 0) {
+                    while (packetBudget <= 0) {
                         // console.log("PACKET BUDGET == 0:", packetBudget, " - Waiting...")
                         await new Promise(resolve => setTimeout(resolve, 5))   // ugly af
                     }
@@ -267,9 +267,12 @@ export async function deactivateTransferRequest(transferRequestId) {
 
 // upload
 
-
 export async function getUpload(secretCode) {
     return await get(`/upload/${secretCode}`)
+}
+
+export async function markTransferComplete(secretCode) {
+    return await post(`/upload/${secretCode}/complete`, {})
 }
 
 // download
@@ -280,4 +283,39 @@ export async function getDownload(secretCode) {
 
 export async function getSettings() {
     return await get("/settings")
+}
+
+// sign
+
+export async function getUploadToken(secretCode) {
+    return await post(`/sign`, { secretCode, scope: "upload" })
+}
+
+export async function getDownloadToken(secretCode) {
+    return await post(`/sign`, { secretCode, scope: "download" })
+}
+
+// node
+
+const nodePost = async (nodeUrl, token, endpoint, payload) => {
+    const res = await (await fetch(nodeUrl + endpoint, {
+        credentials: "omit",
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        }
+    })).json()
+
+    if (!res.success) {
+        throw res
+    }
+    else {
+        return res
+    }
+}
+
+export async function signTransferDownload(nodeUrl, token) {
+    return await nodePost(nodeUrl, token, "/download", {})
 }
