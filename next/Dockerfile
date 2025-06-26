@@ -36,6 +36,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Needed for generate keys
 RUN apk add --no-cache openssl
 
 # Copy init script
