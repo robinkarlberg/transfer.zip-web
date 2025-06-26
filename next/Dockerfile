@@ -44,6 +44,9 @@ COPY ./docker-create-keys.sh /app/docker-create-keys.sh
 RUN chmod +x /app/docker-create-keys.sh
 RUN /app/docker-create-keys.sh
 
+# Copy conf.json
+COPY conf.json /app/conf.json
+
 COPY --from=builder /app/public ./public
 
 # Automatically leverage output traces to reduce image size

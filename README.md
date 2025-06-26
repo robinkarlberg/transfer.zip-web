@@ -91,6 +91,11 @@ zip.yourdomain.com {
 }
 ```
 
+### Get public key
+
+While the container is running:
+`docker compose exec next cat /api_data/public.pem`
+
 ## Local Development and Contributing
 > [!NOTE]
 > This project is tested with Docker Compose V2. Docker Compose V1 will most likely fail to build.
