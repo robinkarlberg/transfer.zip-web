@@ -120,10 +120,10 @@ export default function ({ user, storage, variant }) {
 
     const FILES_PARALLEL = 24
 
-    const UPLOAD_WIN_MB = 10
+    const UPLOAD_WIN_MB = 20
     const UPLOAD_WIN = UPLOAD_WIN_MB * 1024 * 1024
 
-    const CHUNK_MB = 64
+    const CHUNK_MB = 128
     const chunkSize = CHUNK_MB * 1024 * 1024
 
     const fileLimiter = new Bottleneck({ maxConcurrent: FILES_PARALLEL })
