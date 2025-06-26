@@ -5,8 +5,8 @@ import EmptySpace from "../elements/EmptySpace"
 import { ApplicationContext } from "@/context/ApplicationContext"
 import { useContext, useMemo } from "react"
 import { DashboardContext } from "@/context/DashboardContext"
-import { getTransferDownloadLink } from "@/lib/client/Api"
-import { humanTimeUntil, parseTransferExpiryDate } from "@/lib/utils"
+import { deleteTransfer, getTransferDownloadLink } from "@/lib/client/Api"
+import { humanTimeUntil, parseTransferExpiryDate, tryCopyToClipboard } from "@/lib/utils"
 import BIcon from "../BIcon"
 import Link from "next/link"
 
@@ -15,8 +15,7 @@ const Entry = ({ transfer }) => {
 
   const { transferId: displayedTransferId } = useParams()
 
-  const { displayNotification } = useContext(ApplicationContext)
-  const { hideSidebar, showSidebar } = useContext(DashboardContext)
+  const { displayNotification, hideSidebar, showSidebar } = useContext(DashboardContext)
 
   const transferLink = useMemo(() => getTransferDownloadLink(transfer), [transfer])
 
@@ -66,7 +65,7 @@ const Entry = ({ transfer }) => {
   const expiresSoon = expiryDate && (expiryDate - new Date() <= 3 * 24 * 60 * 60 * 1000)
 
   return (
-    <div onClick={handleClicked} className={`cursor-pointer group text-start shadow-sm rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-5 py-4 group ${hasTransferRequest ? "hover:cursor-default" : "hover:bg-gray-50"}`}>
+    <div onClick={handleClicked} className={`hover:cursor-pointer group text-start shadow-sm rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-5 py-4 group ${hasTransferRequest ? "hover:cursor-default" : "hover:bg-gray-50"}`}>
       <div className="">
         <div>
           <div className="flex">
@@ -78,7 +77,7 @@ const Entry = ({ transfer }) => {
           <div className="text-sm text-gray-600 font-medium group-hover:hidden">
             <span className="">
               {!finishedUploading ?
-                (!hasTransferRequest ? <><BIcon name={"file-earmark-arrow-up"} /> Incomplete</> : <><BIcon name={"hourglass-split"} /> Waiting for files...</>)
+                (!hasTransferRequest ? <><BIcon name={"cloud-slash"} /> Incomplete</> : <><BIcon name={"hourglass-split"} /> Waiting for files...</>)
                 :
                 <>{!hasTransferRequest ? <>Sent</> : <><BIcon name={"arrow-down"} /> Received</>} {files.length} file{files.length != 1 ? "s" : ""}</>
               }
@@ -104,18 +103,30 @@ const Entry = ({ transfer }) => {
             </span>}
           </div>
           <div className="text-sm text-gray-600 font-medium hidden group-hover:block">
-            {transfer.hasTransferRequest ?
-              <>
-                <button onClick={handleDownloadClicked} className="underline hover:text-primary">Download Files</button>
-                <BIcon name="dot" />
-                <button onClick={handleDelete} className="underline hover:text-red-600">Delete</button>
-              </>
-              :
-              <>
-                <button className="underline hover:text-primary">Edit</button>
-                <BIcon name="dot" />
-                <button onClick={handleCopyLinkClicked} className="underline hover:text-primary">Copy Link</button>
-              </>}
+            {
+              transfer.finishedUploading ?
+                transfer.hasTransferRequest ?
+                  <>
+                    <button onClick={handleDownloadClicked} className="underline hover:text-primary">Download Files</button>
+                    <BIcon name="dot" />
+                    <button onClick={handleDelete} className="underline hover:text-red-600">Delete</button>
+                  </>
+                  :
+                  <>
+                    <button className="underline hover:text-primary">Edit</button>
+                    <BIcon name="dot" />
+                    <button onClick={handleCopyLinkClicked} className="underline hover:text-primary">Copy Link</button>
+                  </>
+                :
+                (
+                  <>
+                    <button className="underline hover:text-primary">Resume Upload</button>
+                    <BIcon name="dot" />
+                    <button onClick={handleDelete} className="underline hover:text-destructive">Delete</button>
+                  </>
+                )
+            }
+
           </div>
         </div>
         {/* <div className="flex items-center gap-2">

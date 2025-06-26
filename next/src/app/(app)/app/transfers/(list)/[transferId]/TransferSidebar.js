@@ -4,7 +4,7 @@ import BIcon from "@/components/BIcon"
 import Modal from "@/components/elements/Modal"
 import { ApplicationContext } from "@/context/ApplicationContext"
 import { DashboardContext } from "@/context/DashboardContext"
-import { getTransferDownloadLink } from "@/lib/client/Api"
+import { getTransferDownloadLink, putTransfer } from "@/lib/client/Api"
 import { EXPIRATION_TIMES } from "@/lib/constants"
 import { humanFileSize } from "@/lib/transferUtils"
 import { parseTransferExpiryDate } from "@/lib/utils"
@@ -27,6 +27,8 @@ export default function ({ user, transfer }) {
   const { displayNotification, displayErrorModal } = useContext(ApplicationContext)
 
   const selectedTransfer = transfer
+
+  // console.log(selectedTransfer)
 
   const [showEmailList, setShowEmailList] = useState(false)
   const [showForwardTransfer, setShowForwardTransfer] = useState(false)

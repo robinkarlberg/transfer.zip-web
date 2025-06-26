@@ -23,6 +23,10 @@ async function _createToken() {
     .setExpirationTime(exp)
     .sign(await getPrivateKey())
 
+  if(process.env.NODE_ENV === "development") {
+    console.log("Created control token:", jwt)
+  }
+
   // schedule it to refresh a minute before real expiry
   _cached.token = jwt
   _cached.expiresAt = exp - 60 * 1000
@@ -71,4 +75,8 @@ const post = async (nodeUrl, endpoint, payload) => {
 
 export async function controlUploadComplete(nodeUrl, transferId, filesList) {
   return await post(nodeUrl, "/control/uploadComplete", { transferId, filesList })
+}
+
+export async function controlTransferDelete(nodeUrl, transferId) {
+  return await post(nodeUrl, "/control/transfer/delete", { transferId })
 }

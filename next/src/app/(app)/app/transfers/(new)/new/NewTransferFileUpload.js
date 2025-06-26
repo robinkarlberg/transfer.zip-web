@@ -13,6 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Upload } from "tus-js-client";
 import pLimit from "p-limit"
+import Bottleneck from "bottleneck";
 
 const getMaxRecipientsForPlan = (plan) => {
   if (plan == "pro") return 200;
@@ -27,6 +28,10 @@ function AddedEmailField({ email, onAction }) {
       <button type="button" onClick={() => onAction("delete", email)} className="bg-white rounded border px-1 absolute right-2 opacity-0 group-hover:opacity-100"><BIcon name={"x-lg"} /></button>
     </li>
   )
+}
+
+function clampWeight(size, WINDOW) {
+  return Math.min(size, WINDOW)
 }
 
 export default function ({ user, storage, variant }) {
@@ -113,38 +118,40 @@ export default function ({ user, storage, variant }) {
 
     const endpoint = `${nodeUrl}/upload`
 
+    const FILES_PARALLEL = 24
+    
+    const UPLOAD_WIN_MB = 10
+    const UPLOAD_WIN = UPLOAD_WIN_MB * 1024 * 1024
+
     const CHUNK_MB = 64
     const chunkSize = CHUNK_MB * 1024 * 1024
-    const MAX_CONCURRENT_FILES = 4
 
-    const limit = pLimit(MAX_CONCURRENT_FILES)
+    const fileLimiter = new Bottleneck({ maxConcurrent: FILES_PARALLEL })
+    const bytesLimiter = new Bottleneck({ maxConcurrent: UPLOAD_WIN })
 
     const uploads = files.map(file =>
-      limit(() =>
-        new Promise((resolve, reject) => {
-          const upload = new Upload(file, {
-            endpoint,
-            chunkSize,
-            retryDelays: [0, 1000, 3000, 5000, 10000],
-            headers: { Authorization: `Bearer ${token}` },
-            metadata: {   // server’s namingFunction will use this
-              id: file.id,
-              name: file.name,
-              type: file.type,
-            },
-            onError(error) { console.error(`${file.name}`, error); reject(error) },
-            onSuccess() { console.log(`${file.name} done`); resolve() },
-            onProgress(bytes, total) {
-              const pct = ((bytes / total) * 100).toFixed(1)
-              console.log(`${file.name}: ${pct}%`)
-
-            },
+      fileLimiter.schedule(() =>
+        bytesLimiter.schedule({ weight: clampWeight(file.size, UPLOAD_WIN) }, () =>
+          new Promise((resolve, reject) => {
+            new Upload(file, {
+              endpoint,
+              chunkSize,
+              retryDelays: [0, 1000, 3000, 5000, 10000],
+              headers: { Authorization: `Bearer ${token}` },
+              metadata: { id: file.id, name: file.name, type: file.type },
+              onError: reject,
+              onSuccess: resolve,
+              onProgress: (sent, total) =>
+                console.log(`${file.name}: ${((sent / total) * 100).toFixed(1)}%`)
+            }).start()
           })
-
-          upload.start()
-        })
+        )
+      ).finally(() =>
+        bytesLimiter.incrementReservoir(clampWeight(file.size, UPLOAD_WIN))
       )
     )
+
+    await Promise.all(uploads)
 
     await Promise.all(uploads)
 

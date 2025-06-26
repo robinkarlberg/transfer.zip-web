@@ -58,7 +58,7 @@ export async function POST(req) {
 
       const token = await new SignJWT({
         ...basePayload,
-        firstFile: transfer.files.length == 1 ? transfer.files[0].friendlyObj() : undefined,
+        name: transfer.files.length == 1 ? transfer.files[0].name : `${transfer.name} - Transfer.zip`,
         scope: "download"
       })
         .setProtectedHeader({ alg: "RS256" })

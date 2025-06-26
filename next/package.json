@@ -17,6 +17,7 @@
     "@tailwindcss/forms": "^0.5.10",
     "@zip.js/zip.js": "^2.7.62",
     "bootstrap-icons": "^1.11.3",
+    "bottleneck": "^2.19.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.15.0",
