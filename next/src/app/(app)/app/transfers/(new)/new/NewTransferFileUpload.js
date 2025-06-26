@@ -126,8 +126,8 @@ export default function ({ user, storage, variant }) {
     const CHUNK_MB = 64
     const chunkSize = CHUNK_MB * 1024 * 1024
 
-    const fileLimiter = new Bottleneck({ maxConcurrent: FILES_PARALLEL })
-    const bytesLimiter = new Bottleneck({ maxConcurrent: UPLOAD_WIN })
+    const limiter = new Bottleneck({ maxConcurrent: FILES_PARALLEL })
+    const bytesLimiter = new Bottleneck({ reservoir: UPLOAD_WIN })
 
     const uploads = files.map(file =>
       fileLimiter.schedule(() =>
@@ -150,8 +150,6 @@ export default function ({ user, storage, variant }) {
         bytesLimiter.incrementReservoir(clampWeight(file.size, UPLOAD_WIN))
       )
     )
-
-    await Promise.all(uploads)
 
     await Promise.all(uploads)
 
