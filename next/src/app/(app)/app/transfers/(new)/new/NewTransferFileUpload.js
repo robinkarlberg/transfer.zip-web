@@ -119,14 +119,14 @@ export default function ({ user, storage, variant }) {
     const endpoint = `${nodeUrl}/upload`
 
     const FILES_PARALLEL = 24
-    
+
     const UPLOAD_WIN_MB = 10
     const UPLOAD_WIN = UPLOAD_WIN_MB * 1024 * 1024
 
     const CHUNK_MB = 64
     const chunkSize = CHUNK_MB * 1024 * 1024
 
-    const limiter = new Bottleneck({ maxConcurrent: FILES_PARALLEL })
+    const fileLimiter = new Bottleneck({ maxConcurrent: FILES_PARALLEL })
     const bytesLimiter = new Bottleneck({ reservoir: UPLOAD_WIN })
 
     const uploads = files.map(file =>
@@ -144,10 +144,10 @@ export default function ({ user, storage, variant }) {
               onProgress: (sent, total) =>
                 console.log(`${file.name}: ${((sent / total) * 100).toFixed(1)}%`)
             }).start()
-          })
+          }).finally(() =>
+            bytesLimiter.incrementReservoir(clampWeight(file.size, UPLOAD_WIN))
+          )
         )
-      ).finally(() =>
-        bytesLimiter.incrementReservoir(clampWeight(file.size, UPLOAD_WIN))
       )
     )
 
