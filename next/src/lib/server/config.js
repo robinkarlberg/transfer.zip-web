@@ -1,4 +1,3 @@
-"use server"
 import { readFileSync } from "fs"
 
 let cached = global.conf

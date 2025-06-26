@@ -1,5 +1,3 @@
-"use server"
-
 import { cookies } from 'next/headers';
 import dbConnect from '../mongoose/db';
 import Session from '../mongoose/models/Session';
