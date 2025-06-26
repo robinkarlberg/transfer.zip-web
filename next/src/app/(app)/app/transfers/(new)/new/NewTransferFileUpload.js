@@ -118,6 +118,8 @@ export default function ({ user, storage, variant }) {
 
     const endpoint = `${nodeUrl}/upload`
 
+    const MIN_PARALLEL = 1
+    
     const FILES_PARALLEL = 12
 
     const UPLOAD_WIN_MB = 20
@@ -131,7 +133,7 @@ export default function ({ user, storage, variant }) {
 
     const uploads = files.map(file =>
       fileLimiter.schedule(() =>
-        bytesLimiter.schedule({ weight: clampWeight(file.size * 4, UPLOAD_WIN) / 4 }, () =>
+        bytesLimiter.schedule({ weight: clampWeight(file.size * MIN_PARALLEL, UPLOAD_WIN) / MIN_PARALLEL }, () =>
           new Promise((resolve, reject) => {
             new Upload(file, {
               endpoint,
@@ -145,7 +147,7 @@ export default function ({ user, storage, variant }) {
                 console.log(`${file.name}: ${((sent / total) * 100).toFixed(1)}%`)
             }).start()
           }).finally(() =>
-            bytesLimiter.incrementReservoir(clampWeight(file.size * 4, UPLOAD_WIN) / 4)
+            bytesLimiter.incrementReservoir(clampWeight(file.size * MIN_PARALLEL, UPLOAD_WIN) / MIN_PARALLEL)
           )
         )
       )
