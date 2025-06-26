@@ -6,6 +6,7 @@ import { NextResponse } from 'next/server'
 import crypto from "crypto"
 import { addMilliscondsToCurrentTime } from '@/lib/utils'
 import { resp } from '@/lib/server/serverUtils'
+import { getConf } from '@/lib/server/config'
 
 export async function POST(req) {
   let auth
@@ -72,7 +73,7 @@ export async function POST(req) {
   })
 
   // TODO: Not yet implemented - hardcoded url lol
-  transfer.nodeUrl = process.env.NODE_ENV === "development" ? "http://localhost:3050" : undefined
+  transfer.nodeUrl = process.env.NODE_ENV === "development" ? "http://localhost:3050" : getConf().nodes[0]
 
   await transfer.save()
 
