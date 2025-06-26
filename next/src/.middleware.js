@@ -1,12 +1,25 @@
+import { NextResponse } from "next/server"
+
+export function middleware(req) {
+  const { pathname } = req.nextUrl
+
+  if (req.cookies.get('token')) {
+    if (pathname === "/") {
+      const newUrl = req.nextUrl.clone()
+      newUrl.pathname = "/NOROUTE"
+      return NextResponse.rewrite(newUrl)
+    }
+
+    if (pathname === "/NOROUTE") {
+      const newUrl = req.nextUrl.clone()
+      newUrl.pathname = "/not-found"
+      return NextResponse.rewrite(newUrl)
+    }
+  }
+}
+
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-     */
-    '/((?!_next/static|_next/image|favicon.ico|robots.txt).*)',
+    "/NOROUTE", "/",
   ],
 }

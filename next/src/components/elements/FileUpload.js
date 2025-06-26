@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import BIcon from "../BIcon"
 import Link from 'next/link'
 import { Transition } from "@headlessui/react"
@@ -46,13 +46,34 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
     onFiles(files)
   }
 
+  const [compact, setCompact] = useState(false)
+
+  const divRef = useRef()
+
+  useEffect(() => {
+    if (!divRef.current) return
+
+    const handleResize = entries => {
+      setCompact(entries[0].contentRect.width < 330)
+    }
+    
+    setCompact(divRef.current.offsetWidth < 330)
+
+    const resizeObserver = new window.ResizeObserver(handleResize)
+    resizeObserver.observe(divRef.current)
+
+    return () => {
+      resizeObserver.disconnect()
+    }
+  }, [])
+
   return (
     <>
       <form style={{ display: "none" }}>
         <input ref={fileInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" multiple={singleFile ? undefined : true} accept={accept}></input>
         <input ref={folderInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" webkitdirectory="true"></input>
       </form>
-      <div className={`text-start relative w-full flex flex-col min-h-56 ${headless ? "" : "rounded-2xl bg-white border shadow-lg"} ${onReceiveClicked ? "mt-8" : ""}`}>
+      <div ref={divRef} className={`text-start relative w-full flex flex-col min-h-56 ${headless ? "" : "rounded-2xl bg-white border shadow-lg"} ${onReceiveClicked ? "mt-8" : ""}`}>
         {onReceiveClicked && (
           <div className="absolute w-full flex">
             <button type="button" onClick={onReceiveClicked} className="text-sm font-medium text-gray-500 relative mx-auto bg-white border py-1 px-10 rounded-t-lg transition-all h-7 -top-7 hover:h-8 hover:-top-8 hover:text-primary">
@@ -92,7 +113,7 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
               <div className="flex gap-2">
                 {!singleFile && <>
                   <button type="button" className="text-sm pe-3 px-2 rounded-lg border shadow hover:bg-gray-100" onClick={handlePickFiles}><BIcon name={"plus"} /> Files</button>
-                  <button type="button" className="text-sm px-2 rounded-lg border shadow hover:bg-gray-100" onClick={handleSelectFolder}><BIcon name={"folder-plus"} /> Folder</button>
+                  <button type="button" className="text-sm px-2 rounded-lg border shadow hover:bg-gray-100" onClick={handleSelectFolder}><BIcon name={"folder-plus"} />{!compact && " Folder"}</button>
                 </>}
               </div>
               <div>

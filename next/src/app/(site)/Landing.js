@@ -1,10 +1,24 @@
 import Link from 'next/link'
-import BIcon from "./BIcon"
-import LandingFileUpload from '@/app/(site)/LandingFileUpload'
+import BIcon from "../../components/BIcon"
+import LandingFileUpload from '@/app/(site)/LandingQuickShare'
+import NewTransferFileUpload from '@/app/(app)/app/transfers/(new)/new/NewTransferFileUpload'
+import { useServerAuth } from '@/lib/server/wrappers/auth'
+import { Suspense } from 'react'
+import ConditionalLandingFileUpload from './ConditionalLandingFileUpload'
+import LandingQuickShare from '@/app/(site)/LandingQuickShare'
 
 const isInEU = () => true
 
-export default function ({ stars }) {
+export default async function ({ auth }) {
+
+  const res = await fetch("https://api.github.com/repos/robinkarlberg/transfer.zip-web",
+    {
+      next: { revalidate: 3600 }
+    }
+  )
+  const json = await res.json()
+  const stars = json.stargazers_count
+
   return (
     <div className="bg-white">
       <div className="relative isolate">
@@ -64,9 +78,11 @@ export default function ({ stars }) {
               </a>
             </div>
           </div>
-          <div className="mt-16 sm:mt-24 lg:mt-0 lg:flex-shrink-0 lg:flex-grow">
-            <div className="mx-auto max-w-sm">
-              <LandingFileUpload/>
+          <div className={`mt-16 sm:mt-24 lg:mt-0 lg:flex-shrink-0 lg:flex-grow`}>
+            <div className={`mx-auto max-w-sm lg:h-56`}>
+              <Suspense fallback={<></>}>
+                <ConditionalLandingFileUpload/>
+              </Suspense>
             </div>
           </div>
           <div className="sm:hidden flex mt-16 justify-center items-center gap-x-6">

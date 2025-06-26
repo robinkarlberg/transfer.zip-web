@@ -5,24 +5,16 @@ import Features2 from "@/components/Features2";
 import Features3 from "@/components/Features3";
 import FeaturesNew from "@/components/FeaturesNew";
 import HashInterceptor from "@/components/HashInterceptor";
-import Landing from "@/components/Landing";
+import Landing from "@/app/(site)/Landing";
 import Pricing from "@/components/Pricing";
 import TestimonialCloud from "@/components/TestimonialCloud";
 import { FileProvider } from "@/context/FileProvider";
 
-export default async function () {
-  const res = await fetch("https://api.github.com/repos/robinkarlberg/transfer.zip-web",
-    {
-      next: { revalidate: 3600 }
-    }
-  )
-
-  const json = await res.json()
-
+export default function () {
   return (
     <div>
-      <HashInterceptor/>
-      <Landing stars={json.stargazers_count} />
+      <HashInterceptor />
+      <Landing />
       <TestimonialCloud />
       <Features1 />
       <Features3 />

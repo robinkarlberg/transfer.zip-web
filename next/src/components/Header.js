@@ -29,10 +29,11 @@ const callsToAction = [
   { name: 'Contact', href: `mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}`, icon: "envelope-fill" },
 ]
 
-export default function Header() {
+export default function Header({  }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  const ctaText = "Sign Up!"
+  const auth = false
+  const ctaText = auth ? "Dashboard" : "Sign Up!"
   const ctaLink = "/app"
 
   const handleLinkClicked = e => {

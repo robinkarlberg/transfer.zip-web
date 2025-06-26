@@ -18,5 +18,5 @@ export default function HashInterceptor({ }) {
     }
   }, [transferDirection])
 
-  return undefined
+  return null
 }
