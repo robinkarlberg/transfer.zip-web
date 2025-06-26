@@ -37,8 +37,9 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy init script
-COPY init.sh /app/init.sh
-RUN chmod +x /app/init.sh
+COPY ./docker-create-keys.sh /app/docker-create-keys.sh
+RUN chmod +x /app/docker-create-keys.sh
+RUN /app/docker-create-keys.sh
 
 COPY --from=builder /app/public ./public
 
