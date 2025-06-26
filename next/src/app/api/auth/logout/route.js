@@ -1,5 +1,3 @@
-"use server";
-
 import { NextResponse } from 'next/server';
 import { useServerAuth } from '@/lib/server/wrappers/auth';
 import dbConnect from '@/lib/server/mongoose/db';

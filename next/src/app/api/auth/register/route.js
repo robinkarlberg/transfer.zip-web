@@ -1,5 +1,3 @@
-"use server";
-
 import dbConnect from '@/lib/server/mongoose/db';
 import Session from '@/lib/server/mongoose/models/Session';
 import User from '@/lib/server/mongoose/models/User';

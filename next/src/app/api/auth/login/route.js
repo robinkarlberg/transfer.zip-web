@@ -1,5 +1,3 @@
-"use server";
-
 import { NextResponse } from 'next/server'
 import { createCookieParams, resp } from '@/lib/server/serverUtils'
 import dbConnect from '@/lib/server/mongoose/db';

@@ -1,5 +1,3 @@
-"use server"
-
 import { getPublicKey } from "@/lib/server/keyManager"
 
 export async function GET() {
