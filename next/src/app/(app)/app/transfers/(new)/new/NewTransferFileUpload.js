@@ -131,6 +131,11 @@ export default function ({ user, storage, variant }) {
     const fileLimiter = new Bottleneck({ maxConcurrent: FILES_PARALLEL })
     const bytesLimiter = new Bottleneck({ reservoir: UPLOAD_WIN })
 
+    // TODO: make uploads faster by resolving instantly when progress is 100%
+    // then await all uploads calling onSuccess/onError (.finally maybe)
+    // this is faster in dev at least when backpressure is on server side
+
+    // TODO: retry request if initial /upload fails
     const uploads = files.map(file =>
       fileLimiter.schedule(() =>
         bytesLimiter.schedule({ weight: clampWeight(file.size * MIN_PARALLEL, UPLOAD_WIN) / MIN_PARALLEL }, () =>
