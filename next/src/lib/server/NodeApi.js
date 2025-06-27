@@ -24,7 +24,7 @@ async function _createToken() {
     .sign(await getPrivateKey())
 
   if(process.env.NODE_ENV === "development") {
-    console.log("Created control token:", jwt)
+    console.log("[DEV LOG] Created control token:", jwt)
   }
 
   // schedule it to refresh a minute before real expiry

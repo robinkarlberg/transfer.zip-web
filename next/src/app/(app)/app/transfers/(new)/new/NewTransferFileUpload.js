@@ -119,7 +119,7 @@ export default function ({ user, storage, variant }) {
     const endpoint = `${nodeUrl}/upload`
 
     const MIN_PARALLEL = 1
-    
+
     const FILES_PARALLEL = 12
 
     const UPLOAD_WIN_MB = 20
@@ -153,7 +153,13 @@ export default function ({ user, storage, variant }) {
       )
     )
 
-    await Promise.all(uploads)
+    const results = await Promise.allSettled(uploads)
+    const failedPromises = results.filter(r => r.status === "rejected")
+
+    if (failedPromises.length > 0) {
+      console.error("Not all files could be uploaded! :(")
+      console.log(failedPromises)
+    }
 
     await markTransferComplete(secretCode)
 
