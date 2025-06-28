@@ -5,26 +5,26 @@ import Image from "next/image"
 
 const features = [
   {
-    name: 'Privacy by Default',
-    description: 'Your files are protected by AES-256, the same algorithm used by militaries and governments around the world.',
-    icon: "lock",
+    name: 'Privacy First',
+    description: 'Your privacy matters. All files are securely hosted in the EU, keeping your data safe and private.',
+    icon: 'shield-check',
   },
   {
-    name: 'Keep files for 365 days',
-    description: 'With the Pro plan, your transfers are available for 365 days before they expire, ensuring they are always downloaded in time.',
-    icon: "clock",
+    name: 'Files Available All Year',
+    description: 'Upgrade to Pro and keep your files available for download up to 365 days.',
+    icon: 'calendar',
   },
   {
-    name: 'No Tracking',
-    description: `Unlike many services, we value your privacy. ${true ? "Everything is hosted in the EU." : "We do not share your information with third parties."}`,
-    icon: "ban",
+    name: 'Resumable Uploads',
+    description: 'Transfers interrupted? No worries. Easily resume uploads when your network goes down.',
+    icon: 'arrow-clockwise',
   },
   {
     name: 'Statistics',
-    description: 'Easily see when people have clicked your link or downloaded your files.',
-    icon: "bar-chart",
+    description: 'See when your files are downloaded and when your links are clicked, with simple stats.',
+    icon: 'bar-chart',
   },
-]
+];
 
 export default function Features1() {
 
@@ -32,16 +32,14 @@ export default function Features1() {
     <div className="bg-white py-24 sm:py-32" id="about">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-xl text-center">
-          <Image alt="Logo" src={logo} className="w-16 mx-auto"></Image>
+          {/* <Image alt="Logo" src={logo} className="w-16 mx-auto"></Image> */}
           {/* <p className="text-base/7 font-semibold text-primary">Benefits</p> */}
+          <div className="text-blue-500 mb-4">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div>
           <h2 className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            {/* Send Your Files in Seconds */}
-            {/* Why Choose Transfer.zip? */}
-            The Best Way to Send Files
+            Simple, Reliable, Secure
           </h2>
           <p className="mt-6 text-lg/8 text-gray-600">
-            <span className="font-bold">We do things differently here:</span> We have no cookie popups, no terms of service box and no user tracking - just fast and secure file sharing.
-            {/* With our Pro plan, you can send up to 1TB per transfer. */}
+            <span className="font-semibold">File sharing should be effortless.</span> No cookie popups, no complicated terms, and no tracking - just secure and easy transfers every time.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">

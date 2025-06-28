@@ -1,0 +1,71 @@
+import cron from "node-cron"
+
+import { MongoClient } from "mongodb"
+import { controlTransferDelete, post } from "./lib/nodeApi.js"
+
+import Fastify from 'fastify'
+import fastifySensible from '@fastify/sensible'
+import { SignJWT } from "jose"
+import { getPrivateKey } from "./lib/keyManager.js"
+
+const app = Fastify({ logger: true, requestTimeout: 0 })
+app.register(fastifySensible)
+
+let client
+let db
+
+async function dbConnect() {
+  const dbName = process.env.MONGODB_DB_NAME
+  const MONGODB_HOST = process.env.NODE_ENV == "development" ? "localhost" : "mongo"
+  const MONGODB_URL = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@${MONGODB_HOST}:${process.env.MONGODB_HOST_PORT}`
+
+  console.log(`MONGODB_URL: mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:**************@${MONGODB_HOST}:${process.env.MONGODB_HOST_PORT}`)
+
+  if (!client) {
+    client = new MongoClient(MONGODB_URL)
+    await client.connect()
+    db = client.db(dbName)
+  }
+}
+
+await dbConnect()
+
+const deleteExpiredTransfers = async () => {
+  const currentTime = new Date()
+
+  const expiredTransfers = await db.collection("transfers").find({
+    $and: [
+      { expiresAt: { $lt: currentTime } },
+      { expiresAt: { $ne: 0 } }
+    ]
+  }).toArray()
+  for (let transfer of expiredTransfers) {
+    await controlTransferDelete(transfer.nodeUrl, transfer._id.toString())
+    await db.collection("transfers").deleteOne({ _id: transfer._id })
+  }
+
+  console.log("[", currentTime, "]", "Deleted", expiredTransfers.length, "expired transfers...")
+}
+
+app.post("/sign", async (req, reply) => {
+  const { payload, expirationTime } = req.body
+
+  const token = await new SignJWT(payload)
+    .setProtectedHeader({ alg: "RS256" })
+    .setAudience("transfer.zip")
+    .setExpirationTime(expirationTime)
+    .sign(await getPrivateKey())
+
+  return { success: true, token }
+})
+
+app.post("/forward-node-control/*", async (req, reply) => {
+  const endpoint = req.params["*"]
+  const { nodeUrl, ...restBody } = req.body
+  const res = await post(nodeUrl, `/control/${endpoint}`, restBody)
+  return res
+})
+
+cron.schedule("*/15 * * * *", deleteExpiredTransfers)
+deleteExpiredTransfers()
+await app.listen({ port: 3001, host: '127.0.0.1' })

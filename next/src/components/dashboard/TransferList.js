@@ -6,7 +6,7 @@ import { ApplicationContext } from "@/context/ApplicationContext"
 import { useContext, useMemo } from "react"
 import { DashboardContext } from "@/context/DashboardContext"
 import { deleteTransfer, getTransferDownloadLink } from "@/lib/client/Api"
-import { humanTimeUntil, parseTransferExpiryDate, tryCopyToClipboard } from "@/lib/utils"
+import { humanTimeUntil, parseTransferExpiryDate, sleep, tryCopyToClipboard } from "@/lib/utils"
 import BIcon from "../BIcon"
 import Link from "next/link"
 
@@ -50,7 +50,15 @@ const Entry = ({ transfer }) => {
   const handleDelete = async e => {
     e.stopPropagation()
     await deleteTransfer(id)
-    router.replace("../")
+    // await sleep(1000)
+    // router.refresh()
+    if(displayedTransferId === id) {
+      router.replace(".")
+      router.refresh()
+    }
+    else {
+      router.refresh()
+    }
   }
 
   const handleClicked = async e => {
@@ -58,14 +66,14 @@ const Entry = ({ transfer }) => {
 
     }
     else {
-      isSelected ? router.replace(".") : router.push(`/app/transfers/${id}`)
+      isSelected ? router.replace(".") : router.push(`/app/${id}`)
     }
   }
 
   const expiresSoon = expiryDate && (expiryDate - new Date() <= 3 * 24 * 60 * 60 * 1000)
 
   return (
-    <div onClick={handleClicked} className={`hover:cursor-pointer group text-start shadow-sm rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-5 py-4 group ${hasTransferRequest ? "hover:cursor-default" : "hover:bg-gray-50"}`}>
+    <div onClick={handleClicked} className={`group text-start shadow-xs rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-5 py-4 group ${disabled ? "hover:cursor-default" : "hover:cursor-pointer hover:bg-gray-50"}`}>
       <div className="">
         <div>
           <div className="flex">
@@ -156,7 +164,7 @@ const Entry = ({ transfer }) => {
 export default function TransferList({ transfers }) {
   return (
     <div className="">
-      <div className={`grid grid-cols-1 gap-2`}>
+      <div className={`grid grid-cols-1 gap-3`}>
         {transfers.map((transfer, index) => <Entry key={transfer.id} transfer={transfer} />)}
       </div>
       {transfers.length == 0 && (

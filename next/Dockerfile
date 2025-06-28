@@ -36,14 +36,6 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Needed for generate keys
-RUN apk add --no-cache openssl
-
-# Copy init script
-COPY ./docker-create-keys.sh /app/docker-create-keys.sh
-RUN chmod +x /app/docker-create-keys.sh
-RUN /app/docker-create-keys.sh
-
 # Copy conf.json
 COPY conf.json /app/conf.json
 

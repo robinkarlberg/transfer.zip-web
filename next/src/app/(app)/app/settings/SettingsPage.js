@@ -1,5 +1,8 @@
 "use client"
 
+import QuestionCircle from "@/components/elements/QuestionCircle"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 import { API_URL, logout } from "@/lib/client/Api"
 import { capitalizeFirstLetter } from "@/lib/utils"
 import Link from "next/link"
@@ -17,8 +20,8 @@ export default function ({ user }) {
 
   return (
     <div className="pt-4">
-      <div className="border rounded-2xl shadow-xs p-6 border-gray-900/10 max-w-xl mb-8">
-        <h2 className="text-lg font-semibold text-gray-900 ">Account</h2>
+      <div className="border rounded-2xl shadow-xs p-6 border-gray-900/10 max-w-xl mb-3">
+        <h2 className="text-lg font-semibold text-gray-900 ">General</h2>
         <p className="mt-1 text-sm/6 text-gray-600">To change your email or delete your account, <a className="text-primary" href={`mailto:${process.env.NEXT_PUBLIC_SUPPORT_EMAIL}`}>contact us</a>.</p>
 
         <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -39,7 +42,32 @@ export default function ({ user }) {
           </div>
         </div>
       </div>
-      <div className="border rounded-2xl shadow-xs p-6 border-gray-900/10 max-w-xl mb-8">
+      <div className="border rounded-2xl shadow-xs p-6 border-gray-900/10 max-w-xl mb-3">
+        <h2 className="text-lg font-semibold text-gray-900 ">Notifications</h2>
+        <p className="mt-1 text-sm/6 text-gray-600">Choose how you receive notifications.</p>
+
+        <div className="space-y-4 mt-4">
+          <div className="flex items-center space-x-3">
+            <Checkbox id="downloaded" />
+            <Label htmlFor="downloaded" className="cursor-pointer">
+              User Downloaded your Files
+            </Label>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Checkbox id="received" />
+            <Label htmlFor="received" className="cursor-pointer">
+              Files Received from Transfer Request
+            </Label>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Checkbox id="expiry" />
+            <Label htmlFor="expiry" className="cursor-pointer">
+              Expiry Warnings <QuestionCircle text={"Receive an email if a transfer expires, and it has not been downloaded yet."}/>
+            </Label>
+          </div>
+        </div>
+      </div>
+      <div className="border rounded-2xl shadow-xs p-6 border-gray-900/10 max-w-xl mb-3">
         <h2 className="text-lg font-semibold text-gray-900 ">Subscription</h2>
         <p className="mt-1 text-sm/6 text-gray-600">View and change your subscription details.</p>
 
@@ -56,7 +84,7 @@ export default function ({ user }) {
           </div>
         </div>
       </div>
-      <div className="sm:col-span-6 text-red-500">
+      <div className="sm:col-span-6 text-red-500 font-bold">
         <button className="text-sm" onClick={handleLogout}>&larr; Logout</button>
       </div>
     </div>

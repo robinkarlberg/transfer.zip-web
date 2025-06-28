@@ -11,6 +11,9 @@ import BIcon from "@/components/BIcon";
 
 import icon from "@/img/icon.png"
 import Image from "next/image";
+import { Progress } from "@/components/ui/progress";
+import { humanFileSize } from "@/lib/transferUtils";
+import { Button } from "@/components/ui/button";
 
 // const DashButton = ({ children }) => {
 //   return (
@@ -32,7 +35,7 @@ import Image from "next/image";
 //   { id: 3, name: 'Workcation', href: '#', initial: 'W', current: false },
 // ]
 
-export default function Sidebar({ user }) {
+export default function Sidebar({ user, storage }) {
   const prepend = `/app`
 
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -40,8 +43,8 @@ export default function Sidebar({ user }) {
   const pathname = usePathname();
 
   const _navigation = [
-    { name: 'Overview', href: '', icon: "house" },
-    { name: 'Transfers', href: '/transfers', icon: "send" },
+    { name: 'My Transfers', href: '', icon: "house" },
+    // { name: 'Branding', href: '/domains', icon: "globe" },
   ]
 
   const _adminNavigation = [
@@ -169,14 +172,15 @@ export default function Sidebar({ user }) {
         <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
-            <div className="flex h-16 shrink-0 items-center">
+            <div className="flex h-8 shrink-0 items-center mt-10">
               <Image
                 alt="Your Company"
                 src={icon}
-                className="h-8 w-auto me-2"
+                className="h-10 w-auto me-2"
               />
               <h1 className="text-gray-900 text-2xl text-center font-bold"><Link href="/">{process.env.NEXT_PUBLIC_SITE_NAME}</Link></h1>
             </div>
+            <Link href={"/app/new"} className="mb-1 text-center bg-primary hover:bg-primary-light text-white text-sm font-medium py-2 rounded-md">New Transfer<BIcon className={"ms-1.5 text-xs"} name={"send-fill"} /></Link>
             <nav className={`flex flex-1 flex-col`}>
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
@@ -261,26 +265,35 @@ export default function Sidebar({ user }) {
                     </li>
                   </ul>
                 </li> */}
-                <li className="-mx-6 mt-auto">
-                  <Link
-                    href="/app/settings"
-                    className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
-                  >
-                    {/* <img
-                      alt=""
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      className="h-8 w-8 rounded-full bg-gray-50"
-                    /> */}
-                    <BIcon name={"gear"} className={"text-lg"} />
-                    <span className="sr-only">Settings</span>
-                    <span aria-hidden="true">Settings</span>
-                  </Link>
-                </li>
+                <div className="mt-auto">
+                  <div className="mb-4">
+                    <div className="text-sm mb-1 flex font-medium justify-between text-gray-900">
+                      <span>{storage.storagePercent}%</span>
+                      <span>{humanFileSize(storage.usedStorageBytes, true)} of {humanFileSize(storage.maxStorageBytes, true)} used</span>
+                    </div>
+                    <div>
+                      <Progress className={"h-1.5"} value={storage.storagePercent}></Progress>
+                    </div>
+                  </div>
+                  <li className="-mx-6 mb-2">
+                    <Link
+                      href="/app/settings"
+                      className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-900 hover:bg-gray-50"
+                    >
+                      <BIcon name={"person"} className={"text-lg"} />
+                      <span className="sr-only">Account</span>
+                      <span aria-hidden="true">Account</span>
+                    </Link>
+                  </li>
+                  {/* <div className="text-gray-400 text-xs mb-3 flex justify-between">
+                    <Link className="hover:underline" href={"/legal"}>Legal</Link>
+                    <span>&copy; {new Date().getFullYear()} {process.env.NEXT_PUBLIC_AUTHOR}</span>
+                  </div> */}
+                </div>
               </ul>
             </nav>
           </div>
-        </div >
-
+        </div>
         <div className="sticky top-0 z-40 flex items-center gap-x-6 bg-white px-4 py-4 shadow-sm sm:px-6 lg:hidden">
           <button type="button" onClick={() => setSidebarOpen(true)} className="-m-2.5 p-2.5 text-gray-700 lg:hidden">
             <span className="sr-only">Open sidebar</span>
@@ -288,8 +301,8 @@ export default function Sidebar({ user }) {
           </button>
           <div className="flex-1 text-sm font-bold leading-6 text-gray-900">{process.env.NEXT_PUBLIC_SITE_NAME}</div>
           <Link href="#">
-            <span className="sr-only">Settings</span>
-            <BIcon name={"gear"} className={"text-lg"} />
+            <span className="sr-only">Account</span>
+            <BIcon name={"person"} className={"text-lg"} />
             {/* <img
               alt=""
               src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"

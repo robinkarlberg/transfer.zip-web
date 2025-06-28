@@ -1,0 +1,26 @@
+{
+  "name": "worker",
+  "version": "1.0.0",
+  "main": "worker.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "NODE_ENV=development dotenv -e ../.env -- nodemon worker.js",
+    "start": "NODE_ENV=production node worker.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^24.0.7",
+    "dotenv-cli": "^8.0.0",
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "@fastify/sensible": "^6.0.3",
+    "fastify": "^5.4.0",
+    "jose": "^6.0.11",
+    "mongodb": "^6.17.0",
+    "node-cron": "^4.1.1"
+  }
+}

@@ -1,11 +1,8 @@
-import { getFilesListForHashing, getFilesListHash } from "@/lib/server/filesListHash"
-import { getPrivateKey } from "@/lib/server/keyManager"
 import dbConnect from "@/lib/server/mongoose/db"
 import Transfer from "@/lib/server/mongoose/models/Transfer"
-import TransferRequest from "@/lib/server/mongoose/models/TransferRequest"
 import { resp } from "@/lib/server/serverUtils"
+import { workerSign } from "@/lib/server/workerApi"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
-import { SignJWT } from "jose"
 import { NextResponse } from "next/server"
 
 // Signing token for auth to a transfer.zip node server
@@ -39,16 +36,20 @@ export async function POST(req) {
 
       // const storage = await transfer.author.getStorage()
 
-      const token = await new SignJWT({
-        // sub: transfer.author._id.toString(),
+      console.log(basePayload,{
         ...basePayload,
         scope: "upload"
       })
-        .setProtectedHeader({ alg: "RS256" })
-        .setAudience("transfer.zip")
-        .setExpirationTime("1d")
-        .sign(await getPrivateKey())
+      console.log("TEST")
 
+      // Let worker sign token, then return back to the user
+      const { token } =
+        await workerSign({
+          ...basePayload,
+          scope: "upload"
+        }, "1d")
+      
+      console.log("TOKEN TOKEN", token)
       return NextResponse.json(resp({ token }))
     }
     else if (scope == "download") {
@@ -56,15 +57,13 @@ export async function POST(req) {
         return NextResponse.json(resp("Transfer has not finished uploading, so you can not download it yet."), { status: 409 })
       }
 
-      const token = await new SignJWT({
-        ...basePayload,
-        name: transfer.files.length == 1 ? transfer.files[0].name : `${transfer.name} - Transfer.zip`,
-        scope: "download"
-      })
-        .setProtectedHeader({ alg: "RS256" })
-        .setAudience("transfer.zip")
-        .setExpirationTime("1m")
-        .sign(await getPrivateKey())
+      // Let worker sign token, then return back to the user
+      const token =
+        await workerSign({
+          ...basePayload,
+          name: transfer.files.length == 1 ? transfer.files[0].name : `${transfer.name} - Transfer.zip`,
+          scope: "download"
+        }, "1m")
 
       return NextResponse.json(resp({ token, nodeUrl: transfer.nodeUrl }))
     }

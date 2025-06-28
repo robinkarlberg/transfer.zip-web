@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers';
 import dbConnect from '../mongoose/db';
 import Session from '../mongoose/models/Session';
-import { controlUploadComplete } from '../NodeApi';
 
 export async function useServerAuth() {
   const cookieStore = await cookies();

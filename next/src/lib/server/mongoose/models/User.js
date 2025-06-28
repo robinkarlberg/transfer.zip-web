@@ -145,8 +145,8 @@ UserSchema.methods.getStorage = async function () {
     const usedStorageBytes = transfers.reduce((total, transfer) => total + transfer.size, 0)
     const maxStorageBytes = getMaxStorageForPlan(this.getPlan())
 
-    const storagePercent = Math.floor((usedStorageBytes / maxStorageBytes)) * 100
-
+    const storagePercent = Math.floor((usedStorageBytes / maxStorageBytes) * 100)
+    
     return {
         usedStorageBytes,
         maxStorageBytes,

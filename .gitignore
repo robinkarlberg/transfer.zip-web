@@ -2,7 +2,7 @@ node_modules/
 .env
 
 _db/
-_local_dev_api_data/
+_local_dev_worker_data/
 
 /data/
 .DS_Store

@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import crypto from "crypto"
-import { controlTransferDelete } from '../../NodeApi';
 
 // These keys are not protecting anything critical. It is just so that the Transfer password is
 // not in plain-text in the database. We also do not want to hash it, as we need to let the user
@@ -177,16 +176,16 @@ TransferSchema.set('toJSON', { virtuals: true });
 TransferSchema.set('toObject', { virtuals: true });
 
 // MONGOOSE DOCUMENTATION KAN SUGA MIN BALLE
-TransferSchema.pre("deleteOne", async function (next) {
-    const transfer = await this.model.findOne(this.getFilter())
-    try {
-        console.log(`Transfer deleteOne: ${transfer._id}`)
-        await controlTransferDelete(transfer.nodeUrl, transfer._id.toString())
-        next()
-    } catch (err) {
-        console.error(`Error deleting transfer: ${transfer._id}`, err);
-        next();
-    }
-});
+// TransferSchema.pre("deleteOne", async function (next) {
+//     const transfer = await this.model.findOne(this.getFilter())
+//     try {
+//         console.log(`Transfer deleteOne: ${transfer._id}`)
+//         await controlTransferDelete(transfer.nodeUrl, transfer._id.toString())
+//         next()
+//     } catch (err) {
+//         console.error(`Error deleting transfer: ${transfer._id}`, err);
+//         next();
+//     }
+// });
 
 export default mongoose.models.Transfer || mongoose.model("Transfer", TransferSchema)

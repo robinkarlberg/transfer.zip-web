@@ -18,12 +18,14 @@ export default async function DashboardLayout({ children }) {
     return redirect("/signup");
   }
 
+  const storage = await auth.user.getStorage()
+
   return (
     <div>
       <div className="flex flex-col lg:flex-row min-h-screen">
         <ApplicationProvider>
           <DashboardProvider>
-            <Sidebar user={auth.user.friendlyObj()} />
+            <Sidebar user={auth.user.friendlyObj()} storage={storage} />
             {children}
           </DashboardProvider>
         </ApplicationProvider>

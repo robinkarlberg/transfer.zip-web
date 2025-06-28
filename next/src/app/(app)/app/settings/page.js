@@ -9,7 +9,7 @@ export default async function () {
   const { user } = auth
 
   return (
-    <GenericPage title={"Settings"}>
+    <GenericPage title={"Account"}>
       <SettingsPage user={user.friendlyObj()} />
     </GenericPage>
   )

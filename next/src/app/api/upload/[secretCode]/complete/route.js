@@ -1,6 +1,6 @@
 import Transfer from "@/lib/server/mongoose/models/Transfer"
-import { controlUploadComplete } from "@/lib/server/NodeApi"
 import { resp } from "@/lib/server/serverUtils"
+import { workerUploadComplete } from "@/lib/server/workerApi"
 import { NextResponse } from "next/server"
 
 export async function POST(req, { params }) {
@@ -19,7 +19,7 @@ export async function POST(req, { params }) {
 
   const filesList = transfer.files.map(file => file.friendlyObj())
 
-  await controlUploadComplete(transfer.nodeUrl, transfer._id.toString(), filesList)
+  await workerUploadComplete(transfer.nodeUrl, transfer._id.toString(), filesList)
 
   return NextResponse.json(resp({}))
 }

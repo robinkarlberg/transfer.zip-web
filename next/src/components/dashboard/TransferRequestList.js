@@ -1,15 +1,21 @@
 "use client"
 
 import { ApplicationContext } from "@/context/ApplicationContext"
-import { useRouter } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { useContext, useMemo } from "react"
 import EmptySpace from "../elements/EmptySpace"
+import { DashboardContext } from "@/context/DashboardContext"
+import { tryCopyToClipboard } from "@/lib/utils"
+import { activateTransferRequest, deactivateTransferRequest, getTransferRequestUploadLink } from "@/lib/client/Api"
+import BIcon from "../BIcon"
+import Link from "next/link"
 
 const Entry = ({ transferRequest }) => {
   const router = useRouter()
 
-  const { displayNotification } = useContext(ApplicationContext)
-  const { displayedTransferId, hideSidebar, showSidebar } = useContext(DashboardContext)
+  const { displayNotification } = useContext(DashboardContext)
+
+  const { transferId: displayedTransferId } = useParams()
 
   const uploadLink = useMemo(() => getTransferRequestUploadLink(transferRequest), [transferRequest])
 
@@ -51,7 +57,7 @@ const Entry = ({ transferRequest }) => {
   }
 
   return (
-    <button onClick={handleClicked} className={`hover:cursor-default group text-start shadow-sm rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-5 py-4 group`}>
+    <div onClick={handleClicked} className={`hover:cursor-default group text-start shadow-xs rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-5 py-4 group`}>
       <div className="">
         <div>
           <h3 className={`text-lg font-bold mb-0.5 me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
@@ -92,21 +98,21 @@ const Entry = ({ transferRequest }) => {
             {
               active && (
                 <>
-                  <Link onClick={handleCopyLinkClicked} className="underline hover:text-primary">Copy Link</Link>
+                  <button onClick={handleCopyLinkClicked} className="underline hover:text-primary">Copy Link</button>
                   <BIcon name="dot" />
                 </>
               )
             }
-            <Link
+            <button
               onClick={active ? handleDeactivate : handleActivate}
               className={`underline ${active ? "hover:text-red-600" : "hover:text-primary"}`}
             >
               {active ? "Deactivate" : "Reactivate"} Link
-            </Link>
+            </button>
           </div>
         </div>
       </div>
-    </button >
+    </div>
   )
 }
 
@@ -119,7 +125,7 @@ export default function TransferRequestList({ transferRequests }) {
   return (
     <div className="">
       {transferRequests.length == 0 && (
-        <EmptySpace onClick={() => router.push("/app/transfers/new?dir=receive")} buttonText={"Create Request Link"} title={"Your request links will appear here"} subtitle={"You can view or revoke invdividual links."} />
+        <EmptySpace onClick={() => router.push("/app/new?dir=receive")} buttonText={"Create Request Link"} title={"Your request links will appear here"} subtitle={"You can view or revoke invdividual links."} />
       )}
       <div className={`grid grid-cols-1 gap-2 mb-2`}>
         {activeRequests.map((transferRequest, index) => <Entry key={transferRequest.id} transferRequest={transferRequest} />)}

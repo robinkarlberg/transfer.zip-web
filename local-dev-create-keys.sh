@@ -1,6 +1,6 @@
 #!/bin/sh
 
-KEY_DIR="./_api_data"
+KEY_DIR="./_local_dev_worker_data"
 PRIVATE_KEY="$KEY_DIR/private.pem"
 PUBLIC_KEY="$KEY_DIR/public.pem"
 

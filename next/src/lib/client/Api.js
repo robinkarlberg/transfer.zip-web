@@ -255,6 +255,7 @@ export async function sendTransferRequestByEmail(transferRequestId, emails) {
 
 export const getTransferRequestUploadLink = (transferRequest) => {
     if (!transferRequest) return null
+    if(typeof window === "undefined") return null
     return `${window.location.protocol}//${window.location.host}/upload/${transferRequest.secretCode}`
 }
 
