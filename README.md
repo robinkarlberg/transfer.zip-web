@@ -1,12 +1,14 @@
-# Transfer.zip
-
-<img src='https://cdn.transfer.zip/QuickShare.png' width="80%"></img>
-
 > [!NOTE]
 > Work is underway to make the API open source, making normal file transfers, stored on disk/S3, self-hosteable as well.
+>
+> This will allow you to set up your own file transfer server, in addition to Quick Share.
 > 
 > [Dev Branch](https://github.com/robinkarlberg/transfer.zip-web/tree/dev-next)
 > [Node Repo](https://github.com/robinkarlberg/transfer.zip-node/)
+
+# Transfer.zip
+
+<img src='https://cdn.transfer.zip/QuickShare.png' width="80%"></img>
 
 #### A self-hostable web application that allows you to easily and securely transfer files between devices **with no size limit**. Also available on, you guessed it, [https://transfer.zip](https://transfer.zip/).
 
