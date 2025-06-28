@@ -93,8 +93,8 @@ zip.yourdomain.com {
 
 ### Get public key
 
-While the container is running:
-`docker compose exec next cat /api_data/public.pem`
+While the worker container is running:
+`docker compose exec worker cat /worker_data/public.pem`
 
 ## Local Development and Contributing
 > [!NOTE]

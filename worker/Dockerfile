@@ -27,6 +27,6 @@ RUN chown -R nodejs:nodejs /app
 
 USER nodejs
 
-EXPOSE 3050
+EXPOSE 3001
 
 CMD ["npm", "start"]
