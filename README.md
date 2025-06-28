@@ -2,6 +2,12 @@
 
 <img src='https://cdn.transfer.zip/QuickShare.png' width="80%"></img>
 
+> [!NOTE]
+> Work is underway to make the API open source, making normal file transfers, stored on disk/S3, self-hosteable as well.
+> 
+> [Dev Branch](https://github.com/robinkarlberg/transfer.zip-web/tree/dev-next)
+> [Node Repo](https://github.com/robinkarlberg/transfer.zip-node/)
+
 #### A self-hostable web application that allows you to easily and securely transfer files between devices **with no size limit**. Also available on, you guessed it, [https://transfer.zip](https://transfer.zip/).
 
 As a hobby music producer, I often needed to share large WAVs, but existing services didn't really do it for me. Discord's 50MB limit was frustrating (now 10MB 😭), and Google Drive, MEGA, Dropbox etc. felt cumbersome, so I started making transfer.zip. I rarely need to save my transfered files permanently, I just want to transfer them, and I think many others do too. Because the Quick Share feature never stores the files anywhere, there are **no file size or bandwidth limitations**!
