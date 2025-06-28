@@ -36,7 +36,7 @@ export async function POST(req) {
 
       // const storage = await transfer.author.getStorage()
 
-      console.log(basePayload,{
+      console.log(basePayload, {
         ...basePayload,
         scope: "upload"
       })
@@ -48,7 +48,7 @@ export async function POST(req) {
           ...basePayload,
           scope: "upload"
         }, "1d")
-      
+
       console.log("TOKEN TOKEN", token)
       return NextResponse.json(resp({ token }))
     }
@@ -58,7 +58,7 @@ export async function POST(req) {
       }
 
       // Let worker sign token, then return back to the user
-      const token =
+      const { token } =
         await workerSign({
           ...basePayload,
           name: transfer.files.length == 1 ? transfer.files[0].name : `${transfer.name} - Transfer.zip`,
