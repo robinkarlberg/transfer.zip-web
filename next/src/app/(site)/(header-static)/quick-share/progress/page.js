@@ -1,7 +1,8 @@
+import DashboardProvider, { DashboardContext } from "@/context/DashboardContext";
 import QuickShareProgress from "./QuickShareProgress";
 
-export default function({}) {
+export default function ({ }) {
   return (
-    <QuickShareProgress/>
+    <QuickShareProgress />
   )
 }

@@ -75,7 +75,7 @@ export default function ({ user, storage }) {
     return uploadProgressMap.reduce((sum, item) => sum + item[1], 0)
   }, [uploadProgressMap])
 
-  const tooLittleStorage = useMemo(() => storage ? totalBytesToSend > storage.maxBytes - storage.usedBytes : false, [totalBytesToSend, storage])
+  const tooLittleStorage = useMemo(() => storage ? totalBytesToSend > storage.maxStorageBytes - storage.usedStorageBytes : false, [totalBytesToSend, storage])
 
   const handleFiles = async files => {
     const form = formRef.current;
@@ -260,17 +260,17 @@ export default function ({ user, storage }) {
 
   return (
     <div className="flex flex-col gap-4">
-      {tooLittleStorage && (
-        <div className="w-full max-w-96 px-4 sm:px-0">
-          <button onClick={() => setShowUpgradeModal(true)} className="w-full shadow-sm text-start rounded-lg text-white bg-red-500 px-4 py-3 group transition-colors hover:bg-red-600">
-            <h5 className="font-semibold text-sm"><span className="group-hover:underline">Storage full</span> <span className="group-hover:ms-1 transition-all">&rarr;</span></h5>
-            <p className="font-medium text-sm">
-              Upgrade your subscription to send up to 1TB of files.
-            </p>
-          </button>
-        </div>
-      )}
       <div className={`mx-auto w-full shadow-lg bg-white max-w-[22rem] rounded-2xl border`}>
+        {tooLittleStorage && direction == "send" && (
+          <div className="w-full pt-4 px-4">
+            <button onClick={() => setShowUpgradeModal(true)} className="w-full shadow-sm text-start rounded-lg text-white bg-red-500 px-4 py-3 group transition-colors hover:bg-red-600">
+              <h5 className="font-bold text-sm mb-1"><span className="group-hover:underline">Hey big sender...</span></h5>
+              <p className="font-medium text-sm">
+                Your storage is too full. Upgrade your subscription now to send bigger files. <span className="group-hover:ms-1 transition-all">&rarr;</span>
+              </p>
+            </button>
+          </div>
+        )}
         <div className="px-6 flex justify-center mt-2 sm:mt-4">
           <fieldset aria-label="Transfer direction">
             <RadioGroup
@@ -364,28 +364,6 @@ export default function ({ user, storage }) {
                 {emailRecipients.map((email, index) => <AddedEmailField key={index} email={email} onAction={handleEmailFieldAction} />)}
               </ul>
             )}
-            {/* <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
-              Recipients<span className="ms-2 text-gray-400 font-normal text-xs">{emailRecipients.length > 0 ? (emailRecipients.length + " / " + getMaxRecipientsForPlan(user.plan)) : "Optional"}</span>
-            </label>
-            <div className="relative mt-2 flex items-center">
-              <input
-                ref={emailRef}
-                onKeyDown={handleEmailInputKeyDown}
-                onBlur={handleEmailBlur}
-                id="email"
-                placeholder="user@example.com"
-                type="email"
-                className={`block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 pr-16`}
-              />
-              <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-                <button type="button" onClick={handleEmailAdd} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
-                  <BIcon name={"plus-lg"} className={"mr-1 ms-1"} />Add
-                </button>
-              </div>
-            </div>
-            <ul className="max-h-40 overflow-y-auto overflow-x-hidden">
-              {emailRecipients.map((email, index) => <AddedEmailField key={index} email={email} onAction={handleEmailFieldAction} />)}
-            </ul> */}
           </div>
           <div className={`col-span-full grid gap-2 ${emailRecipients.length > 0 ? "-mt-6" : ""}`}>
             <Label htmlFor="description">Message</Label>

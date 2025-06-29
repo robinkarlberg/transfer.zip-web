@@ -17,6 +17,7 @@ import { call, fileTransferGetFileList, fileTransferServeFiles, listen } from "@
 import * as WebRtc from "@/lib/client/webrtc"
 import * as zip from "@zip.js/zip.js"
 import { useQuickShare } from "@/hooks/client/useQuickShare"
+import { DashboardContext } from "@/context/DashboardContext"
 
 const TRANSFER_STATE_WAIT_FOR_USER = "wait_for_user"
 const TRANSFER_STATE_IDLE = "idle"
@@ -30,7 +31,7 @@ export default function QuickShareProgress() {
   const router = useRouter()
 
   const { files } = useContext(FileContext)
-  const { displayNotification, setShowSignUpModal } = useContext(ApplicationContext)
+  const { displayNotification, setShowSignUpModal } = useContext(DashboardContext)
   const { hasBeenSentLink, k, remoteSessionId, transferDirection } = useQuickShare()
 
   const [transferState, _setTransferState] = useState(hasBeenSentLink ? TRANSFER_STATE_IDLE : TRANSFER_STATE_WAIT_FOR_USER)

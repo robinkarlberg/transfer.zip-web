@@ -43,7 +43,13 @@ const UserSchema = new mongoose.Schema({
     promoEmailConsent: { type: Boolean, default: true },
     lastPromoEmail: { type: Date },
 
-    customApplicationFeePercent: { type: Number }
+    customApplicationFeePercent: { type: Number },
+
+    notificationSettings: {
+        transferDownloaded: { type: Boolean, default: true },
+        transferReceived: { type: Boolean, default: true },
+        expiryWarnings: { type: Boolean, default: true },
+    }
 
 }, { timestamps: true })
 
@@ -66,7 +72,8 @@ UserSchema.methods.friendlyObj = function () {
         planValidUntil: this.planValidUntil,
         planCancelling: this.planCancelling,
         stripe_account_id: this.stripe_account_id,
-        onboarded: this.onboarded
+        onboarded: this.onboarded,
+        notificationSettings: this.notificationSettings
     }
 }
 
@@ -146,7 +153,7 @@ UserSchema.methods.getStorage = async function () {
     const maxStorageBytes = getMaxStorageForPlan(this.getPlan())
 
     const storagePercent = Math.floor((usedStorageBytes / maxStorageBytes) * 100)
-    
+
     return {
         usedStorageBytes,
         maxStorageBytes,

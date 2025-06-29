@@ -62,7 +62,7 @@ export default function ({ user }) {
           <div className="flex items-center space-x-3">
             <Checkbox id="expiry" />
             <Label htmlFor="expiry" className="cursor-pointer">
-              Expiry Warnings <QuestionCircle text={"Receive an email if a transfer expires, and it has not been downloaded yet."}/>
+              Expiry Warnings <QuestionCircle text={"Receive an email if a transfer is about to expire, but has not yet been downloaded."}/>
             </Label>
           </div>
         </div>

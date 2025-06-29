@@ -17,15 +17,15 @@ export default function ({ stars }) {
   const handleFiles = (files) => {
     setFiles(files)
     if (hasBeenSentLink) {
-      router.push("/quick-share/progress" + window.location.hash)
+      router.push("/quick-share/progress" + window.location.hash, { scroll: false })
     }
     else {
-      router.push("/quick-share/progress#S")
+      router.push("/quick-share/progress#S", { scroll: false })
     }
   }
 
   const onReceiveClicked = e => {
-    router.push("/quick-share/progress#R")
+    router.push("/quick-share/progress#R", { scroll: false })
   }
 
   return (
