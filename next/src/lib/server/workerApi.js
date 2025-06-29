@@ -24,6 +24,10 @@ export async function workerSign(payload, expirationTime) {
   return await post("/sign", { payload, expirationTime })
 }
 
+export async function workerGeoSlow(ip) {
+  return await post("/geo-slow", { ip })
+}
+
 export async function workerTransferDelete(nodeUrl, transferId) {
   return await controlPost("/transfer/delete", { nodeUrl, transferId })
 }

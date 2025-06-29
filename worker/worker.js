@@ -7,6 +7,7 @@ import Fastify from 'fastify'
 import fastifySensible from '@fastify/sensible'
 import { SignJWT } from "jose"
 import { getPrivateKey } from "./lib/keyManager.js"
+import { lookup } from "doc999tor-fast-geoip"
 
 const app = Fastify({ logger: true, requestTimeout: 0 })
 app.register(fastifySensible)
@@ -57,6 +58,12 @@ app.post("/sign", async (req, reply) => {
     .sign(await getPrivateKey())
 
   return { success: true, token }
+})
+
+app.post("/geo-slow", async (req, reply) => {
+  const { ip } = req.body
+  const geo = await lookup(ip)
+  return { success: true, geo }
 })
 
 app.post("/forward-node-control/*", async (req, reply) => {

@@ -23,7 +23,6 @@
     "bottleneck": "^2.19.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "doc999tor-fast-geoip": "^1.1.339",
     "framer-motion": "^12.15.0",
     "heic-convert": "^2.1.0",
     "jsonwebtoken": "^9.0.2",

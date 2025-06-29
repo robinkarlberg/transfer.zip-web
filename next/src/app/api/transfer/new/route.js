@@ -7,8 +7,8 @@ import crypto from "crypto"
 import { addMilliscondsToCurrentTime } from '@/lib/utils'
 import { resp } from '@/lib/server/serverUtils'
 import { getConf } from '@/lib/server/config'
-import { lookup } from "doc999tor-fast-geoip"
 import { toLargeRegion } from '@/lib/server/region'
+import { workerGeoSlow } from '@/lib/server/workerApi'
 
 export async function POST(req) {
   let auth
@@ -74,12 +74,12 @@ export async function POST(req) {
     files: transferFiles
   })
 
-  const xForwardedFor = process.env.NODE_ENV === "development" ? "207.97.227.239" : req.headers.get("x-forwarded-for")
+  const xForwardedFor = process.env.NODE_ENV === "development" ? "185.183.152.210" : req.headers.get("x-forwarded-for")
   const conf = await getConf()
 
   let nodeUrl
   if (xForwardedFor) {
-    const geo = await lookup(xForwardedFor)
+    const { geo } = await workerGeoSlow(xForwardedFor)
     if (geo) {
       const { country } = geo
       const transferRegion = toLargeRegion(country)
