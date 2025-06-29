@@ -7,6 +7,8 @@ import crypto from "crypto"
 import { addMilliscondsToCurrentTime } from '@/lib/utils'
 import { resp } from '@/lib/server/serverUtils'
 import { getConf } from '@/lib/server/config'
+import { lookup } from "doc999tor-fast-geoip"
+import { toLargeRegion } from '@/lib/server/region'
 
 export async function POST(req) {
   let auth
@@ -72,8 +74,38 @@ export async function POST(req) {
     files: transferFiles
   })
 
-  // TODO: Not yet implemented - hardcoded url lol
-  transfer.nodeUrl = process.env.NODE_ENV === "development" ? "http://localhost:3050" : getConf().nodes[0]
+  const xForwardedFor = process.env.NODE_ENV === "development" ? "207.97.227.239" : req.headers.get("x-forwarded-for")
+  const conf = await getConf()
+
+  let nodeUrl
+  if (xForwardedFor) {
+    const geo = await lookup(xForwardedFor)
+    if (geo) {
+      const { country } = geo
+      const transferRegion = toLargeRegion(country)
+      console.log("Geo location for ip:", country, "chosen region:", transferRegion)
+
+      const nodesInRegion = conf.nodes.filter(node => node.region === transferRegion)
+
+      if (nodesInRegion.length > 0) {
+        nodeUrl = nodesInRegion[Math.floor(Math.random() * nodesInRegion.length)].url
+      }
+    }
+    else {
+      console.warn("Geo location failed for ip:", xForwardedFor)
+    }
+  }
+  else {
+    console.warn("x-forwarded-for was null")
+  }
+
+  if (!nodeUrl) {
+    nodeUrl = conf.nodes[0].url
+    console.warn("First nodeUrl was chosen as fallback!")
+  }
+
+  console.log("Chose nodeUrl:", nodeUrl)
+  transfer.nodeUrl = nodeUrl
 
   await transfer.save()
 
