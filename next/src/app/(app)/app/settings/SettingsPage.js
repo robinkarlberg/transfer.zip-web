@@ -3,11 +3,14 @@
 import QuestionCircle from "@/components/elements/QuestionCircle"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
-import { API_URL, logout } from "@/lib/client/Api"
+import { API_URL, logout, putUserSettings } from "@/lib/client/Api"
 import { capitalizeFirstLetter } from "@/lib/utils"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 export default function ({ user }) {
+
+  const router = useRouter()
 
   const handleUpgrade = async e => {
     // setShowUpgradeModal(true)
@@ -17,6 +20,17 @@ export default function ({ user }) {
     await logout()
     window.location.href = "/"
   }
+
+  const handleCheckedChange = field => async e => {
+    await putUserSettings({
+      notificationSettings: {
+        [field]: e
+      }
+    })
+    router.refresh()
+  }
+
+  const { notificationSettings } = user
 
   return (
     <div className="pt-4">
@@ -48,21 +62,21 @@ export default function ({ user }) {
 
         <div className="space-y-4 mt-4">
           <div className="flex items-center space-x-3">
-            <Checkbox id="downloaded" />
-            <Label htmlFor="downloaded" className="cursor-pointer">
+            <Checkbox id="transferDownloaded" defaultChecked={notificationSettings.transferDownloaded} onCheckedChange={handleCheckedChange("transferDownloaded")} />
+            <Label htmlFor="transferDownloaded" className="cursor-pointer">
               User Downloaded your Files
             </Label>
           </div>
           <div className="flex items-center space-x-3">
-            <Checkbox id="received" />
-            <Label htmlFor="received" className="cursor-pointer">
+            <Checkbox id="transferReceived" defaultChecked={notificationSettings.transferReceived} onCheckedChange={handleCheckedChange("transferReceived")} />
+            <Label htmlFor="transferReceived" className="cursor-pointer">
               Files Received from Transfer Request
             </Label>
           </div>
           <div className="flex items-center space-x-3">
-            <Checkbox id="expiry" />
-            <Label htmlFor="expiry" className="cursor-pointer">
-              Expiry Warnings <QuestionCircle text={"Receive an email if a transfer is about to expire, but has not yet been downloaded."}/>
+            <Checkbox id="expiryWarnings" defaultChecked={notificationSettings.expiryWarnings} onCheckedChange={handleCheckedChange("expiryWarnings")} />
+            <Label htmlFor="expiryWarnings" className="cursor-pointer">
+              Expiry Warnings <QuestionCircle text={"Receive an email if a transfer is about to expire, but has not yet been downloaded."} />
             </Label>
           </div>
         </div>

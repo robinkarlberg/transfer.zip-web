@@ -13,7 +13,7 @@ import LandingQuickShare from "./LandingQuickShare"
 const isInEU = () => true
 
 export default async function ({ auth }) {
-
+  
   const res = await fetch("https://api.github.com/repos/robinkarlberg/transfer.zip-web",
     {
       next: { revalidate: 3600 }

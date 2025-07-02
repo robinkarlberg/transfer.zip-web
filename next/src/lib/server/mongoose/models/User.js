@@ -7,6 +7,20 @@ import { getMaxStorageForPlan } from '@/lib/utils';
 import TransferRequest from './TransferRequest';
 import { listTransfersForUser } from '../../serverUtils';
 
+const NotificationSettingsSchema = new mongoose.Schema({
+    transferDownloaded: { type: Boolean, default: true },
+    transferReceived: { type: Boolean, default: true },
+    expiryWarnings: { type: Boolean, default: true },
+}, { _id: false })
+
+NotificationSettingsSchema.methods.friendlyObj = function () {
+    return {
+        transferDownloaded: this.transferDownloaded,
+        transferReceived: this.transferReceived,
+        expiryWarnings: this.expiryWarnings
+    }
+}
+
 const UserSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -45,11 +59,7 @@ const UserSchema = new mongoose.Schema({
 
     customApplicationFeePercent: { type: Number },
 
-    notificationSettings: {
-        transferDownloaded: { type: Boolean, default: true },
-        transferReceived: { type: Boolean, default: true },
-        expiryWarnings: { type: Boolean, default: true },
-    }
+    notificationSettings: { type: NotificationSettingsSchema, default: {} }
 
 }, { timestamps: true })
 
@@ -73,7 +83,7 @@ UserSchema.methods.friendlyObj = function () {
         planCancelling: this.planCancelling,
         stripe_account_id: this.stripe_account_id,
         onboarded: this.onboarded,
-        notificationSettings: this.notificationSettings
+        notificationSettings: this.notificationSettings.friendlyObj()
     }
 }
 

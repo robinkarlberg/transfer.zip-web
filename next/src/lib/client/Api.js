@@ -56,6 +56,10 @@ export async function getUserStorage() {
     return await get("/user/storage")
 }
 
+export async function putUserSettings(payload) {
+    return await put("/user/settings", payload)
+}
+
 // auth
 
 export async function login(email, password) {
@@ -107,106 +111,6 @@ export async function joinWaitlist(email) {
 }
 
 // transfer
-
-const CHUNK_SIZE = 5 * 1024 * 1024 // 5MB
-
-export function uploadTransferFiles(secretCode, files, onProgress) {
-    let bytesTransferred = 0
-    let currentFileIndex = 0
-    return new Promise((resolve, reject) => {
-        // Initialize the WebSocket connection
-        const apiUrlWithoutProtocol = API_URL.replace(/^https?:/, '')
-        const wsProtocol = window.location.protocol == "https:" ? "wss:" : "ws:"
-        const ws = new WebSocket(`${wsProtocol}//${apiUrlWithoutProtocol}/transfer/upload/${secretCode}`)
-
-        let packetBudget = 10  // 50MB
-
-        const startFileTransfer = (fileIndex) => {
-            const currentFile = files[fileIndex]
-            ws.send(JSON.stringify({
-                fileInfo: { relativePath: currentFile.webkitRelativePath || currentFile.name, name: currentFile.name, size: currentFile.size, type: currentFile.type }
-            }))
-
-            const sendChunk = (start) => {
-                const nextChunk = currentFile.slice(start, start + CHUNK_SIZE)
-                const reader = new FileReader()
-
-                reader.onload = async (e) => {
-                    while (packetBudget <= 0) {
-                        // console.log("PACKET BUDGET == 0:", packetBudget, " - Waiting...")
-                        await new Promise(resolve => setTimeout(resolve, 5))   // ugly af
-                    }
-
-                    ws.send(e.target.result)
-                    packetBudget -= 1
-                    bytesTransferred += e.target.result.byteLength
-
-                    onProgress && onProgress({
-                        bytesTransferred
-                    })
-
-                    if (start + CHUNK_SIZE < currentFile.size) {
-                        sendChunk(start + CHUNK_SIZE)
-                    } else {
-                        fileIndex++
-                    }
-                }
-                reader.readAsArrayBuffer(nextChunk)
-            }
-
-            fileIndex++
-            sendChunk(0)
-        }
-
-        ws.onopen = () => {
-
-        }
-
-        ws.onmessage = (event) => {
-            // Handle incoming WebSocket messages (progress updates)
-            console.log(event.data)
-            try {
-                const message = event.data
-                const jsonObject = JSON.parse(message)
-
-                if (jsonObject.ready) {
-                    if (currentFileIndex < files.length) {
-                        startFileTransfer(currentFileIndex++)
-                    }
-                    else {
-                        ws.send(JSON.stringify({
-                            finished: true
-                        }))
-                    }
-                }
-                else if (jsonObject.finished) {
-                    // Handle completion (final result)
-                    ws.close()
-                    resolve()
-                }
-                else if (jsonObject.recv) {
-                    // Chunk received by server
-                    packetBudget += 1
-                }
-                else if (!jsonObject.success) {
-                    throw new Error(jsonObject.message)
-                }
-            } catch (error) {
-                reject(error)
-                ws.close()
-            }
-        }
-
-        ws.onerror = (error) => {
-            console.error("WebSocket error:", error)
-            reject(error)
-        }
-
-        ws.onclose = () => {
-            console.log("WebSocket connection closed")
-        }
-    })
-}
 
 export async function getTransferList() {
     return await get(`/transfer/list`)
