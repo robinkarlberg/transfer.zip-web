@@ -28,7 +28,7 @@ export default function DownloadArea({ secretCode }) {
 
     }
     finally {
-      await sleep(1000)
+      await sleep(6000)
       setLoading(false)
     }
   }
