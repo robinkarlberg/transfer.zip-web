@@ -8,6 +8,8 @@ import { humanTimeUntil, parseTransferExpiryDate } from "@/lib/utils";
 export async function generateMetadata({ params }) {
   const { secretCode } = await params
 
+  await dbConnect()
+
   const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } })
   if (!transfer) {
     return undefined

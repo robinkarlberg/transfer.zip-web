@@ -16,7 +16,8 @@ const TransferRequestSchema = new mongoose.Schema({
     emailsSharedWith: [EmailSharedWith]
 }, { timestamps: true })
 
-TransferRequestSchema.methods.registerSentByEmail = function (email) {
+// store an email address that this request was shared with
+TransferRequestSchema.methods.addSharedEmail = function (email) {
     this.emailsSharedWith.push({ email })
 }
 
@@ -46,7 +47,7 @@ TransferRequestSchema.methods.uploadObj = function () {
 }
 
 TransferRequestSchema.methods.getUploadLink = function () {
-    return `${SITE_URL}/upload/${this.secretCode}`
+    return `${process.env.SITE_URL}/upload/${this.secretCode}`
 }
 
 export default mongoose.models.TransferRequest || mongoose.model("TransferRequest", TransferRequestSchema)
