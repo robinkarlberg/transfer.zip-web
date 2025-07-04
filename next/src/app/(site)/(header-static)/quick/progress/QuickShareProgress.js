@@ -289,7 +289,7 @@ export default function QuickShareProgress() {
 
   const handleCopy = async e => {
     if (await tryCopyToClipboard(quickShareLink)) {
-      displayNotification("Copied Link", "The Quick Share link was successfully copied to the clipboard!")
+      displayNotification("success", "Copied Link", "The Quick Share link was successfully copied to the clipboard!")
     }
   }
 

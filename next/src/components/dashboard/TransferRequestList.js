@@ -25,7 +25,7 @@ const Entry = ({ transferRequest }) => {
 
   const handleCopy = async e => {
     if (await tryCopyToClipboard(uploadLink)) {
-      displayNotification("Copied Link", "The request link was successfully copied to the clipboard!")
+      displayNotification("success", "Copied Link", "The request link was successfully copied to the clipboard!")
     }
   }
 

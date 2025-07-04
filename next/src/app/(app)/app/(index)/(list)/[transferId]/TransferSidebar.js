@@ -67,7 +67,7 @@ export default function ({ user, transfer }) {
 
     await putTransfer(selectedTransfer.id, { expiresAt })
 
-    displayNotification("Expiration Changed", `The expiration date was successfully changed to ${expiresAt.toLocaleDateString()}`)
+    displayNotification("success", "Expiration Changed", `The expiration date was successfully changed to ${expiresAt.toLocaleDateString()}`)
     router.refresh()
   }
 
@@ -108,7 +108,7 @@ export default function ({ user, transfer }) {
 
   const handleCopy = async e => {
     if (await tryCopyToClipboard(transferLink)) {
-      displayNotification("Copied Link", "The Transfer link was successfully copied to the clipboard!")
+      displayNotification("success", "Copied Link", "The Transfer link was successfully copied to the clipboard!")
     }
   }
 
@@ -166,7 +166,7 @@ export default function ({ user, transfer }) {
 
     await sendTransferByEmail(selectedTransfer.id, [email])
 
-    displayNotification("Email sent", `The Transfer link was successfully sent to ${email}!`)
+    displayNotification("success", "Email sent", `The Transfer link was successfully sent to ${email}!`)
     router.refresh()
     setShowForwardTransfer(false)
   }
