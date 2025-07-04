@@ -14,7 +14,10 @@ export default async function ({ params }) {
   }
 
   return (
-    // <div></div>
-    <TransferSidebar user={auth.user.friendlyObj()} transfer={transfer.friendlyObj()} />
+    <TransferSidebar
+      key={transferId}
+      user={auth.user.friendlyObj()}
+      transfer={transfer.friendlyObj()}
+    />
   )
 }

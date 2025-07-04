@@ -3,6 +3,7 @@ import BIcon from "@/components/BIcon"
 import GenericPage from "@/components/dashboard/GenericPage"
 import Link from "next/link"
 import TransfersPage from "./TransfersPage"
+import AnimatePresenceWrapper from "./AnimatePresenceWrapper"
 import Transfer from "@/lib/server/mongoose/models/Transfer"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
 import TransferRequest from "@/lib/server/mongoose/models/TransferRequest"
@@ -36,7 +37,9 @@ export default async function ({ children }) {
           transfers={transfers.map(transfer => transfer.friendlyObj())}
           transferRequests={transferRequestsWithCount}
         />
-        {children}
+        <AnimatePresenceWrapper>
+          {children}
+        </AnimatePresenceWrapper>
       </GenericPage>
     </DefaultLayout>
   )

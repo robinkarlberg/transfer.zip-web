@@ -8,7 +8,7 @@ import { deleteTransfer, getTransferDownloadLink, putTransfer } from "@/lib/clie
 import { EXPIRATION_TIMES } from "@/lib/constants"
 import { humanFileSize } from "@/lib/transferUtils"
 import { parseTransferExpiryDate, tryCopyToClipboard } from "@/lib/utils"
-import { Transition } from "@headlessui/react"
+import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { useContext, useMemo, useRef, useState } from "react"
 
@@ -172,9 +172,15 @@ export default function ({ user, transfer }) {
   }
 
   return (
-    <Transition show={!!selectedTransfer}>
-      <div className="z-20 --overflow-hidden duration-0 data-[closed]:w-0 data-[leave]:overflow-hidden data-[enter]:overflow-hidden fixed top-0 w-[100vw] h-full md:right-0 md:duration-300 md:w-96 xl:w-[512px]">
-        <div className="absolute h-full w-full md:w-96 xl:w-[512px]">
+    selectedTransfer && (
+      <motion.div
+          initial={{ x: "100%" }}
+          animate={{ x: 0 }}
+          exit={{ x: "100%" }}
+          transition={{ type: "tween", duration: 0.3 }}
+          className="z-20 fixed top-0 w-[100vw] h-full md:right-0 md:w-96 xl:w-[512px]"
+        >
+          <div className="absolute h-full w-full md:w-96 xl:w-[512px]">
           <Modal title={`Shared with ${selectedTransfer.emailsSharedWith.length} people`} icon={"envelope"} buttons={[
             { title: "Ok", onClick: () => setShowEmailList(false) }
           ]} show={showEmailList} onClose={() => setShowEmailList(false)}>
@@ -337,6 +343,7 @@ export default function ({ user, transfer }) {
           </div>
         </div>
       </div>
-    </Transition>
+        </motion.div>
+    )
   )
 }
