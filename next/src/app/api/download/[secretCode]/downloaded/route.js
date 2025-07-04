@@ -3,6 +3,7 @@ import dbConnect from '@/lib/server/mongoose/db';
 import Transfer from '@/lib/server/mongoose/models/Transfer';
 import { resp } from '@/lib/server/serverUtils';
 import { sendTransferDownloaded } from '@/lib/server/mail/mail';
+import { useServerAuth } from '@/lib/server/wrappers/auth';
 
 const DOWNLOAD_EMAIL_COOLDOWN_MS = 1000 * 60 * 30;
 
@@ -10,9 +11,21 @@ export async function POST(req, { params }) {
   const { secretCode } = await params;
   await dbConnect();
 
+  let auth
+  try {
+    auth = await useServerAuth()
+  }
+  catch (err) {
+
+  }
+
   const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } }).populate('author');
   if (!transfer) {
     return NextResponse.json(resp('transfer not found'), { status: 404 });
+  }
+
+  if (auth && auth.user._id.toString() === transfer.author._id.toString()) {
+    return NextResponse.json(resp({}));
   }
 
   transfer.logDownload();
