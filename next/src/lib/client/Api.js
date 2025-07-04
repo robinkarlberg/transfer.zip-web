@@ -97,12 +97,17 @@ export async function doVerification(email, token) {
 // stripe
 
 export async function createCheckoutSession(tier) {
-    return await post(`/create-checkout-session`, { tier })
+    return await post(`/stripe/create-checkout-session`, { tier })
 }
 
 export async function changeSubscription(tier) {
-    return await post(`/change-subscription`, { tier })
+    return await post(`/stripe/change-subscription`, { tier })
 }
+
+export async function changeSubscriptionPreview(tier) {
+    return await post(`/stripe/change-subscription`, { tier, preview: true })
+}
+
 
 // waitlist
 
@@ -134,7 +139,7 @@ export async function deleteTransfer(transferId) {
 
 export const getTransferDownloadLink = (transfer) => {
     if (!transfer) return null
-    if(typeof window === "undefined") return null
+    if (typeof window === "undefined") return null
     return `${window.location.protocol}//${window.location.host}/transfer/${transfer.secretCode}`
 }
 
@@ -159,7 +164,7 @@ export async function sendTransferRequestByEmail(transferRequestId, emails) {
 
 export const getTransferRequestUploadLink = (transferRequest) => {
     if (!transferRequest) return null
-    if(typeof window === "undefined") return null
+    if (typeof window === "undefined") return null
     return `${window.location.protocol}//${window.location.host}/upload/${transferRequest.secretCode}`
 }
 

@@ -22,9 +22,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CheckCircle2Icon, InfoIcon } from "lucide-react";
 
 const getMaxRecipientsForPlan = (plan) => {
-  if (plan == "pro") return 200;
-  else if (plan == "starter") return 25
-  else return 25
+  if (plan == "pro") return 50;
+  else if (plan == "starter") return 20
+  else return 20
 }
 
 function AddedEmailField({ email, onAction }) {

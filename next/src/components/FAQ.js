@@ -5,17 +5,17 @@ import BIcon from './BIcon'
 
 const faqs = [
   {
-    question: "Why pay for Transfer.zip when Quick Share is free?",
+    question: "Why pay for Transfer.zip when Quick Transfers is free?",
     answer:
       "Using Transfer.zip for free is already great for most people. However, if you are a professional or just want your files to be more accessible, you can pay for a subscription. This gives you access to the dashboard, and lets you share files that don't expire when you close the browser tab. The paid plan is also cheaper and faster than other sites like WeTransfer or Dropbox."
   },
   {
     question: "Is there really no file size limit?",
     answer:
-      "There is no file size limit when using Quick Share, because the file is never stored on our servers. For transfers there are limits determined by your plan, because they will be stored on our servers."
+      "There is no file size limit when using Quick Transfers, because the file is never stored on our servers. For transfers there are limits determined by your plan, because they will be stored on our servers."
   },
   {
-    question: "How does Quick-Share work?",
+    question: "How do Quick Transfers work?",
     answer: "It uses WebRTC for peer-to-peer data transfer, meaning the files are streamed directly between peers and not stored anywhere in the process, not even on transfer.zip servers. To let peers initially discover each other, a signaling server is implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through. In addition, the file data is end-to-end encrypted using AES-GCM with a client-side 256 bit generated key, meaning if someone could impersonate a peer or capture the traffic, they would not be able to decrypt the file without knowing the key. Because the file is streamed directly between peers, there are no file size or bandwidth limitations."
   },
   {

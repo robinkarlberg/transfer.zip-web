@@ -20,7 +20,7 @@ export function middleware(req) {
 
   if (pathname === "/quick-share") {
     const newUrl = req.nextUrl.clone()
-    newUrl.pathname = "/"
+    newUrl.pathname = "/quick"
     return NextResponse.redirect(newUrl, { status: 301 })
   }
 }

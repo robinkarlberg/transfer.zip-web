@@ -1,0 +1,63 @@
+import { resp } from "@/lib/server/serverUtils";
+import { getStripe } from "@/lib/server/stripe";
+import { useServerAuth } from "@/lib/server/wrappers/auth";
+import { NextResponse } from "next/server";
+
+export async function POST(req) {
+  const { tier } = await req.json()
+
+  if (!["starter", "pro"].includes(tier.toLowerCase())) {
+    return NextResponse.json(resp("Invalid tier. Tier must be 'starter' or 'pro'."), { status: 400 })
+  }
+
+  const priceId = tier.toLowerCase() == "starter" ? process.env.STRIPE_SUB_STARTER_PRICE_ID : process.env.STRIPE_SUB_PRO_PRICE_ID
+
+  const { user } = await useServerAuth()
+  console.log("create-checkout-session:", user.email)
+
+  const stripe = getStripe()
+
+  let existingCustomerId = user.stripe_customer_id
+  try {
+    if (!existingCustomerId) throw new Error("User has no stripe_customer_id")
+
+    const customerObj = await stripe.customers.retrieve(existingCustomerId)
+    if (customerObj.deleted) {
+      throw new Error("customer deleted")
+    }
+  }
+  catch (err) {
+    existingCustomerId = (await stripe.customers.create({
+      email: user.email
+    })).id
+    user.stripe_customer_id = existingCustomerId
+    await user.save()
+  }
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      mode: "subscription",
+      allow_promotion_codes: true,
+      success_url: `${process.env.SITE_URL}/app`,
+      cancel_url: `${process.env.SITE_URL}/app`,
+      customer: existingCustomerId,
+      expires_at: Math.floor(Date.now() / 1000) + (3600 * 22), // Configured to expire after 22 hours
+    });
+
+    // Assuming you want to send the session ID back in the response
+    return NextResponse.json(resp({ url: session.url }))
+  }
+  catch (err) {
+    console.error(err)
+    // if (typeof (err) === "object" && err?.type == "StripeInvalidRequestError") {
+    //     sendSomeoneTriedDonate(sellerUser.email, tenant.domain)
+    // }
+    return NextResponse.json(resp("Unknown error, try again later!"), { status: 500 })
+  }
+}

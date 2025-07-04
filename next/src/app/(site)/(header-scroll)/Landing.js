@@ -10,8 +10,6 @@ import { Button } from "@/components/ui/button"
 import AuthConditional from "./AuthConditional"
 import LandingQuickShare from "./LandingQuickShare"
 
-const isInEU = () => true
-
 export default async function ({ auth }) {
   
   const res = await fetch("https://api.github.com/repos/robinkarlberg/transfer.zip-web",
@@ -80,7 +78,7 @@ export default async function ({ auth }) {
                 </Link>
               </div>
             </div> */}
-            <h1 className="mx-auto lg:mx-0 mt-10 max-w-lg text-5xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+            <h1 className="mx-auto lg:mx-0 mt-10 max-w-lg text-5xl font-extrabold tracking-tight text-gray-900 sm:text-6xl">
               Send Big Files
               Without Limits
             </h1>
@@ -96,7 +94,7 @@ export default async function ({ auth }) {
                 <AuthConditional
                   auth={(
                     <>
-                      <span>My Transfers</span> {" "}&rarr;
+                      <span>My Transfers</span>{" "}&rarr;
                     </>
                   )}
                   noauth={(

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, TransitionChild } from '@headlessui/react'
 
 import Link from "next/link";
@@ -14,6 +14,7 @@ import Image from "next/image";
 import { Progress } from "@/components/ui/progress";
 import { humanFileSize } from "@/lib/transferUtils";
 import { Button } from "@/components/ui/button";
+import { Bolt } from "lucide-react";
 
 // const DashButton = ({ children }) => {
 //   return (
@@ -61,6 +62,32 @@ export default function Sidebar({ user, storage }) {
     return { ...n, href: prepend + n.href }
   })
 
+  useEffect(() => {
+    setSidebarOpen(false)
+  }, [pathname])
+
+  const storageBox = user.plan == "free" ?
+    <>
+      <Link href={"/onboarding"} className="w-full text-sm mb-1 px-3 flex font-medium justify-between text-purple-600 border border-purple-300 bg-purple-50 rounded-xl p-2 group">
+        <span>
+          Upgrade Plan
+        </span>
+        <span className="me-1 group-hover:me-0 transition-all">
+          &rarr;
+        </span>
+      </Link>
+    </>
+    :
+    <>
+      <div className="text-sm mb-1 flex font-medium justify-between text-gray-900">
+        <span>{storage.storagePercent}%</span>
+        <span>{humanFileSize(storage.usedStorageBytes, true)} of {humanFileSize(storage.maxStorageBytes, true)} used</span>
+      </div>
+      <div>
+        <Progress className={"h-1.5"} value={storage.storagePercent}></Progress>
+      </div>
+    </>
+
   return (
     <>
       {/*
@@ -92,15 +119,16 @@ export default function Sidebar({ user, storage }) {
                 </div>
               </TransitionChild>
               {/* Sidebar component, swap this element with another sidebar if you like */}
-              <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2">
-                <div className="flex h-16 shrink-0 items-center">
-                  {/* <img
+              <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2 max-h-screen">
+                <div className="flex h-8 shrink-0 items-center mt-6">
+                  <Image
                     alt="Your Company"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=primary&shade=600"
-                    className="h-8 w-auto"
-                  /> */}
+                    src={icon}
+                    className="h-10 w-auto me-2"
+                  />
                   <h1 className="text-gray-900 text-2xl text-center font-bold"><Link href="/">{process.env.NEXT_PUBLIC_SITE_NAME}</Link></h1>
                 </div>
+                <Link href={"/app/new"} className="mb-1 text-center bg-primary hover:bg-primary-light text-white text-sm font-medium py-2 rounded-md">New Transfer<BIcon className={"ms-1.5 text-xs"} name={"send-fill"} /></Link>
                 <nav className="flex flex-1 flex-col">
                   <ul role="list" className="flex flex-1 flex-col gap-y-7">
                     <li>
@@ -131,36 +159,9 @@ export default function Sidebar({ user, storage }) {
                         ))}
                       </ul>
                     </li>
-                    {/* <li>
-                      <div className="text-xs font-semibold leading-6 text-gray-400">Your teams</div>
-                      <ul role="list" className="-mx-2 mt-2 space-y-1">
-                        {blogs.map((_blog) => (
-                          <li key={_blog.id}>
-                            <Link
-                              href={"#"}
-                              className={classNames(
-                                false
-                                  ? 'bg-gray-50 text-primary-600'
-                                  : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600',
-                                'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
-                              )}
-                            >
-                              <span
-                                className={classNames(
-                                  false
-                                    ? 'border-primary-600 text-primary-600'
-                                    : 'border-gray-200 text-gray-400 group-hover:border-primary-600 group-hover:text-primary-600',
-                                  'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium',
-                                )}
-                              >
-                                {_blog.name[0].toUpperCase()}
-                              </span>
-                              <span className="truncate">{_blog.name}</span>
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </li> */}
+                    <div className="mt-auto mb-4">
+                      {storageBox}
+                    </div>
                   </ul>
                 </nav>
               </div>
@@ -212,68 +213,9 @@ export default function Sidebar({ user, storage }) {
                     ))}
                   </ul>
                 </li>
-                {/* <li>
-                  <div className="text-xs font-semibold leading-6 text-gray-400">Your blogs</div>
-                  <ul role="list" className="-mx-2 mt-2 space-y-1">
-                    {blogs.map((_blog) => (
-                      <li key={_blog.id}>
-                        <button
-                          onClick={() => setBlogId(_blog.id)}
-                          className={classNames(
-                            blogId === _blog.id
-                              ? 'bg-gray-50 text-primary-600'
-                              : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600',
-                            'w-full group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
-                          )}
-                        >
-                          <span
-                            className={classNames(
-                              blogId === _blog.id
-                                ? 'border-primary-600 text-primary-600'
-                                : 'border-gray-200 text-gray-400 group-hover:border-primary-600 group-hover:text-primary-600',
-                              'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium',
-                            )}
-                          >
-                            {_blog.name[0].toUpperCase()}
-                          </span>
-                          <span className="truncate">{_blog.name}</span>
-                        </button>
-                      </li>
-                    ))}
-                    <li>
-                      <Link
-                        href={"/dashboard/newblog/0"}
-                        className={classNames(
-                          pathname.startsWith("/dashboard/newblog")
-                            ? 'bg-gray-50 text-primary-600'
-                            : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600',
-                          'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6',
-                        )}
-                      >
-                        <span
-                          className={classNames(
-                            pathname.startsWith("/dashboard/newblog")
-                              ? 'border-primary-600 text-primary-600'
-                              : 'border-gray-200 text-gray-400 group-hover:border-primary-600 group-hover:text-primary-600',
-                            'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium',
-                          )}
-                        >
-                          <BIcon name={"plus-lg"} className={"text-base"} center />
-                        </span>
-                        <span className="truncate">Create Blog</span>
-                      </Link>
-                    </li>
-                  </ul>
-                </li> */}
                 <div className="mt-auto">
                   <div className="mb-4">
-                    <div className="text-sm mb-1 flex font-medium justify-between text-gray-900">
-                      <span>{storage.storagePercent}%</span>
-                      <span>{humanFileSize(storage.usedStorageBytes, true)} of {humanFileSize(storage.maxStorageBytes, true)} used</span>
-                    </div>
-                    <div>
-                      <Progress className={"h-1.5"} value={storage.storagePercent}></Progress>
-                    </div>
+                    {storageBox}
                   </div>
                   <li className="-mx-6 mb-2">
                     <Link
@@ -300,14 +242,9 @@ export default function Sidebar({ user, storage }) {
             <BIcon name={"list"} aria-hidden="true" className="h-6 w-6" />
           </button>
           <div className="flex-1 text-sm font-bold leading-6 text-gray-900">{process.env.NEXT_PUBLIC_SITE_NAME}</div>
-          <Link href="#">
+          <Link href="/app/settings">
             <span className="sr-only">Account</span>
             <BIcon name={"person"} className={"text-lg"} />
-            {/* <img
-              alt=""
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              className="h-8 w-8 rounded-full bg-gray-50"
-            /> */}
           </Link>
         </div>
       </div >

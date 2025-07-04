@@ -267,7 +267,7 @@ export default function QuickShareProgress() {
       return
     }
     if (transferDirection === null) {
-      return router.replace("/quick-share")
+      return router.replace("/quick")
     }
 
     // Setup WebRtc websocket connection, and close it when leaving page.

@@ -23,7 +23,7 @@ const products = [
   { name: 'Limitless File Sharing', description: 'Send Your Files in Seconds', href: '/#about', icon: "lightbulb" },
   { name: 'Receive Files with a Link', description: 'Easily Receive Files from Anyone', href: '/#features-receive', icon: "arrow-down" },
   { name: '365 Days Expiration Time', description: 'Big Files That Don\'t Expire', href: '/#features', icon: "clock" },
-  { name: 'Quick Share', description: 'Keep Your Tab Open - Send Without Limits', href: '/#about-quick-share', icon: "lightning-fill" },
+  { name: 'Quick Transfers', description: 'Keep Your Tab Open - Send Without Limits', href: '/#about-quick-share', icon: "lightning-fill" },
 ]
 const callsToAction = [
   { name: 'FAQ', href: "/#faq", icon: "question-lg" },

@@ -1,5 +1,5 @@
 export const getComputedNewLocation = (transferDirection) => {
-  return transferDirection == "R" ? "/quick-share/progress" : "/quick-share"
+  return transferDirection == "R" ? "/quick/progress" : "/quick"
 }
 
 export const tryParseQuickShareHash = (hash) => {
@@ -21,7 +21,7 @@ export const tryParseQuickShareHash = (hash) => {
     if (hash && hashList.length === 3) {
       const [k, remoteSessionId, transferDirection] = hashList
 
-      if (remoteSessionId.length !== 36 && (transferDirection !== "R" && transferDirection !== "S")) {
+      if (remoteSessionId.length !== 8 && (transferDirection !== "R" && transferDirection !== "S")) {
         throw new Error("The URL parameters are malformed. Did you copy the URL correctly?")
       }
 

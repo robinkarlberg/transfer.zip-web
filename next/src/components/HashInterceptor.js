@@ -12,9 +12,9 @@ export default function HashInterceptor({ }) {
   const { transferDirection } = useQuickShare()
 
   useEffect(() => {
-    if(transferDirection == "S" || transferDirection == "R") {
-      console.log(getComputedNewLocation(transferDirection) + window.location.hash)
-      router.replace(getComputedNewLocation(transferDirection) + window.location.hash)
+    if (transferDirection == "S" || transferDirection == "R") {
+      // console.log(getComputedNewLocation(transferDirection) + window.location.hash)
+      router.replace(getComputedNewLocation(transferDirection) + window.location.hash, { scroll: false })
     }
   }, [transferDirection])
 

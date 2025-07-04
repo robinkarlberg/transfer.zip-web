@@ -85,13 +85,13 @@ const closeConnWithReason = (conn, reason) => {
 }
 
 const constructPacketBudgetPacket = (targetId, sessionId, packetBudget) => {
-    const packet = new Uint8Array(1 + 36 + 36 + 4)
+    const packet = new Uint8Array(1 + 8 + 8 + 4)
     const packetDataView = new DataView(packet.buffer)
     packetDataView.setInt8(0, SPKT_RELAY_BUDGET)
 
     packet.set(encodeString(targetId), 1)
-    packet.set(encodeString(sessionId), 1 + 36)
-    packetDataView.setInt32(1 + 36 + 36, packetBudget)
+    packet.set(encodeString(sessionId), 1 + 8)
+    packetDataView.setInt32(1 + 8 + 8, packetBudget)
     return packet
 }
 
@@ -101,8 +101,8 @@ function handleBinaryData(conn, _data) {
     const packetId = packetDataView.getInt8(0)
 
     if (packetId == CPKT_RELAY) {
-        const targetId = decodeString(packet.subarray(1, 1 + 36))
-        const callerId = decodeString(packet.subarray(1 + 36, 1 + 36 + 36))
+        const targetId = decodeString(packet.subarray(1, 1 + 8))
+        const callerId = decodeString(packet.subarray(1 + 8, 1 + 8 + 8))
 
         if (!conn._relay_packets) {
             conn._relay_packets = 1
@@ -175,7 +175,7 @@ function handleTextMessage(conn, message) {
 
         console.log("Login requested with session ", data.id)
         if (!data.id) return closeConnWithReason(conn, "[login] Didn't specify id");
-        if (typeof data.id !== "string" && data.id.length != 36) return closeConnWithReason(conn, "[login] Invalid ID " + data.id);
+        if (typeof data.id !== "string" && data.id.length != 8) return closeConnWithReason(conn, "[login] Invalid ID " + data.id);
         if (sessions.has(data.id)) return closeConnWithReason(conn, "[login] Session ID already taken " + data.id)
 
         if (conn._session === undefined) {
@@ -288,7 +288,7 @@ function handleTextMessage(conn, message) {
 
         let recipientConn;
         if ((recipientConn = sessions.get(data.recipientId))) {
-            const newRtcSessionId = uuidv4()
+            const newRtcSessionId = uuidv4().slice(0, 8)
 
             recipientConn.send(JSON.stringify({
                 type: SPKT_SWITCH_TO_FALLBACK,

@@ -22,10 +22,10 @@ export default function FeaturesNew() {
           <h2 className="text-base/7 font-semibold text-primary">Quick Share</h2>
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
             {/* Unlimited File Size -<br/>Unlimited Privacy */}
-            Keep Your Tab Open -<br />Send 100GB Files <span className="bg-primary-200 px-2 text-primary rounded-xl">for Free</span>
+            Keep Your Tab Open -<br />Send 100GB Files <span className="bg-primary-200 px-2 text-primary rounded-xl whitespace-nowrap">for Free</span>
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            Use <Link href={"/quick-share"} className="text-primary hover:underline">Quick Share</Link> to send large files for free.
+            Use <Link href={"/quick"} className="text-primary hover:underline"><i>Quick</i></Link> to send large files for free.
             It has <b>no file size limit</b> whatsoever - as long as your browser tab is open, you are good to go.
           </p>
         </div>

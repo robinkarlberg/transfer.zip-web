@@ -166,12 +166,12 @@ export const createWebSocket = () => {
 			const packetDataView = new DataView(packet.buffer)
 			const packetId = packetDataView.getInt8(0)
 			if (packetId == SPKT_RELAY || packetId == SPKT_RELAY_BUDGET) {
-				const targetId = decodeString(packet.subarray(1, 1 + 36))
-				const callerId = decodeString(packet.subarray(1 + 36, 1 + 36 + 36))
+				const targetId = decodeString(packet.subarray(1, 1 + 8))
+				const callerId = decodeString(packet.subarray(1 + 8, 1 + 8 + 8))
 				// const targetId = packetDataView.
 				for (let rtcSession of activeRtcSessions) {
 					if (rtcSession.sessionId === targetId) {
-						rtcSession.onbinarydata && rtcSession.onbinarydata(e.data.slice(1 + 36 + 36), packetId)
+						rtcSession.onbinarydata && rtcSession.onbinarydata(e.data.slice(1 + 8 + 8), packetId)
 					}
 				}
 			}
@@ -246,13 +246,13 @@ export class RelayChannel {
 	}
 
 	_constructPacket(data) {
-		const packet = new Uint8Array(1 + 36 + 36 + data.byteLength)
+		const packet = new Uint8Array(1 + 8 + 8 + data.byteLength)
 		const packetDataView = new DataView(packet.buffer)
 		packetDataView.setInt8(0, CPKT_RELAY)
 
 		packet.set(encodeString(this.targetId), 1)
-		packet.set(encodeString(this.rtcSession.sessionId), 1 + 36)
-		packet.set(data, 1 + 36 + 36)
+		packet.set(encodeString(this.rtcSession.sessionId), 1 + 8)
+		packet.set(data, 1 + 8 + 8)
 		return packet
 	}
 

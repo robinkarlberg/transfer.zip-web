@@ -14,7 +14,7 @@ export default async function () {
   }
 
   return (
-    auth ?
+    auth && auth.user.getPlan() != "free" ?
       <div className="lg:-mt-60">
         <NewTransferFileUpload user={auth.user.friendlyObj()} storage={await auth.user.getStorage()} />
       </div>

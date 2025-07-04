@@ -1,3 +1,5 @@
+"use client"
+
 import Link from 'next/link'
 import BIcon from "./BIcon"
 
@@ -59,6 +61,12 @@ export default function PricingCards({ tiers, compact, buttonText, onTierSelecte
         ))}
       </ul>
       <Link
+        onClick={!!onTierSelected && (
+          e => {
+            e.preventDefault()
+            onTierSelected(tier.name)
+          }
+        )}
         href={"/signup"}
         aria-describedby={tier.name}
         className={classNames(

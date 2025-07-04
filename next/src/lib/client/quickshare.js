@@ -2,7 +2,7 @@ import * as WebRtc from "./webrtc"
 import { FileTransfer } from "./filetransfer";
 
 export const listen = async (onLink, onCandidate) => {
-  const sessionId = crypto.randomUUID()
+  const sessionId = crypto.randomUUID().slice(0, 8)
   const rtcSession = WebRtc.newRtcListener(sessionId)
   console.log("[QuickShareProvider] [listen]", sessionId)
 
@@ -15,7 +15,7 @@ export const listen = async (onLink, onCandidate) => {
   )
   const jwk = await crypto.subtle.exportKey("jwk", key)
 
-  onLink(`${window.location.origin}/#${jwk.k},${sessionId},`)
+  onLink(`${window.location.origin}/quick#${jwk.k},${sessionId},`)
 
   rtcSession.onclose = () => {
       console.log("[QuickShareProvider] [listen] onclose")
@@ -52,7 +52,7 @@ export const call = async (recipientId, k, forceFallback) => {
   }, { name: "AES-GCM" }, false, ["encrypt", "decrypt"])
 
   console.log("[QuickShareProvider] [call]", recipientId)
-  const rtcSession = WebRtc.newRtcSession(crypto.randomUUID())
+  const rtcSession = WebRtc.newRtcSession(crypto.randomUUID().slice(0, 8))
   rtcSession.onclose = () => {
       console.log("[QuickShareProvider] [call] onclose")
   }

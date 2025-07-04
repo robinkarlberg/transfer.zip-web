@@ -18,6 +18,10 @@ export default async function DashboardLayout({ children }) {
     return redirect("/signup");
   }
 
+  if(auth.user.getPlan() == "free") {
+    return redirect("/onboarding")
+  }
+
   const storage = await auth.user.getStorage()
 
   return (
