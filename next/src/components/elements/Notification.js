@@ -5,7 +5,7 @@ import { Transition } from '@headlessui/react'
 import BIcon from '../BIcon'
 
 const types = {
-  "success": { icon: "check-circle", text: "text-primary" },
+  "success": { icon: "check-circle", text: "text-green-400" },
   "error": { icon: "x-circle", text: "text-red-400" },
 }
 
