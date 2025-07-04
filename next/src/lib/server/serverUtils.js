@@ -14,7 +14,15 @@ export const resp = (json) => {
 
 export const createCookieParams = () => {
   return (
-    { domain: process.env.COOKIE_DOMAIN, httpOnly: true, secure: !IS_DEV, sameSite: "strict", expires: new Date(Date.now() + 100 * 24 * 60 * 60 * 1000) }
+    {
+      domain: process.env.COOKIE_DOMAIN,
+      httpOnly: true,
+      secure: !IS_DEV,
+      // Use lax to ensure the token cookie is included when returning
+      // from external providers such as Stripe.
+      sameSite: "lax",
+      expires: new Date(Date.now() + 100 * 24 * 60 * 60 * 1000),
+    }
   )
 }
 
