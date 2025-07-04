@@ -1,7 +1,7 @@
 "use client"
 
 import BIcon from "@/components/BIcon"
-import { getDownloadToken, signTransferDownload } from "@/lib/client/Api"
+import { getDownloadToken, registerTransferDownloaded, signTransferDownload } from "@/lib/client/Api"
 import { sleep } from "@/lib/utils"
 import { useEffect, useRef, useState } from "react"
 
@@ -19,6 +19,8 @@ export default function DownloadArea({ secretCode }) {
       const { nodeUrl, token } = await getDownloadToken(secretCode)
       
       // const res = await signTransferDownload(nodeUrl, token)
+
+      await registerTransferDownloaded(secretCode)
       setFormData({
         url: nodeUrl + "/download",
         token

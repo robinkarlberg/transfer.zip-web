@@ -17,7 +17,7 @@ async function sendMail(reactElement, { from, to, subject }) {
     });
   } else {
     console.log('[MOCK] Sending email to', to, 'from', from, 'subject', subject);
-    console.log(render(reactElement));
+    console.log(await render(reactElement));
   }
 }
 

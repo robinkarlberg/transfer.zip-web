@@ -7,10 +7,10 @@ import { sendTransferDownloaded } from '@/lib/server/mail/mail';
 const DOWNLOAD_EMAIL_COOLDOWN_MS = 1000 * 60 * 30;
 
 export async function POST(req, { params }) {
-  const { transferId } = params;
+  const { secretCode } = await params;
   await dbConnect();
 
-  const transfer = await Transfer.findById(transferId).populate('author');
+  const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } }).populate('author');
   if (!transfer) {
     return NextResponse.json(resp('transfer not found'), { status: 404 });
   }

@@ -132,7 +132,7 @@ TransferSchema.methods.friendlyObj = function () {
         secretCode,
         hasPassword: this.hasPassword(),
         password: this.getPassword(),
-        emailsSharedWith,
+        emailsSharedWith: emailsSharedWith.map(entry => ({ time: entry.time, email: entry.email })),
         statistics: {
             downloads: { length: downloads?.length },
             views: { length: views?.length },

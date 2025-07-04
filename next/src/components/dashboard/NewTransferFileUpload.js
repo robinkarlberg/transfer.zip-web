@@ -103,7 +103,7 @@ export default function ({ user, storage }) {
     }))
 
     // response: { idMap: [{ tmpId, id }, ...] } - what your API returned
-    const { transfer, idMap } = await newTransfer({ name, description, expiresInDays, files: transferFiles })
+    const { transfer, idMap } = await newTransfer({ name, description, expiresInDays, files: transferFiles, emails: emailRecipients })
 
     // We need to give each local file its given id from the server so that we can
     // upload the right file to the right place, based on its id

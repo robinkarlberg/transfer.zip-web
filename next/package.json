@@ -38,6 +38,7 @@
     "react-dom": "^19.0.0",
     "react-qr-code": "^2.0.16",
     "recharts": "^2.15.3",
+    "resend": "^4.6.0",
     "sharp": "^0.34.2",
     "stripe": "^18.2.1",
     "tailwind-merge": "^3.3.1",

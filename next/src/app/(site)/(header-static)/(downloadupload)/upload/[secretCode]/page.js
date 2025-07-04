@@ -1,9 +1,12 @@
 import TransferRequest from "@/lib/server/mongoose/models/TransferRequest";
 import UploadArea from "./UploadArea";
 import { notFound } from "next/navigation";
+import dbConnect from "@/lib/server/mongoose/db";
 
 export default async function ({ params }) {
   const { secretCode } = await params
+
+  await dbConnect()
 
   const transferRequest = await TransferRequest.findOne({ secretCode: { $eq: secretCode } })
 

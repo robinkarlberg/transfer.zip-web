@@ -188,12 +188,8 @@ export async function markTransferComplete(secretCode) {
 
 // download
 
-export async function getDownload(secretCode) {
-    return await get(`/download/${secretCode}`)
-}
-
-export async function getSettings() {
-    return await get("/settings")
+export async function registerTransferDownloaded(secretCode) {
+    return await post(`/download/${secretCode}/downloaded`)
 }
 
 // sign
