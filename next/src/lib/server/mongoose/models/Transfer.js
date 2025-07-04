@@ -59,7 +59,8 @@ const TransferSchema = new mongoose.Schema({
     storageLocation: String, // deprecated, still used for a few transfers (maybe migrate?)
     nodeUrl: String,
 
-    finishedUploading: { type: Boolean, default: false }
+    finishedUploading: { type: Boolean, default: false },
+    lastDownloadEmailSentAt: Date
 }, { timestamps: true })
 
 function encPassword(pass) {
@@ -105,7 +106,8 @@ TransferSchema.methods.logView = function (count = 1) {
     }
 }
 
-TransferSchema.methods.registerSentByEmail = function (email) {
+// store an email address that this transfer will be shared with
+TransferSchema.methods.addSharedEmail = function (email) {
     this.emailsSharedWith.push({ email })
 }
 

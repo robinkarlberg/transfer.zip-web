@@ -19,7 +19,7 @@ export async function POST(req) {
     // No auth, it's ok if it is for a transferRequest
   }
 
-  const { name, description, expiresInDays, transferRequestSecretCode, files } = await req.json()
+  const { name, description, expiresInDays, transferRequestSecretCode, files, emails } = await req.json()
 
   if (!expiresInDays) {
     return NextResponse.json(resp("expiresInDays not provided"), { status: 400 })
@@ -31,6 +31,14 @@ export async function POST(req) {
 
   if ((name != null && typeof name !== "string") || (description != null && typeof description !== "string")) {
     return NextResponse.json(resp("name and description must be strings"), { status: 400 })
+  }
+
+  if (emails && !Array.isArray(emails)) {
+    return NextResponse.json(resp("emails must be an array"), { status: 400 })
+  }
+
+  if (transferRequestSecretCode && emails && emails.length > 0) {
+    return NextResponse.json(resp("cannot send emails when uploading to a request"), { status: 400 })
   }
 
   if (!files || files.length === 0) {
@@ -106,6 +114,12 @@ export async function POST(req) {
 
   console.log("Chose nodeUrl:", nodeUrl)
   transfer.nodeUrl = nodeUrl
+
+  if (!transferRequest && emails?.length) {
+    for (const email of emails) {
+      transfer.addSharedEmail(email)
+    }
+  }
 
   await transfer.save()
 
