@@ -3,9 +3,9 @@
 import { useParams, useRouter, useSelectedLayoutSegment, useSelectedLayoutSegments } from "next/navigation"
 import EmptySpace from "../elements/EmptySpace"
 import { ApplicationContext } from "@/context/ApplicationContext"
-import { useContext, useMemo } from "react"
+import { useContext, useEffect, useMemo, useRef, useState } from "react"
 import { DashboardContext } from "@/context/DashboardContext"
-import { deleteTransfer, getTransferDownloadLink, sendTransferByEmail } from "@/lib/client/Api"
+import { deleteTransfer, getDownloadToken, getTransferDownloadLink, registerTransferDownloaded, sendTransferByEmail } from "@/lib/client/Api"
 import { humanTimeUntil, parseTransferExpiryDate, sleep, tryCopyToClipboard } from "@/lib/utils"
 import BIcon from "../BIcon"
 import Link from "next/link"
@@ -19,7 +19,7 @@ const Entry = ({ transfer }) => {
 
   const transferLink = useMemo(() => getTransferDownloadLink(transfer), [transfer])
 
-  const { id, name, files, expiresAt, hasTransferRequest, finishedUploading } = transfer
+  const { id, name, files, expiresAt, hasTransferRequest, finishedUploading, secretCode } = transfer
   const expiryDate = parseTransferExpiryDate(expiresAt)
   const isSelected = id === displayedTransferId
 
@@ -29,11 +29,6 @@ const Entry = ({ transfer }) => {
     if (await tryCopyToClipboard(transferLink)) {
       displayNotification("success", "Copied Link", "The Transfer link was successfully copied to the clipboard!")
     }
-  }
-
-  const handleDownloadClicked = async e => {
-    e.stopPropagation()
-    window.open(getTransferAttachmentLink(transfer) + "/zip", "_blank")
   }
 
   const handleCopyLinkClicked = async e => {
@@ -52,7 +47,7 @@ const Entry = ({ transfer }) => {
     await deleteTransfer(id)
     // await sleep(1000)
     // router.refresh()
-    if(displayedTransferId === id) {
+    if (displayedTransferId === id) {
       router.replace(".")
       router.refresh()
     }
@@ -72,8 +67,46 @@ const Entry = ({ transfer }) => {
 
   const expiresSoon = expiryDate && (expiryDate - new Date() <= 3 * 24 * 60 * 60 * 1000)
 
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState(undefined)
+  const formRef = useRef(null)
+
+  const handleDownloadClicked = async e => {
+    e.stopPropagation()
+    setLoading(true)
+
+    try {
+      const { nodeUrl, token } = await getDownloadToken(secretCode)
+
+      registerTransferDownloaded(secretCode)
+      setFormData({
+        url: nodeUrl + "/download",
+        token
+      })
+    }
+    catch (err) {
+      console.error(err)
+      displayNotification("error", "Error", err.message)
+    }
+    finally {
+      await sleep(6000)
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (formData) {
+      formRef.current.submit()
+    }
+  }, [formData])
+
   return (
     <div onClick={handleClicked} className={`group text-start shadow-xs rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-5 py-4 group ${disabled ? "hover:cursor-default" : "hover:cursor-pointer hover:bg-gray-50"}`}>
+      {hasTransferRequest && (
+        <form method={"POST"} action={formData?.url} ref={formRef} className="hidden">
+          <input hidden name="token" value={formData?.token ?? ""} readOnly />
+        </form>
+      )}
       <div className="">
         <div>
           <div className="flex">

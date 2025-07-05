@@ -7,9 +7,7 @@ import { useEffect, useRef, useState } from "react"
 
 export default function DownloadArea({ secretCode }) {
   const [loading, setLoading] = useState(false)
-
   const [formData, setFormData] = useState(undefined)
-
   const formRef = useRef(null)
 
   const handleDownloadClicked = async () => {
@@ -17,10 +15,10 @@ export default function DownloadArea({ secretCode }) {
 
     try {
       const { nodeUrl, token } = await getDownloadToken(secretCode)
-      
+
       // const res = await signTransferDownload(nodeUrl, token)
 
-      await registerTransferDownloaded(secretCode)
+      registerTransferDownloaded(secretCode)
       setFormData({
         url: nodeUrl + "/download",
         token
@@ -36,7 +34,7 @@ export default function DownloadArea({ secretCode }) {
   }
 
   useEffect(() => {
-    if(formData) {
+    if (formData) {
       formRef.current.submit()
     }
   }, [formData])
@@ -44,7 +42,7 @@ export default function DownloadArea({ secretCode }) {
   return (
     <>
       <form method={"POST"} action={formData?.url} ref={formRef} className="hidden">
-        <input hidden name="token" value={formData?.token ?? ""} readOnly/>
+        <input hidden name="token" value={formData?.token ?? ""} readOnly />
       </form>
       <div className="flex gap-2">
         <button disabled type="button" className="text-gray-400 bg-white border shadow rounded-lg px-3 py-1 grow-0"><BIcon name={"search"} /> Preview</button>
