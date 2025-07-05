@@ -13,8 +13,12 @@ export async function POST(req, { params }) {
 
   const transfer = await Transfer.findOne({ author: auth.user._id, _id: transferId })
 
+  if (!transfer) {
+    return NextResponse.json(resp("transfer not found"), { status: 404 })
+  }
+
   await transfer.deleteOne()
-  workerTransferDelete(transfer.nodeUrl, transfer._id.toString())
+  await workerTransferDelete(transfer.nodeUrl, transfer._id.toString())
 
   return NextResponse.json(resp({}))
 }
