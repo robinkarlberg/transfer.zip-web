@@ -15,8 +15,8 @@ export default function () {
     <div>
       <HashInterceptor />
       <Landing />
-      <Features1 />
       <TestimonialCloud />
+      <Features1 />
       <Features3 />
       <Features2 />
       <FeaturesNew />
