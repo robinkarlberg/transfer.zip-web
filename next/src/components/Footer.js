@@ -1,8 +1,9 @@
 import Link from 'next/link';
 
-import logo from "@/img/icon.png"
+import logo from "@/img/icon.png";
 import BIcon from "./BIcon";
 import Image from 'next/image';
+import { tools } from '@/lib/tools';
 
 export default function Footer({ }) {
   return (
@@ -19,15 +20,13 @@ export default function Footer({ }) {
             <div>
               <h5 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white">Tools</h5>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
-                <li className="mb-4">
-                  <Link href="/tools/zip-files-online" className="hover:underline ">Zip Files Online</Link>
-                </li>
-                <li className="mb-4">
-                  <Link href="/tools/unzip-files-online" className="hover:underline">Unzip Files Online</Link>
-                </li>
-                <li>
-                  <Link href="/tools/heic-convert" className="hover:underline">Convert HEIC to JPG</Link>
-                </li>
+                {tools.map(t => (
+                  <li key={t.slug} className="mb-4">
+                    <Link href={`/tools/${t.slug}`} className="hover:underline">
+                      {t.title}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
             <div>
