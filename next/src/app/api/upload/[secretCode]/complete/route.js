@@ -9,7 +9,9 @@ export async function POST(req, { params }) {
   const { secretCode } = await params
 
   const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } })
-  // TODO: if no transfer
+  if (!transfer) {
+    return NextResponse.json(resp("transfer not found"), { status: 404 })
+  }
 
   // TODO: Maybe add auth or something to this
 

@@ -13,6 +13,10 @@ export async function PUT(req, { params }) {
 
   const transfer = await Transfer.findOne({ author: user._id, _id: { $eq: transferId } })
 
+  if (!transfer) {
+    return NextResponse.json(resp("transfer not found"), { status: 404 })
+  }
+
   if (name || name === "") transfer.name = name
   if (description || description === "") transfer.description = description
 
