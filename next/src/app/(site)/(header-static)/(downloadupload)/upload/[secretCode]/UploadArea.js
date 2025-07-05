@@ -2,9 +2,16 @@
 
 import FileUpload from "@/components/elements/FileUpload"
 import Progress from "@/components/elements/Progress";
+import { newTransfer } from "@/lib/client/Api";
+import { prepareTransferFiles, uploadFiles } from "@/lib/client/uploader";
+import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 
 export default function () {
+
+  const { secretCode } = useParams()
+
+  const [uploadProgressMap, setUploadProgressMap] = useState(null)
   const [uploadingFiles, setUploadingFiles] = useState(false)
   const [filesToUpload, setFilesToUpload] = useState(null)
 
@@ -14,17 +21,24 @@ export default function () {
     }
     return 0;
   }, [filesToUpload]);
-  const [bytesTransferred, setBytesTransferred] = useState(0)
+
+  const bytesTransferred = useMemo(() => {
+    if (!uploadProgressMap) return 0
+    return uploadProgressMap.reduce((sum, item) => sum + item[1], 0)
+  }, [uploadProgressMap])
 
   const handleFiles = async files => {
-    // const { transfer } = await newTransfer({ expiresInDays: 30, transferRequestSecretCode: upload.secretCode })
+    setFilesToUpload(files) // Just to be safe
+    setUploadingFiles(true)
 
-    // setFilesToUpload(files) // just to be safe
-    // setUploadingFiles(true)
+    const transferFiles = prepareTransferFiles(files)
 
-    // await uploadTransferFiles(transfer.secretCode, files, progress => {
-    //   setBytesTransferred(progress.bytesTransferred)
-    // })
+    // response: { idMap: [{ tmpId, id }, ...] } - what your API returned
+    const { transfer, idMap } = await newTransfer({ expiresInDays: 30, files: transferFiles, transferRequestSecretCode: secretCode })
+
+    const { results, failedPromises } = await uploadFiles(files, idMap, transfer, progress => setUploadProgressMap(progress))
+
+    // router.replace(`/app/${transfer.id}`)
   }
 
   return (

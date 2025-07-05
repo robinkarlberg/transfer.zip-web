@@ -14,7 +14,7 @@ export async function POST(req, { params }) {
   const transfer = await Transfer.findOne({ author: auth.user._id, _id: transferId })
 
   await transfer.deleteOne()
-  await workerTransferDelete(transfer.nodeUrl, transfer._id.toString())
+  workerTransferDelete(transfer.nodeUrl, transfer._id.toString())
 
   return NextResponse.json(resp({}))
 }
