@@ -238,15 +238,6 @@ export default function ({ user }) {
                 }}
               />)
             }
-            {/* <div className="sm:col-span-4">
-            <div className="mb-2">
-              <span className="font-bold text-gray-800 me-2">{capitalizeFirstLetter(user.plan)} Plan</span>
-            </div>
-            {user.plan == "starter" && <button type="button" onClick={handleUpgrade} className={"text-primary rounded-md font-medium text-sm hover:text-primary-light mb-2"}>Upgrade Subscription &rarr;</button>}
-            <form method="POST" action={API_URL + "/stripe/create-customer-portal-session"}>
-              <button type="submit" className={"text-primary rounded-md font-medium text-sm hover:text-primary-light"}>Manage Billing &rarr;</button>
-            </form>
-          </div> */}
           </div>
         </div>
         <div className="sm:col-span-6 text-red-500 font-bold">
