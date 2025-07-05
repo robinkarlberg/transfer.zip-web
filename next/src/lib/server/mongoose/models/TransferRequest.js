@@ -29,7 +29,7 @@ TransferRequestSchema.methods.friendlyObj = function () {
         name: name || "Untitled Request",
         description,
         secretCode,
-        emailsSharedWith,
+        emailsSharedWith: emailsSharedWith.map(entry => ({ time: entry.time, email: entry.email })),
         createdAt,
         hasName: !!name,
     }

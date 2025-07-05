@@ -12,7 +12,7 @@ export default async function ({ children }) {
   const auth = await useServerAuth()
   const transfers = await listTransfersForUser(auth.user)
 
-  const transferRequests = await TransferRequest.find({ author: auth.user._id })
+  const transferRequests = await TransferRequest.find({ author: auth.user._id }).sort({ createdAt: -1 })
   const transferRequestsWithCount = await Promise.all(transferRequests.map(async request => {
     // Count the transfers related to each transferRequest
     const receivedTransfersCount = await Transfer.countDocuments({

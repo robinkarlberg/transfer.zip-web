@@ -3,6 +3,7 @@ import { render } from '@react-email/render';
 import TransferDownloadedEmail from './templates/TransferDownloadedEmail.jsx';
 import TransferRequestReceivedEmail from './templates/TransferRequestReceivedEmail.jsx';
 import TransferShareEmail from './templates/TransferShareEmail.jsx';
+import TransferRequestShareEmail from './templates/TransferRequestShareEmail.jsx';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'Transfer.zip';
@@ -32,6 +33,13 @@ export async function sendTransferRequestReceived(email, { name, link }) {
   await sendMail(TransferRequestReceivedEmail({ name, link }), {
     to: email,
     subject: `Files received - ${SITE_NAME}`,
+  });
+}
+
+export async function sendTransferRequestShare(email, { name, description, link }) {
+  await sendMail(TransferRequestShareEmail({ name, description, link }), {
+    to: email,
+    subject: `Transfer request - ${SITE_NAME}`,
   });
 }
 

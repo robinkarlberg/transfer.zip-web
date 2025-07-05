@@ -45,3 +45,8 @@ export const listTransfersForUser = async (user) => {
 
   return filteredTransfers
 }
+
+export const getTransferRequestUploadLink = (transferRequest) => {
+  if (!transferRequest) return null
+  return `${process.env.SITE_URL}/upload/${transferRequest.secretCode}`
+}

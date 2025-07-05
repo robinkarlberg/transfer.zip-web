@@ -1,12 +1,13 @@
+import { sendTransferRequestReceived, sendTransferRequestShare, sendTransferShare } from "@/lib/server/mail/mail";
 import TransferRequest from "@/lib/server/mongoose/models/TransferRequest";
-import { resp } from "@/lib/server/serverUtils";
+import { getTransferRequestUploadLink, resp } from "@/lib/server/serverUtils";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
   const { user } = await useServerAuth()
 
-  const { name, description } = await req.json()
+  const { name, description, emails } = await req.json()
 
   if ((name != null && typeof name !== "string") || (description != null && typeof description !== "string")) {
     return NextResponse.json(resp("name and description must be strings"), { status: 400 })
@@ -17,6 +18,19 @@ export async function POST(req) {
     name,
     description,
   })
+
+  console.log(transferRequest, getTransferRequestUploadLink(transferRequest))
+
+  if (emails?.length) {
+    for (const email of emails) {
+      await sendTransferRequestShare(email, {
+        name: name || "Untitled Transfer Request",
+        description: description,
+        link: getTransferRequestUploadLink(transferRequest)
+      })
+      await transferRequest.addSharedEmail(email)
+    }
+  }
 
   await transferRequest.save()
 
