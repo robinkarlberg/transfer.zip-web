@@ -112,6 +112,16 @@ When developing, install all dependencies with `./setup.sh`. Then run the `local
 ./local-dev.sh
 ```
 
+## Built with
+
+- Next.js
+- WebRTC
+- WebSockets
+- Node.js
+- ExpressJS
+- MongoDB
+- zip.js
+
 ## License
 
 This project is licensed under the [Business Source License 1.1](./LICENSE), with a 3-year change date to MIT.
