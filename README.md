@@ -37,7 +37,7 @@ Instead of real-time peer-to-peer transfer like with Quick Transfers, Cloud Tran
 
 Cloud Transfers are just what normal file transfer services like WeTransfer do, but you can host it yourself.
 
-To set up Cloud Transfers, you need to spin up a [node](https://github.com/robinkarlberg/transfer.zip-node) server and configure it. Having seperate servers handling the heavy-duty stuff like uploads and zip bundles, keeps the main site running smoothly. It also enables distributing of several node servers around the world, close to users, to optimize download times.
+To set up Cloud Transfers, you need to spin up a [node server](https://github.com/robinkarlberg/transfer.zip-node) and configure it. Having seperate servers handling the heavy-duty stuff like uploads and zip bundles, keeps the main site running smoothly. It also enables distributing of several node servers around the world, close to users, to optimize download times.
 
 ## Known Problems
 
