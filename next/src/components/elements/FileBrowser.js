@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
-import { buildNestedStructure, createRichFileObject } from "../../utils";
 import BIcon from "../BIcon";
-import { humanFileSize } from "../../transferUtils";
+import { humanFileSize } from "@/lib/transferUtils";
+import { buildNestedStructure } from "@/lib/utils";
 
 const FileBrowserEntry = ({ richFile, isOpen, onClick }) => {
   return (
