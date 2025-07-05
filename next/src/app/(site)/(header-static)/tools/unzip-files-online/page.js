@@ -17,7 +17,7 @@ export const metadata = {
 export default function Page() {
   return (
     <div>
-      <ToolLayout heroTitle={<span><span className="text-primary">Easily</span> open your zip file online.</span>} heroSubtitle="Decompress and view even the largest zip files with this online tool. We can not read your files, as everything is handled locally in your browser.">
+      <ToolLayout large heroTitle={<span><span className="text-primary">Easily</span> open your zip file online.</span>} heroSubtitle="Decompress and view even the largest zip files with this online tool. We can not read your files, as everything is handled locally in your browser.">
         <UnzipFilesTool />
       </ToolLayout>
       <div className="mx-auto max-w-7xl px-6 lg:px-8 mb-16">

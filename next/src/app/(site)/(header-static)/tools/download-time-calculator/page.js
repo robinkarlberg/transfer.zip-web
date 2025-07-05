@@ -22,7 +22,7 @@ export default function Page() {
         <div className="mt-16">
           <h2 className="inline-block text-2xl mb-4 font-bold">About this tool</h2>
           <p className="text-lg mb-2">Enter a file size and your connection speed to get an instant estimate of how long the download will take.</p>
-          <p className="text-lg mb-2">No data is sent anywhere – the calculation happens entirely in your browser.</p>
+          {/* <p className="text-lg mb-2">No data is sent anywhere - the calculation happens entirely in your browser.</p> */}
         </div>
         <div className="mt-16">
           <RelatedLinks currentSlug="download-time-calculator" />

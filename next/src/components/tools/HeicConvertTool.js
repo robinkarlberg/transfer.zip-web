@@ -7,14 +7,16 @@ import { downloadBlob } from "@/lib/utils";
 import streamSaver from "@/lib/client/StreamSaver";
 import * as zip from "@zip.js/zip.js";
 
+const heic2any = typeof window !== "undefined" ? require("heic2any") : null
+
 export default function HeicConvertTool() {
   const [now, setNow] = useState(0);
   const [max, setMax] = useState(0);
 
   const doConvert = async (file) => {
-    const buffer = await file.arrayBuffer();
-    const { default: convert } = await import("heic-convert/browser");
-    const outputBuffer = await convert({ buffer, format: "JPEG", quality: 0.9 });
+    console.log(heic2any)
+    const outputBuffer = await heic2any({ blob: file, format: "JPEG", quality: 0.9 });
+    console.log(outputBuffer)
     return outputBuffer;
   };
 

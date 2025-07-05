@@ -7,7 +7,9 @@ import { tools } from '@/lib/tools';
 
 export default function Footer({ }) {
   return (
-    <footer className="bg-white --dark:bg-gray-900 z-10 relative">
+    // I do NOT know why the key= trick works I just tried it and it seems to fix the scroll bug LMAOOOOO
+    // Edit: didnt work
+    <footer className="bg-white --dark:bg-gray-900 z-10 relative" key={"fix-scroll-bug-asdf"}>
       <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
         <div className="md:flex md:justify-between">
           <div className="mb-6 md:mb-0">

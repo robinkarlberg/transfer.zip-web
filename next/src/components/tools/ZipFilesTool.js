@@ -34,6 +34,7 @@ export default function ZipFilesTool() {
       writer.close();
     }
     await zipStream.close();
+    setProgressBytes(maxBytes)
   };
 
   const handleFiles = (fs) => { if (fs.length) setFiles(fs); };
