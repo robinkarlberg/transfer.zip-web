@@ -42,7 +42,7 @@ export async function POST(req, { params }) {
     if (request && request.author && request.author.notificationSettings?.transferReceived !== false) {
       await sendTransferRequestReceived(request.author.email, {
         name: request.name || 'Untitled Request',
-        link: transfer.getDownloadLink(),
+        link: `${process.env.SITE_URL}/app?tab=received`,
       });
     }
   }

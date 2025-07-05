@@ -78,7 +78,7 @@ const Entry = ({ transfer }) => {
     try {
       const { nodeUrl, token } = await getDownloadToken(secretCode)
 
-      registerTransferDownloaded(secretCode)
+      await registerTransferDownloaded(secretCode)
       setFormData({
         url: nodeUrl + "/download",
         token

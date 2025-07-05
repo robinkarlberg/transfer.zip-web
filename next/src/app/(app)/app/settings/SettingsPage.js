@@ -213,12 +213,12 @@ export default function ({ user }) {
                 Files Received from Transfer Request
               </Label>
             </div>
-            <div className="flex items-center space-x-3">
+            {/* <div className="flex items-center space-x-3">
               <Checkbox id="expiryWarnings" defaultChecked={notificationSettings.expiryWarnings} onCheckedChange={handleCheckedChange("expiryWarnings")} />
               <Label htmlFor="expiryWarnings" className="cursor-pointer">
                 Expiry Warnings <QuestionCircle text={"Receive an email if a transfer is about to expire, but has not yet been downloaded."} />
               </Label>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="border rounded-2xl shadow-xs p-6 border-gray-900/10 max-w-xl mb-3">

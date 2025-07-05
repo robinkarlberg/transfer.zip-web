@@ -17,7 +17,7 @@ NotificationSettingsSchema.methods.friendlyObj = function () {
     return {
         transferDownloaded: this.transferDownloaded,
         transferReceived: this.transferReceived,
-        expiryWarnings: this.expiryWarnings
+        // expiryWarnings: this.expiryWarnings
     }
 }
 

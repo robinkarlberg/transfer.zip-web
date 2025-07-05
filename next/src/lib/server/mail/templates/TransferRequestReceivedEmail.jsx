@@ -8,7 +8,7 @@ export default function TransferRequestReceivedEmail({ name, link }) {
       <Text style={text}>
         Someone uploaded files to your request "{name}".
       </Text>
-      <Button style={button} href={link}>View Transfer</Button>
+      <Button style={button} href={link}>View Dashboard</Button>
       <Hr style={{ marginTop: "24px" }}/>
       <Text style={{ color: "#2563eb", textDecoration: "underline" }}><a href={link}>{link}</a></Text>
     </EmailLayout>
