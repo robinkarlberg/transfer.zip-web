@@ -20,9 +20,9 @@ It aims to become the best way to setup your own file transfer server, in additi
 
 - End-to-end encrypted peer-to-peer realtime transfers with **no size limits**, meaning you can send **1TB** files if you want.
 - Reliable file uploads using the [tus](https://tus.io/) protocol.
-- Ability to request others to upload files to you.
+- Ability to request others to upload files to you for download later.
 - Easy to **self-host** or contribute to the codebase.
-- Supports S3-compatiable APIs as well as local disk storage.
+- Supports storing files with S3-compatiable APIs as well as local disk storage.
 - Manages multiple accounts.
 
 ### Quick Transfers - End-to-end encrypted WebRTC file transfers in the browser
