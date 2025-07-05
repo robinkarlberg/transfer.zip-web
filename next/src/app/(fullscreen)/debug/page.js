@@ -7,7 +7,7 @@ export default function () {
   const props = {
     link: "https://transfer.zip/transfer/asdasadsasdas",
     name: "Test Transfer",
-    description: "asdmaio adas oidasioiodaios dioad s"
+    description: "asdmaio adas\noidasioiodaios dioad s"
   }
   return (
     <div className="grid grid-cols-1 space-y-8" style={{ all: "unset" }}>

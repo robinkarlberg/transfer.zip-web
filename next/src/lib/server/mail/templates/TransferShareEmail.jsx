@@ -25,11 +25,12 @@ const text = { fontSize: '16px', lineHeight: '22px' };
 const container = {
   backgroundColor: '#ffffff',
   borderRadius: '6px',
-  border: '1px solid gray',
-  padding: '4px',
+  border: '1px solid lightgray',
+  padding: '0 16px',
   display: 'block',
   margin: '0 auto',
-  marginBottom: "16px"
+  marginBottom: "16px",
+  whiteSpace: "pre"
 };
 const button = {
   backgroundColor: '#2563eb',
