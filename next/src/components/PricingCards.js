@@ -71,7 +71,7 @@ export default function PricingCards({ tiers, compact, buttonText, onTierSelecte
         aria-describedby={tier.name}
         className={classNames(
           tier.featured
-            ? 'bg-primary-light text-white shadow-sm hover:bg-primary-lighter focus-visible:outline-primary-light'
+            ? 'bg-primary text-white shadow-sm hover:bg-primary-lighter focus-visible:outline-primary-light'
             : 'text-primary ring-1 ring-inset ring-primary-200 hover:ring-primary-300 focus-visible:outline-primary',
           'mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10',
         )}

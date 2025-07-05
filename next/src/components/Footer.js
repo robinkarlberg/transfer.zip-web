@@ -20,7 +20,7 @@ export default function Footer({ }) {
           </div>
           <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3 lg:grid-cols-4">
             <div>
-              <h5 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><Link className="hover:underline" href={"/legal"}>Tools</Link></h5>
+              <h4 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><Link className="hover:underline" href={"/legal"}>Tools</Link></h4>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 {tools.map(t => (
                   <li key={t.slug} className="mb-4">
@@ -32,7 +32,7 @@ export default function Footer({ }) {
               </ul>
             </div>
             <div>
-              <h5 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><a className="hover:underline" href="https://blog.transfer.zip/">Blog</a></h5>
+              <h4 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><a className="hover:underline" href="https://blog.transfer.zip/">Blog</a></h4>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 <li className="mb-4">
                   <Link href="https://blog.transfer.zip/2025/04/05/how-to-send-large-video-files.html" className="hover:underline ">Send Large Video Files</Link>
@@ -49,7 +49,7 @@ export default function Footer({ }) {
               </ul>
             </div>
             <div>
-              <h5 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white">Resources</h5>
+              <h4 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white">Resources</h4>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 <li className="mb-4">
                   <a href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}`} className="hover:underline">Contact</a>
@@ -63,7 +63,7 @@ export default function Footer({ }) {
               </ul>
             </div>
             <div>
-              <h5 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><Link className="hover:underline" href={"/legal"}>Legal</Link></h5>
+              <h4 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><Link className="hover:underline" href={"/legal"}>Legal</Link></h4>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 <li className="mb-4">
                   <Link href="/legal/privacy-policy" className="hover:underline">Privacy Policy</Link>
