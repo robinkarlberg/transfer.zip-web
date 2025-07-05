@@ -18,7 +18,10 @@ export async function POST(req, { params }) {
   }
 
   await transfer.deleteOne()
-  await workerTransferDelete(transfer.nodeUrl, transfer._id.toString())
+
+  // Do not await this, it will just lag too much. We assume the deletion succeeds.
+  // We can always delete left over files with a tidy script later.
+  workerTransferDelete(transfer.nodeUrl, transfer._id.toString())
 
   return NextResponse.json(resp({}))
 }
