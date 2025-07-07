@@ -4,17 +4,18 @@ import 'react-circular-progressbar/dist/styles.css';
 import Checkmark from "../Checkmark";
 import { Transition } from "@headlessui/react";
 import { humanFileSizePair, humanFileSizeWithUnit } from "@/lib/transferUtils";
+import Spinner from "./Spinner";
 
-export default function Progress({ now, max, showUnits, finishedText }) {
+export default function Progress({ now, max, showUnits, autoFinish, finished, finishedText }) {
   const percent = useMemo(() => !max ? 0 : Math.floor(now / max * 100), [now, max])
 
   const humanMax = humanFileSizePair(max, true)
   const humanNowAmount = humanFileSizeWithUnit(now, humanMax.unit, true, 1)
 
-  const showCheckmark = max && max === now
+  // const showCheckmark = 
   return (
     <div className="bg-red w-full h-full text-primary relative">
-      <Transition show={showCheckmark}>
+      <Transition show={!!autoFinish ? max && max === now : finished}>
         <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center transition data-[closed]:opacity-0">
           <Checkmark />
           <div className="text-center">
@@ -22,7 +23,15 @@ export default function Progress({ now, max, showUnits, finishedText }) {
           </div>
         </div>
       </Transition>
-      <Transition show={!showCheckmark}>
+      <Transition show={!autoFinish && (max && max === now) && !finished}>
+        <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center transition data-[closed]:opacity-0">
+          <Spinner className={"text-primary"} sizeClassName={"w-16 h-16"}/>
+          <div className="mt-5 text-center">
+            Processing files...
+          </div>
+        </div>
+      </Transition>
+      <Transition show={max && max !== now}>
         <div className="absolute top-0 left-0 transition data-[closed]:opacity-0">
           <CircularProgressbarWithChildren value={percent} text={max ? `${percent}%` : ""}
             styles={buildStyles({

@@ -7,11 +7,19 @@ import { NextResponse } from "next/server";
 export async function POST(req, { params }) {
   const { transferId } = await params
 
-  console.log("POST DELETE", transferId)
+  const { user } = await useServerAuth()
 
-  const auth = await useServerAuth()
-
-  const transfer = await Transfer.findOne({ author: auth.user._id, _id: transferId })
+  const transfer = await Transfer.findOne({
+    $or: [
+      { author: user._id },
+      { transferRequest: { $exists: true } }  // Only consider transfers with a transferRequest
+    ],
+    _id: transferId
+  })
+    .populate({
+      path: 'transferRequest',        // Populate the transferRequest field
+      match: { author: user._id },    // Match transferRequest where the author is the user
+    })
 
   if (!transfer) {
     return NextResponse.json(resp("transfer not found"), { status: 404 })

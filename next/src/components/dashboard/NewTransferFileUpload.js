@@ -53,6 +53,7 @@ export default function ({ user, storage }) {
   const formRef = useRef(null)
   const emailRef = useRef(null)
 
+  const [finished, setFinished] = useState(false)
   const [uploadingFiles, setUploadingFiles] = useState(false)
   const [filesToUpload, setFilesToUpload] = useState(null)
 
@@ -90,8 +91,12 @@ export default function ({ user, storage }) {
     // response: { idMap: [{ tmpId, id }, ...] } - what your API returned
     const { transfer, idMap } = await newTransfer({ name, description, expiresInDays, files: transferFiles, emails: emailRecipients })
 
-    const { results, failedPromises } = await uploadFiles(files, idMap, transfer, progress => setUploadProgressMap(progress))
+    const { results, failedPromises } = await uploadFiles(files, idMap, transfer, progress => {
+      console.log(progress, progress.reduce((sum, item) => sum + item[1], 0))
+      setUploadProgressMap(progress)
+    })
 
+    setFinished(true)
     router.replace(`/app/${transfer.id}`)
   }
 
@@ -273,7 +278,7 @@ export default function ({ user, storage }) {
           </div>
         </form>
         <div className={`col-span-full ${direction == "send" ? "block" : "hidden"}`}>
-          <FileUpload headless initialFiles={files} onFilesChange={setFilesToUpload} onFiles={handleFiles} progressElement={<Progress max={totalBytesToSend} now={bytesTransferred} showUnits={true} finishedText={"Processing files, wait a minute."} />} showProgress={uploadingFiles} disabled={tooLittleStorage} />
+          <FileUpload headless initialFiles={files} onFilesChange={setFilesToUpload} onFiles={handleFiles} progressElement={<Progress max={totalBytesToSend} now={bytesTransferred} showUnits={true} finished={finished} finishedText={"Your files were uploaded!"} />} showProgress={uploadingFiles} disabled={tooLittleStorage} />
         </div>
         {direction == "receive" && <div className="col-span-full">
           <div className="pb-4 flex px-6 mt-4">

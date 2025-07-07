@@ -12,6 +12,7 @@ import Link from "next/link";
 import { ApplicationContext } from "@/context/ApplicationContext";
 import Modal from "@/components/elements/Modal";
 import { sleep } from "@/lib/utils";
+import { IS_SELFHOST } from "@/lib/isSelfHosted";
 
 /*
   This example requires some changes to your config:
@@ -88,7 +89,7 @@ export default function SignInPage() {
     finally {
       setLoadingForgotPassword(false)
     }
-    
+
   }
 
   return (
@@ -114,7 +115,7 @@ export default function SignInPage() {
         </div>
       </Modal>
       <div className="flex min-h-[100vh] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <button className="absolute top-8 text-xl me-1 text-primary hover:text-primary-light" onClick={() => window.history.back()}>&larr; Back</button>
+        {!IS_SELFHOST && <button className="absolute top-8 text-xl me-1 text-primary hover:text-primary-light" onClick={() => window.history.back()}>&larr; Back</button>}
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <Image
             alt="Your Company"
@@ -180,26 +181,30 @@ export default function SignInPage() {
                 >
                   Sign in {loading && <Spinner className={"ms-2"} />}
                 </button>
-                <div className="mt-2 flex flex-row gap-2">
-                  <SignInWithGoogleButton disabled={loading}/>
-                  {/* <button
+                {!IS_SELFHOST && (
+                  <div className="mt-2 flex flex-row gap-2">
+                    <SignInWithGoogleButton disabled={loading} />
+                    {/* <button
                     disabled={loading}
                     type="submit"
                     className="flex w-full justify-center rounded-md bg-white px-3 py-1.5 text-sm/6 font-semibold text-gray-700 hover:text-black shadow-sm border border-gray-500 hover:border-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
                     <BIcon name={"github"} className={"me-1"} /> GitHub
                   </button> */}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           </form>
 
-          <p className="mt-10 text-center text-sm/6 text-gray-500">
-            Don't have an account?{' '}
-            <Link href="/signup" className="font-semibold text-primary hover:text-primary-light">
-              Sign up
-            </Link>
-          </p>
+          {!IS_SELFHOST && (
+            <p className="mt-10 text-center text-sm/6 text-gray-500">
+              Don't have an account?{' '}
+              <Link href="/signup" className="font-semibold text-primary hover:text-primary-light">
+                Sign up
+              </Link>
+            </p>
+          )}
         </div>
       </div>
     </>

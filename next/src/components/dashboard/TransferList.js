@@ -162,8 +162,12 @@ const Entry = ({ transfer }) => {
                 :
                 (
                   <>
-                    <Link href={`/app/resume/${id}`} className="underline hover:text-primary">Resume Upload</Link>
-                    <BIcon name="dot" />
+                    {!transfer.hasTransferRequest && (
+                      <>
+                        <Link href={`/app/resume/${id}`} className="underline hover:text-primary">Resume Upload</Link>
+                        <BIcon name="dot" />
+                      </>
+                    )}
                     <button onClick={handleDelete} className="underline hover:text-destructive">Delete</button>
                   </>
                 )

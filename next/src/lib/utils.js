@@ -141,10 +141,6 @@ export function humanFileName(fileName) {
 
 }
 
-export const isSelfHosted = () => {
-    return process.env.NEXT_PUBLIC_SELFHOST == undefined || (process.env.NEXT_PUBLIC_SELFHOST && process.env.NEXT_PUBLIC_SELFHOST == "true")
-}
-
 export const tryCopyToClipboard = async (value) => {
     try {
         await navigator.clipboard.writeText(value);

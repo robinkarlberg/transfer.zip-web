@@ -43,7 +43,7 @@ export default function ZipFilesTool() {
 
   return (
     <div className="mx-auto max-w-sm">
-      <FileUpload onFiles={handleFiles} buttonText="Zip" showProgress={!!maxBytes} progressElement={<Progress max={maxBytes} now={progressBytes} />} />
+      <FileUpload onFiles={handleFiles} buttonText="Zip" showProgress={!!maxBytes} progressElement={<Progress autoFinish max={maxBytes} now={progressBytes} />} />
     </div>
   );
 }

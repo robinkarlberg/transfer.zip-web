@@ -48,7 +48,7 @@ export default function HeicConvertTool() {
 
   return (
     <div className="mx-auto max-w-sm">
-      <FileUpload onFiles={handleFiles} buttonText="Convert" showProgress={max !== 0} accept=".heic" progressElement={<Progress now={now} max={max} />} />
+      <FileUpload onFiles={handleFiles} buttonText="Convert" showProgress={max !== 0} accept=".heic" progressElement={<Progress autoFinish now={now} max={max} />} />
     </div>
   );
 }
