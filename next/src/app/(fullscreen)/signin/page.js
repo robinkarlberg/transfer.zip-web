@@ -53,8 +53,8 @@ export default function SignInPage() {
     setLoading(true)
 
     try {
-      if (!validateEmail(email)) return setMessage("Invalid email")
-      // if (password.length < 6) return setMessage("Password too short (min 6 characters")
+      if (!validateEmail(email)) throw { message: "Invalid email" }
+      if (password.length < 6) throw { message: "Password too short (min 6 characters" }
 
       const res = await login(email, password)
       if (res.success) {
