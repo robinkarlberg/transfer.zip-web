@@ -19,6 +19,7 @@ import * as zip from "@zip.js/zip.js"
 import { useQuickShare } from "@/hooks/client/useQuickShare"
 import { DashboardContext } from "@/context/DashboardContext"
 import { IS_SELFHOST } from "@/lib/isSelfHosted"
+import SignUpModal from "@/components/SignUpModal"
 
 const TRANSFER_STATE_WAIT_FOR_USER = "wait_for_user"
 const TRANSFER_STATE_IDLE = "idle"
@@ -27,13 +28,15 @@ const TRANSFER_STATE_TRANSFERRING = "transferring"
 const TRANSFER_STATE_FINISHED = "finished"
 const TRANSFER_STATE_FAILED = "failed"
 
-export default function QuickShareProgress() {
+export default function QuickShareProgress({ isLoggedIn }) {
 
   const router = useRouter()
 
   const { files } = useContext(FileContext)
-  const { displayNotification, setShowSignUpModal } = useContext(DashboardContext)
+  const { displayNotification } = useContext(DashboardContext)
   const { hasBeenSentLink, k, remoteSessionId, transferDirection } = useQuickShare()
+
+  const [showSignUpModal, setShowSignUpModal] = useState(false)
 
   const [transferState, _setTransferState] = useState(hasBeenSentLink ? TRANSFER_STATE_IDLE : TRANSFER_STATE_WAIT_FOR_USER)
   const setTransferState = (ts) => {
@@ -282,7 +285,7 @@ export default function QuickShareProgress() {
     }
   }, [transferDirection])
 
-  const sendTitle = "Send Files"
+  const sendTitle = "Quick Transfer"
   const recvTitle = "Receive Files"
   const title = hasBeenSentLink ? (transferDirection == "R" ? recvTitle : sendTitle) : (transferDirection == "S" ? sendTitle : recvTitle)
 
@@ -295,76 +298,86 @@ export default function QuickShareProgress() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row gap-4">
-      <div className="w-full max-w-64">
-        <h1 className="text-3xl font-bold mb-4 block md:hidden">{title}</h1>
-        <div className="relative">
-          <QRCode style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-            className={"bg-white p-5 border rounded-lg shadow-sm"}
-            size={128}
-            fgColor="#212529"
-            value={quickShareLink ? quickShareLink : "https://transfer.zip/?542388234752394243924377293849asdasd"} />
-          <Transition show={hasConnected || hasBeenSentLink}>
-            <div className="absolute bg-gray-50 left-0 top-0 w-full max-w-full h-full rounded-lg p-16 border transition data-[closed]:opacity-0">
-              <Progress now={bytesTransferred} max={totalBytes} unit={"%"} />
-            </div>
-          </Transition>
-        </div>
-        {!hasBeenSentLink && (
-          <div>
-            <div className="relative mt-2 flex items-center">
-              <input
-                type="url"
-                className="block w-full rounded-md border-0 py-1.5 pr-20 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-                defaultValue={quickShareLink}
-                contentEditable="false"
-              />
-              <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-                <button onClick={handleCopy} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
-                  <BIcon name={"copy"} className={"mr-1 ms-1"} />Copy
-                </button>
+    <>
+      <SignUpModal show={showSignUpModal} onShowChange={setShowSignUpModal} />
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="w-full max-w-64">
+          <h1 className="text-3xl font-bold mb-4 block md:hidden">{title}</h1>
+          <div className="relative">
+            <QRCode style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+              className={"bg-white p-5 border rounded-lg shadow-sm"}
+              size={128}
+              fgColor="#212529"
+              value={quickShareLink ? quickShareLink : "https://transfer.zip/?542388234752394243924377293849asdasd"} />
+            <Transition show={hasConnected || hasBeenSentLink}>
+              <div className="absolute bg-gray-50 left-0 top-0 w-full max-w-full h-full rounded-lg p-16 border transition data-[closed]:opacity-0">
+                <Progress autoFinish now={bytesTransferred} max={totalBytes} unit={"%"} />
+              </div>
+            </Transition>
+          </div>
+          {!hasBeenSentLink && (
+            <div>
+              <div className="relative mt-2 flex items-center">
+                <input
+                  type="url"
+                  className="block w-full rounded-md border-0 py-1.5 pr-20 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                  defaultValue={quickShareLink}
+                  contentEditable="false"
+                />
+                <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
+                  <button onClick={handleCopy} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
+                    <BIcon name={"copy"} className={"mr-1 ms-1"} />Copy
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold mb-1 hidden md:block">{title}</h1>
+          {!errorMessage ?
+            (<ol className="list-decimal list-inside mb-4 md:mb-2">
+              {/* <li>Choose if you want to send or receive files.</li> */}
+              <li className={transferState == TRANSFER_STATE_IDLE ? "" : "text-gray-400"}>{(hasBeenSentLink && !IS_SELFHOST) ? "Connecting to server..." : "Scan the QR code or send the link to the recipient."} {transferState == TRANSFER_STATE_IDLE && spinner}</li>
+              <li className={transferState == TRANSFER_STATE_CONNECTING ? "" : "text-gray-400"}>Wait for your devices to establish a connection. {transferState == TRANSFER_STATE_CONNECTING && spinner}</li>
+              <li className={transferState == TRANSFER_STATE_TRANSFERRING ? "" : "text-gray-400"}>Stand by while the files are being transfered. {transferState == TRANSFER_STATE_TRANSFERRING && spinner}</li>
+              <li className={transferState == TRANSFER_STATE_FINISHED ? "" : "text-gray-400"}>Done!</li>
+            </ol>)
+            :
+            <p className="text-danger"><b className="text-danger">Error: </b>{errorMessage}</p>
+          }
+          {!IS_SELFHOST && transferState != TRANSFER_STATE_FINISHED && (
+            <Link
+              href={"/app/new"}
+              onNavigate={e => {
+                if (!isLoggedIn) {
+                  e.preventDefault()
+                  if (window.sa_loaded) window.sa_event("quick-share_upsell_clicked")
+                  setShowSignUpModal(true)
+                }
+              }}
+              className="text-start flex md:inline-flex gap-2 border rounded-lg shadow-sm py-2 ps-3 pe-4 bg-purple-50 group">
+              <div className="flex items-center h-6">
+                <BIcon center className={"text-purple-500 text-sm animate-pulse group-hover:animate-none mt-1"} name={"lightning-fill"} />{" "}
+              </div>
+              <div>
+                <p className="sm:text-lg font-bold text-purple-500">
+                  {hasBeenSentLink ? "Keep your browser window open" : "This link will expire when tab is closed."}
+                </p>
+                {!hasBeenSentLink &&
+                  <span className="text-purple-500 font-medium">
+                    {transferDirection == "S" ?
+                      "Make the files available for 365 days" :
+                      "Make the link available for 365 days"
+                    }
+                    <span className="transition-all group-hover:ms-1">&rarr;</span>
+                  </span>
+                }
+              </div>
+            </Link>
+          )}
+        </div>
       </div>
-      <div>
-        <h1 className="text-3xl font-bold mb-1 hidden md:block">{title}</h1>
-        {!errorMessage ?
-          (<ol className="list-decimal list-inside mb-4 md:mb-2">
-            {/* <li>Choose if you want to send or receive files.</li> */}
-            <li className={transferState == TRANSFER_STATE_IDLE ? "" : "text-gray-400"}>{(hasBeenSentLink && !IS_SELFHOST) ? "Connecting to server..." : "Scan the QR code or send the link to the recipient."} {transferState == TRANSFER_STATE_IDLE && spinner}</li>
-            <li className={transferState == TRANSFER_STATE_CONNECTING ? "" : "text-gray-400"}>Wait for your devices to establish a connection. {transferState == TRANSFER_STATE_CONNECTING && spinner}</li>
-            <li className={transferState == TRANSFER_STATE_TRANSFERRING ? "" : "text-gray-400"}>Stand by while the files are being transfered. {transferState == TRANSFER_STATE_TRANSFERRING && spinner}</li>
-            <li className={transferState == TRANSFER_STATE_FINISHED ? "" : "text-gray-400"}>Done!</li>
-          </ol>)
-          :
-          <p className="text-danger"><b className="text-danger">Error: </b>{errorMessage}</p>
-        }
-        {!IS_SELFHOST && transferState != TRANSFER_STATE_FINISHED && (
-          <Link
-            href={"/app/new"}
-            className="text-start flex md:inline-flex gap-2 border rounded-lg shadow-sm py-2 ps-3 pe-4 bg-purple-50 group">
-            <div className="flex items-center h-6">
-              <BIcon center className={"text-purple-500 text-sm animate-pulse group-hover:animate-none mt-1"} name={"lightning-fill"} />{" "}
-            </div>
-            <div>
-              <p className="sm:text-lg font-bold text-purple-500">
-                {hasBeenSentLink ? "Keep your browser window open" : "This link will expire when tab is closed."}
-              </p>
-              {!hasBeenSentLink &&
-                <span className="text-purple-500 font-medium">
-                  {transferDirection == "S" ?
-                    "Make the files available for 365 days" :
-                    "Make the link available for 365 days"
-                  }
-                  <span className="transition-all group-hover:ms-1">&rarr;</span>
-                </span>
-              }
-            </div>
-          </Link>
-        )}
-      </div>
-    </div>
+    </>
   )
 }
