@@ -7,38 +7,45 @@ This is the dev branch for a completely open-source version, with support for yo
 
 It aims to become the best way to setup your own file transfer server, in addition to our managed solution ;)
 
+<img src="https://dev.transfer.zip/img/icon-small.png"></img>
+
 # Transfer.zip
 
-<img src='https://cdn.transfer.zip/QuickShare.png' width="80%"></img>
+**Transfer.zip:** The open source file-sharing solution. Self-hosteable and without size limits.
 
-#### A self-hostable web application that allows you to easily and securely transfer files between devices **with no size limit**. Also available on, you guessed it, [https://transfer.zip](https://transfer.zip/).
-
-As a hobby music producer, I often needed to share large WAVs, but existing services didn't really do it for me. Discord's 50MB limit was frustrating (now 10MB 😭), and Google Drive, MEGA, Dropbox etc. felt cumbersome, so I started making transfer.zip. I rarely need to save my transfered files permanently, I just want to transfer them, and I think many others do too. Because the Quick Share feature never stores the files anywhere, there are **no file size or bandwidth limitations**!
-
-Transfer.zip is easy to set up locally, to self-host or contribute to the codebase. 
+> [!NOTE]
+> If you do not want to self-host or just try it out for yourself, it is available as a managed service at [Transfer.zip](https://transfer.zip/).
 
 ## Features
 
-### Quick Share - End-to-end encrypted WebRTC file transfers in the browser
-Quick Share uses [WebRTC](http://www.webrtc.org/) for peer-to-peer data transfer, meaning the files are streamed directly between peers and not stored anywhere in the process, not even on transfer.zip servers. To let peers initially discover each other, a signaling server is implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through. In addition, the file data is end-to-end encrypted using [AES-GCM](https://en.wikipedia.org/wiki/Galois/Counter_Mode) with a client-side 256 bit generated key, meaning if someone could impersonate a peer or capture the traffic, they would not be able to decrypt the file without knowing the key. Because the file is streamed directly between peers, there are **no file size or bandwidth limitations**. The easiest way to Quick Share a file is to scan the QR code containing the file link and encryption key. It is also possible to copy the link and share it to the recipient over what medium you prefer the most. 
+- End-to-end encrypted peer-to-peer realtime transfers with **no size limits**, meaning you can send **1TB** files if you want.
+- Reliable file uploads using the [tus](https://tus.io/) protocol.
+- Ability to request others to upload files to you for download later.
+- Easy to **self-host** or contribute to the codebase.
+- Supports storing files with S3-compatiable APIs as well as local disk storage.
+- Manages multiple accounts.
 
-### Quick Share Relay - For when WebRTC is blocked
+### Quick Transfers - End-to-end encrypted WebRTC file transfers in the browser
+Quick Transfers use [WebRTC](http://www.webrtc.org/) for peer-to-peer data transfer, meaning the files are streamed directly between peers and not stored anywhere in the process, not even on Transfer.zip servers. To let peers initially discover each other, a signaling server is implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through. In addition, the file data is end-to-end encrypted using [AES-GCM](https://en.wikipedia.org/wiki/Galois/Counter_Mode) with a client-side 256 bit generated key, meaning if someone could impersonate a peer or capture the traffic, they would not be able to decrypt the file without knowing the key. Because the file is streamed directly between peers, there are **no file size or bandwidth limitations**. The easiest way to Quick Transfer a file is to scan the QR code containing the file link and encryption key. It is also possible to copy the link and share it to the recipient over what medium you prefer the most. 
 
-Because of how peer-to-peer works, some network firewalls may not allow direct connections between devices. In that case, the peer-to-peer connection can fallback to using the signalling server as a relay, effectively bypassing network firewall limitations. 
+Because of how peer-to-peer works, some network firewalls may not allow direct connections between devices. In that case, the peer-to-peer connection can fallback to using the signalling server as a relay, effectively bypassing network firewall limitations. Due to WebRTC connections being much slower than using the relay, it will forced to be used if files are larger than 10MB, even if WebRTC connections are technically possible. This change was made due to people complaining of slow transfer speeds.
 
-Due to WebRTC connections being much slower than using the relay, it will forced to be used if files are larger than 10MB, even if WebRTC connections are technically possible. This change was made due to people complaining of slow transfer speeds.
+Quick Transfers only work while both users are online at the same time, due to the peer-to-peer nature of the system. 
 
-### Transfers
+### Cloud Transfers - File uploads with resumable, scalable storage
+Instead of real-time peer-to-peer transfer like with Quick Transfers, Cloud Transfers store the file temporarily on your server (or S3-compatible backend) using the [tus](https://tus.io/) protocol, which supports resumable, chunked uploads. This means interrupted uploads or downloads can continue where they left off. Files are deleted after the transfers expiry date.
 
-Transfer.zip also supports permanent file transfers, but currently not on the self-hosted version. That could be enabled in the future by making the API open source and self-hostable.
+Cloud Transfers are just what normal file transfer services like WeTransfer do, but you can host it yourself.
+
+To set up Cloud Transfers, you need to spin up a [node server](https://github.com/robinkarlberg/transfer.zip-node) and configure it. Having seperate servers handling the heavy-duty stuff like uploads and zip bundles, keeps the main site running smoothly. It also enables distributing of several node servers around the world, close to users, to optimize download times.
 
 ## Known Problems
 
-0-byte files gets stuck on transmit.
+0-byte files gets stuck on transmit using Quick Transfers.
 
-On Firefox mobile, sending files using Quick Share does not work at the moment. This could have something to do with the path being changed after the file has been chosen in the file picker, but not been read yet. This is under investigation.
+On Firefox mobile, sending files using Quick Transfer does not work at the moment. This could have something to do with the path being changed after the file has been chosen in the file picker, but not been read yet. This is under investigation and idk how to fix.
 
-Sending files from some Safari browsers is buggy at the moment, it has something to do with Safari terminating the WebSocket connection when unfocusing the window.
+Sending files from some Safari browsers is buggy at the moment, it has something to do with Safari terminating the WebSocket connection when unfocusing the window. Apple...
 
 ## Self-Hosting
 To setup self-hosting, run  `./createenv.sh` to create the env-files needed. This will enable only the core features for Quick Share and the relay to function.
@@ -105,9 +112,20 @@ When developing, install all dependencies with `./setup.sh`. Then run the `local
 ./local-dev.sh
 ```
 
+## Built with
 
+- Next.js
+- WebRTC
+- WebSockets
+- Node.js
+- ExpressJS
+- MongoDB
+- zip.js
 
+## License
 
+This project is licensed under the [Business Source License 1.1](./LICENSE), with a 3-year change date to MIT.
 
+Basically, you may self-host and use it internally or with clients, but just not offer a competing file transfer service.
 
-
+See [LICENSE](./LICENSE) for details.

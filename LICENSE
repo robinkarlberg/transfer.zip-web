@@ -1,0 +1,36 @@
+Business Source License 1.1
+
+Licensor: Robin Karlberg
+
+Licensed Work: Transfer.zip - All source code and related assets in this repository
+
+Change Date: 3 years from the date of each file's commit
+
+Change License: MIT License
+
+Usage Limitation: Commercial Use Restriction
+
+1. Grant of License
+   Under the terms of this Business Source License (the “License”), you are granted the right to use, copy, modify, create derivative works, and self-host the Licensed Work, subject to the limitations below.
+
+2. Permitted Use
+   You may use the Licensed Work:
+   - For internal purposes, including self-hosting
+   - To transmit files as part of your normal business operations; commercial use
+   - To serve clients or customers with whom you have a direct relationship
+
+3. Prohibited Use
+   You may not:
+   - Offer a file-transfer service or product that directly competes with Transfer.zip
+   - Provide the Licensed Work, or a modified version of it, as a hosted service to third parties whose primary purpose is file transfer
+   - Resell, sublicense, or rebrand the Licensed Work in a manner that replicates or competes with Transfer.zip's public offering
+
+4. Change Date
+   On the Change Date, the License will automatically convert to the Change License, currently the MIT License. After this date, all restrictions in this License are lifted.
+
+5. Alternative Licensing
+   If you wish to use the Licensed Work outside the bounds of this License (e.g., to offer a competing service), please contact Transfer.zip to discuss a commercial license.
+
+6. Disclaimer
+   THIS SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. THE LICENSOR SHALL NOT BE LIABLE FOR ANY DAMAGES ARISING FROM THE USE OF THE LICENSED WORK.
+
