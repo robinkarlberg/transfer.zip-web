@@ -36,9 +36,13 @@ export default async function ({ children, params }) {
   if (transferIdSlug && transferIdSlug.length > 0) {
     const transferId = transferIdSlug[0]
     if (!isValidObjectId(transferId)) {
-      redirect("/app")
+      return redirect("/app")
     }
     selectedTransfer = await Transfer.findOne({ author: auth.user._id, _id: transferId })
+
+    if (!selectedTransfer) {
+      return redirect("/app")
+    }
   }
 
   return (

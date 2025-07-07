@@ -4,6 +4,7 @@ import BIcon from "@/components/BIcon"
 import Modal from "@/components/elements/Modal"
 import { ApplicationContext } from "@/context/ApplicationContext"
 import { DashboardContext } from "@/context/DashboardContext"
+import { SelectedTransferContext } from "@/context/SelectedTransferProvider"
 import { deleteTransfer, getTransferDownloadLink, putTransfer, sendTransferByEmail } from "@/lib/client/Api"
 import { EXPIRATION_TIMES } from "@/lib/constants"
 import { humanFileSize } from "@/lib/transferUtils"
@@ -26,6 +27,7 @@ export default function ({ user, selectedTransfer }) {
   const router = useRouter()
 
   const { displayNotification, displayErrorModal } = useContext(DashboardContext)
+  const { refreshTransfer } = useContext(SelectedTransferContext)
 
   const [showEmailList, setShowEmailList] = useState(false)
   const [showForwardTransfer, setShowForwardTransfer] = useState(false)
@@ -64,7 +66,7 @@ export default function ({ user, selectedTransfer }) {
     await putTransfer(selectedTransfer.id, { expiresAt })
 
     displayNotification("success", "Expiration Changed", `The expiration date was successfully changed to ${expiresAt.toLocaleDateString()}`)
-    router.refresh()
+    refreshTransfer()
   }
 
   const textarea = useMemo(() => {
@@ -114,7 +116,7 @@ export default function ({ user, selectedTransfer }) {
     await deleteTransfer(selectedTransfer.id)
     // hideSidebar()
     router.replace(".")
-    router.refresh()
+    refreshTransfer()
   }
 
   const handleLinkKeyDown = async e => {
@@ -131,13 +133,13 @@ export default function ({ user, selectedTransfer }) {
   const handleSaveTitle = async e => {
     setEditingTitle(false)
     await putTransfer(selectedTransfer.id, { name: titleRef.current.value })
-    router.refresh()
+    refreshTransfer()
   }
 
   const handleSaveMessage = async e => {
     setEditingMessage(false)
     await putTransfer(selectedTransfer.id, { description: messageRef.current.value })
-    router.refresh()
+    refreshTransfer()
   }
 
   const onSendByEmailFormSubmit = async e => {
@@ -165,7 +167,7 @@ export default function ({ user, selectedTransfer }) {
     await sendTransferByEmail(selectedTransfer.id, [email])
 
     displayNotification("success", "Email sent", `The Transfer link was successfully sent to ${email}!`)
-    router.refresh()
+    refreshTransfer()
     setShowForwardTransfer(false)
   }
 

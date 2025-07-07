@@ -32,19 +32,28 @@ export function SelectedTransferProvider({ children }) {
     }
   }, [selectedTransferId])
 
+  const refreshTransfer = () => {
+    getTransfer(cachedTransferId)
+    .then(({ transfer }) => setTransfer(transfer))
+    .catch(err => setTransfer(null))
+  }
+
   const [transfer, setTransfer] = useState(null)
 
   useEffect(() => {
     if (cachedTransferId) {
-      getTransfer(cachedTransferId).then(({ transfer }) => setTransfer(transfer))
+      refreshTransfer()
     }
   }, [cachedTransferId])
+
+
 
   return (
     <SelectedTransferContext.Provider value={{
       transfer,
       cachedTransferId,
-      selectedTransferId, setSelectedTransferId
+      selectedTransferId, setSelectedTransferId,
+      refreshTransfer
     }}>
       {children}
     </SelectedTransferContext.Provider>
