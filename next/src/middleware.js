@@ -6,9 +6,14 @@ const selfHostBlacklist = [
 ]
 
 const selfHostWhitelist = [
-  "/signin",
+  "/signin", "/change-password",
   "/app", "/legal", "/api",
   "/transfer", "/upload"
+]
+
+const legacyRedirects = [
+  { from: "/quick-share", to: "/quick" },
+  { from: "/login", to: "/signin" },
 ]
 
 export function middleware(req) {
@@ -22,10 +27,11 @@ export function middleware(req) {
     return NextResponse.redirect(newUrl, { status: 302 })
   }
 
-  // legacy quick-share link
-  if (pathname === "/quick-share") {
+  // legacy redirects
+  const legacyMatch = legacyRedirects.find(entry => pathname === entry.from)
+  if (legacyMatch) {
     const newUrl = req.nextUrl.clone()
-    newUrl.pathname = "/quick"
+    newUrl.pathname = legacyMatch.to
     return NextResponse.redirect(newUrl, { status: 301 })
   }
 

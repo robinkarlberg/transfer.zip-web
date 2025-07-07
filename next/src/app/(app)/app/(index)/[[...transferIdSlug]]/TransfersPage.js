@@ -23,7 +23,7 @@ export default function ({ transfers, transferRequests }) {
   const selectedTab = tabs.find(t => t.slug == slug) || tabs[0]
 
   const setTab = slug => {
-    router.push(`?tab=${slug}`)
+    router.push(`/app?tab=${slug}`)
   }
 
   const sentTransfers = useMemo(() => transfers.filter(transfer => !transfer.hasTransferRequest), [transfers])
@@ -54,7 +54,7 @@ export default function ({ transfers, transferRequests }) {
             <nav aria-label="Tabs" className="-mb-px flex space-x-4">
               {tabs.map((tab) => (
                 <Link
-                  href={`?tab=${tab.slug}`}
+                  href={`/app?tab=${tab.slug}`}
                   key={tab.slug}
                   className={classNames(
                     selectedTab == tab

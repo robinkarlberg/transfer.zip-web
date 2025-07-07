@@ -4,6 +4,7 @@ import TransferDownloadedEmail from './templates/TransferDownloadedEmail.jsx';
 import TransferRequestReceivedEmail from './templates/TransferRequestReceivedEmail.jsx';
 import TransferShareEmail from './templates/TransferShareEmail.jsx';
 import TransferRequestShareEmail from './templates/TransferRequestShareEmail.jsx';
+import PasswordResetEmail from './templates/PasswordResetEmail.jsx';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'Transfer.zip';
@@ -47,5 +48,12 @@ export async function sendTransferShare(email, { name, description, link }) {
   await sendMail(TransferShareEmail({ name, description, link }), {
     to: email,
     subject: `Files available - ${SITE_NAME}`,
+  });
+}
+
+export async function sendPasswordReset(email, { link }) {
+  await sendMail(PasswordResetEmail({ link }), {
+    to: email,
+    subject: `Reset your password - ${SITE_NAME}`,
   });
 }

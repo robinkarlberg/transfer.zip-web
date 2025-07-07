@@ -9,17 +9,23 @@ export async function POST(req, { params }) {
 
   const { user } = await useServerAuth()
 
-  const transfer = await Transfer.findOne({
-    $or: [
-      { author: user._id },
-      { transferRequest: { $exists: true } }  // Only consider transfers with a transferRequest
-    ],
-    _id: transferId
-  })
-    .populate({
-      path: 'transferRequest',        // Populate the transferRequest field
-      match: { author: user._id },    // Match transferRequest where the author is the user
-    })
+  // Pull the document first
+  const transfer = await Transfer.findById(transferId)
+    .populate('transferRequest');              // full populate; we'll check it ourselves
+
+  // Authorisation check in one place
+  const authorized =
+    transfer &&
+    (transfer.author.equals(user._id) ||
+      (transfer.transferRequest &&
+        transfer.transferRequest.author.equals(user._id)));
+
+  if (!authorized) {
+    // Respond the same either way to avoid information leakage
+    return NextResponse.json(resp("transfer not found"), { status: 404 });
+  }
+
+  await transfer.deleteOne();
 
   if (!transfer) {
     return NextResponse.json(resp("transfer not found"), { status: 404 })
@@ -29,7 +35,7 @@ export async function POST(req, { params }) {
 
   // Do not await this, it will just lag too much. We assume the deletion succeeds.
   // We can always delete left over files with a tidy script later.
-  workerTransferDelete(transfer.nodeUrl, transfer._id.toString())
+  workerTransferDelete(transfer.nodeUrl, transfer._id.toString()).catch(console.error)
 
   return NextResponse.json(resp({}))
 }
