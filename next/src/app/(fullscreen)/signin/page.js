@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext, useState } from "react";
-import { login, register } from "@/lib/client/Api";
+import { login, register, requestPasswordReset } from "@/lib/client/Api";
 
 import logo from "@/img/icon.png"
 import { useRouter } from "next/navigation";
@@ -11,6 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ApplicationContext } from "@/context/ApplicationContext";
 import Modal from "@/components/elements/Modal";
+import { sleep } from "@/lib/utils";
 
 /*
   This example requires some changes to your config:
