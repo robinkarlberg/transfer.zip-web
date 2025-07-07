@@ -14,7 +14,7 @@ function getStripe() {
   if (cached.instance) {
     return cached.instance
   }
-  cached.instance = new Stripe(process.env.STRIPE_SK)
+  cached.instance = new Stripe(process.env.STRIPE_SK, { apiVersion: "2025-06-30.basil" })
   return cached.instance
 }
 

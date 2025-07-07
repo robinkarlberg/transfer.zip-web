@@ -117,6 +117,10 @@ export async function joinWaitlist(email) {
 
 // transfer
 
+export async function getTransfer(id) {
+    return await get(`/transfer/${id}`)
+}
+
 export async function getTransferList() {
     return await get(`/transfer/list`)
 }

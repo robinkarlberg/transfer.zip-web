@@ -9,11 +9,12 @@ import { deleteTransfer, getDownloadToken, getTransferDownloadLink, registerTran
 import { humanTimeUntil, parseTransferExpiryDate, sleep, tryCopyToClipboard } from "@/lib/utils"
 import BIcon from "../BIcon"
 import Link from "next/link"
+import { SelectedTransferContext } from "@/context/SelectedTransferProvider"
 
 const Entry = ({ transfer }) => {
   const router = useRouter()
 
-  const { transferId: displayedTransferId } = useParams()
+  const { selectedTransferId } = useContext(SelectedTransferContext)
 
   const { displayNotification, hideSidebar, showSidebar } = useContext(DashboardContext)
 
@@ -21,7 +22,7 @@ const Entry = ({ transfer }) => {
 
   const { id, name, files, expiresAt, hasTransferRequest, finishedUploading, secretCode } = transfer
   const expiryDate = parseTransferExpiryDate(expiresAt)
-  const isSelected = id === displayedTransferId
+  const isSelected = id === selectedTransferId
 
   const disabled = !finishedUploading || hasTransferRequest
 
@@ -47,7 +48,7 @@ const Entry = ({ transfer }) => {
     await deleteTransfer(id)
     // await sleep(1000)
     // router.refresh()
-    if (displayedTransferId === id) {
+    if (selectedTransferId === id) {
       router.replace(".")
       router.refresh()
     }
@@ -161,7 +162,7 @@ const Entry = ({ transfer }) => {
                 :
                 (
                   <>
-                    <button className="underline hover:text-primary">Resume Upload</button>
+                    <Link href={`/app/resume/${id}`} className="underline hover:text-primary">Resume Upload</Link>
                     <BIcon name="dot" />
                     <button onClick={handleDelete} className="underline hover:text-destructive">Delete</button>
                   </>

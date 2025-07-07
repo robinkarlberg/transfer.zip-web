@@ -4,6 +4,7 @@ import { useServerAuth } from "@/lib/server/wrappers/auth";
 import ApplicationProvider from "@/context/ApplicationContext";
 import Sidebar from "./Sidebar";
 import { FileProvider } from "@/context/FileProvider";
+import { SelectedTransferProvider } from "@/context/SelectedTransferProvider";
 
 export const metadata = {
   title: "Dashboard"
@@ -18,7 +19,7 @@ export default async function DashboardLayout({ children }) {
     return redirect("/signup");
   }
 
-  if(auth.user.getPlan() == "free") {
+  if (auth.user.getPlan() == "free") {
     return redirect("/onboarding")
   }
 
@@ -29,8 +30,10 @@ export default async function DashboardLayout({ children }) {
       <div className="flex flex-col lg:flex-row min-h-screen">
         <ApplicationProvider>
           <DashboardProvider>
-            <Sidebar user={auth.user.friendlyObj()} storage={storage} />
-            {children}
+            <SelectedTransferProvider>
+              <Sidebar user={auth.user.friendlyObj()} storage={storage} />
+              {children}
+            </SelectedTransferProvider>
           </DashboardProvider>
         </ApplicationProvider>
       </div>

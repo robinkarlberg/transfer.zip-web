@@ -39,3 +39,17 @@ export async function PUT(req, { params }) {
 
   return NextResponse.json(resp({ transfer: transfer.friendlyObj() }))
 }
+
+export async function GET(req, { params }) {
+  const auth = await useServerAuth()
+  const { transferId } = params
+  const { user } = auth
+
+  const transfer = await Transfer.findOne({ author: user._id, _id: { $eq: transferId } })
+
+  if (!transfer) {
+    return NextResponse.json(resp("transfer not found"), { status: 404 })
+  }
+
+  return NextResponse.json(resp({ transfer: transfer.friendlyObj() }))
+}

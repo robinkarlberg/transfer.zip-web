@@ -1,4 +1,3 @@
-import DefaultLayout from "@/components/dashboard/DefaultLayout";
 import BIcon from "@/components/BIcon"
 import GenericPage from "@/components/dashboard/GenericPage"
 import Link from "next/link"
@@ -7,8 +6,13 @@ import Transfer from "@/lib/server/mongoose/models/Transfer"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
 import TransferRequest from "@/lib/server/mongoose/models/TransferRequest"
 import { listTransfersForUser } from "@/lib/server/serverUtils"
+import { isValidObjectId } from "mongoose"
+import { redirect } from "next/navigation"
+import TransferSidebarWrapper from "./TransferSidebarWrapper"
+import DefaultLayout from "@/components/dashboard/DefaultLayout"
+import { SelectedTransferProvider } from "@/context/SelectedTransferProvider"
 
-export default async function ({ children }) {
+export default async function ({ children, params }) {
   const auth = await useServerAuth()
   const transfers = await listTransfersForUser(auth.user)
 
@@ -26,6 +30,17 @@ export default async function ({ children }) {
     };
   }));
 
+  const { transferIdSlug } = await params
+
+  let selectedTransfer
+  if (transferIdSlug && transferIdSlug.length > 0) {
+    const transferId = transferIdSlug[0]
+    if (!isValidObjectId(transferId)) {
+      redirect("/app")
+    }
+    selectedTransfer = await Transfer.findOne({ author: auth.user._id, _id: transferId })
+  }
+
   return (
     <DefaultLayout>
       <GenericPage title={"My Transfers"}>
@@ -36,6 +51,7 @@ export default async function ({ children }) {
           transfers={transfers.map(transfer => transfer.friendlyObj())}
           transferRequests={transferRequestsWithCount}
         />
+        <TransferSidebarWrapper user={auth.user.friendlyObj()} transfer={selectedTransfer?.friendlyObj()} />
         {children}
       </GenericPage>
     </DefaultLayout>
