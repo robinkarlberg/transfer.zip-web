@@ -8,7 +8,7 @@ export default function ({ }) {
         We are committed to collecting as little data as absolutely needed to keep the service running. We handle your personal information with the utmost care and respect, ensuring that it is never ever sold for profit. This privacy policy details our minimal data collection practices and our dedication to protecting your personal information when you use our services.
       </p>
       <p className="mt-6 text-xl leading-8">
-        This policy applies to our paid services, where your files are stored on our servers. If you are using <nobr><i>Quick Share</i></nobr>, this policy does not apply, as we can not collect any information from you at all.
+        This policy applies to our paid services, where your files are stored on our servers. If you are using <nobr><i>Quick Transfer</i></nobr>, this policy does not apply, as we can not collect any information from you at all.
       </p>
       <div className="mt-10 max-w-2xl">
         <p>
@@ -32,7 +32,7 @@ export default function ({ }) {
           <li className="flex gap-x-3">
             <BIcon name={"check-circle"} aria-hidden="true" className="mt-1 h-5 w-5 flex-none text-primary" />
             <span>
-              <strong className="font-semibold text-gray-900">File Metadata.</strong> When using our paid services, we save metadata such file name, file size and file type, to provide our service. When a transfer is deleted, all metadata is instantly deleted as well, without a trace. <nobr><i>Quick Share</i></nobr> works completely seperately, and can not collect any of this data.
+              <strong className="font-semibold text-gray-900">File Metadata.</strong> When using our paid services, we save metadata such file name, file size and file type, to provide our service. When a transfer is deleted, all metadata is instantly deleted as well, without a trace. <nobr><i>Quick Transfer</i></nobr> works completely seperately, and can not collect any of this data.
             </span>
           </li>
         </ul>
@@ -46,7 +46,7 @@ export default function ({ }) {
           <strong className="font-semibold text-gray-900">Data Retention.</strong> If using an account, we store your data until your transfer is deleted, or your account deleted. You can request data deletion by sending an email to {process.env.NEXT_PUBLIC_SUPPORT_EMAIL}.
         </p>
         <p className="mt-8">
-          <strong className="font-semibold text-gray-900">Data Security.</strong> We prioritize the security of your data. The "Quick Share" feature ensures that files are never stored on our servers but are streamed directly between devices using WebRTC peer-to-peer technology with end-to-end encryption using an AES-GCM 256-bit key. For normal file transfers, files are stored encrypted at rest using AES256 bit encryption.
+          <strong className="font-semibold text-gray-900">Data Security.</strong> We prioritize the security of your data. The "Quick Transfer" feature ensures that files are never stored on our servers but are streamed directly between devices using WebRTC peer-to-peer technology with end-to-end encryption using an AES-GCM 256-bit key. For normal file transfers, files are stored encrypted at rest using AES256 bit encryption.
         </p>
         <p className="mt-8">
           <strong className="font-semibold text-gray-900">User Rights.</strong> You have the right to access, modify, or delete your data. To exercise these rights, you can delete your account via the account page or send a request to {process.env.NEXT_PUBLIC_SUPPORT_EMAIL} for data deletion and related inquiries.

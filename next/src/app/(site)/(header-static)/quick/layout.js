@@ -30,7 +30,7 @@ export default function ({ children }) {
             <rect fill="url(#83fd4e5a-9d52-42fc-97b6-718e5d7ee527)" width="100%" height="100%" strokeWidth={0} />
           </svg>
           <div className="backdrop-blur-sm rounded-xl">
-            {/* <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">Quick Share</h1> */}
+            {/* <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">Quick Transfer</h1> */}
             {children}
           </div>
         </main>

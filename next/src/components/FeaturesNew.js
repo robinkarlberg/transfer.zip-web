@@ -4,12 +4,12 @@ import Link from 'next/link'
 const features = [
   {
     name: 'Much Larger Files',
-    description: 'Quick Share supports files over 100GB, because the data is never stored on our servers. Instead it is streamed in real-time between your devices.',
+    description: 'Quick Transfer supports files over 100GB, because the data is never stored on our servers. Instead it is streamed in real-time between your devices.',
     icon: "database-fill-up"
   },
   {
     name: 'End-to-end Encryption',
-    description: 'Files sent with Quick Share is protected with end-to-end encryption, keeping your files secure and private - even from us.',
+    description: 'Files sent with Quick Transfers are protected with end-to-end encryption, keeping your files secure and private - even from us.',
     icon: "lock-fill",
   },
 ]
@@ -19,13 +19,13 @@ export default function FeaturesNew() {
     <div className="bg-white py-24 sm:py-32" id="about-quick-share">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className="text-base/7 font-semibold text-primary">Quick Share</h2>
+          <h2 className="text-base/7 font-semibold text-primary">Quick Transfer</h2>
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
             {/* Unlimited File Size -<br/>Unlimited Privacy */}
             Keep Your Tab Open -<br />Send 100GB Files <span className="bg-primary-200 px-2 text-primary rounded-xl whitespace-nowrap">for Free</span>
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            Use <Link href={"/quick"} className="text-primary hover:underline"><i>Quick</i></Link> to send large files for free.
+            Use <Link href={"/quick"} className="text-primary hover:underline">Quick Transfers</Link> to send large files for free.
             It has <b>no file size limit</b> whatsoever - as long as your browser tab is open, you are good to go.
           </p>
         </div>

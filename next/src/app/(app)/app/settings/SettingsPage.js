@@ -6,13 +6,14 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { API_URL, changeSubscription, changeSubscriptionPreview, logout, putUserSettings } from "@/lib/client/Api"
 import pricing from "@/lib/pricing"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useContext, useState } from "react"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import Spinner from "@/components/elements/Spinner"
 import { DashboardContext } from "@/context/DashboardContext"
 import { sleep } from "@/lib/utils"
+import { IS_SELFHOST } from "@/lib/isSelfHosted"
 
 const parseDollar = cents => {
   const amount = Math.abs(cents / 100).toFixed(2)
@@ -58,11 +59,12 @@ function TierCard({ isCurrent, tier, isUpgrade, onAction }) {
 export default function ({ user }) {
 
   const { displayNotification } = useContext(DashboardContext)
+  const searchParams = useSearchParams()
   const router = useRouter()
 
   const [showDowngrade, setShowDowngrade] = useState(false)
 
-  const [showUpgrade, setShowUpgrade] = useState(false)
+  const [showUpgrade, setShowUpgrade] = useState(searchParams.get("upgrade") !== null)
   const [newInvoice, setNewInvoice] = useState(null)
   const [loading, setLoading] = useState(false)
 
@@ -176,7 +178,11 @@ export default function ({ user }) {
       <div className="pt-4">
         <div className="border rounded-2xl shadow-xs p-6 border-gray-900/10 max-w-xl mb-3">
           <h2 className="text-lg font-semibold text-gray-900 ">General</h2>
-          <p className="mt-1 text-sm/6 text-gray-600">To change your email or delete your account, <a className="text-primary" href={`mailto:${process.env.NEXT_PUBLIC_SUPPORT_EMAIL}`}>contact us</a>.</p>
+          {!IS_SELFHOST && (
+            <p className="mt-1 text-sm/6 text-gray-600">
+              To change your email or delete your account, <a className="text-primary" href={`mailto:${process.env.NEXT_PUBLIC_SUPPORT_EMAIL}`}>contact us</a>.
+            </p>
+          )}
 
           <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 
@@ -221,25 +227,27 @@ export default function ({ user }) {
             </div> */}
           </div>
         </div>
-        <div className="border rounded-2xl shadow-xs p-6 border-gray-900/10 max-w-xl mb-3">
-          <h2 className="text-lg font-semibold text-gray-900 ">Subscription</h2>
-          <p className="mt-1 text-sm/6 text-gray-600">View and change your subscription details.</p>
+        {!IS_SELFHOST && (
+          <div className="border rounded-2xl shadow-xs p-6 border-gray-900/10 max-w-xl mb-3">
+            <h2 className="text-lg font-semibold text-gray-900 ">Subscription</h2>
+            <p className="mt-1 text-sm/6 text-gray-600">View and change your subscription details.</p>
 
-          <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
-            {
-              pricing.tiers.map(tier => <TierCard key={tier.id} isCurrent={user.plan == tier.id} tier={tier} isUpgrade={user.plan != "pro" && tier.id == "pro"}
-                onAction={action => {
-                  if (action == "upgrade") {
-                    showUpgradePreview(tier.id)
-                  }
-                  else if (action == "downgrade") {
-                    setShowDowngrade(true)
-                  }
-                }}
-              />)
-            }
+            <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
+              {
+                pricing.tiers.map(tier => <TierCard key={tier.id} isCurrent={user.plan == tier.id} tier={tier} isUpgrade={user.plan != "pro" && tier.id == "pro"}
+                  onAction={action => {
+                    if (action == "upgrade") {
+                      showUpgradePreview(tier.id)
+                    }
+                    else if (action == "downgrade") {
+                      setShowDowngrade(true)
+                    }
+                  }}
+                />)
+              }
+            </div>
           </div>
-        </div>
+        )}
         <div className="sm:col-span-6 text-red-500 font-bold">
           <button className="text-sm" onClick={handleLogout}>&larr; Logout</button>
         </div>

@@ -3,9 +3,10 @@ import crypto from "crypto"
 
 import WaitlistEntry from './WaitlistEntry';
 import Transfer from './Transfer';
-import { getMaxStorageForPlan } from '@/lib/utils';
+import { getMaxStorageForPlan } from "../../serverUtils";
 import TransferRequest from './TransferRequest';
 import { listTransfersForUser } from '../../serverUtils';
+import { IS_SELFHOST } from '@/lib/isSelfHosted';
 
 const NotificationSettingsSchema = new mongoose.Schema({
     transferDownloaded: { type: Boolean, default: true },
@@ -37,11 +38,11 @@ const UserSchema = new mongoose.Schema({
 
     googleId: String,
 
+    // Password hash n salt
     hash: { type: String },
     salt: String,
 
     stripe_customer_id: String,
-    stripe_account_id: String,
 
     // TODO: Fix plan shit into an object instead
     plan: { type: String, default: "free" },
@@ -49,17 +50,12 @@ const UserSchema = new mongoose.Schema({
     planStatus: { type: String, default: "inactive" },
     planCancelling: { type: Boolean, default: false },
 
-    timeZone: { type: String, default: "US/Eastern" },
-
     // verified: { type: Boolean, default: false },
     // onboarded: { type: Boolean, default: false },
 
-    promoEmailConsent: { type: Boolean, default: true },
-    lastPromoEmail: { type: Date },
+    customMaxStorageBytes: { type: Number },
 
-    customApplicationFeePercent: { type: Number },
-
-    notificationSettings: { type: NotificationSettingsSchema, default: {} }
+    notificationSettings: { type: NotificationSettingsSchema, default: {} },
 
 }, { timestamps: true })
 
@@ -81,7 +77,6 @@ UserSchema.methods.friendlyObj = function () {
         verified: this.verified,
         planValidUntil: this.planValidUntil,
         planCancelling: this.planCancelling,
-        stripe_account_id: this.stripe_account_id,
         onboarded: this.onboarded,
         notificationSettings: this.notificationSettings.friendlyObj()
     }
@@ -145,22 +140,15 @@ UserSchema.methods.getTransfersThisMonth = async function () {
     return transfers.length;
 }
 
-UserSchema.methods.isReadyToSendPromoEmail = function () {
-    if (!this.promoEmailConsent) return false;
-    if (!this.lastPromoEmail) return true;
-    const twentyFourHoursAgo = new Date(Date.now() - 48 * 60 * 60 * 1000); // 48 hours ago
-    return this.lastPromoEmail < twentyFourHoursAgo;
-}
-
-UserSchema.methods.registerPromoEmailSent = function () {
-    this.lastPromoEmail = new Date();
-}
-
 UserSchema.methods.getStorage = async function () {
     const transfers = await listTransfersForUser(this)
 
     const usedStorageBytes = transfers.reduce((total, transfer) => total + transfer.size, 0)
-    const maxStorageBytes = getMaxStorageForPlan(this.getPlan())
+    const maxStorageBytes = this.customMaxStorageBytes || (
+        IS_SELFHOST ?
+        10e12   // 10TB for good measure
+        : getMaxStorageForPlan(this.getPlan())
+    )
 
     const storagePercent = Math.floor((usedStorageBytes / maxStorageBytes) * 100)
 

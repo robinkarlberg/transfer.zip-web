@@ -8,7 +8,8 @@ const selfHostBlacklist = [
 const selfHostWhitelist = [
   "/signin", "/change-password",
   "/app", "/legal", "/api",
-  "/transfer", "/upload"
+  "/transfer", "/upload",
+  "/quick"
 ]
 
 const legacyRedirects = [
@@ -42,7 +43,6 @@ export function middleware(req) {
       selfHostWhitelist.every((prefix) => !pathname.startsWith(prefix)) ||
       selfHostBlacklist.some((prefix) => pathname.startsWith(prefix))
     ) {
-      console.log(req.nextUrl.toString())
       newUrl.pathname = "/app"
       return NextResponse.redirect(newUrl, { status: 301 })
     }

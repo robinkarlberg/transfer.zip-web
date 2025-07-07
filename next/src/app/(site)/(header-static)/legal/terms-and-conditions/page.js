@@ -15,7 +15,7 @@ export default function TermsAndConditionsPage({ }) {
           <li className="flex gap-x-3">
             <BIcon name={"file-earmark-text"} aria-hidden="true" className="mt-1 h-5 w-5 flex-none text-primary" />
             <span>
-              <strong className="font-semibold text-gray-900">Services Provided.</strong> Users can access the file transfer service by subscribing to our paid plans, which offer increased file size limits and longer file expiration times than competitors solutions. Files can be as large as the user's subscription plan allows. The service <nobr><i>Quick Share</i></nobr> has no file size limit and is provided free of charge for everyone.
+              <strong className="font-semibold text-gray-900">Services Provided.</strong> Users can access the file transfer service by subscribing to our paid plans, which offer increased file size limits and longer file expiration times than competitors solutions. Files can be as large as the user's subscription plan allows. The service <nobr><i>Quick Transfer</i></nobr> has no file size limit and is provided free of charge for everyone.
             </span>
           </li>
           <li className="flex gap-x-3">

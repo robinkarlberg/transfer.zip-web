@@ -3,7 +3,7 @@ import PricingCards from "./PricingCards"
 import BIcon from "./BIcon"
 
 const features = [
-  { name: "Full access to Quick Share", good: true },
+  { name: "Full access to Quick Transfers", good: true },
   { name: "Use without an account", good: true },
   { name: "No limit on file size", good: true },
   { name: "Transfers expire when browser tab is closed", good: false },

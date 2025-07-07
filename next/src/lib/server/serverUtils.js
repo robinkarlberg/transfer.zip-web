@@ -50,3 +50,12 @@ export const getTransferRequestUploadLink = (transferRequest) => {
   if (!transferRequest) return null
   return `${process.env.SITE_URL}/upload/${transferRequest.secretCode}`
 }
+export const getMaxStorageForPlan = (plan) => {
+    if (plan === "starter") {
+        return 200e9;
+    }
+    else if (plan === "pro") {
+        return 1e12;
+    }
+    else return 0;
+};

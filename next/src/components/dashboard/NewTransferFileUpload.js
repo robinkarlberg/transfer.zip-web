@@ -41,7 +41,7 @@ export default function ({ user, storage }) {
   const directionSlug = searchParams.get("dir")
 
   const { displayErrorModal } = useContext(ApplicationContext)
-  const { setSelectedTransferId, setShowUpgradeModal, hideSidebar } = useContext(DashboardContext)
+  const { setSelectedTransferId, hideSidebar } = useContext(DashboardContext)
 
   const [uploadProgressMap, setUploadProgressMap] = useState(null)
 
@@ -164,7 +164,7 @@ export default function ({ user, storage }) {
       <div className={`mx-auto w-full shadow-lg bg-white max-w-[22rem] rounded-2xl border`}>
         {tooLittleStorage && direction == "send" && (
           <div className="w-full pt-4 px-4">
-            <button onClick={() => setShowUpgradeModal(true)} className="w-full shadow-sm text-start rounded-lg text-white bg-red-500 px-4 py-3 group transition-colors hover:bg-red-600">
+            <button onClick={() => router.push("/app/settings?upgrade")} className="w-full shadow-sm text-start rounded-lg text-white bg-red-500 px-4 py-3 group transition-colors hover:bg-red-600">
               <h5 className="font-bold text-sm mb-1"><span className="group-hover:underline">Hey big sender...</span></h5>
               <p className="font-medium text-sm">
                 Your storage is too full. Upgrade your subscription now to send bigger files. <span className="group-hover:ms-1 transition-all">&rarr;</span>

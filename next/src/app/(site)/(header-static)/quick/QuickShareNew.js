@@ -31,7 +31,7 @@ export default function ({ stars }) {
   return (
     <div className="w-full max-w-96 text-center">
       <div className={hasBeenSentLink ? "mb-2" : "mb-28"}>
-        <h1 className="font-bold text-4xl md:text-5xl mb-2">{hasBeenSentLink ? "Send Files" : "Quick Share"}</h1>
+        <h1 className="font-bold text-4xl md:text-5xl mb-2">{hasBeenSentLink ? "Send Files" : "Quick Transfer"}</h1>
         <h2 className="text-gray-800 mb-4 md:text-lg">
           {hasBeenSentLink ?
             "Someone has requested you to send files!"

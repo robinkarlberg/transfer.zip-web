@@ -2,7 +2,6 @@ import GenericPage from "@/components/dashboard/GenericPage";
 import Stats from "./Stats";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 import Transfer from "@/lib/server/mongoose/models/Transfer";
-import { getMaxStorageForPlan } from "@/lib/utils";
 import TransferList from "@/components/dashboard/TransferList";
 import { listTransfersForUser } from "@/lib/server/serverUtils";
 

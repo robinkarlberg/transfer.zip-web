@@ -324,16 +324,6 @@ export const readFileTillEnd = async (file, cbData) => {
     })
 }
 
-export const getMaxStorageForPlan = (plan) => {
-    if (plan === "starter") {
-        return 200e9
-    }
-    else if (plan === "pro") {
-        return 1e12
-    }
-    else return 0
-}
-
 export const addMilliscondsToCurrentTime = (add) => {
     return Math.floor(new Date().getTime()) + add
 }
