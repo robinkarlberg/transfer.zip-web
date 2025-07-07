@@ -28,7 +28,7 @@ export function SelectedTransferProvider({ children }) {
       setCachedTransferId(selectedTransferId)
     }
     else {
-      sleep(300).then(setCachedTransferId(null))
+      setCachedTransferId(null)
     }
   }, [selectedTransferId])
 

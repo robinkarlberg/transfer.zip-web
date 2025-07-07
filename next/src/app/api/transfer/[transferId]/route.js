@@ -42,7 +42,7 @@ export async function PUT(req, { params }) {
 
 export async function GET(req, { params }) {
   const auth = await useServerAuth()
-  const { transferId } = params
+  const { transferId } = await params
   const { user } = auth
 
   const transfer = await Transfer.findOne({ author: user._id, _id: { $eq: transferId } })
