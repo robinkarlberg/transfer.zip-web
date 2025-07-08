@@ -12,10 +12,9 @@ export const AnalyticsProvider = ({ }) => {
     }
 
     const scriptElement = window.document.createElement("script")
-    scriptElement.setAttribute("data-collect-dnt", "false")
-    scriptElement.async = true
+    scriptElement.setAttribute("data-website-id", "cebb948f-071a-45db-b912-aa73876bf398")
     scriptElement.defer = true
-    scriptElement.src = "https://scripts.simpleanalyticscdn.com/latest.js"
+    scriptElement.src = "https://umami.w0bb.com/script.js"
     document.body.appendChild(scriptElement)
 
     return () => {
