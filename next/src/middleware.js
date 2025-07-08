@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { IS_SELFHOST } from "./lib/isSelfHosted"
 
 const selfHostBlacklist = [
-  "/api/stripe", "/api/auth/register"
+  "/api/stripe"
 ]
 
 const selfHostWhitelist = [

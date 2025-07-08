@@ -23,7 +23,6 @@ It aims to become the best way to setup your own file transfer server, in additi
 - Ability to request others to upload files to you for download later.
 - Easy to **self-host** or contribute to the codebase.
 - Supports storing files with S3-compatiable APIs as well as local disk storage.
-- Manages multiple accounts.
 
 ### Quick Transfers - End-to-end encrypted WebRTC file transfers in the browser
 Quick Transfers use [WebRTC](http://www.webrtc.org/) for peer-to-peer data transfer, meaning the files are streamed directly between peers and not stored anywhere in the process, not even on Transfer.zip servers. To let peers initially discover each other, a signaling server is implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through. In addition, the file data is end-to-end encrypted using [AES-GCM](https://en.wikipedia.org/wiki/Galois/Counter_Mode) with a client-side 256 bit generated key, meaning if someone could impersonate a peer or capture the traffic, they would not be able to decrypt the file without knowing the key. Because the file is streamed directly between peers, there are **no file size or bandwidth limitations**. The easiest way to Quick Transfer a file is to scan the QR code containing the file link and encryption key. It is also possible to copy the link and share it to the recipient over what medium you prefer the most. 

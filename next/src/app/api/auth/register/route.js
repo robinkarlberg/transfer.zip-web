@@ -4,6 +4,7 @@ import User from '@/lib/server/mongoose/models/User';
 import { ROLE_ADMIN } from '@/lib/roles';
 import { createCookieParams, resp } from '@/lib/server/serverUtils';
 import { NextResponse } from 'next/server';
+import { IS_SELFHOST } from '@/lib/isSelfHosted';
 
 export async function POST(req, res) {
   const data = await req.json()
@@ -15,9 +16,21 @@ export async function POST(req, res) {
 
   await dbConnect()
 
+  if (IS_SELFHOST && await User.countDocuments() > 0) {
+    return NextResponse.json(resp("Signup not allowed: users already exist in self-hosted mode"), { status: 409 })
+  }
+
   const user = new User({ email })
   // user.addRole(ROLE_ADMIN)
   user.setPassword(pass)
+
+  if(IS_SELFHOST) {
+    user.updateSubscription({
+      plan: "pro",
+      status: "active",
+      cancelling: false
+    })
+  }
 
   try {
     await user.save()
