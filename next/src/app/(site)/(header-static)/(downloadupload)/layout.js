@@ -1,6 +1,7 @@
 import FAQ from "@/components/FAQ";
 import Features1 from "@/components/Features1";
 import TestimonialCloud from "@/components/TestimonialCloud";
+import { IS_SELFHOST } from "@/lib/isSelfHosted";
 
 export default function ({ children }) {
   return (
@@ -32,9 +33,13 @@ export default function ({ children }) {
         </svg>
         {children}
       </main>
-      <Features1 />
-      <TestimonialCloud />
-      <FAQ />
+      {!IS_SELFHOST && (
+        <>
+          <Features1 />
+          <TestimonialCloud />
+          <FAQ />
+        </>
+      )}
     </div>
   )
 }
