@@ -197,14 +197,21 @@ export default function SignInPage() {
             </div>
           </form>
 
-          {!IS_SELFHOST && (
+          {IS_SELFHOST ?
             <p className="mt-10 text-center text-sm/6 text-gray-500">
-              Don't have an account?{' '}
-              <Link href="/signup" className="font-semibold text-primary hover:text-primary-light">
-                Sign up
+              Self-managed instance of{' '}
+              <Link href="https://transfer.zip/" className="font-semibold text-primary hover:text-primary-light">
+                Transfer.zip
               </Link>
             </p>
-          )}
+            : (
+              <p className="mt-10 text-center text-sm/6 text-gray-500">
+                Don't have an account?{' '}
+                <Link href="/signup" className="font-semibold text-primary hover:text-primary-light">
+                  Sign up
+                </Link>
+              </p>
+            )}
         </div>
       </div>
     </>

@@ -6,7 +6,7 @@ import { controlTransferDelete, post } from "./lib/nodeApi.js"
 import Fastify from 'fastify'
 import fastifySensible from '@fastify/sensible'
 import { SignJWT } from "jose"
-import { getPrivateKey } from "./lib/keyManager.js"
+import { getPrivateKey, getPublicKey } from "./lib/keyManager.js"
 import { lookup } from "doc999tor-fast-geoip"
 
 const app = Fastify({ logger: true, requestTimeout: 0 })
@@ -75,4 +75,7 @@ app.post("/forward-node-control/*", async (req, reply) => {
 
 cron.schedule("*/15 * * * *", deleteExpiredTransfers)
 deleteExpiredTransfers()
+
+console.log(await getPublicKey())
+
 await app.listen({ port: 3001, host: process.env.NODE_ENV === "development" ? '127.0.0.1' : '0.0.0.0' })

@@ -116,7 +116,7 @@ export default function ({ user, storage }) {
     //   await sendTransferRequestByEmail(transferRequest.id, emailRecipients)
     // }
 
-    router.replace(`/app/transfers?tab=requests`)
+    router.replace(`/app?tab=requests`)
   }
 
   const handleEmailAdd = () => {

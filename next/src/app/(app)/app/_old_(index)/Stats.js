@@ -14,7 +14,7 @@ export default function ({ user, transfers, storagePercent }) {
       name: 'Transfers', stat: transfers.length,
       icon: "send-fill",
       actionName: "View All",
-      actionLink: "/app/transfers"
+      actionLink: "/app"
     },
     // {
     //     name: 'Downloads', stat: `2`,

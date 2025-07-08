@@ -53,7 +53,7 @@ const Entry = ({ transferRequest }) => {
   }
 
   const handleClicked = async e => {
-    // navigate("/app/transfers", { replace: true, state: { tabIndex: 2 } })
+    // navigate("/app", { replace: true, state: { tabIndex: 2 } })
   }
 
   return (

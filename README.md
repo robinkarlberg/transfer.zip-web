@@ -47,6 +47,10 @@ On Firefox mobile, sending files using Quick Transfer does not work at the momen
 Sending files from some Safari browsers is buggy at the moment, it has something to do with Safari terminating the WebSocket connection when unfocusing the window. Apple...
 
 ## Self-Hosting
+
+> [!NOTE]
+> Self-hosting of Stored Transfers is experimental at the moment. Please report any issues in this GitHub repo.
+
 To setup self-hosting, run  `./createenv.sh` to create the env-files needed. This will enable only the core features for Quick Share and the relay to function.
 
 Then, to build and deploy transfer.zip, use docker compose.
