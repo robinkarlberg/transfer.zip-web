@@ -15,10 +15,15 @@ const features = [
     icon: 'calendar',
   },
   {
-    name: 'Resumable Uploads',
-    description: 'Transfers interrupted? No worries. Easily resume uploads when your network goes down.',
+    name: 'Reliable Uploads',
+    description: 'Transfers interrupted? No worries. ',
     icon: 'arrow-clockwise',
   },
+  // {
+  //   name: 'Resumable Uploads',
+  //   description: 'Transfers interrupted? No worries. Easily resume uploads when your network goes down.',
+  //   icon: 'arrow-clockwise',
+  // },
   {
     name: 'Statistics',
     description: 'See when your files are downloaded and when your links are clicked, with simple stats.',

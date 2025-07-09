@@ -52,7 +52,8 @@ export default function SignUpPage() {
 
       const res = await register(email, password)
       if (res.success) {
-        router.push("/app")
+        // router.push("/app")
+        window.location.href = "/app"
       }
     }
     catch (err) {

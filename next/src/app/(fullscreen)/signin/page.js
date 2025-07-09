@@ -58,7 +58,8 @@ export default function SignInPage() {
 
       const res = await login(email, password)
       if (res.success) {
-        router.push("/app")
+        // router.push("/app")
+        window.location.href = "/app"
       }
     }
     catch (err) {
