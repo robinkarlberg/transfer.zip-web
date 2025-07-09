@@ -14,7 +14,7 @@ const roboto = Roboto({
 })
 
 export const metadata = {
-  title: "Transfer.zip - Send Large Files for Free | 100GB+",
+  title: "Transfer.zip - Send Large Files | 100GB+",
   description: "Quickly send large files! No signup, no size limit, with end-to-end encryption, all for free.",
 };
 

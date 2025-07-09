@@ -356,21 +356,19 @@ export default function QuickShareProgress({ isLoggedIn }) {
                   setShowSignUpModal(true)
                 }
               }}
-              className="text-start flex md:inline-flex gap-2 border rounded-lg shadow-sm py-2 ps-3 pe-4 bg-purple-50 group">
+              className="text-start flex md:inline-flex gap-2 border rounded-lg shadow-sm py-2 ps-3 pe-4 bg-primary-50 group">
               <div className="flex items-center h-6">
-                <BIcon center className={"text-purple-500 text-sm animate-pulse group-hover:animate-none mt-1"} name={"lightning-fill"} />{" "}
+                <BIcon center className={"text-primary-500 text-sm animate-pulse group-hover:animate-none mt-1"} name={"lightning-fill"} />{" "}
               </div>
               <div>
-                <p className="sm:text-lg font-bold text-purple-500">
-                  {hasBeenSentLink ? "Keep your browser window open" : "This link will expire when tab is closed."}
+                <p className="sm:text-lg font-semibold text-primary-500">
+                  {hasBeenSentLink ? "Keep your browser window open" : "Link expires when tab is closed."}
                 </p>
                 {!hasBeenSentLink &&
-                  <span className="text-purple-500 font-medium">
-                    {transferDirection == "S" ?
-                      "Make the files available for 365 days" :
-                      "Make the link available for 365 days"
-                    }
-                    <span className="transition-all group-hover:ms-1">&rarr;</span>
+                  <span className="text-primary-500">
+                    Make the link available {isLoggedIn ? <span className="">for longer</span> : <span className="font-medium">up to a year</span>}
+                    {" "}
+                    <span className="relative transition-all left-0 group-hover:left-1">&rarr;</span>
                   </span>
                 }
               </div>

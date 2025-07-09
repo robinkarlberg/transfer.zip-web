@@ -45,7 +45,7 @@ export default function Sidebar({ user, storage }) {
 
   const _navigation = [
     { name: 'My Transfers', href: '', icon: "house" },
-    { name: <>Branding</>, href: '/branding', icon: "globe", disabled: true },
+    // { name: <>Branding</>, href: '/branding', icon: "globe", disabled: true },
   ]
 
   const _adminNavigation = [

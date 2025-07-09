@@ -22,11 +22,13 @@ const legacyRedirects = [
 export function middleware(req) {
   const { pathname } = req.nextUrl
 
-  // Redirect back to /signup if user has no token and wants to use /app
+  
+
+  // Redirect back to /signup or /signin if user has no token and wants to use /app
   const token = req.cookies.get("token")
   if (!token && pathname.startsWith("/app")) {
     const newUrl = req.nextUrl.clone()
-    newUrl.pathname = "/signin"
+    newUrl.pathname = IS_SELFHOST ? "/signin" : "/signup"
     return NextResponse.redirect(newUrl, { status: 302 })
   }
 

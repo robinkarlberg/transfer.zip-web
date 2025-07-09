@@ -16,7 +16,7 @@ const features = [
   },
   {
     name: 'Reliable Uploads',
-    description: 'Transfers interrupted? No worries. ',
+    description: "Connection dropped? No problem. Uploads retry in the background until they're done.",
     icon: 'arrow-clockwise',
   },
   // {
