@@ -36,7 +36,7 @@ export default function Header({ scrollAware }) {
 
   const auth = false
   const ctaText = auth ? "Dashboard" : "Sign Up!"
-  const ctaLink = "/app"
+  const ctaLink = auth ? "/app" : "/signup"
 
   const handleLinkClicked = e => {
     setMobileMenuOpen(false)

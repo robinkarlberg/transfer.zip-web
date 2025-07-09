@@ -1,5 +1,5 @@
 import BIcon from "./BIcon"
-import ProductDemoScreenshot from "@/img/ProductDemoScreenshot.png"
+// import ProductDemoScreenshot from "@/img/ProductDemoScreenshot.png"
 import logo from "@/img/icon.png"
 import Image from "next/image"
 
@@ -70,7 +70,8 @@ export default function Features1() {
             className="mx-auto rounded-xl w-full max-w-4xl"
             loop
             controls
-            poster={ProductDemoScreenshot}
+            // preload="none"
+            poster={"/img/ProductDemoScreenshot.png"}
           >
             <source src={"/img/ProductDemo.mp4"} type="video/mp4" />
           </video>

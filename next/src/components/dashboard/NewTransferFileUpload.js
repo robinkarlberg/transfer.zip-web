@@ -161,7 +161,7 @@ export default function ({ user, storage }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className={`mx-auto w-full shadow-lg bg-white max-w-[22rem] rounded-2xl border`}>
+      <div className={`mx-auto w-full shadow-lg bg-white max-w-[22rem] rounded-2xl border relative z-10`}>
         {tooLittleStorage && direction == "send" && (
           <div className="w-full pt-4 px-4">
             <button onClick={() => router.push("/app/settings?upgrade")} className="w-full shadow-sm text-start rounded-lg text-white bg-red-500 px-4 py-3 group transition-colors hover:bg-red-600">

@@ -1,7 +1,6 @@
 import { useServerAuth } from "@/lib/server/wrappers/auth"
 import LandingQuickShare from "./LandingQuickShare"
-import { sleep } from "@/lib/utils"
-import NewTransferFileUpload from "@/components/dashboard/NewTransferFileUpload"
+import LandingTransferCarousel from "./LandingTransferCarousel"
 
 export default async function () {
 
@@ -15,9 +14,7 @@ export default async function () {
 
   return (
     auth && auth.user.getPlan() != "free" ?
-      <div className="lg:-mt-60">
-        <NewTransferFileUpload user={auth.user.friendlyObj()} storage={await auth.user.getStorage()} />
-      </div>
+      <LandingTransferCarousel user={auth.user.friendlyObj()} storage={await auth.user.getStorage()}/>
       : <LandingQuickShare />
   )
 }

@@ -2,6 +2,7 @@
 
 import BIcon from "@/components/BIcon"
 import FileUpload from "@/components/elements/FileUpload"
+import QuestionCircle from "@/components/elements/QuestionCircle"
 import { FileContext } from "@/context/FileProvider"
 import { useQuickShare } from "@/hooks/client/useQuickShare"
 import { useRouter } from "next/navigation"
@@ -31,13 +32,17 @@ export default function ({ stars }) {
   return (
     <div className="w-full max-w-96 text-center">
       <div className={hasBeenSentLink ? "mb-2" : "mb-28"}>
-        <h1 className="font-bold text-4xl md:text-5xl mb-2">{hasBeenSentLink ? "Send Files" : "Quick Transfer"}</h1>
-        <h2 className="text-gray-800 mb-4 md:text-lg">
+        <h1 className="font-extrabold text-4xl tracking-tight md:text-5xl mb-2 text-gray-800">{hasBeenSentLink ? "Send Files" : "Quick Transfer"}</h1>
+        <h2 className="text-gray-600 mb-4 md:text-lg">
           {hasBeenSentLink ?
             "Someone has requested you to send files!"
             :
-            "Send files in realtime, with no size limit."
+            "Temporary file sharing, with no size limit."
           }
+          {" "}
+          <div className="hidden sm:inline">
+            <QuestionCircle text={"Link expires when tab is closed. Both of you need to be online at the same time."} />
+          </div>
         </h2>
       </div>
       <FileUpload onFiles={handleFiles} onReceiveClicked={hasBeenSentLink ? undefined : onReceiveClicked} />
