@@ -22,7 +22,7 @@ const legacyRedirects = [
 export function middleware(req) {
   const { pathname } = req.nextUrl
 
-  
+
 
   // Redirect back to /signup or /signin if user has no token and wants to use /app
   const token = req.cookies.get("token")
@@ -43,11 +43,15 @@ export function middleware(req) {
   if (IS_SELFHOST) {
     const newUrl = req.nextUrl.clone()
     // Restrict access to routes when self-hosting
+    if (newUrl.pathname === "/") {
+      newUrl.pathname = "/quick"
+      return NextResponse.redirect(newUrl, { status: 301 })
+    }
     if (
       selfHostWhitelist.every((prefix) => !pathname.startsWith(prefix)) ||
       selfHostBlacklist.some((prefix) => pathname.startsWith(prefix))
     ) {
-      newUrl.pathname = "/app"
+      newUrl.pathname = "/"
       return NextResponse.redirect(newUrl, { status: 301 })
     }
   }
