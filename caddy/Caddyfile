@@ -3,7 +3,7 @@
 	email {$CADDY_ACME_EMAIL}
 }
 
-${CADDY_DOMAIN} {
+{$CADDY_DOMAIN} {
   # Forward websocket to signaling server
   reverse_proxy /ws signaling-server:9002
 
