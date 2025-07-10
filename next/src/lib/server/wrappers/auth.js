@@ -15,7 +15,7 @@ export async function useServerAuth() {
   const session = await Session.findOne({ token }).populate("user").exec();
 
   if (!session || !session.user) {
-    cookieStore.delete("token")
+    // cookieStore.delete("token")
     throw new Error("Invalid session");
   }
 
