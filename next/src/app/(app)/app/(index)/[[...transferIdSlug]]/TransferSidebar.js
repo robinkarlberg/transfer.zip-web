@@ -103,7 +103,7 @@ export default function ({ user, selectedTransfer }) {
 
   const handleClose = e => {
     // hideSidebar()
-    router.replace(".")
+    router.push(".")
   }
 
   const handleCopy = async e => {
@@ -115,9 +115,11 @@ export default function ({ user, selectedTransfer }) {
   const handleDelete = async e => {
     await deleteTransfer(selectedTransfer.id)
     // hideSidebar()
-    router.refresh()
-    router.replace(".")
-    refreshTransfer()
+    // router.refresh()
+    // router.push(".")
+    // refreshTransfer()
+    // NextJS can suck my fucking balls https://github.com/vercel/next.js/discussions/70786
+    window.location.replace(".")
   }
 
   const handleLinkKeyDown = async e => {

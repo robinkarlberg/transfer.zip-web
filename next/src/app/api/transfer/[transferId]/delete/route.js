@@ -2,6 +2,7 @@ import Transfer from "@/lib/server/mongoose/models/Transfer";
 import { resp } from "@/lib/server/serverUtils";
 import { workerTransferDelete } from "@/lib/server/workerApi";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 export async function POST(req, { params }) {
@@ -24,8 +25,6 @@ export async function POST(req, { params }) {
     // Respond the same either way to avoid information leakage
     return NextResponse.json(resp("transfer not found"), { status: 404 });
   }
-
-  await transfer.deleteOne();
 
   if (!transfer) {
     return NextResponse.json(resp("transfer not found"), { status: 404 })

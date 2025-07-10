@@ -49,8 +49,10 @@ const Entry = ({ transfer }) => {
     // await sleep(1000)
     // router.refresh()
     if (selectedTransferId === id) {
-      router.refresh()
-      router.replace(".")
+      // router.refresh()
+      // router.push(".")
+      // NextJS can suck my fucking balls https://github.com/vercel/next.js/discussions/70786
+      window.location.replace(".")
     }
     else {
       router.refresh()
