@@ -1,0 +1,28 @@
+services:
+  next:
+    ports:
+      - []
+    
+  signaling-server:
+    ports:
+      - []
+
+  caddy:
+    image: caddy:2.8-alpine
+    depends_on:
+      - server
+    environment:
+      - CADDY_DOMAIN=${CADDY_DOMAIN:-example.com}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+    env_file:
+      - .env
+
+volumes:
+  caddy_data: {}
+  caddy_config: {}

@@ -5,6 +5,7 @@ services:
     volumes:
       - ./_db:/data/db
     ports:
+      # I made mongodb listen on localhost here to be able to use MongoDB compass to inspect the database
       - 127.0.0.1:${MONGODB_FORWARD_PORT:-27017}:27017
     env_file:
       - .env

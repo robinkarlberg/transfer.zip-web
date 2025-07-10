@@ -1,6 +1,8 @@
 #/bin/sh
 cd next && npm i
 cd ..
+cd worker && npm i
+cd ..
 cd signaling-server && npm i
 cd ..
 

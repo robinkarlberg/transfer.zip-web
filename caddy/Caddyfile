@@ -1,0 +1,12 @@
+{
+	# Where Caddy should send ACME e-mails
+	email {$ACME_EMAIL}
+}
+
+${CADDY_DOMAIN} {
+  # Forward websocket to signaling server
+  reverse_proxy /ws signaling-server:9002
+
+	# Forward the rest to next
+	reverse_proxy next:${9001}
+}

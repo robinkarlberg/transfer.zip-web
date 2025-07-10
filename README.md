@@ -32,43 +32,52 @@ Because of how peer-to-peer works, some network firewalls may not allow direct c
 Quick Transfers only work while both users are online at the same time, due to the peer-to-peer nature of the system. 
 
 ### Cloud Transfers - File uploads with resumable, scalable storage
-Instead of real-time peer-to-peer transfer like with Quick Transfers, Cloud Transfers store the file temporarily on your server (or S3-compatible backend) using the [tus](https://tus.io/) protocol, which supports resumable, chunked uploads. This means interrupted uploads or downloads can continue where they left off. Files are deleted after the transfers expiry date.
+Instead of real-time peer-to-peer transfer like with Quick Transfers, Cloud Transfers store the file temporarily on the server (or S3-compatible backend) using the [tus](https://tus.io/) protocol, which supports resumable, chunked uploads. This means interrupted uploads or downloads can continue where they left off. Files are deleted after the transfers expiry date.
 
-Cloud Transfers are just what normal file transfer services like WeTransfer do, but you can host it yourself.
+Cloud Transfers are just what normal file transfer services like WeTransfer do, but you can host it yourself if you want.
 
 To set up Cloud Transfers, you need to spin up a [node server](https://github.com/robinkarlberg/transfer.zip-node) and configure it. Having seperate servers handling the heavy-duty stuff like uploads and zip bundles, keeps the main site running smoothly. It also enables distributing of several node servers around the world, close to users, to optimize download times.
-
-## Known Problems
-
-0-byte files gets stuck on transmit using Quick Transfers.
-
-On Firefox mobile, sending files using Quick Transfer does not work at the moment. This could have something to do with the path being changed after the file has been chosen in the file picker, but not been read yet. This is under investigation and idk how to fix.
-
-Sending files from some Safari browsers is buggy at the moment, it has something to do with Safari terminating the WebSocket connection when unfocusing the window. Apple...
 
 ## Self-Hosting
 
 > [!NOTE]
 > Self-hosting of Stored Transfers is experimental at the moment. Please report any issues in this GitHub repo.
 
-To setup self-hosting, run  `./createenv.sh` to create the env-files needed. This will enable only the core features for Quick Share and the relay to function.
+> [!NOTE]
+> This project is tested with Docker Compose V2. Docker Compose V1 will most likely fail to build.
 
-Then, to build and deploy transfer.zip, use docker compose.
+To setup self-hosting, start by running `./createenv.sh` to create the env-files needed.
+
+### Caddy (built-in)
+
+Transfer.zip comes with a Caddy conf built-in. Run the caddy deploy script to use the `docker-compose.caddy.yml` override.
 ```
-docker compose build && docker compose up
+./deploy-caddy.sh
 ```
-This will by default listen for connections on `localhost:9001`, the signaling server will be proxied through the web-server on the `/ws` endpoint on the same port. When self-hosting, it is recommended to put transfer.zip behind a reverse-proxy with https.
+
+> [!WARNING]
+> The Caddy container listens by default on `0.0.0.0`. Make sure to firewall it if you don't want to expose it to the internet.
+
+
+### Any other reverse-proxy
+
+```
+docker compose build && docker compose up -d
+```
+
+**Apache**
 For Apache, the configuration needs to include these lines for the reverse proxy to function:
 ```
 ProxyPreserveHost On
 
-ProxyPass /ws ws://localhost:9001/ws
-ProxyPassReverse /ws ws://localhost:9001/ws
+ProxyPass /ws ws://localhost:9002/
+ProxyPassReverse /ws ws://localhost:9002/
 
 ProxyPass / http://localhost:9001/
 ProxyPassReverse / http://localhost:9001/
 ```
 
+**NGINX**
 For NGINX:
 ```
 # Put this at the top
@@ -90,27 +99,13 @@ map $http_upgrade $connection_upgrade {
 # }
 ```
 
-For Caddy (Thanks [7MinSec](https://github.com/7MinSec)):
-```
-zip.yourdomain.com {
-    reverse_proxy 127.0.0.1:9001
-
-    log {
-        output file /var/log/caddy/zip.log
-    }
-}
-```
-
 ### Get public key
 
 While the worker container is running:
 `docker compose exec worker cat /worker_data/public.pem`
 
 ## Local Development and Contributing
-> [!NOTE]
-> This project is tested with Docker Compose V2. Docker Compose V1 will most likely fail to build.
-
-When developing, install all dependencies with `./setup.sh`. Then run the `local-dev.sh` script, it will start the signalling server and the web server for you.
+When developing, install all dependencies with `./setup-dev.sh`. Then run the `local-dev.sh` script, it will start the signalling server and the web server for you.
 ```
 ./local-dev.sh
 ```
@@ -124,6 +119,14 @@ When developing, install all dependencies with `./setup.sh`. Then run the `local
 - ExpressJS
 - MongoDB
 - zip.js
+
+## Some known problems
+
+0-byte files gets stuck on transmit using Quick Transfers.
+
+On Firefox mobile, sending files using Quick Transfer does not work at the moment. This could have something to do with the path being changed after the file has been chosen in the file picker, but not been read yet. This is under investigation and idk how to fix.
+
+Sending files from some Safari browsers is buggy at the moment, it has something to do with Safari terminating the WebSocket connection when unfocusing the window. Apple...
 
 ## License
 

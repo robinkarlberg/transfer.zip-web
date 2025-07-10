@@ -1,7 +1,0 @@
-User-agent: *
-
-Disallow: /app
-Disallow: /onboarding
-
-Disallow: /transfer/
-Disallow: /change-password

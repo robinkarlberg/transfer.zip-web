@@ -82,7 +82,7 @@ export async function POST(req) {
     files: transferFiles
   })
 
-  const xForwardedFor = process.env.NODE_ENV === "development" ? "185.183.152.210" : req.headers.get("x-forwarded-for")
+  const xForwardedFor = process.env.NODE_ENV === "development" ? "127.0.0.1" : req.headers.get("x-forwarded-for")
   const conf = await getConf()
 
   let nodeUrl
