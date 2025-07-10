@@ -115,6 +115,7 @@ export default function ({ user, selectedTransfer }) {
   const handleDelete = async e => {
     await deleteTransfer(selectedTransfer.id)
     // hideSidebar()
+    router.refresh()
     router.replace(".")
     refreshTransfer()
   }

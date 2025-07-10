@@ -13,7 +13,7 @@ import DefaultLayout from "@/components/dashboard/DefaultLayout"
 import { SelectedTransferProvider } from "@/context/SelectedTransferProvider"
 
 // Make this part dynamic, i dont want to think about cache revalidation and shit. Just brought bugs in prod :D
-export const dynamic = "force-dynamic"
+// export const dynamic = "force-dynamic"
 
 export default async function ({ children, params }) {
   const auth = await useServerAuth()

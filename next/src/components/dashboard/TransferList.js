@@ -49,8 +49,8 @@ const Entry = ({ transfer }) => {
     // await sleep(1000)
     // router.refresh()
     if (selectedTransferId === id) {
-      router.replace(".")
       router.refresh()
+      router.replace(".")
     }
     else {
       router.refresh()
