@@ -1,9 +1,8 @@
 import User from "@/lib/server/mongoose/models/User";
 import { resp } from "@/lib/server/serverUtils";
 import { NextResponse } from "next/server";
-import { buffer } from "node:stream/consumers";
-import Stripe from "stripe";
 import dbConnect from "@/lib/server/mongoose/db";
+import { getStripe } from "@/lib/server/stripe";
 
 // export const config = {
 //   api: {
@@ -23,7 +22,7 @@ export async function POST(req) {
   let event;
 
   try {
-    event = Stripe.webhooks.constructEvent(payload, sig, process.env.STRIPE_WHSEC);
+    event = getStripe().webhooks.constructEvent(payload, sig, process.env.STRIPE_WHSEC);
   } catch (err) {
     console.error("Error verifying webhook signature:", err);
     return NextResponse.json(resp(`Webhook Error: ${err.message}`))
