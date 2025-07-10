@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/server/mongoose/db';
 import Transfer from '@/lib/server/mongoose/models/Transfer';
 import { resp } from '@/lib/server/serverUtils';
 import { sendTransferDownloaded } from '@/lib/server/mail/mail';
@@ -9,7 +8,6 @@ const DOWNLOAD_EMAIL_COOLDOWN_MS = 1000 * 60 * 30;
 
 export async function POST(req, { params }) {
   const { secretCode } = await params;
-  await dbConnect();
 
   let auth
   try {
