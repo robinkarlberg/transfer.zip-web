@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { buffer } from "node:stream/consumers";
 import Stripe from "stripe";
 import dbConnect from "@/lib/server/mongoose/db";
+
 // export const config = {
 //   api: {
 //     bodyParser: false
@@ -17,7 +18,7 @@ const getPlanNameByProductId = (id) => {
 }
 
 export async function POST(req) {
-  const payload = await buffer(req.body)
+  const payload = await req.text()
   const sig = req.headers.get("stripe-signature")
   let event;
 
