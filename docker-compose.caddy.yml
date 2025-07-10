@@ -8,7 +8,7 @@ services:
   caddy:
     image: caddy:2.8-alpine
     depends_on:
-      - server
+      - next
     environment:
       - CADDY_DOMAIN=${CADDY_DOMAIN:-example.com}
     volumes:
