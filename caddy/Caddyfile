@@ -1,6 +1,6 @@
 {
 	# Where Caddy should send ACME e-mails
-	email {$ACME_EMAIL}
+	email {$CADDY_ACME_EMAIL}
 }
 
 ${CADDY_DOMAIN} {
