@@ -22,8 +22,6 @@ const legacyRedirects = [
 export function middleware(req) {
   const { pathname } = req.nextUrl
 
-
-
   // Redirect back to /signup or /signin if user has no token and wants to use /app
   const token = req.cookies.get("token")
   if (!token && pathname.startsWith("/app")) {
