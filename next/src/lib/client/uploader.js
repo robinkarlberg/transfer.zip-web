@@ -70,6 +70,7 @@ export async function uploadFiles(files, idMap, transfer, progress) {
     fileLimiter.schedule(() =>
       bytesLimiter.schedule({ weight: clampWeight(file.size * MIN_PARALLEL, UPLOAD_WIN) / MIN_PARALLEL }, () =>
         new Promise((resolve, reject) => {
+          console.log("START:", file.name)
           new Upload(file, {
             endpoint,
             chunkSize,

@@ -99,7 +99,7 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
             <div className="grow max-h-56 overflow-auto">
               {files.map((file) => {
                 return (
-                  <div className="relative px-2 py-1 overflow-hidden text-md group" key={file.name + file.size + file.lastModified}>
+                  <div className="relative px-2 py-1 overflow-hidden text-md group" key={file.webkitRelativePath + file.name + file.size + file.lastModified}>
                     <div className="absolute right-0 hidden group-hover:block pe-2">
                       <button type="button" onClick={() => removeFile(file)} className="bg-white border p-1 rounded-lg"><BIcon name={"x"} center /></button>
                     </div>

@@ -4,9 +4,12 @@ import { resp } from "@/lib/server/serverUtils";
 import { workerUploadComplete } from "@/lib/server/workerApi";
 import { sendTransferRequestReceived, sendTransferShare } from "@/lib/server/mail/mail";
 import { NextResponse } from "next/server";
+import dbConnect from "@/lib/server/mongoose/db";
 
 export async function POST(req, { params }) {
   const { secretCode } = await params
+
+  await dbConnect()
 
   const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } })
   if (!transfer) {
