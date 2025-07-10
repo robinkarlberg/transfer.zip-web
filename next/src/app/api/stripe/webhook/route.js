@@ -3,6 +3,7 @@ import { resp } from "@/lib/server/serverUtils";
 import { NextResponse } from "next/server";
 import { buffer } from "node:stream/consumers";
 import Stripe from "stripe";
+import dbConnect from "@/lib/server/mongoose/db";
 // export const config = {
 //   api: {
 //     bodyParser: false
@@ -26,6 +27,8 @@ export async function POST(req) {
     console.error("Error verifying webhook signature:", err);
     return NextResponse.json(resp(`Webhook Error: ${err.message}`))
   }
+
+  await dbConnect();
 
   console.log("Received Stripe webhook event:", event.type);
 

@@ -1,10 +1,8 @@
-import dbConnect from "@/lib/server/mongoose/db";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
 export async function GET() {
-  await dbConnect()
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_OAUTH_CLIENT_ID,
     redirect_uri:
