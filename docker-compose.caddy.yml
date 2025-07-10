@@ -1,11 +1,9 @@
 services:
   next:
-    ports:
-      - []
+    ports: []
     
   signaling-server:
-    ports:
-      - []
+    ports: []
 
   caddy:
     image: caddy:2.8-alpine
