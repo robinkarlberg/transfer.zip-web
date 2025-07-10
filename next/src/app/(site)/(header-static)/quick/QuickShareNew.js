@@ -5,8 +5,9 @@ import FileUpload from "@/components/elements/FileUpload"
 import QuestionCircle from "@/components/elements/QuestionCircle"
 import { FileContext } from "@/context/FileProvider"
 import { useQuickShare } from "@/hooks/client/useQuickShare"
+import { getComputedNewLocation } from "@/lib/client/hash"
 import { useRouter } from "next/navigation"
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 
 export default function ({ stars }) {
 
@@ -28,6 +29,13 @@ export default function ({ stars }) {
   const onReceiveClicked = e => {
     router.push("/quick/progress#R", { scroll: false })
   }
+
+  useEffect(() => {
+    if (transferDirection == "R") {
+      // console.log(getComputedNewLocation(transferDirection) + window.location.hash)
+      router.replace(getComputedNewLocation(transferDirection) + window.location.hash, { scroll: false })
+    }
+  }, [transferDirection])
 
   return (
     <div className="w-full max-w-96 text-center">

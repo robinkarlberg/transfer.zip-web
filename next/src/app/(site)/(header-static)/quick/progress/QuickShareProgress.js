@@ -264,6 +264,7 @@ export default function QuickShareProgress({ isLoggedIn }) {
   }
 
   useEffect(() => {
+    console.log("BEFORE", hasBeenSentLink, k, remoteSessionId, transferDirection)
     if (startProgressExecuted) return
     // transferDirection is undefined means it hasnt been checked yet
 
@@ -273,6 +274,8 @@ export default function QuickShareProgress({ isLoggedIn }) {
     if (transferDirection === null) {
       return router.replace("/quick")
     }
+
+    console.log("AFTER",hasBeenSentLink, k, remoteSessionId, transferDirection)
 
     // Setup WebRtc websocket connection, and close it when leaving page.
     // startProgress is run before websocket connects, but webrtc.js code handles the waiting for us
