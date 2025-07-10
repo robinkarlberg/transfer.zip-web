@@ -5,6 +5,7 @@ import ApplicationProvider from "@/context/ApplicationContext";
 import Sidebar from "./Sidebar";
 import { FileProvider } from "@/context/FileProvider";
 import { SelectedTransferProvider } from "@/context/SelectedTransferProvider";
+import { IS_SELFHOST } from "@/lib/isSelfHosted";
 
 export const metadata = {
   title: "Dashboard"
