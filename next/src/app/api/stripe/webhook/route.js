@@ -3,6 +3,7 @@ import { resp } from "@/lib/server/serverUtils";
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/server/mongoose/db";
 import { getStripe } from "@/lib/server/stripe";
+import { headers } from "next/headers";
 
 // export const config = {
 //   api: {
@@ -18,14 +19,16 @@ const getPlanNameByProductId = (id) => {
 
 export async function POST(req) {
   const payload = await req.text()
-  const sig = req.headers.get("stripe-signature")
+  const requestHeaders = await headers()
+  const sig = requestHeaders.get("stripe-signature")
   let event;
 
   try {
     event = getStripe().webhooks.constructEvent(payload, sig, process.env.STRIPE_WHSEC);
   } catch (err) {
     console.error("Error verifying webhook signature:", err);
-    return NextResponse.json(resp(`Webhook Error: ${err.message}`))
+    console.log(process.env.STRIPE_WHSEC)
+    return NextResponse.json(resp(`Webhook Error: ${err.message}`), { status: 500 })
   }
 
   await dbConnect();
