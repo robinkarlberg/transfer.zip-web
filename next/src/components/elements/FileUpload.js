@@ -7,6 +7,14 @@ import { Transition } from "@headlessui/react"
 import { humanFileSize, humanFileType } from "@/lib/transferUtils"
 import { humanFileName } from "@/lib/utils"
 
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { PopoverClose } from "@radix-ui/react-popover"
+
 export default function FileUpload({ initialFiles, onFilesChange, onFiles, onReceiveClicked, progressElement, showProgress, buttonText, singleFile, disabled, accept, headless, children }) {
 
   const _buttonText = buttonText ?? "Transfer"
@@ -16,27 +24,43 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
   const fileInputRef = useRef()
   const folderInputRef = useRef()
 
+  const [error, setError] = useState(null)
+
   const handleFileInputChange = (e) => {
-    const inputFiles = Array.from(e.target.files)
-    // Check duplicate file names (without webkitRelativePath)
+    const newFiles = [...files, ...e.target.files]
+
     const names = new Set()
-    // Check duplicate webkitRelativePath
-    const relPaths = new Set()
-    for (const file of inputFiles) {
-      if (file.webkitRelativePath && file.webkitRelativePath.length > 0) {
-        if (relPaths.has(file.webkitRelativePath)) {
-          throw new Error('Duplicate file: ' + file.webkitRelativePath)
+
+    try {
+      const relPaths = new Set()
+      for (const file of newFiles) {
+        if (file.webkitRelativePath && file.webkitRelativePath.length > 0) {
+          if (relPaths.has(file.webkitRelativePath)) {
+            throw new Error(file.webkitRelativePath)
+          }
+          relPaths.add(file.webkitRelativePath)
+        } else {
+          if (names.has(file.name)) {
+            throw new Error(file.name)
+          }
+          names.add(file.name)
         }
-        relPaths.add(file.webkitRelativePath)
-      } else {
-        if (names.has(file.name)) {
-          throw new Error('Duplicate file: ' + file.name)
-        }
-        names.add(file.name)
       }
     }
-    
-    const newFiles = [...files, ...e.target.files]
+    catch (err) {
+      setError(
+        <>
+          <p>
+            We can't send multiple files with the same name! Try again.
+          </p>
+          <p className="text-gray-500 text-sm mt-2">
+            <span className="font-medium">Name:</span> <span className="font-mono">{err.message}</span>
+          </p>
+        </>
+      )
+      return
+    }
+
     setFiles(newFiles)
     onFilesChange && onFilesChange(newFiles)
   }
@@ -92,6 +116,22 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
         <input ref={fileInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" multiple={singleFile ? undefined : true} accept={accept}></input>
         <input ref={folderInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" webkitdirectory="true"></input>
       </form>
+      <Popover open={!!error} onOpenChange={open => setError(!!open)}>
+        <PopoverAnchor>
+          <div></div>
+        </PopoverAnchor>
+        <PopoverContent className={"relative"}>
+          <PopoverClose asChild>
+            <button className="absolute right-4"><BIcon name={"x-lg"} center /></button>
+          </PopoverClose>
+          <div className="pe-5">
+            <p className="font-semibold text-gray-800">Whoops!</p>
+          </div>
+          <div className="text-gray-600 mt-1">
+            {error}
+          </div>
+        </PopoverContent>
+      </Popover>
       <div ref={divRef} className={`text-start relative w-full flex flex-col min-h-56 ${headless ? "" : "rounded-2xl bg-white border shadow-lg"} ${onReceiveClicked ? "mt-8" : ""}`}>
         {onReceiveClicked && (
           <div className="absolute w-full flex">
