@@ -17,6 +17,25 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
   const folderInputRef = useRef()
 
   const handleFileInputChange = (e) => {
+    const inputFiles = Array.from(e.target.files)
+    // Check duplicate file names (without webkitRelativePath)
+    const names = new Set()
+    // Check duplicate webkitRelativePath
+    const relPaths = new Set()
+    for (const file of inputFiles) {
+      if (file.webkitRelativePath && file.webkitRelativePath.length > 0) {
+        if (relPaths.has(file.webkitRelativePath)) {
+          throw new Error('Duplicate file: ' + file.webkitRelativePath)
+        }
+        relPaths.add(file.webkitRelativePath)
+      } else {
+        if (names.has(file.name)) {
+          throw new Error('Duplicate file: ' + file.name)
+        }
+        names.add(file.name)
+      }
+    }
+    
     const newFiles = [...files, ...e.target.files]
     setFiles(newFiles)
     onFilesChange && onFilesChange(newFiles)
@@ -56,7 +75,7 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
     const handleResize = entries => {
       setCompact(entries[0].contentRect.width < 330)
     }
-    
+
     setCompact(divRef.current.offsetWidth < 330)
 
     const resizeObserver = new window.ResizeObserver(handleResize)
