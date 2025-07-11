@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <Head>
         <script src="/lib/ponyfill.min.js"></script>
-        {process.env.NEXT_PUBLIC_ANALYTICS && <script defer src="https://umami.w0bb.com/script.js" data-website-id="cebb948f-071a-45db-b912-aa73876bf398"></script>}
+        {process.env.NEXT_PUBLIC_ANALYTICS && process.env.NEXT_PUBLIC_ANALYTICS == "true" ? <script defer src="https://umami.w0bb.com/script.js" data-website-id="cebb948f-071a-45db-b912-aa73876bf398"></script> : <></>}
       </Head>
       <body
         className={`${roboto.className} antialiased`} // ${roboto.className} ${playfairDisplay.className} 
