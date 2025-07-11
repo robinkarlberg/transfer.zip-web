@@ -4,6 +4,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { FileProvider } from "@/context/FileProvider";
 import Script from "next/script";
 import Head from "next/head";
+import { IS_SELFHOST } from "@/lib/isSelfHosted";
 
 const playfairDisplay = Playfair_Display({
   weight: ['400', '500', '600', '700', '800', '900'],
@@ -25,8 +26,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <Head>
         <script src="/lib/ponyfill.min.js"></script>
-        {process.env.NEXT_PUBLIC_ANALYTICS && process.env.NEXT_PUBLIC_ANALYTICS == "true" ? <script defer src="https://umami.w0bb.com/script.js" data-website-id="cebb948f-071a-45db-b912-aa73876bf398"></script> : <></>}
       </Head>
+      {!IS_SELFHOST && process.env.ANALYTICS && process.env.ANALYTICS == "true" ? <Script defer src="https://umami.w0bb.com/script.js" data-website-id="cebb948f-071a-45db-b912-aa73876bf398"></Script> : <></>}
       <body
         className={`${roboto.className} antialiased`} // ${roboto.className} ${playfairDisplay.className} 
       >
