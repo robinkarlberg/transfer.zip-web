@@ -2,13 +2,15 @@
 
 import { getTransfer } from '@/lib/client/Api'
 import { sleep } from '@/lib/utils'
-import { useParams } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { createContext, useEffect, useState } from 'react'
 
 export const SelectedTransferContext = createContext({})
 
 export function SelectedTransferProvider({ children }) {
   const [selectedTransferId, setSelectedTransferId] = useState(null)
+
+  const router = useRouter()
 
   const { transferIdSlug } = useParams()
 
@@ -25,7 +27,10 @@ export function SelectedTransferProvider({ children }) {
     // setTransfer(null)
     getTransfer(selectedTransferId)
       .then(({ transfer }) => setTransfer(transfer))
-      .catch(err => setTransfer(null))
+      .catch(err => {
+        setTransfer(null)
+        router.replace("/app")
+      })
   }
 
   const [transfer, setTransfer] = useState(null)

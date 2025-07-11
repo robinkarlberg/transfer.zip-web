@@ -54,7 +54,7 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
             We can't send multiple files with the same name! Try again.
           </p>
           <p className="text-gray-500 text-sm mt-2">
-            <span className="font-medium">Name:</span> <span className="font-mono">{err.message}</span>
+            <span className="font-medium">Name:</span> <span className="font-mono break-all">{err.message}</span>
           </p>
         </>
       )
