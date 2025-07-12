@@ -16,7 +16,7 @@ const legacyRedirects = [
   { from: "/quick-share", to: "/quick" },
   { from: "/login", to: "/signin" },
   { from: "/about", to: "/" },
-  { from: "/pricing", to: "/#pricing" },
+  { from: "/pricing", to: "/" },
 ]
 
 export function middleware(req) {

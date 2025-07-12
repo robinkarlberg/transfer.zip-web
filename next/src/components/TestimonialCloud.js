@@ -20,14 +20,16 @@ const testimonials = [
 
 export default function TestimonialCloud({ className }) {
   return (
-    <div className={`bg-gray-50 mb-8 border border-dashed ${className}`}>
+    <div className={`bg-gray-50 pt-10 mb-8 border border-dashed ${className}`}>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        {/* <div className="pt-8 text-center">
-          <h2 className="inline-block text-lg text-gray-400">
-            Trusted by more than 11 thousand users every month!
-          </h2>
-        </div> */}
-        <div className="mx-auto pb-10 pt-12 grid max-w-lg grid-cols-1 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:gap-x-10 lg:mx-0 md:max-w-none md:grid-cols-3">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-base/7 font-semibold text-primary">Our Reviews</h2>
+          {/* <div className="text-blue-500 mb-4">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div> */}
+          <p className="mt-2 text-pretty text-3xl font-bold tracking-tight text-gray-800 sm:text-5xl lg:text-balance">
+            Users <BIcon name={"heart-fill"} className={"text-red-400 text-2xl sm:text-4xl"}/> Transfer.zip
+          </p>
+        </div>
+        <div className="mx-auto pb-10 pt-16 grid max-w-lg grid-cols-1 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:gap-x-10 lg:mx-0 md:max-w-none md:grid-cols-3">
           {testimonials.map(testimonial => {
             return (
               <div key={testimonial.proof} className="col-span-1 text-center h-32">

@@ -10,7 +10,7 @@ export default function ({ user, storage }) {
       <NewTransferFileUpload user={user} storage={storage} />
       <div className="hidden lg:flex w-full justify-center absolute -top-7 h-13 hover:-top-13 transition-all group">
         <Link className="inline-block border-t border-x rounded-lg rounded-b-none bg-white h-full w-60 group-hover:w-80 text-center pt-0.5 transition-all" href={"/quick"}>
-          <p className="text-gray-700 font-medium">Quick Transfer <span className="relative left-0 group-hover:left-1 transition-all">&rarr;</span></p>
+          <p className="text-gray-700 font-normal">Quick Transfer <span className="relative left-0 group-hover:left-1 transition-all">&rarr;</span></p>
           <p className="text-sm text-gray-600 whitespace-nowrap">
             Temporary file sharing, with no size limit.
           </p>

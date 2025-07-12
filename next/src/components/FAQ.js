@@ -7,12 +7,12 @@ const faqs = [
   {
     question: "Why pay for Transfer.zip when Quick Transfers is free?",
     answer:
-      "Using Transfer.zip for free is already great for most people. However, if you are a professional or just want your files to be more accessible, you can pay for a subscription. This gives you access to the dashboard, and lets you share files that don't expire when you close the browser tab. The paid plan is also cheaper and faster than other sites like WeTransfer or Dropbox."
+      "A paid subscription unlocks the dashboard, lets you share files that don’t expire, and offers cheaper, faster transfers than competitors."
   },
   {
     question: "Is there really no file size limit?",
     answer:
-      "There is no file size limit when using Quick Transfers, because the file is never stored on our servers. For transfers there are limits determined by your plan, because they will be stored on our servers."
+      "Quick Transfers has no file size limit. Regular transfers have a limit based on your plan."
   },
   {
     question: "How do Quick Transfers work?",
@@ -20,32 +20,23 @@ const faqs = [
   },
   {
     question: "Is Transfer.zip safe to use?",
-    answer: "Privacy and security is our top priority. The site was founded by an IT-security consultant, with many years of experience. Furthermore, your transfers are stored encrypted on our servers, meaning if an attacker could gain access to our servers hosting the files, they would not be able to steal your data."
+    answer: "Yes. Transfers on our servers are encrypted, and your privacy is a priority."
   },
   {
     question: "What payment methods are accepted?",
-    answer:
-      "We accept all major credit cards using our payment processor Stripe.",
+    answer: "All major credit cards via Stripe."
   },
-  // {
-  //   question: "Do you accept PayPal?",
-  //   answer:
-  //     "Yes!",
-  // },
   {
     question: "Is there a free trial available?",
-    answer:
-      "Not at the moment, it will be added in the future based on feedback."
+    answer: "No, not at the moment."
   },
   {
     question: "How do I contact support if I encounter an issue?",
-    answer:
-      "You can contact our support team via the 'Support' button further down on the site.",
+    answer: "Click the 'Support' button on the site."
   },
   {
     question: "Can I cancel my account?",
-    answer:
-      "Yes, you can cancel your account by contacting support.",
+    answer: "Yes, contact support to cancel your account."
   },
 ]
 

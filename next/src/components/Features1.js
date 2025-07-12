@@ -2,16 +2,22 @@ import BIcon from "./BIcon"
 // import ProductDemoScreenshot from "@/img/ProductDemoScreenshot.png"
 import logo from "@/img/icon.png"
 import Image from "next/image"
+import Link from "next/link";
 
 const features = [
-  {
-    name: 'Privacy First',
-    description: 'Your privacy matters. All files are securely hosted in the EU, keeping your data safe and private.',
-    icon: 'shield-check',
-  },
+  // {
+  //   name: 'Privacy First',
+  //   description: 'Your privacy matters. User data is securely hosted in the EU, keeping your life safe and private.',
+  //   icon: 'shield-check',
+  // },
+  // {
+  //   name: 'No Limits',
+  //   description: "Easily transfer massive files without ever hitting a limit.",
+  //   icon: 'arrow-clockwise',
+  // },
   {
     name: 'Files Available All Year',
-    description: 'Upgrade to Pro and keep your files available for download up to 365 days.',
+    description: 'Your files stay accessible all year. No more expiry anxiety.',
     icon: 'calendar',
   },
   {
@@ -29,22 +35,27 @@ const features = [
     description: 'See when your files are downloaded and when your links are clicked, with simple stats.',
     icon: 'bar-chart',
   },
+  {
+    name: 'Fully Open Source',
+    description: <>All source code is open source on GitHub. <Link className="text-primary hover:underline whitespace-nowrap" href="https://github.com/robinkarlberg/transfer.zip-web">Check it Out &rarr;</Link></>,
+    icon: 'github',
+  },
 ];
 
 export default function Features1() {
 
   return (
-    <div className="bg-white py-24 sm:py-32" id="about">
+    <div className="bg-white py-24 sm:py-32" id="why-choose-us">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-xl text-center">
           {/* <Image alt="Logo" src={logo} className="w-16 mx-auto"></Image> */}
-          {/* <p className="text-base/7 font-semibold text-primary">Benefits</p> */}
-          <div className="text-blue-500 mb-4">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div>
-          <h2 className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Simple, Reliable, Secure
-          </h2>
+          <h2 className="text-base/7 font-semibold text-primary">Why Choose Us?</h2>
+          {/* <div className="text-blue-500 mb-4">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div> */}
+          <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
+            Blazingly Fast. No Bull***t
+          </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            <span className="font-semibold">File sharing should be effortless.</span> No cookie popups, no complicated terms, and no tracking - just secure and easy transfers every time.
+            Say goodbye to frustrating uploads, restrictive size limits, and cluttered interfaces. Transfer.zip is the easiest way to send files - no limits or "accept cookies" popups before uploading. It just works.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">

@@ -84,7 +84,8 @@ export default async function ({ auth }) {
             </h1>
             <p className="mx-auto lg:mx-0 mt-6 text-lg leading-8 text-gray-600 max-w-md">
               {/* Send files with <span className="underline decoration-primary decoration-dashed font-semibold">no size limit</span> in real-time, with end-to-end encryption and blazingly fast speeds. */}
-              Ultrafast, simple and reliable file transfers - without size limits or tracking cookies.
+              Ultrafast, Reliable and Secure file transfers. <br className="hidden sm:inline"/>
+              No size limits. No frustration.
             </p>
             <div className="flex mt-10 items-center gap-6 justify-center lg:justify-start">
               <Link

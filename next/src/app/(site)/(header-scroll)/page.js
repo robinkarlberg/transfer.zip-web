@@ -15,12 +15,12 @@ export default function () {
     <div>
       <HashInterceptor />
       <Landing />
-      <TestimonialCloud />
       <Features1 />
-      <Features3 />
-      <Features2 />
-      <FeaturesNew />
       <TestimonialCloud />
+      <Features2 />
+      <Features3 />
+      {/* <FeaturesNew /> */}
+      {/* <TestimonialCloud /> */}
       <Pricing />
       <FAQ />
       <CTA />

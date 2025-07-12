@@ -21,10 +21,10 @@ import Image from 'next/image'
 import { IS_SELFHOST } from '@/lib/isSelfHosted'
 
 const products = [
-  { name: 'Limitless File Sharing', description: 'Send Your Files in Seconds', href: '/#about', icon: "lightbulb" },
-  { name: 'Receive Files with a Link', description: 'Easily Receive Files from Anyone', href: '/#features-receive', icon: "arrow-down" },
-  { name: '365 Days Expiration Time', description: 'Big Files That Don\'t Expire', href: '/#features', icon: "clock" },
-  { name: 'Quick Transfers', description: 'Keep Your Tab Open - Send Without Limits', href: '/#about-quick-share', icon: "lightning-fill" },
+  { name: 'Why Choose Us?', description: 'Blazingly Fast. No Bull***t', href: '/#why-choose-us', icon: "lightbulb" },
+  { name: 'Receive Files with a Link', description: 'Easily Receive Files from Anyone', href: '/#receive-files', icon: "arrow-down" },
+  { name: 'Send Files By Email', description: 'Share Files with Your Whole Organisation.', href: '/#send-files-by-email', icon: "clock" },
+  { name: 'Quick Transfers', description: 'Keep Your Tab Open - Send Without Limits', href: '/#about-quick-transfer', icon: "lightning-fill" },
 ]
 const callsToAction = [
   { name: 'FAQ', href: "/#faq", icon: "question-lg" },
