@@ -8,6 +8,11 @@ import PasswordResetEmail from './templates/PasswordResetEmail.jsx';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME || 'Transfer.zip';
+const DEFAULT_BRAND = {
+  name: SITE_NAME,
+  iconUrl: `${process.env.SITE_URL}/img/icon-small.png`,
+  siteUrl: process.env.SITE_URL,
+};
 
 async function sendMail(reactElement, { from, to, subject }) {
   if (resend) {
@@ -23,37 +28,42 @@ async function sendMail(reactElement, { from, to, subject }) {
   }
 }
 
-export async function sendTransferDownloaded(email, { name, link }) {
-  await sendMail(TransferDownloadedEmail({ name, link }), {
+export async function sendTransferDownloaded(email, { name, link, brand }) {
+  const b = brand || DEFAULT_BRAND;
+  await sendMail(TransferDownloadedEmail({ name, link, brand: b }), {
     to: email,
-    subject: `Transfer downloaded - ${SITE_NAME}`,
+    subject: `Transfer downloaded - ${b.name}`,
   });
 }
 
-export async function sendTransferRequestReceived(email, { name, link }) {
-  await sendMail(TransferRequestReceivedEmail({ name, link }), {
+export async function sendTransferRequestReceived(email, { name, link, brand }) {
+  const b = brand || DEFAULT_BRAND;
+  await sendMail(TransferRequestReceivedEmail({ name, link, brand: b }), {
     to: email,
-    subject: `Files received - ${SITE_NAME}`,
+    subject: `Files received - ${b.name}`,
   });
 }
 
-export async function sendTransferRequestShare(email, { name, description, link }) {
-  await sendMail(TransferRequestShareEmail({ name, description, link }), {
+export async function sendTransferRequestShare(email, { name, description, link, brand }) {
+  const b = brand || DEFAULT_BRAND;
+  await sendMail(TransferRequestShareEmail({ name, description, link, brand: b }), {
     to: email,
-    subject: `Transfer request - ${SITE_NAME}`,
+    subject: `Transfer request - ${b.name}`,
   });
 }
 
-export async function sendTransferShare(email, { name, description, link }) {
-  await sendMail(TransferShareEmail({ name, description, link }), {
+export async function sendTransferShare(email, { name, description, link, brand }) {
+  const b = brand || DEFAULT_BRAND;
+  await sendMail(TransferShareEmail({ name, description, link, brand: b }), {
     to: email,
-    subject: `Files available - ${SITE_NAME}`,
+    subject: `Files available - ${b.name}`,
   });
 }
 
-export async function sendPasswordReset(email, { link }) {
-  await sendMail(PasswordResetEmail({ link }), {
+export async function sendPasswordReset(email, { link, brand }) {
+  const b = brand || DEFAULT_BRAND;
+  await sendMail(PasswordResetEmail({ link, brand: b }), {
     to: email,
-    subject: `Reset your password - ${SITE_NAME}`,
+    subject: `Reset your password - ${b.name}`,
   });
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { useServerAuth } from '@/lib/server/wrappers/auth';
 import Transfer from '@/lib/server/mongoose/models/Transfer';
+import BrandProfile from '@/lib/server/mongoose/models/BrandProfile';
 import { resp } from '@/lib/server/serverUtils';
 import { sendTransferShare } from '@/lib/server/mail/mail';
 
@@ -13,7 +14,7 @@ export async function POST(req, { params }) {
   }
 
   const auth = await useServerAuth();
-  const transfer = await Transfer.findOne({ _id: transferId, author: auth.user._id });
+  const transfer = await Transfer.findOne({ _id: transferId, author: auth.user._id }).populate('brandProfile');
 
   if (!transfer) {
     return NextResponse.json(resp('transfer not found'), { status: 404 });
@@ -33,11 +34,13 @@ export async function POST(req, { params }) {
   await transfer.save();
 
   if (transfer.finishedUploading) {
+    const brand = transfer.brandProfile ? transfer.brandProfile.friendlyObj() : undefined;
     for (const email of uniqueNew) {
       await sendTransferShare(email, {
         name: transfer.name || 'Untitled Transfer',
         description: transfer.description,
         link: transfer.getDownloadLink(),
+        brand,
       });
     }
   }

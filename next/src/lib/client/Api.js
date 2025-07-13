@@ -180,6 +180,15 @@ export async function deactivateTransferRequest(transferRequestId) {
     return await post(`/transferrequest/${transferRequestId}/deactivate`)
 }
 
+// brand profile
+export async function newBrandProfile(data) {
+    return await post(`/brandprofile/new`, data)
+}
+
+export async function updateBrandProfile(id, data) {
+    return await put(`/brandprofile/${id}`, data)
+}
+
 // upload
 
 export async function getUpload(secretCode) {

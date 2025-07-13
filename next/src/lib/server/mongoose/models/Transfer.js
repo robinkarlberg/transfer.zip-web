@@ -53,6 +53,8 @@ const TransferSchema = new mongoose.Schema({
     encryptedPassword: Buffer,
     emailsSharedWith: [EmailSharedWith],
 
+    brandProfile: { type: mongoose.Schema.Types.ObjectId, ref: "BrandProfile" },
+
     encryptionKey: { type: Buffer },
     encryptionIV: { type: Buffer },
 
@@ -143,7 +145,8 @@ TransferSchema.methods.friendlyObj = function () {
         hasName: !!name,
         hasTransferRequest: !!this.transferRequest,
         finishedUploading: this.finishedUploading,
-        nodeUrl: this.nodeUrl
+        nodeUrl: this.nodeUrl,
+        brandProfileId: this.brandProfile ? this.brandProfile.toString() : undefined
     }
 }
 
@@ -160,7 +163,8 @@ TransferSchema.methods.downloadObj = function () {
         size,
         hasName: !!name,
         finishedUploading: this.finishedUploading,
-        nodeUrl: this.nodeUrl
+        nodeUrl: this.nodeUrl,
+        brandProfileId: this.brandProfile ? this.brandProfile.toString() : undefined
     }
 }
 

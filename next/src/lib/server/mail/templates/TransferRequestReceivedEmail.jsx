@@ -1,9 +1,9 @@
 import { Button, Heading, Hr, Text } from '@react-email/components';
 import EmailLayout from './EmailLayout.jsx';
 
-export default function TransferRequestReceivedEmail({ name, link }) {
+export default function TransferRequestReceivedEmail({ name, link, brand }) {
   return (
-    <EmailLayout>
+    <EmailLayout brand={brand}>
       <Heading style={h1}>Files received</Heading>
       <Text style={text}>
         Someone uploaded files to your request "{name}".

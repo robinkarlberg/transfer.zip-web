@@ -12,10 +12,13 @@ import { sleep } from "@/lib/utils"
 import Image from "next/image"
 import Link from "next/link"
 import { useRef, useState } from "react"
+import { newBrandProfile, updateBrandProfile } from "@/lib/client/Api"
+import { useRouter } from "next/navigation"
 
 export default function ({ initialProfile, isNew }) {
   const [profile, setProfile] = useState(initialProfile)
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   const backgroundFileInputRef = useRef(null)
   const [backgroundImageUrl, setBackgroundImageUrl] = useState(profile.backgroundUrl || null)
@@ -25,8 +28,21 @@ export default function ({ initialProfile, isNew }) {
 
   const handleSave = async e => {
     setLoading(true)
-    await sleep(1000)
-    setLoading(false)
+    const payload = {
+      name: profile.name,
+      iconUrl: iconImageUrl,
+      backgroundUrl: backgroundImageUrl,
+    }
+    try {
+      if (isNew) {
+        const { brandProfile } = await newBrandProfile(payload)
+        router.replace(`/app/branding/${brandProfile.id}`)
+      } else {
+        await updateBrandProfile(initialProfile.id, payload)
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
   const [editingName, setEditingName] = useState(false)

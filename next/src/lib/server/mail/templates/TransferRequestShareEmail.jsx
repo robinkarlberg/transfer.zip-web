@@ -1,9 +1,9 @@
 import { Button, Container, Heading, Hr, Text } from '@react-email/components';
 import EmailLayout from './EmailLayout.jsx';
 
-export default function TransferRequestShareEmail({ name, description, link }) {
+export default function TransferRequestShareEmail({ name, description, link, brand }) {
   return (
-    <EmailLayout>
+    <EmailLayout brand={brand}>
       <Heading style={h1}>File transfer request</Heading>
       <Text style={text}>
         Someone has requested to get files from you, use the button

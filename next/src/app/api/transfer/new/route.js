@@ -1,5 +1,6 @@
 import Transfer from '@/lib/server/mongoose/models/Transfer'
 import TransferRequest from '@/lib/server/mongoose/models/TransferRequest'
+import BrandProfile from '@/lib/server/mongoose/models/BrandProfile'
 import { useServerAuth } from '@/lib/server/wrappers/auth'
 import mongoose from 'mongoose'
 import { NextResponse } from 'next/server'
@@ -19,7 +20,7 @@ export async function POST(req) {
     // No auth, it's ok if it is for a transferRequest
   }
 
-  const { name, description, expiresInDays, transferRequestSecretCode, files, emails } = await req.json()
+  const { name, description, expiresInDays, transferRequestSecretCode, files, emails, brandProfileId } = await req.json()
 
   if (!expiresInDays) {
     return NextResponse.json(resp("expiresInDays not provided"), { status: 400 })
@@ -39,6 +40,20 @@ export async function POST(req) {
 
   if (transferRequestSecretCode && emails && emails.length > 0) {
     return NextResponse.json(resp("cannot send emails when uploading to a request"), { status: 400 })
+  }
+
+  let brandProfile
+  if (brandProfileId) {
+    if (!auth) {
+      return NextResponse.json(resp("Auth required"), { status: 401 })
+    }
+    if (!mongoose.Types.ObjectId.isValid(brandProfileId)) {
+      return NextResponse.json(resp("invalid brandProfileId"), { status: 400 })
+    }
+    brandProfile = await BrandProfile.findOne({ _id: brandProfileId, author: auth.user._id })
+    if (!brandProfile) {
+      return NextResponse.json(resp("brand profile not found"), { status: 404 })
+    }
   }
 
   if (!files || files.length === 0) {
@@ -79,7 +94,8 @@ export async function POST(req) {
     expiresAt: new Date(addMilliscondsToCurrentTime(1000 * 60 * 60 * 24 * expiresInDays)),
     encryptionKey,
     encryptionIV,
-    files: transferFiles
+    files: transferFiles,
+    brandProfile: brandProfile ? brandProfile._id : undefined
   })
 
   const xForwardedFor = process.env.NODE_ENV === "development" ? "127.0.0.1" : req.headers.get("x-forwarded-for")
@@ -114,6 +130,11 @@ export async function POST(req) {
 
   console.log("Chose nodeUrl:", nodeUrl)
   transfer.nodeUrl = nodeUrl
+
+  if (brandProfile) {
+    brandProfile.lastUsed = new Date()
+    await brandProfile.save()
+  }
 
   if (!transferRequest && emails?.length) {
     for (const email of emails) {

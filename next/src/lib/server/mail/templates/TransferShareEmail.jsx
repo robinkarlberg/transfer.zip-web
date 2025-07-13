@@ -1,9 +1,9 @@
 import { Button, Container, Heading, Hr, Text } from '@react-email/components';
 import EmailLayout from './EmailLayout.jsx';
 
-export default function TransferShareEmail({ name, description, link }) {
+export default function TransferShareEmail({ name, description, link, brand }) {
   return (
-    <EmailLayout>
+    <EmailLayout brand={brand}>
       <Heading style={h1}>Files have been shared with you</Heading>
       <Text style={text}>
         {name ? `\"${name}\"` : 'A transfer'} has been sent to you, download it using the button below.

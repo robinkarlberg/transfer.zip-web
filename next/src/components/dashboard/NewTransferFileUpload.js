@@ -89,7 +89,7 @@ export default function ({ user, storage, brandProfiles }) {
     const transferFiles = prepareTransferFiles(files)
 
     // response: { idMap: [{ tmpId, id }, ...] } - what your API returned
-    const { transfer, idMap } = await newTransfer({ name, description, expiresInDays, files: transferFiles, emails: emailRecipients })
+    const { transfer, idMap } = await newTransfer({ name, description, expiresInDays, files: transferFiles, emails: emailRecipients, brandProfileId })
 
     const { results, failedPromises } = await uploadFiles(files, idMap, transfer, progress => {
       console.log(progress, progress.reduce((sum, item) => sum + item[1], 0))
@@ -219,7 +219,7 @@ export default function ({ user, storage, brandProfiles }) {
                     <SelectItem
                       key={profile.id}
                       value={profile.id}>
-                      <Image width={24} height={24} src={brandProfile.iconUrl} />
+                      <Image width={24} height={24} src={profile.iconUrl} />
                     </SelectItem>)
                   )
                   :

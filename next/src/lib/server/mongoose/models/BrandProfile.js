@@ -12,6 +12,7 @@ const BrandProfileSchema = new mongoose.Schema({
 
 BrandProfileSchema.methods.friendlyObj = function () {
   return {
+    id: this._id.toString(),
     name: this.name,
     iconUrl: this.iconUrl,
     backgroundUrl: this.backgroundUrl,

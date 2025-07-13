@@ -1,9 +1,9 @@
 import { Button, Heading, Hr, Text } from '@react-email/components';
 import EmailLayout from './EmailLayout.jsx';
 
-export default function PasswordResetEmail({ link }) {
+export default function PasswordResetEmail({ link, brand }) {
   return (
-    <EmailLayout>
+    <EmailLayout brand={brand}>
       <Heading style={h1}>Password reset request</Heading>
       <Text style={text}>
         Click the button below to reset your password.

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import Transfer from '@/lib/server/mongoose/models/Transfer';
+import BrandProfile from '@/lib/server/mongoose/models/BrandProfile';
 import { resp } from '@/lib/server/serverUtils';
 import { sendTransferDownloaded } from '@/lib/server/mail/mail';
 import { useServerAuth } from '@/lib/server/wrappers/auth';
@@ -17,7 +18,7 @@ export async function POST(req, { params }) {
 
   }
 
-  const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } }).populate('author');
+  const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } }).populate('author').populate('brandProfile');
   if (!transfer) {
     return NextResponse.json(resp('transfer not found'), { status: 404 });
   }
@@ -35,9 +36,11 @@ export async function POST(req, { params }) {
     author.notificationSettings?.transferDownloaded !== false &&
     (!transfer.lastDownloadEmailSentAt || now - transfer.lastDownloadEmailSentAt > DOWNLOAD_EMAIL_COOLDOWN_MS)
   ) {
+    const brand = transfer.brandProfile ? transfer.brandProfile.friendlyObj() : undefined;
     await sendTransferDownloaded(author.email, {
       name: transfer.name || 'Untitled Transfer',
       link: transfer.getDownloadLink(),
+      brand,
     });
     transfer.lastDownloadEmailSentAt = now;
   }
