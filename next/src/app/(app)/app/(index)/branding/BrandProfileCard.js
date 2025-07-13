@@ -1,36 +1,41 @@
-"use client"
-
+import BIcon from "@/components/BIcon";
+import { capitalizeFirstLetter } from "@/lib/utils";
 import Image from "next/image";
+import Link from "next/link";
 
-export default BrandProfileCard = ({ id, name, iconUrl }) => {
+import transfer_zip_grid from "@/img/transfer-zip-grid.png"
+
+export default function ({ id, name, iconUrl, backgroundUrl }) {
   return (
-    <div className="border shadow-sm rounded-lg bg-white border-gray-300">
-      <div className="">
-        {iconUrl ?
-          <Image width={32} height={32} />
-          :
-          <div className="w-[32px] h-[32px] rounded-lg border-2 border-dashed border-gray-400">
-            <BIcon name={"building-fill"} center />
-          </div>
-        }
+    <Link href={`/app/branding/${id}`} className="border shadow-xs rounded-xl bg-white border-gray-200 p-4 hover:bg-gray-50 group">
+      <div className="flex items-center gap-2">
+        <div className="">
+          {iconUrl ?
+            <Image alt="Company Logo" width={32} height={32} src={iconUrl} />
+            :
+            <div className="w-[32px] h-[32px] rounded-lg border-2 border-dashed border-gray-400">
+              <BIcon name={"building-fill"} center />
+            </div>
+          }
+        </div>
+        <p className="text-gray-800 text-lg font-bold whitespace-nowrap text-ellipsis overflow-x-hidden">{capitalizeFirstLetter(name)}</p>
       </div>
-      <DashH4 className="font-semibold ">{capitalizeFirstLetter(name)}</DashH4>
-      {/* {description && <span className=" text-sm text-gray-400">{description.slice(0, 100)}...</span>} */}
-      <span className="text-sm text-gray-500"><BIcon name="command" className="mr-1" />{type}</span>
-      <div className="flex-grow"></div>
-      <div className="flex flex-row justify-between gap-2">
-        <Button asChild className={"grow"} variant="outline"><Link href={`${id}`}>Customize</Link></Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className={"w-10"} variant="outline"><BIcon center name={"three-dots-vertical"} /></Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            {/* <DropdownMenuItem className={"cursor-pointer"}>Customize</DropdownMenuItem>
-                            <DropdownMenuSeparator></DropdownMenuSeparator> */}
-            <DropdownMenuItem onClick={handleDeleteAction} className={"cursor-pointer text-destructive"}>Delete</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <div className="rounded-lg border border-gray-100 mt-2">
+        <div className="relative aspect-video rounded-md overflow-clip flex justify-center items-center">
+          <Image
+            layout="fill"
+            className="object-center object-cover pointer-events-none group-hover:scale-105 transition-transform duration-300"
+            src={backgroundUrl || transfer_zip_grid}
+            alt={"Brand Profile Background Image"}
+          />
+          {!backgroundUrl && <p className="relative text-gray-300">
+            No background
+          </p>}
+        </div>
       </div>
-    </div>
+      {/* <div className="flex flex-row justify-between gap-2">
+        <Button asChild className={"grow"} variant="outline"><Link href={`branding/${id}`}>Customize</Link></Button>
+      </div> */}
+    </Link>
   )
 }

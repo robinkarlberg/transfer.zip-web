@@ -18,20 +18,21 @@ export default async function () {
         profiles.length > 0 ?
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {profiles.map(profile => {
-              const { id, name, iconUrl } = profile.friendlyObj()
+              const { id, name, iconUrl, backgroundUrl } = profile.friendlyObj()
               return (
                 <BrandProfileCard
                   key={id}
                   id={id}
                   name={name}
                   iconUrl={iconUrl}
+                  backgroundUrl={backgroundUrl}
                 />
               )
             })}
           </div>
           :
           <EmptySpace
-            title={"No Brand Profiles"}
+            title={"Showcase Your Unique Brand Identity"}
             subtitle={"Add your own logo, customize backgrounds, and include your branding directly in emails and download pages for a seamless, professional look."}
           />
       }

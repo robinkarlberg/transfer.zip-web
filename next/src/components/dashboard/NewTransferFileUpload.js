@@ -13,10 +13,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useContext, useMemo, useRef, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectTriggerFix, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { prepareTransferFiles, uploadFiles } from "@/lib/client/uploader";
+import Image from "next/image";
 
 const getMaxRecipientsForPlan = (plan) => {
   if (plan == "pro") return 50;
@@ -159,7 +160,7 @@ export default function ({ user, storage, brandProfiles }) {
     }
   }
 
-  const [brandProfileId, setBrandProfileId] = useState(null)
+  const [brandProfileId, setBrandProfileId] = useState(brandProfiles.length > 0 ? brandProfiles[0].id : null)
   const brandProfile = brandProfiles.find(profile => profile.id === brandProfileId)
 
   return (
@@ -204,24 +205,28 @@ export default function ({ user, storage, brandProfiles }) {
               </fieldset>
             </div>
             <Select value={brandProfileId} onValueChange={setBrandProfileId}>
-              <SelectTrigger className="w-16 rounded-full absolute top-0 right-0">
-                {
-                  brandProfile ?
-                    <Image width={24} height={24} src={brandProfile.iconUrl} />
-                    :
-                    <BIcon className={"text-gray-400"} center name={"building"} />
-                }
-              </SelectTrigger>
-              <SelectContent>
+              <SelectTriggerFix asChild>
+                <button className="aspect-square !rounded-full absolute top-0 right-0 flex justify-center items-center">
+                  {
+                    brandProfile ?
+                      <div className="absolute">
+                        <Image alt="Brand Profile Icon" className="w-6 h-6" width={24} height={24} src={brandProfile.iconUrl} />
+                      </div>
+                      :
+                      <BIcon className={"text-gray-400"} center name={"dash-circle-dotted"} />
+                  }
+                </button>
+              </SelectTriggerFix>
+              <SelectContent align={"end"}>
                 {brandProfiles.length > 0
                   ?
-                  brandProfiles.map(profile => (
+                  [brandProfiles.map(profile => (
                     <SelectItem
                       key={profile.id}
                       value={profile.id}>
-                      <Image width={24} height={24} src={profile.iconUrl} />
+                      <Image alt="Brand Profile Icon" width={24} height={24} src={profile.iconUrl} />
                     </SelectItem>)
-                  )
+                  ), <SelectItem key={null} value={null}>None</SelectItem>]
                   :
                   <SelectItem key={"none"} value={"none"} disabled>No brand profiles.</SelectItem>
                 }
@@ -317,6 +322,6 @@ export default function ({ user, storage, brandProfiles }) {
           </div>
         </div>}
       </div>
-    </div>
+    </div >
   )
 }

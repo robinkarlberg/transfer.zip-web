@@ -12,8 +12,9 @@ import { sleep } from "@/lib/utils"
 import Image from "next/image"
 import Link from "next/link"
 import { useRef, useState } from "react"
-import { newBrandProfile, updateBrandProfile } from "@/lib/client/Api"
+import { deleteBrandProfile, newBrandProfile, updateBrandProfile } from "@/lib/client/Api"
 import { useRouter } from "next/navigation"
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 export default function ({ initialProfile, isNew }) {
   const [profile, setProfile] = useState(initialProfile)
@@ -36,11 +37,13 @@ export default function ({ initialProfile, isNew }) {
     try {
       if (isNew) {
         const { brandProfile } = await newBrandProfile(payload)
-        router.replace(`/app/branding/${brandProfile.id}`)
+        window.location.replace(`/app/branding`)
       } else {
         await updateBrandProfile(initialProfile.id, payload)
+        window.location.replace(`/app/branding`)
       }
-    } finally {
+    }
+    catch {
       setLoading(false)
     }
   }
@@ -81,6 +84,39 @@ export default function ({ initialProfile, isNew }) {
     backgroundRepeat: "no-repeat"
   } : {}
 
+  const handleDelete = async () => {
+    setLoading(true)
+    await deleteBrandProfile(profile.id)
+    window.location.replace("/app/branding")
+  }
+
+  const side = <div className="flex gap-2">
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" disabled={loading}>{loading && <Spinner />} Delete</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Are you sure?</DialogTitle>
+        </DialogHeader>
+        <p>This action cannot be undone. This will permanently delete this brand profile.</p>
+        <DialogFooter className="gap-2">
+          <Button
+            variant="outline"
+            disabled={loading}
+            onClick={handleDelete}
+          >
+            {loading && <Spinner />} Delete
+          </Button>
+          <DialogClose asChild>
+            <Button>Cancel</Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+    <Button onClick={handleSave} disabled={loading}>{loading && <Spinner />} Save</Button>
+  </div>
+
   return (
     <>
       <form className="hidden">
@@ -89,9 +125,9 @@ export default function ({ initialProfile, isNew }) {
       <form className="hidden">
         <input onChange={handleBackgroundFiles} ref={backgroundFileInputRef} type="file" />
       </form>
-      <GenericPage title={isNew ? "New Brand Profile" : profile.name} side={<Button onClick={handleSave} disabled={loading}>{loading && <Spinner />} Save</Button>}>
+      <GenericPage title={isNew ? "New Brand Profile" : profile.name} side={side}>
         <div className="border border-gray-200 border-dashed p-6 bg-gray-50 rounded-xl">
-          <div className="bg-white rounded-lg">
+          <div className="bg-white rounded-lg relative">
             <div className="flex justify-center border-b border-b-gray-200 p-4">
               <span className="-m-1.5 p-1.5 flex items-center gap-x-1">
                 <Tooltip>
@@ -151,7 +187,31 @@ export default function ({ initialProfile, isNew }) {
               className="px-4 pt-2 flex items-center justify-center h-[560px] relative"
               style={dlBackgroundStyle}
             >
-              <div className="bg-white opacity-50 backdrop-blur-sm rounded-2xl border p-6 shadow-xl w-full max-w-80 min-h-96 flex flex-col justify-between">
+              {!backgroundImageUrl && <svg
+                aria-hidden="true"
+                className="absolute inset-0 h-full w-full stroke-gray-200 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
+              >
+                <defs>
+                  <pattern
+                    x="50%"
+                    y={-1}
+                    id="83fd4e5a-9d52-42fc-97b6-718e5d7ee527"
+                    width={200}
+                    height={200}
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <path d="M100 200V.5M.5 .5H200" fill="none" />
+                  </pattern>
+                </defs>
+                <svg x="50%" y={-1} className="overflow-visible fill-gray-50">
+                  <path
+                    d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z"
+                    strokeWidth={0}
+                  />
+                </svg>
+                <rect fill="url(#83fd4e5a-9d52-42fc-97b6-718e5d7ee527)" width="100%" height="100%" strokeWidth={0} />
+              </svg>}
+              <div className="relative z-10 bg-white rounded-2xl border p-6 shadow-xl w-full max-w-80 min-h-96 flex flex-col justify-between">
                 <div>
                   <h2 className="font-bold text-xl/8 text-gray-800">Transfer Title</h2>
                   <p className="text-gray-600">Transfer description</p>

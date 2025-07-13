@@ -22,7 +22,7 @@ import { IS_SELFHOST } from '@/lib/isSelfHosted'
 
 const products = [
   { name: 'Why Choose Us?', description: 'Blazingly Fast. No Bull***t', href: '/#why-choose-us', icon: "lightbulb" },
-  { name: 'Receive Files with a Link', description: 'Easily Receive Files from Anyone', href: '/#receive-files', icon: "arrow-down" },
+  { name: 'Receive Files with a Link', description: 'Receive Files from Anyone, Anywhere', href: '/#receive-files', icon: "arrow-down" },
   { name: 'Send Files By Email', description: 'Share Files with Your Whole Organisation.', href: '/#send-files-by-email', icon: "clock" },
   { name: 'Quick Transfers', description: 'Keep Your Tab Open - Send Without Limits', href: '/#about-quick-transfer', icon: "lightning-fill" },
 ]

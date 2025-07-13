@@ -20,10 +20,13 @@ const controlPost = async (controlEndpoint, payload) => {
   return await post(`/forward-node-control${controlEndpoint}`, payload)
 }
 
+// We segment the private key from Next for better security
 export async function workerSign(payload, expirationTime) {
   return await post("/sign", { payload, expirationTime })
 }
 
+// The geolocation library didn't work with NextJS, so we defer that to the worker
+// it is used rarely so it's ok
 export async function workerGeoSlow(ip) {
   return await post("/geo-slow", { ip })
 }

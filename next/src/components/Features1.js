@@ -15,10 +15,15 @@ const features = [
   //   description: "Easily transfer massive files without ever hitting a limit.",
   //   icon: 'arrow-clockwise',
   // },
+  // {
+  //   name: 'Files Available All Year',
+  //   description: 'Your files stay accessible all year. No more expiry anxiety.',
+  //   icon: 'calendar',
+  // },
   {
-    name: 'Files Available All Year',
-    description: 'Your files stay accessible all year. No more expiry anxiety.',
-    icon: 'calendar',
+    name: 'Custom Branding',
+    description: 'Make every transfer your own. Add your logo and background for a more professional look.',
+    icon: 'person',
   },
   {
     name: 'Reliable Uploads',

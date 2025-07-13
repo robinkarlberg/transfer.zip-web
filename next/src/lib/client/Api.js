@@ -189,6 +189,10 @@ export async function updateBrandProfile(id, data) {
     return await put(`/brandprofile/${id}`, data)
 }
 
+export async function deleteBrandProfile(id) {
+    return await post(`/brandprofile/${id}/delete`, {})
+}
+
 // upload
 
 export async function getUpload(secretCode) {
