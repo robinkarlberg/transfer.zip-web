@@ -5,99 +5,91 @@ export default function TermsAndConditionsPage({ }) {
     <>
       <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Terms and Conditions</h1>
       <p className="mt-6 text-xl leading-8">
-        Welcome to {process.env.NEXT_PUBLIC_SITE_NAME}. By accessing or using our website and services, you agree to be bound by these Terms and Conditions. Please carefully review the following terms.
+        Welcome to {process.env.NEXT_PUBLIC_SITE_NAME}. By accessing or using our website and services, you agree to be bound by these Terms and Conditions. Please read them carefully.
       </p>
       <div className="mt-10 max-w-2xl">
         <p>
-          We provide a platform to facilitate seamless transfers for your files. By using our services, you ensure that all information provided is accurate and complies with applicable laws.
+          We provide a platform to facilitate seamless transfers for your files. By using our services, you warrant that all information provided is accurate and complies with applicable laws.
         </p>
         <ul role="list" className="mt-8 max-w-xl space-y-8 text-gray-600">
           <li className="flex gap-x-3">
             <BIcon name={"file-earmark-text"} aria-hidden="true" className="mt-1 h-5 w-5 flex-none text-primary" />
             <span>
-              <strong className="font-semibold text-gray-900">Services Provided.</strong> Users can access the file transfer service by subscribing to our paid plans, which offer increased file size limits and longer file expiration times than competitors solutions. Files can be as large as the user's subscription plan allows. The service <nobr><i>Quick Transfer</i></nobr> has no file size limit and is provided free of charge for everyone.
+              <strong className="font-semibold text-gray-900">Services Provided.</strong> Subscribing to a paid plan grants a pool of <em>simultaneous</em> storage capacity. The current plans are&nbsp;
+              <nobr><em>Starter</em> – 200&nbsp;GB</nobr> total active storage and&nbsp;
+              <nobr><em>Pro</em> – 1&nbsp;TB</nobr> total active storage. The <i>Quick Transfer</i> feature (also referred to as “Quick Transfers” or “Quick Share”) has no file‑size limit and is provided free of charge while both parties keep their browser tab open.
             </span>
           </li>
           <li className="flex gap-x-3">
             <BIcon name={"shield-slash"} aria-hidden="true" className="mt-1 h-5 w-5 flex-none text-primary" />
             <span>
-              <strong className="font-semibold text-gray-900">Prohibited Content.</strong> Our platform strictly prohibits any malicious or illegal content. Violations may result in immediate termination of service.
+              <strong className="font-semibold text-gray-900">Prohibited Content.</strong> You may not upload or share any malicious, unlawful, or infringing content. Violations may result in immediate account termination and, where required, referral to law‑enforcement authorities.
             </span>
           </li>
           <li className="flex gap-x-3">
-            <BIcon name={"emoji-frown"} aria-hidden="true" className="mt-1 h-5 w-5 flex-none text-primary" />
+            <BIcon name={"clock-history"} aria-hidden="true" className="mt-1 h-5 w-5 flex-none text-primary" />
             <span>
-              <strong className="font-semibold text-gray-900">Refund Policy.</strong> We strive to provide the best possible experience for our users. If you are not satisfied with our paid services, you may be eligible for a refund under the "Refund Policy." section further down in this terms agreement.
+              <strong className="font-semibold text-gray-900">Free Trial & Billing.</strong> New subscribers receive a 7‑day free trial. You can cancel at any time during the trial and will not be charged. Unless cancelled, your subscription converts to the paid plan you selected at the end of the 7‑day period and renews monthly until cancelled.
             </span>
           </li>
         </ul>
 
         <p className="mt-8">
-          <strong className="font-semibold text-gray-900">User Responsibilities.</strong> You are responsible for following all platform rules and guidelines, ensuring that your actions do not violate any laws or harm others in any way. This includes but is not limited to, avoiding the upload of any content that infringes on copyrights, distributes malware, or engages in any form of illegal activity. We are dedicated to maintaining a secure and reliable environment, and compliance with all applicable laws and regulations is crucial to ensuring the continued safety and integrity of users.
+          <strong className="font-semibold text-gray-900">User Responsibilities.</strong> You must comply with all platform rules and applicable laws, including copyright and malware regulations. You are responsible for any content you transmit.
         </p>
 
         <p className="mt-8">
-          <strong className="font-semibold text-gray-900">Account Terms.</strong> Users must create an account to access certain features of transfer.zip. There are no specific eligibility criteria or age restrictions unless required by law. Users must provide accurate and complete information during the registration process and are responsible for maintaining the confidentiality of their account credentials.
+          <strong className="font-semibold text-gray-900">Account Terms.</strong> You must create an account to access paid features. You agree to provide accurate information and to keep your credentials secure. You must be at least 16 years old or the minimum age required by the laws of your jurisdiction.
         </p>
 
         <p className="mt-8">
-          <strong className="font-semibold text-gray-900">Fees and Payment.</strong> Subscriptions to transfer.zip services are billed monthly. Users who cancel their subscription will retain access to paid features until the end of their current billing cycle. Transfer.zip offers different plans, including Starter and Pro plans. The limit for Pro plan is initially set at 1TB, however the user can request to extend that limit by contacting us at {process.env.NEXT_PUBLIC_SUPPORT_EMAIL}, we will make a decision on a case-by-case basis, and may include raising the cost of the subscription.
+          <strong className="font-semibold text-gray-900">Fees and Payment.</strong> Subscription fees are billed monthly after any applicable free‑trial period. If you cancel during the free trial, no payment will be taken. If you cancel after billing has occurred, you will retain access to paid features until the end of your current billing cycle and no further charges will be made. Plan storage limits represent the <em>aggregate size of all stored transfers</em> at any one time. Prices and limits may change with 30 days’ notice.
         </p>
 
         <p className="mt-8">
-          <strong className="font-semibold text-gray-900">Intellectual Property.</strong> Transfer.zip does not claim ownership of any content uploaded by users. However, we reserve the right to remove content that infringes on the rights of others or violates our terms. Users retain ownership of their content.
+          <strong className="font-semibold text-gray-900">Data Retention & Deletion.</strong> Paid transfers are stored only while (a) your subscription is active and (b) the total size of stored transfers remains within your plan’s limit. If your subscription lapses or is cancelled and not renewed within seven (7) days of the last paid day, all stored files may be permanently deleted. Quick Transfers are ephemeral and are deleted automatically when either party closes the transfer window.
         </p>
 
         <p className="mt-8">
-          <strong className="font-semibold text-gray-900">Prohibited Activities.</strong> Users are prohibited from uploading copyright-infringing content, distributing malware, or engaging in any activities that harm others. Users must not engage in any activity that violates applicable laws or regulations.
+          <strong className="font-semibold text-gray-900">Intellectual Property.</strong> Transfer.zip claims no ownership over user‑uploaded content but reserves the right to remove content that infringes third‑party rights or violates these Terms.
         </p>
 
         <p className="mt-8">
-          <strong className="font-semibold text-gray-900">Termination.</strong> Transfer.zip reserves the right to terminate any account that violates our acceptable use policy, including but not limited to the distribution of malware or copyright-infringing content. We also reserve the right to terminate any account without providing a reason to maintain the security and integrity of our platform. Refunds for terminated accounts are at our discretion and depend on the nature and extent of any damage caused to our site and its reputation.
+          <strong className="font-semibold text-gray-900">Prohibited Activities.</strong> You may not distribute copyright‑infringing material, malware, or engage in any illegal activity via the service.
         </p>
 
         <p className="mt-8">
-          <strong className="font-semibold text-gray-900">Limitation of Liability.</strong> While transfer.zip is committed to maintaining the functionality and security of our site, we are not liable for any damages or losses resulting from the use of our services. Users acknowledge that the use of Transfer.zip is at their own risk.
+          <strong className="font-semibold text-gray-900">Termination.</strong> We may suspend or terminate accounts that violate these Terms or pose a security or legal risk. If we terminate during a paid billing cycle for reasons not related to your breach, we may, at our sole discretion, provide a prorated refund.
         </p>
 
-        <div className="mt-8" id="refund-policy">
-          <p><strong className="font-semibold text-gray-900">Refund Policy.</strong> At transfer.zip, we strive to provide the best possible experience for our users. If you are not satisfied with our paid services, you may be eligible for a refund under the following conditions:</p>
+        <p className="mt-8">
+          <strong className="font-semibold text-gray-900">Limitation of Liability.</strong> Transfer.zip is provided “as‑is.” To the maximum extent permitted by law, we will not be liable for indirect or consequential damages arising out of your use of the service.
+        </p>
+
+        <div className="mt-8" id="free-trial-policy">
+          <p><strong className="font-semibold text-gray-900">Free Trial Policy.</strong> The 7‑day free trial is intended to let you evaluate our paid features risk‑free.</p>
           <ul className="list-disc pl-6">
-            <li>
-              Refund requests must be made within 7 days of the initial subscription purchase.
-            </li>
-            <li>
-              Refunds will only be considered for users who have not significantly utilized the service during this period. Significant utilization is defined as exceeding 10% of the storage limits allowed under the subscribed plan, or receiving 2 or more downloads.
-            </li>
-            <li>
-              By default, refunds account for 100% of the invoiced amount, but decisions could be made on a case-by-case basis, especially if our service was heavily utilized.
-            </li>
-            <li>
-              No refunds will be provided for renewals of ongoing subscriptions. Users must cancel their subscription before the renewal date to avoid charges for the next billing cycle.
-            </li>
-            <li>
-              Refund requests for accounts terminated due to violations of our terms and conditions, including but not limited to the distribution of malicious content or copyright infringement, will not be entertained by default, however decisions can be made on a case-by-case basis.
-            </li>
+            <li>You must provide valid payment details at sign‑up; no charge is made until the trial ends.</li>
+            <li>You may cancel at any time during the 7‑day period through your dashboard or by contacting us at {process.env.NEXT_PUBLIC_SUPPORT_EMAIL}.</li>
+            <li>If you do not cancel, the first monthly fee will be charged on day 8, and the subscription will renew monthly thereafter.</li>
+            <li>Once your subscription has converted to paid, fees are non‑refundable except where required by mandatory consumer‑protection law.</li>
           </ul>
-
-          <p>To request a refund, please contact us at {process.env.NEXT_PUBLIC_SUPPORT_EMAIL} with your account details and the reason for your refund request. We will review your request and respond within 7 business days. Approved refunds will be processed within 14 business days of approval.</p>
+          <p className="mt-4">Statutory right of withdrawal: Consumers in the EU/EEA retain any non‑waivable rights under applicable distance‑selling regulations.</p>
         </div>
 
         <p className="mt-8">
-          <strong className="font-semibold text-gray-900">Governing Law.</strong> These terms and conditions are governed by and construed in accordance with the laws of the kingdom of Sweden. Any disputes arising from these terms will be resolved in the courts of the kingdom of Sweden.
+          <strong className="font-semibold text-gray-900">Governing Law.</strong> These Terms are governed by the laws of Sweden. Disputes will be resolved in the courts of Sweden.
         </p>
 
         <p className="mt-8">
-          <strong className="font-semibold text-gray-900">Modifications.</strong> Transfer.zip reserves the right to modify these terms and conditions at any time without prior notice, including the terms regarding individual plans and their limits. Users are encouraged to review these terms periodically to stay informed of any changes. If the terms and limits regarding plans are changed, users will be informed 1 month in advance, and have the right to cancel their subscription before the changes take into effect.
+          <strong className="font-semibold text-gray-900">Modifications.</strong> We may modify these Terms at any time. We will notify registered users at least 30 days before changes affecting fees, plan limits, or material user rights take effect.
         </p>
 
         <p className="mt-8">
-          <strong className="font-semibold text-gray-900">Contact Information.</strong> For any questions or concerns regarding these terms and conditions, please contact us at {process.env.NEXT_PUBLIC_SUPPORT_EMAIL}.
-
-          To report DMCA violations, please contact us at {process.env.NEXT_PUBLIC_CONTACT_EMAIL}.
+          <strong className="font-semibold text-gray-900">Contact Information.</strong> Questions or DMCA notices: {process.env.NEXT_PUBLIC_SUPPORT_EMAIL}.
         </p>
 
-        <p className="mt-8"><strong>By using Transfer.zip, you agree to these terms and conditions. If you do not agree, please discontinue the use of our services.</strong></p>
+        <p className="mt-8"><strong>By using Transfer.zip you agree to these Terms. If you do not agree, please discontinue use of the service.</strong></p>
       </div>
     </>
   )

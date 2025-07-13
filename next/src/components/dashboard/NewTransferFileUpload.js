@@ -33,7 +33,7 @@ function AddedEmailField({ email, onAction }) {
   )
 }
 
-export default function ({ user, storage }) {
+export default function ({ user, storage, brandProfiles }) {
 
   const { files, setFiles } = useContext(FileContext)
 
@@ -159,6 +159,9 @@ export default function ({ user, storage }) {
     }
   }
 
+  const [brandProfileId, setBrandProfileId] = useState(null)
+  const brandProfile = brandProfiles.find(profile => profile.id === brandProfileId)
+
   return (
     <div className="flex flex-col gap-4">
       <div className={`mx-auto w-full shadow-lg bg-white max-w-[22rem] rounded-2xl border relative z-10`}>
@@ -172,31 +175,59 @@ export default function ({ user, storage }) {
             </button>
           </div>
         )}
-        <div className="px-6 flex justify-center mt-2 sm:mt-4">
-          <fieldset aria-label="Transfer direction">
-            <RadioGroup
-              value={direction}
-              onChange={value => {
-                setDirection(value)
-              }}
-              className="grid grid-cols-2 gap-x-1 rounded-full p-1 text-center text-xs font-semibold leading-5 ring-1 ring-inset ring-gray-200"
-            >
-              <Radio
-                key={"send"}
-                value={"send"}
-                className="cursor-pointer rounded-full px-2.5 py-1 text-gray-500 data-[checked]:bg-primary data-[checked]:text-white"
-              >
-                Send
-              </Radio>
-              <Radio
-                key={"receive"}
-                value={"receive"}
-                className="cursor-pointer rounded-full px-2.5 py-1 text-gray-500 data-[checked]:bg-primary data-[checked]:text-white"
-              >
-                Request
-              </Radio>
-            </RadioGroup>
-          </fieldset>
+        <div className="px-6">
+          <div className="relative flex justify-center mt-2 sm:mt-4 ">
+            <div>
+              <fieldset aria-label="Transfer direction">
+                <RadioGroup
+                  value={direction}
+                  onChange={value => {
+                    setDirection(value)
+                  }}
+                  className="grid grid-cols-2 gap-x-1 rounded-full p-1 text-center text-xs font-semibold leading-5 ring-1 ring-inset ring-gray-200"
+                >
+                  <Radio
+                    key={"send"}
+                    value={"send"}
+                    className="cursor-pointer rounded-full px-2.5 py-1 text-gray-500 data-[checked]:bg-primary data-[checked]:text-white"
+                  >
+                    Send
+                  </Radio>
+                  <Radio
+                    key={"receive"}
+                    value={"receive"}
+                    className="cursor-pointer rounded-full px-2.5 py-1 text-gray-500 data-[checked]:bg-primary data-[checked]:text-white"
+                  >
+                    Request
+                  </Radio>
+                </RadioGroup>
+              </fieldset>
+            </div>
+            <Select value={brandProfileId} onValueChange={setBrandProfileId}>
+              <SelectTrigger className="w-16 rounded-full absolute top-0 right-0">
+                {
+                  brandProfile ?
+                    <Image width={24} height={24} src={brandProfile.iconUrl} />
+                    :
+                    <BIcon className={"text-gray-400"} center name={"building"} />
+                }
+              </SelectTrigger>
+              <SelectContent>
+                {brandProfiles.length > 0
+                  ?
+                  brandProfiles.map(profile => (
+                    <SelectItem
+                      key={profile.id}
+                      value={profile.id}>
+                      <Image width={24} height={24} src={brandProfile.iconUrl} />
+                    </SelectItem>)
+                  )
+                  :
+                  <SelectItem key={"none"} value={"none"} disabled>No brand profiles.</SelectItem>
+                }
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <form onSubmit={e => e.preventDefault()} ref={formRef} className="grid grid-cols-3 gap-y-4 gap-x-2 px-6 mt-4">
           {direction == "receive" && (

@@ -7,8 +7,8 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function PricingCards({ tiers, compact, buttonText, onTierSelected }) {
-  const _buttonText = buttonText ?? "Get started today"
+export default function PricingCards({ tiers, compact, onTierSelected }) {
+  const _buttonText = "Start 7-day Free Trial"
   return tiers.map((tier, tierIdx) => (
     <div
       key={tier.name}
@@ -78,6 +78,12 @@ export default function PricingCards({ tiers, compact, buttonText, onTierSelecte
       >
         {_buttonText}
       </Link>
+      <p className={`mt-2 text-center text-xs ${tier.featured
+        ? 'text-gray-300'
+        : 'text-gray-500'}`}>
+        {/* <BIcon name={"check-lg"} />{" "} */}
+        $0 due today. Cancel anytime.
+      </p>
     </div>
   ))
 }

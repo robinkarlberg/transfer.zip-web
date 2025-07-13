@@ -77,6 +77,7 @@ UserSchema.methods.friendlyObj = function () {
         verified: this.verified,
         planValidUntil: this.planValidUntil,
         planCancelling: this.planCancelling,
+        isTrial: this.planStatus == "trialing",
         onboarded: this.onboarded,
         notificationSettings: this.notificationSettings.friendlyObj()
     }
@@ -88,7 +89,7 @@ UserSchema.methods.setPassword = function (pass) {
 }
 
 UserSchema.methods.getPlan = function () {
-    if (this.planStatus == "active") {
+    if (this.planStatus == "active" || this.planStatus == "trialing") {
         return this.plan
     }
     else return "free"

@@ -48,6 +48,9 @@ export async function POST(req) {
       cancel_url: `${process.env.SITE_URL}/app`,
       customer: existingCustomerId,
       expires_at: Math.floor(Date.now() / 1000) + (3600 * 22), // Configured to expire after 22 hours
+      subscription_data: {
+        trial_period_days: 7
+      }
     });
 
     // Assuming you want to send the session ID back in the response

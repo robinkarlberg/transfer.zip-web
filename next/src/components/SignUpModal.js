@@ -9,13 +9,14 @@ import Link from "next/link"
 import Spinner from "./elements/Spinner"
 import { sleep } from "@/lib/utils"
 import { register } from "@/lib/client/Api"
+import QuestionCircle from "./elements/QuestionCircle"
 
 const features = [
-  "Make links available for 365 days",
-  "Up to 1TB per transfer",
-  "Unlimited transfers",
-  "Send big files by email",
-  "Ultrafast and secure",
+  <span>Make your files available for <b>a year</b></span>,
+  <span>Send <b>unlimited</b> amount of transfers</span>,
+  <span>Send up to <b>1TB</b> per transfer</span>,
+  <span>Use custom branding <QuestionCircle text={"Add your own logo, customize backgrounds, and include your branding directly in emails and download pages for a seamless, professional look."} /></span>,
+  <span>Easily send files by email</span>,
 ]
 
 export default function SignUpModal({ show, onShowChange }) {
@@ -60,16 +61,16 @@ export default function SignUpModal({ show, onShowChange }) {
     <Modal show={show} onClose={() => onShowChange(false)} style={"none"} size={"max-w-3xl"}>
       <div className="flex p-4">
         <div className="hidden sm:block grow">
-          <h2 className="text-3xl font-bold mb-2">Hey You! 👋</h2>
-          <p className="text-md text-gray-800 mb-4 font-medium">
-            Sign up to make links available for longer.
+          <h2 className="text-3xl font-bold mb-2">Extend your link's life! 👋</h2>
+          <p className="text-md text-gray-800 mb-4 max-w-xs">
+            Unlock seamless file sharing - no need to keep your browser tab open.
           </p>
           <ul
             role="list"
             className={'text-gray-600 mt-2 space-y-3 text-sm/6 sm:mt-3'}
           >
-            {features.map((feature) => (
-              <li key={feature} className="flex gap-x-3">
+            {features.map((feature, i) => (
+              <li key={i} className="flex gap-x-3">
                 <BIcon
                   name={"check-lg"}
                   aria-hidden="true"
@@ -78,13 +79,21 @@ export default function SignUpModal({ show, onShowChange }) {
                 {feature}
               </li>
             ))}
-            <li className="flex gap-x-3 text-purple-500 font-bold">
+            <li className="flex gap-x-3 text-primary font-bold">
               <BIcon
                 name={"lightning-fill"}
                 aria-hidden="true"
                 className={`h-5 w-5 flex-none`}
-              />Plans start at just $9
+              />7 Days Free Trial. Cancel Anytime.
             </li>
+            {/* <li className="flex gap-x-3 mt-10 text-gray-500">
+              <BIcon
+                name={"x-lg"}
+                aria-hidden="true"
+                className={`h-5 w-5 flex-none text-red-500`}
+              />
+              ...keep using Quick Transfers.
+            </li> */}
           </ul>
         </div>
         <div className="grow">

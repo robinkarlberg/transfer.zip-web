@@ -76,7 +76,7 @@ export default function OnboardingPage({ user, hasStripeAccount }) {
           </p>
         </div>
         <div className="mx-auto mt-8 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-12 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
-          <PricingCards tiers={tiers} compact={false} buttonText={"Subscribe"} onTierSelected={handleTierSelected} />
+          <PricingCards tiers={tiers} compact={false} onTierSelected={handleTierSelected} />
         </div>
         <div className={``}>
           <div className="mx-auto max-w-4xl px-6 lg:px-8 pt-16 mb-8">
@@ -101,13 +101,10 @@ export default function OnboardingPage({ user, hasStripeAccount }) {
             </div>
           </div>
         </div>
-        <p className="text-primary text-center text-sm mb-2">
+        {/* <p className="text-primary text-center text-sm mb-2">
           <a href="/legal/terms-and-conditions" target="_blank" className="hover:underline"><BIcon name={"patch-check-fill"} className={"text-xs"} /> 7 day money-back guarantee</a>
-        </p>
-        <p className="text-xs text-center mt-4 text-gray-500">
-          Secure payments via Stripe. <Link className="text-primary-dark" target="_blank" href={"/legal/terms-and-conditions"}>Terms</Link> and <Link className="text-primary-dark" target="_blank" href={"/legal/privacy-policy"}>Privacy</Link> apply.
-        </p>
-        <div className="mt-5 rounded-lg shadow-lg p-2 px-4 border mx-auto">
+        </p> */}
+        <div className="mt-0 rounded-lg shadow-lg p-2 px-4 border mx-auto">
           <div className="text-xs">
             <p className="text-center text-gray-500">
               You are logged in as {user?.email}{" "}
@@ -133,6 +130,9 @@ export default function OnboardingPage({ user, hasStripeAccount }) {
             </p>
           </div>
         </div>
+        <p className="text-xs text-center mt-8 text-gray-500">
+          Secure payments via Stripe. <Link className="text-primary-dark" target="_blank" href={"/legal/terms-and-conditions"}>Terms</Link> and <Link className="text-primary-dark" target="_blank" href={"/legal/privacy-policy"}>Privacy</Link> apply.
+        </p>
       </div>
     </>
   )

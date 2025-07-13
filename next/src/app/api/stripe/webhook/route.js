@@ -1,5 +1,5 @@
 import User from "@/lib/server/mongoose/models/User";
-import { resp } from "@/lib/server/serverUtils";
+import { listTransfersForUser, resp } from "@/lib/server/serverUtils";
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/server/mongoose/db";
 import { getStripe } from "@/lib/server/stripe";
@@ -100,6 +100,17 @@ const handleSubscriptionDeleted = async object => {
     });
 
     await user.save();
+
+    const transfers = await listTransfersForUser(user)
+
+    // Delete the user's transfers. Worker will take care of it.
+    await Promise.all(
+      transfers.map(async transfer => {
+        await transfer.updateOne({
+          expiresAt: new Date(Date.now())
+        })
+      })
+    )
   }
   else {
     console.error(`[handleSubscriptionDeleted] User does not exist for customer: ${object.customer}`);

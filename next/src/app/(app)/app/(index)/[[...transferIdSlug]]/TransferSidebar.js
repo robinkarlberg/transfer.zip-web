@@ -13,15 +13,7 @@ import { parseTransferExpiryDate, tryCopyToClipboard } from "@/lib/utils"
 import { Transition } from "@headlessui/react"
 import { useRouter } from "next/navigation"
 import { useContext, useEffect, useMemo, useRef, useState } from "react"
-
-const YesNo = ({ onYes, onNo }) => {
-  return (
-    <div className="text-2xl text-gray-600 flex gap-1">
-      <button className="hover:text-primary" onClick={onYes}><BIcon name={"check-circle"} /></button>
-      <button className="hover:text-gray-700" onClick={onNo}><BIcon name={"x-circle"} /></button>
-    </div>
-  )
-}
+import { YesNo } from "../../../../../components/dashboard/YesNo"
 
 export default function ({ user, selectedTransfer }) {
 

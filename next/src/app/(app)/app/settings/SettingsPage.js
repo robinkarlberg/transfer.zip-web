@@ -12,7 +12,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Button } from "@/components/ui/button"
 import Spinner from "@/components/elements/Spinner"
 import { DashboardContext } from "@/context/DashboardContext"
-import { sleep } from "@/lib/utils"
+import { humanTimeUntil, sleep } from "@/lib/utils"
 import { IS_SELFHOST } from "@/lib/isSelfHosted"
 
 const parseDollar = cents => {
@@ -20,11 +20,11 @@ const parseDollar = cents => {
   return `${cents < 0 ? '-' : ''}$${amount}`
 }
 
-function TierCard({ isCurrent, tier, isUpgrade, onAction }) {
+function TierCard({ isCurrent, isTrial, planCancelling, planValidUntil, tier, isUpgrade, onAction }) {
   const { id, name, price, features } = tier
   return (
     <div className={`relative border-2 rounded-lg py-3 px-4 col-span-1 flex flex-col ${isCurrent ? "border-primary bg-primary-50" : "border-gray-200"}`}>
-      {isCurrent && <p className="text-xs bg-primary-50 absolute -top-2 text-primary px-1 rounded-full font-bold">CURRENT PLAN</p>}
+      {isCurrent && <p className="text-xs bg-primary-50 absolute -top-2 text-primary px-1 rounded-full font-bold uppercase">{isTrial || planCancelling ? <>{planCancelling ? "CANCELLING" : "FREE TRIAL"} - {humanTimeUntil(planValidUntil)} LEFT</> : "CURRENT PLAN"}</p>}
       <div>
         <div className="flex justify-between">
           <p className="font-bold">{name}</p>
@@ -231,10 +231,14 @@ export default function ({ user }) {
           <div className="border rounded-2xl shadow-xs p-6 border-gray-900/10 max-w-xl mb-3">
             <h2 className="text-lg font-semibold text-gray-900 ">Subscription</h2>
             <p className="mt-1 text-sm/6 text-gray-600">View and change your subscription details.</p>
-
+            {/* {user.isTrial && (
+              <div className="border-2 border-primary bg-primary-50 p-4 rounded-lg">
+                <span className="font-bold">Free Trial</span>
+              </div>
+            )} */}
             <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
               {
-                pricing.tiers.map(tier => <TierCard key={tier.id} isCurrent={user.plan == tier.id} tier={tier} isUpgrade={user.plan != "pro" && tier.id == "pro"}
+                pricing.tiers.map(tier => <TierCard key={tier.id} isTrial={user.isTrial} planCancelling={user.planCancelling} planValidUntil={user.planValidUntil} isCurrent={user.plan == tier.id} tier={tier} isUpgrade={user.plan != "pro" && tier.id == "pro"}
                   onAction={action => {
                     if (action == "upgrade") {
                       showUpgradePreview(tier.id)
