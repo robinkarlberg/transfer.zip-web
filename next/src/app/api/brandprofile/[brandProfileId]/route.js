@@ -2,6 +2,13 @@ import BrandProfile from "@/lib/server/mongoose/models/BrandProfile";
 import { resp } from "@/lib/server/serverUtils";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 import { NextResponse } from "next/server";
+import {
+  cropIconTo64Png,
+  cropBackgroundTo1920x1080,
+  dataUrlToBuffer,
+  uploadBufferToS3,
+  processAndUploadBrandProfileImages
+} from "@/app/api/brandprofile/brandProfileUtils"
 
 export async function PUT(req, { params }) {
   const { user } = await useServerAuth();
@@ -14,8 +21,19 @@ export async function PUT(req, { params }) {
   }
 
   if (name !== undefined) profile.name = name;
-  if (iconUrl !== undefined) profile.iconUrl = iconUrl;
-  if (backgroundUrl !== undefined) profile.backgroundUrl = backgroundUrl;
+
+  try {
+    const processed = await processAndUploadBrandProfileImages({
+      iconUrl,
+      backgroundUrl,
+      brandProfileId
+    })
+
+    if (processed.iconUrl) profile.iconUrl = processed.iconUrl
+    if (processed.backgroundUrl) profile.backgroundUrl = processed.backgroundUrl
+  } catch (e) {
+    return NextResponse.json(resp(e.message), { status: 400 })
+  }
   profile.lastUsed = new Date();
   await profile.save();
 

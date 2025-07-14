@@ -2,6 +2,9 @@ import BrandProfile from "@/lib/server/mongoose/models/BrandProfile";
 import { resp } from "@/lib/server/serverUtils";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 import { NextResponse } from "next/server";
+import {
+  processAndUploadBrandProfileImages
+} from "@/app/api/brandprofile/brandProfileUtils";
 
 export async function POST(req) {
   const { user } = await useServerAuth();
@@ -15,12 +18,26 @@ export async function POST(req) {
   const profile = new BrandProfile({
     author: user._id,
     name,
-    iconUrl,
-    backgroundUrl,
+    iconUrl: null,
+    backgroundUrl: null,
     lastUsed: new Date(),
   });
 
   await profile.save();
+
+  try {
+    const processed = await processAndUploadBrandProfileImages({
+      iconUrl,
+      backgroundUrl,
+      brandProfileId: profile._id.toString(),
+    });
+
+    if (processed.iconUrl) profile.iconUrl = processed.iconUrl;
+    if (processed.backgroundUrl) profile.backgroundUrl = processed.backgroundUrl;
+    if (processed.iconUrl || processed.backgroundUrl) await profile.save();
+  } catch (e) {
+    return NextResponse.json(resp(e.message), { status: 400 });
+  }
 
   return NextResponse.json(resp({ brandProfile: profile.friendlyObj() }));
 }

@@ -76,6 +76,7 @@ export async function POST(req) {
   // Encryption keys are used when writing to disk, not buckets
   // however, buckets are encrypted by default and probably more secure anyways lol
   // Maybe put these on the node server thoughh....
+  // TODO: Nvm lets just introduce end-to-end encryption feature instead and ditch these.
   const encryptionKey = crypto.randomBytes(32)
   const encryptionIV = crypto.randomBytes(16)
 

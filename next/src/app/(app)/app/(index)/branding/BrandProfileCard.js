@@ -23,7 +23,7 @@ export default function ({ id, name, iconUrl, backgroundUrl }) {
       <div className="rounded-lg border border-gray-100 mt-2">
         <div className="relative aspect-video rounded-md overflow-clip flex justify-center items-center">
           <Image
-            layout="fill"
+            fill
             className="object-center object-cover pointer-events-none group-hover:scale-105 transition-transform duration-300"
             src={backgroundUrl || transfer_zip_grid}
             alt={"Brand Profile Background Image"}

@@ -1,12 +1,7 @@
-import FAQ from "@/components/FAQ";
-import Features1 from "@/components/Features1";
-import TestimonialCloud from "@/components/TestimonialCloud";
-import { IS_SELFHOST } from "@/lib/isSelfHosted";
-
 export default function ({ children }) {
   return (
     <div>
-      <main className="grid min-h-[100vh] place-items-center px-6 py-24 sm:py-32 lg:px-8 relative">
+      <main className="w-full relative">
         <svg
           aria-hidden="true"
           className="absolute inset-0 -z-10 h-full w-full stroke-gray-200 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
@@ -33,13 +28,6 @@ export default function ({ children }) {
         </svg>
         {children}
       </main>
-      {!IS_SELFHOST && (
-        <>
-          <Features1 />
-          <TestimonialCloud />
-          <FAQ />
-        </>
-      )}
     </div>
   )
 }

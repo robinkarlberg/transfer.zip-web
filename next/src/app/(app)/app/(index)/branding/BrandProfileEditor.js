@@ -31,8 +31,8 @@ export default function ({ initialProfile, isNew }) {
     setLoading(true)
     const payload = {
       name: profile.name,
-      iconUrl: iconImageUrl,
-      backgroundUrl: backgroundImageUrl,
+      iconUrl: iconImageUrl && iconImageUrl.startsWith("data:") ? iconImageUrl : undefined,
+      backgroundUrl: backgroundImageUrl && backgroundImageUrl.startsWith("data:") ? backgroundImageUrl : undefined,
     }
     try {
       if (isNew) {
@@ -76,13 +76,6 @@ export default function ({ initialProfile, isNew }) {
 
   const handleBackgroundFiles = handleImageFiles(setBackgroundImageUrl, "backgroundUrl")
   const handleLogoFiles = handleImageFiles(setIconImageUrl, "logoUrl")
-
-  const dlBackgroundStyle = backgroundImageUrl ? {
-    backgroundImage: `url(${backgroundImageUrl})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat"
-  } : {}
 
   const handleDelete = async () => {
     setLoading(true)
@@ -185,32 +178,42 @@ export default function ({ initialProfile, isNew }) {
             </div>
             <div
               className="px-4 pt-2 flex items-center justify-center h-[560px] relative"
-              style={dlBackgroundStyle}
             >
-              {!backgroundImageUrl && <svg
-                aria-hidden="true"
-                className="absolute inset-0 h-full w-full stroke-gray-200 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
-              >
-                <defs>
-                  <pattern
-                    x="50%"
-                    y={-1}
-                    id="83fd4e5a-9d52-42fc-97b6-718e5d7ee527"
-                    width={200}
-                    height={200}
-                    patternUnits="userSpaceOnUse"
-                  >
-                    <path d="M100 200V.5M.5 .5H200" fill="none" />
-                  </pattern>
-                </defs>
-                <svg x="50%" y={-1} className="overflow-visible fill-gray-50">
-                  <path
-                    d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z"
-                    strokeWidth={0}
+              {backgroundImageUrl ?
+                (
+                  <Image
+                    fill
+                    alt="Branding Background Image"
+                    className="object-center object-cover pointer-events-none"
+                    src={backgroundImageUrl}
                   />
-                </svg>
-                <rect fill="url(#83fd4e5a-9d52-42fc-97b6-718e5d7ee527)" width="100%" height="100%" strokeWidth={0} />
-              </svg>}
+                )
+                : (
+                  <svg
+                    aria-hidden="true"
+                    className="absolute inset-0 h-full w-full stroke-gray-200 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
+                  >
+                    <defs>
+                      <pattern
+                        x="50%"
+                        y={-1}
+                        id="83fd4e5a-9d52-42fc-97b6-718e5d7ee527"
+                        width={200}
+                        height={200}
+                        patternUnits="userSpaceOnUse"
+                      >
+                        <path d="M100 200V.5M.5 .5H200" fill="none" />
+                      </pattern>
+                    </defs>
+                    <svg x="50%" y={-1} className="overflow-visible fill-gray-50">
+                      <path
+                        d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z"
+                        strokeWidth={0}
+                      />
+                    </svg>
+                    <rect fill="url(#83fd4e5a-9d52-42fc-97b6-718e5d7ee527)" width="100%" height="100%" strokeWidth={0} />
+                  </svg>
+                )}
               <div className="relative z-10 bg-white rounded-2xl border p-6 shadow-xl w-full max-w-80 min-h-96 flex flex-col justify-between">
                 <div>
                   <h2 className="font-bold text-xl/8 text-gray-800">Transfer Title</h2>

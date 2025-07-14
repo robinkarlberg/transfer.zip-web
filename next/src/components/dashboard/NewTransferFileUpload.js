@@ -213,7 +213,7 @@ export default function ({ user, storage, brandProfiles }) {
                         <Image alt="Brand Profile Icon" className="w-6 h-6" width={24} height={24} src={brandProfile.iconUrl} />
                       </div>
                       :
-                      <BIcon className={"text-gray-400"} center name={"dash-circle-dotted"} />
+                      <BIcon className={"text-gray-400"} center name={"slash-lg"} />
                   }
                 </button>
               </SelectTriggerFix>
@@ -225,6 +225,7 @@ export default function ({ user, storage, brandProfiles }) {
                       key={profile.id}
                       value={profile.id}>
                       <Image alt="Brand Profile Icon" width={24} height={24} src={profile.iconUrl} />
+                      <span className="text-sm text-gray-700">{profile.name}</span>
                     </SelectItem>)
                   ), <SelectItem key={null} value={null}>None</SelectItem>]
                   :
