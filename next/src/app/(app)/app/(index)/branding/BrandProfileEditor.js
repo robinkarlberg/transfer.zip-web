@@ -22,17 +22,17 @@ export default function ({ initialProfile, isNew }) {
   const router = useRouter()
 
   const backgroundFileInputRef = useRef(null)
-  const [backgroundImageUrl, setBackgroundImageUrl] = useState(profile.backgroundUrl || null)
+  const [backgroundImageUrl, setBackgroundImageUrl] = useState(initialProfile.backgroundUrl || null)
 
   const iconFileInputRef = useRef(null)
-  const [iconImageUrl, setIconImageUrl] = useState(profile.iconUrl || null)
+  const [iconImageUrl, setIconImageUrl] = useState(initialProfile.iconUrl || null)
 
   const handleSave = async e => {
     setLoading(true)
     const payload = {
       name: profile.name,
-      iconUrl: iconImageUrl && iconImageUrl.startsWith("data:") ? iconImageUrl : undefined,
-      backgroundUrl: backgroundImageUrl && backgroundImageUrl.startsWith("data:") ? backgroundImageUrl : undefined,
+      iconUrl: iconImageUrl,
+      backgroundUrl: backgroundImageUrl,
     }
     try {
       if (isNew) {
