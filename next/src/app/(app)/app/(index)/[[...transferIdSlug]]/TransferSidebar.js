@@ -356,7 +356,7 @@ export default function ({ user, selectedTransfer }) {
                         selectedTransfer ?
                           <div className="flex items-center">
                             <Image alt="Brand Profile Icon" width={32} height={32} src={selectedTransfer.brandProfile.iconUrl} />
-                            <span className="ms-1.5 font-semibold text-gray-800">{selectedTransfer.brandProfile.name}</span>
+                            <span className="ms-1.5 font-semibold text-gray-700">{selectedTransfer.brandProfile.name}</span>
                           </div>
                           :
                           <Skeleton className={"h-8 w-32"} />
