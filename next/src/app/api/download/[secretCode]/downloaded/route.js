@@ -39,7 +39,7 @@ export async function POST(req, { params }) {
     const brand = transfer.brandProfile ? transfer.brandProfile.friendlyObj() : undefined;
     await sendTransferDownloaded(author.email, {
       name: transfer.name || 'Untitled Transfer',
-      link: transfer.getDownloadLink(),
+      link: `${process.env.SITE_URL}/app/${transfer._id.toString()}`,
       brand,
     });
     transfer.lastDownloadEmailSentAt = now;
