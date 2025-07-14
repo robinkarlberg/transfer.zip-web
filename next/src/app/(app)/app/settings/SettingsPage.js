@@ -69,8 +69,12 @@ export default function ({ user }) {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if(searchParams.get("upgrade") !== null) {
+    if (searchParams.get("upgrade") !== null) {
       showUpgradePreview("pro")
+      const params = new URLSearchParams(window.location.search)
+      params.delete("upgrade")
+      const newPath = window.location.pathname + (params.toString() ? `?${params}` : "")
+      router.replace(newPath)
     }
   }, [])
 

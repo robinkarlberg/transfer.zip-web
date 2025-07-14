@@ -7,8 +7,8 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function PricingCards({ tiers, compact, onTierSelected, overrideText }) {
-  const _buttonText = overrideText || "Start 7-day Free Trial"
+export default function PricingCards({ tiers, compact, onTierSelected, hasFreeTrial }) {
+  const _buttonText = hasFreeTrial ? "Start 7-day Free Trial" : "Subscribe"
   return tiers.map((tier, tierIdx) => (
     <div
       key={tier.name}
@@ -78,12 +78,14 @@ export default function PricingCards({ tiers, compact, onTierSelected, overrideT
       >
         {_buttonText}
       </Link>
-      <p className={`mt-2 text-center text-xs ${tier.featured
-        ? 'text-gray-300'
-        : 'text-gray-500'}`}>
-        {/* <BIcon name={"check-lg"} />{" "} */}
-        $0 due today. Cancel anytime.
-      </p>
+      {hasFreeTrial && (
+        <p className={`mt-2 text-center text-xs ${tier.featured
+          ? 'text-gray-300'
+          : 'text-gray-500'}`}>
+          {/* <BIcon name={"check-lg"} />{" "} */}
+          $0 due today. Cancel anytime.
+        </p>
+      )}
     </div>
   ))
 }

@@ -1,4 +1,4 @@
-import { resp } from "@/lib/server/serverUtils";
+import { doesUserHaveFreeTrial, resp } from "@/lib/server/serverUtils";
 import { getStripe } from "@/lib/server/stripe";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 import { NextResponse } from "next/server";
@@ -16,6 +16,10 @@ export async function POST(req) {
   console.log("create-checkout-session:", user.email)
 
   const stripe = getStripe()
+
+  // Check if has free trial before setting first stripe customer id
+  // otherwise it will make a unneccesarry (how2spell?) api call 
+  const hasFreeTrial = await doesUserHaveFreeTrial(user)
 
   let existingCustomerId = user.stripe_customer_id
   try {
@@ -48,9 +52,11 @@ export async function POST(req) {
       cancel_url: `${process.env.SITE_URL}/app`,
       customer: existingCustomerId,
       expires_at: Math.floor(Date.now() / 1000) + (3600 * 22), // Configured to expire after 22 hours
-      subscription_data: {
+
+      // set trial period to 7 days if user has a free trial to use
+      subscription_data: hasFreeTrial ? {
         trial_period_days: 7
-      }
+      } : undefined
     });
 
     // Assuming you want to send the session ID back in the response

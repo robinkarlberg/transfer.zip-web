@@ -35,7 +35,7 @@ export default function Pricing() {
         We employ a pricing strategy that values transparency and fairness, allowing you to focus on your work, without worrying about hidden fees.
       </p>
       <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
-        <PricingCards tiers={tiers} />
+        <PricingCards tiers={tiers} hasFreeTrial={true} />
         <div className="col-span-full mt-16">
           <div className="border shadow rounded-3xl p-10 w-full flex flex-col lg:flex-row justify-between">
             <div>

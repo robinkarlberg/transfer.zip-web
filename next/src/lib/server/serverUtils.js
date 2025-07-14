@@ -1,5 +1,6 @@
 import "server-only"
 import Transfer from "./mongoose/models/Transfer"
+import { getStripe } from "./stripe"
 
 export const IS_DEV = process.env.NODE_ENV == "development"
 
@@ -51,11 +52,43 @@ export const getTransferRequestUploadLink = (transferRequest) => {
   return `${process.env.SITE_URL}/upload/${transferRequest.secretCode}`
 }
 export const getMaxStorageForPlan = (plan) => {
-    if (plan === "starter") {
-        return 200e9;
-    }
-    else if (plan === "pro") {
-        return 1e12;
-    }
-    else return 0;
+  if (plan === "starter") {
+    return 200e9;
+  }
+  else if (plan === "pro") {
+    return 1e12;
+  }
+  else return 0;
 };
+
+async function customerHasPaid(customerId) {
+  const { data: [sub] } = await getStripe().subscriptions.list({
+    customer: customerId,
+    status: 'all',
+    limit: 1,
+    expand: ['data.latest_invoice'],
+  });
+  if (!sub) return false;                       // no subscription at all
+  if (sub.status === 'trialing') return false;  // still on trial
+  if (sub.status === 'active') return true;     // first charge succeeded
+  return !!sub.latest_invoice?.paid;            // fall‑back for past_due/unpaid
+}
+
+export async function doesUserHaveFreeTrial(user) {
+  if (user && !!user.stripe_customer_id) {
+    try {
+      if (user.usedFreeTrial) {
+        return false
+      }
+      else if (await customerHasPaid(user.stripe_customer_id)) {
+        // Users who has paid once can't get free trial anymore.
+        return false
+      }
+    }
+    catch (e) {
+      console.error("Error in onboarding page:", e)
+    }
+  }
+
+  return true
+}
