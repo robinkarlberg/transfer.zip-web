@@ -112,7 +112,7 @@ export default function ({ user, storage, brandProfiles }) {
     const name = formData.get("name")
     const description = formData.get("description")
 
-    const { transferRequest } = await newTransferRequest({ name, description, emails: emailRecipients })
+    const { transferRequest } = await newTransferRequest({ name, description, emails: emailRecipients, brandProfileId })
     // if (emailRecipients.length > 0) {
     //   await sendTransferRequestByEmail(transferRequest.id, emailRecipients)
     // }

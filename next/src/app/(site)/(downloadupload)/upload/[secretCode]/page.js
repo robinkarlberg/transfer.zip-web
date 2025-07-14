@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import dbConnect from "@/lib/server/mongoose/db";
 import BrandHeader from "../../BrandHeader";
 import Header from "@/components/Header";
+import { IS_SELFHOST } from "@/lib/isSelfHosted";
 
 export default async function ({ params }) {
   const { secretCode } = await params
@@ -16,7 +17,7 @@ export default async function ({ params }) {
     notFound()
   }
 
-  let { brandProfile } = transfer
+  let { brandProfile } = transferRequest
 
   return (
     <>

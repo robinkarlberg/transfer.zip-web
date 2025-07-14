@@ -64,7 +64,7 @@ export async function POST(req) {
 
   let transferRequest
   if (transferRequestSecretCode) {
-    transferRequest = await TransferRequest.findOne({ secretCode: transferRequestSecretCode })
+    transferRequest = await TransferRequest.findOne({ secretCode: transferRequestSecretCode }).populate('brandProfile')
   }
   else {
     if (!auth) {
@@ -87,6 +87,8 @@ export async function POST(req) {
     _id: new mongoose.Types.ObjectId(),
   }))
 
+  const usedBrandProfile = brandProfile || (transferRequest ? transferRequest.brandProfile : undefined)
+
   const transfer = new Transfer({
     transferRequest: transferRequest ? transferRequest._id : undefined,
     author: auth ? auth.user._id : undefined,
@@ -96,7 +98,7 @@ export async function POST(req) {
     encryptionKey,
     encryptionIV,
     files: transferFiles,
-    brandProfile: brandProfile ? brandProfile._id : undefined
+    brandProfile: usedBrandProfile ? usedBrandProfile._id : undefined
   })
 
   const xForwardedFor = process.env.NODE_ENV === "development" ? "127.0.0.1" : req.headers.get("x-forwarded-for")
@@ -132,9 +134,9 @@ export async function POST(req) {
   console.log("Chose nodeUrl:", nodeUrl)
   transfer.nodeUrl = nodeUrl
 
-  if (brandProfile) {
-    brandProfile.lastUsed = new Date()
-    await brandProfile.save()
+  if (usedBrandProfile) {
+    usedBrandProfile.lastUsed = new Date()
+    await usedBrandProfile.save()
   }
 
   if (!transferRequest && emails?.length) {

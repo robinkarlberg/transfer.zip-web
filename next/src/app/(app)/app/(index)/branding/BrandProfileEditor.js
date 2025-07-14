@@ -18,7 +18,9 @@ import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogT
 
 export default function ({ initialProfile, isNew }) {
   const [profile, setProfile] = useState(initialProfile)
-  const [loading, setLoading] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const loading = saving || deleting
   const router = useRouter()
 
   const backgroundFileInputRef = useRef(null)
@@ -28,7 +30,7 @@ export default function ({ initialProfile, isNew }) {
   const [iconImageUrl, setIconImageUrl] = useState(initialProfile.iconUrl || null)
 
   const handleSave = async e => {
-    setLoading(true)
+    setSaving(true)
     const payload = {
       name: profile.name,
       iconUrl: iconImageUrl,
@@ -44,7 +46,7 @@ export default function ({ initialProfile, isNew }) {
       }
     }
     catch {
-      setLoading(false)
+      setSaving(false)
     }
   }
 
@@ -78,7 +80,7 @@ export default function ({ initialProfile, isNew }) {
   const handleLogoFiles = handleImageFiles(setIconImageUrl, "logoUrl")
 
   const handleDelete = async () => {
-    setLoading(true)
+    setDeleting(true)
     await deleteBrandProfile(profile.id)
     window.location.replace("/app/branding")
   }
@@ -86,7 +88,9 @@ export default function ({ initialProfile, isNew }) {
   const side = <div className="flex gap-2">
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" disabled={loading}>{loading && <Spinner />} Delete</Button>
+        <Button variant="outline" disabled={loading}>
+          {deleting && <Spinner />} Delete
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -99,7 +103,7 @@ export default function ({ initialProfile, isNew }) {
             disabled={loading}
             onClick={handleDelete}
           >
-            {loading && <Spinner />} Delete
+            {deleting && <Spinner />} Delete
           </Button>
           <DialogClose asChild>
             <Button>Cancel</Button>
@@ -107,7 +111,9 @@ export default function ({ initialProfile, isNew }) {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-    <Button onClick={handleSave} disabled={loading}>{loading && <Spinner />} Save</Button>
+    <Button onClick={handleSave} disabled={loading}>
+      {saving && <Spinner />} Save
+    </Button>
   </div>
 
   return (
