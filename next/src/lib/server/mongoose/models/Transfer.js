@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import crypto from "crypto"
 
+import BrandProfile from './BrandProfile';
+
 // These keys are not protecting anything critical. It is just so that the Transfer password is
 // not in plain-text in the database. We also do not want to hash it, as we need to let the user
 // reveal it if they forget it.
@@ -146,7 +148,8 @@ TransferSchema.methods.friendlyObj = function () {
         hasTransferRequest: !!this.transferRequest,
         finishedUploading: this.finishedUploading,
         nodeUrl: this.nodeUrl,
-        brandProfileId: this.brandProfile ? this.brandProfile.toString() : undefined
+        brandProfileId: this.brandProfile ? this.brandProfile.toString() : undefined,
+        brandProfile: (this.brandProfile && typeof this.brandProfile.friendlyObj === 'function') ? this.brandProfile.friendlyObj() : undefined
     }
 }
 

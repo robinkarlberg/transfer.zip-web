@@ -227,7 +227,7 @@ export default function ({ user, storage, brandProfiles }) {
                       <Image alt="Brand Profile Icon" width={24} height={24} src={profile.iconUrl} />
                       <span className="text-sm text-gray-700">{profile.name}</span>
                     </SelectItem>)
-                  ), <SelectItem key={null} value={null}>None</SelectItem>]
+                  ), <SelectItem key={"nonee"} value={null}>No brand profile</SelectItem>]
                   :
                   <SelectItem key={"none"} value={"none"} disabled>No brand profiles.</SelectItem>
                 }

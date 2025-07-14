@@ -1,26 +1,31 @@
 import { Html, Head, Body, Container, Img, Text } from '@react-email/components';
 
 export default function EmailLayout({ children, brand }) {
-  const b = brand || { name: process.env.NEXT_PUBLIC_SITE_NAME || 'Transfer.zip', iconUrl: `${process.env.SITE_URL}/img/icon-small.png`, siteUrl: process.env.SITE_URL }
+  const iconUrl = brand?.iconUrl || `${process.env.SITE_URL}/img/icon.png`
   return (
     <Html>
       <Head />
       <Body style={main}>
         <Container style={container}>
           <Img
-            src={b.iconUrl}
+            src={iconUrl}
             width="64"
             height="64"
-            alt={b.name}
+            alt={"Icon url"}
           />
           {children}
         </Container>
         <Text style={{ textAlign: "center", color: "gray" }}>
-          Shared securely with <a style={{ textDecoration: "underline" }} href={b.siteUrl}>{b.name}</a>
+          {
+            brand ?
+              <>Shared securely for {brand.name} with <a style={{ textDecoration: "underline" }} href={`${process.env.SITE_URL}`}>{process.env.NEXT_PUBLIC_SITE_NAME}</a></>
+              :
+              <>Shared securely with <a style={{ textDecoration: "underline" }} href={`${process.env.SITE_URL}`}>{process.env.NEXT_PUBLIC_SITE_NAME}</a></>
+          }
           <span style={{ margin: "0 4px" }}>&bull;</span>
-          <a style={{ textDecoration: "underline" }} href={`${b.siteUrl}/legal/privacy-policy`}>Privacy</a>
+          <a style={{ textDecoration: "underline" }} href={`${process.env.SITE_URL}/legal/privacy-policy`}>Privacy</a>
           <span style={{ margin: "0 4px" }}>&bull;</span>
-          <a style={{ textDecoration: "underline" }} href={`${b.siteUrl}/legal/terms-and-conditions`}>Terms</a>
+          <a style={{ textDecoration: "underline" }} href={`${process.env.SITE_URL}/legal/terms-and-conditions`}>Terms</a>
         </Text>
       </Body>
     </Html>

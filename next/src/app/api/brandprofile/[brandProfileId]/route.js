@@ -14,7 +14,7 @@ export async function PUT(req, { params }) {
   const { user } = await useServerAuth();
   const { brandProfileId } = await params;
   const { name, iconUrl, backgroundUrl } = await req.json();
-
+  // console.log(name, iconUrl, backgroundUrl)
   const profile = await BrandProfile.findOne({ _id: brandProfileId, author: user._id });
   if (!profile) {
     return NextResponse.json(resp("brand profile not found"), { status: 404 });
@@ -28,6 +28,9 @@ export async function PUT(req, { params }) {
       backgroundUrl,
       brandProfileId
     })
+
+    // console.log(processed)
+
 
     profile.iconUrl = processed.iconUrl
     profile.backgroundUrl = processed.backgroundUrl

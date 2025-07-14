@@ -121,7 +121,7 @@ const Entry = ({ transfer }) => {
           <div className="text-sm text-gray-600 font-medium group-hover:hidden">
             <span className="">
               {!finishedUploading ?
-                (!hasTransferRequest ? <><BIcon name={"cloud-slash"} /> Incomplete</> : <><BIcon name={"hourglass-split"} /> Waiting for files...</>)
+                <><BIcon name={"cloud-slash"} /> Incomplete</>
                 :
                 <>{!hasTransferRequest ? <>Sent</> : <><BIcon name={"arrow-down"} /> Received</>} {files.length} file{files.length != 1 ? "s" : ""}</>
               }

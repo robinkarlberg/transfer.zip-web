@@ -14,6 +14,8 @@ import { Transition } from "@headlessui/react"
 import { useRouter } from "next/navigation"
 import { useContext, useEffect, useMemo, useRef, useState } from "react"
 import { YesNo } from "../../../../../components/dashboard/YesNo"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectTriggerFix } from "@/components/ui/select"
+import Image from "next/image"
 
 export default function ({ user, selectedTransfer }) {
 
@@ -81,7 +83,7 @@ export default function ({ user, selectedTransfer }) {
     if (!selectedTransfer) {
       return (
         <div className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6">
-          <Skeleton className={"h-4 my-1 w-28 ms-2"}/>
+          <Skeleton className={"h-4 my-1 w-28 ms-2"} />
         </div>
       )
     }
@@ -176,6 +178,16 @@ export default function ({ user, selectedTransfer }) {
     refreshTransfer()
     setShowForwardTransfer(false)
   }
+
+  // const handleSetProfileId = async profileId => {
+  //   setBrandProfileId(profileId)
+  //   await putTransfer(selectedTransfer.id, { brandProfileId: profileId })
+  //   refreshTransfer()
+  //   displayNotification("success", "Brand profile updated", `The brand profile for this transfer was changed!`)
+  // }
+
+  // const [brandProfileId, setBrandProfileId] = useState(selectedTransfer?.brandProfileId || "none")
+  // const brandProfile = brandProfiles.find(profile => profile.id === selectedTransfer?.brandProfileId)
 
   return (
     <>
@@ -334,6 +346,24 @@ export default function ({ user, selectedTransfer }) {
                     {dateInput}
                   </div>
                 </div>
+                {selectedTransfer?.brandProfile && (
+                  <div>
+                    <label htmlFor="brandProfile" className="block text-base font-bold leading-6 text-gray-900">
+                      Brand Profile
+                    </label>
+                    <div className="mt-2 max-w-52 min-w-40 w-fit">
+                      {
+                        selectedTransfer ?
+                          <div className="flex items-center">
+                            <Image alt="Brand Profile Icon" width={32} height={32} src={selectedTransfer.brandProfile.iconUrl} />
+                            <span className="ms-1.5 font-semibold text-gray-800">{selectedTransfer.brandProfile.name}</span>
+                          </div>
+                          :
+                          <Skeleton className={"h-8 w-32"} />
+                      }
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

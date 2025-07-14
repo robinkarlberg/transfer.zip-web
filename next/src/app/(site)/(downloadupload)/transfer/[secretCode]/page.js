@@ -10,6 +10,7 @@ import { IS_SELFHOST } from "@/lib/isSelfHosted";
 import Features1 from "@/components/Features1";
 import TestimonialCloud from "@/components/TestimonialCloud";
 import FAQ from "@/components/FAQ";
+import Image from "next/image";
 
 export async function generateMetadata({ params }) {
   const { secretCode } = await params
@@ -60,6 +61,14 @@ export default async function ({ params }) {
     <>
       <div className="grid min-h-[100vh] place-items-center ">
         {brandProfile ? <BrandHeader brandProfile={brandProfile} /> : <Header />}
+        {brandProfile && brandProfile.backgroundUrl && (
+          <Image
+            fill
+            alt="Branding Background Image"
+            className="object-center object-cover pointer-events-none"
+            src={brandProfile.backgroundUrl}
+          />
+        )}
         <div className="bg-white backdrop-blur-sm rounded-2xl border p-6 shadow-xl w-full max-w-80 min-h-96 flex flex-col justify-between">
           <div>
             {/* <h1 className="text-3xl font-semibold tracking-tight text-gray-900 text-start mb-4">You got files!</h1> */}

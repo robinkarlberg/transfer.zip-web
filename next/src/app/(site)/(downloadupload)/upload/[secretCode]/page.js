@@ -5,6 +5,10 @@ import dbConnect from "@/lib/server/mongoose/db";
 import BrandHeader from "../../BrandHeader";
 import Header from "@/components/Header";
 import { IS_SELFHOST } from "@/lib/isSelfHosted";
+import Features1 from "@/components/Features1";
+import TestimonialCloud from "@/components/TestimonialCloud";
+import FAQ from "@/components/FAQ";
+import Image from "next/image";
 
 export default async function ({ params }) {
   const { secretCode } = await params
@@ -23,7 +27,15 @@ export default async function ({ params }) {
     <>
       <div className="grid min-h-[100vh] place-items-center ">
         {brandProfile ? <BrandHeader brandProfile={brandProfile} /> : <Header />}
-        <div className={`bg-white backdrop-blur-sm rounded-2xl border shadow-xl w-full flex flex-col max-w-96`}>
+        {brandProfile && brandProfile.backgroundUrl && (
+          <Image
+            fill
+            alt="Branding Background Image"
+            className="object-center object-cover pointer-events-none"
+            src={brandProfile.backgroundUrl}
+          />
+        )}
+        <div className={`bg-white backdrop-blur-sm rounded-2xl border shadow-xl w-full flex flex-col max-w-80`}>
           <div className="p-6">
             {/* <h1 className="text-3xl font-semibold tracking-tight text-gray-900 text-start mb-4">You got files!</h1> */}
             <h2 className="font-bold text-xl/8 text-gray-800">{transferRequest.name}</h2>

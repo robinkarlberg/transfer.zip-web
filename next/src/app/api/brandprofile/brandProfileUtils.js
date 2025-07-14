@@ -105,7 +105,7 @@ function getBrandBackgroundPath(brandProfileId) {
 export async function processAndUploadBrandProfileImages({ iconUrl, backgroundUrl, brandProfileId }) {
   const processed = {}
 
-  console.log(iconUrl)
+  // console.log(iconUrl)
   if (iconUrl) {
     // If it starts with data: it has been updated from client
     // otherwise starts with https://<bucket n shit>
@@ -137,7 +137,7 @@ export async function processAndUploadBrandProfileImages({ iconUrl, backgroundUr
   if (backgroundUrl) {
     // If it starts with data: it has been updated from client
     // otherwise starts with https://<bucket n shit>
-    if (iconUrl.startsWith("data:")) {
+    if (backgroundUrl.startsWith("data:")) {
       try {
         const bgBuf = await dataUrlToBuffer(backgroundUrl)
         const croppedBg = await cropBackgroundTo1920x1080(bgBuf)

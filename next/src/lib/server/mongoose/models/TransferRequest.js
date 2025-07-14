@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import crypto from "crypto"
 
+import BrandProfile from './BrandProfile';
+
 const EmailSharedWith = new mongoose.Schema({
     time: { type: Date, default: () => new Date(), required: true },
     email: String

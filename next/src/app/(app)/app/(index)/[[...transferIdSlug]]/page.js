@@ -6,6 +6,7 @@ import { listTransfersForUser } from "@/lib/server/serverUtils"
 import { isValidObjectId } from "mongoose"
 import { redirect } from "next/navigation"
 import TransferSidebarWrapper from "./TransferSidebarWrapper"
+import BrandProfile from "@/lib/server/mongoose/models/BrandProfile"
 
 export default async function ({ params }) {
   const auth = await useServerAuth()
@@ -39,13 +40,20 @@ export default async function ({ params }) {
       return redirect("/app")
     }
   }
+
+  // const brandProfiles = await BrandProfile.find({ author: auth.user._id })
+
   return (
     <>
       <TransfersPage
         transfers={transfers.map(transfer => transfer.friendlyObj())}
         transferRequests={transferRequestsWithCount}
       />
-      <TransferSidebarWrapper user={auth.user.friendlyObj()} transfer={selectedTransfer?.friendlyObj()} />
+      <TransferSidebarWrapper
+        user={auth.user.friendlyObj()}
+        transfer={selectedTransfer?.friendlyObj()}
+      // brandProfiles={brandProfiles.map(profile => profile.friendlyObj())}
+      />
     </>
   )
 }

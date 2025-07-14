@@ -77,7 +77,7 @@ export default function ({ initialProfile, isNew }) {
   }
 
   const handleBackgroundFiles = handleImageFiles(setBackgroundImageUrl, "backgroundUrl")
-  const handleLogoFiles = handleImageFiles(setIconImageUrl, "logoUrl")
+  const handleLogoFiles = handleImageFiles(setIconImageUrl, "iconUrl")
 
   const handleDelete = async () => {
     setDeleting(true)
