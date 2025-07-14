@@ -9,6 +9,7 @@ const EmailSharedWith = new mongoose.Schema({
 const TransferRequestSchema = new mongoose.Schema({
     active: { type: Boolean, default: true },
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true, required: true },
+    brandProfile: { type: mongoose.Schema.Types.ObjectId, ref: "BrandProfile" },
     name: String,
     description: String,
     secretCode: { type: String, default: () => crypto.randomUUID(), required: true, index: true },
@@ -22,7 +23,7 @@ TransferRequestSchema.methods.addSharedEmail = function (email) {
 }
 
 TransferRequestSchema.methods.friendlyObj = function () {
-    const { _id, active, name, description, secretCode, emailsSharedWith, createdAt } = this
+    const { _id, active, name, description, secretCode, emailsSharedWith, createdAt, brandProfile } = this
     return {
         id: _id.toString(),
         active,
@@ -32,17 +33,19 @@ TransferRequestSchema.methods.friendlyObj = function () {
         emailsSharedWith: emailsSharedWith.map(entry => ({ time: entry.time, email: entry.email })),
         createdAt,
         hasName: !!name,
+        brandProfileId: brandProfile ? brandProfile.toString() : undefined,
     }
 }
 
 TransferRequestSchema.methods.uploadObj = function () {
-    const { _id, name, description, secretCode } = this
+    const { _id, name, description, secretCode, brandProfile } = this
     return {
         id: _id,
         name: name || "Untitled Request",
         description,
         secretCode,
         hasName: !!name,
+        brandProfileId: brandProfile ? brandProfile.toString() : undefined,
     }
 }
 

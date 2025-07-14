@@ -44,11 +44,12 @@ export async function POST(req, { params }) {
   }
 
   if (transfer.transferRequest) {
-    const request = await TransferRequest.findById(transfer.transferRequest).populate('author');
+    const request = await TransferRequest.findById(transfer.transferRequest).populate('author').populate('brandProfile');
     if (request && request.author && request.author.notificationSettings?.transferReceived !== false) {
       await sendTransferRequestReceived(request.author.email, {
         name: request.name || 'Untitled Request',
         link: `${process.env.SITE_URL}/app?tab=received`,
+        brand: request.brandProfile ? request.brandProfile.friendlyObj() : undefined,
       });
     }
   }
