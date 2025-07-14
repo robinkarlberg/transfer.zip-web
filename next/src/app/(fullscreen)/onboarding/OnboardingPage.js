@@ -29,7 +29,7 @@ const testimonials = [
   },
 ]
 
-export default function OnboardingPage({ user, hasStripeAccount }) {
+export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial }) {
   const router = useRouter()
 
   const [isRequesting, setIsRequesting] = useState(false);
@@ -68,15 +68,24 @@ export default function OnboardingPage({ user, hasStripeAccount }) {
             src={logo}
             className="mx-auto h-10 w-auto"
           />
-          <h1 className="text-3xl mb-2 font-bold tracking-tight text-gray-900">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
             Welcome to Transfer.zip! 🎉
           </h1>
-          <p className="text-gray-700">
-            Choose a plan that fits your needs. <b>Send files instantly</b> upon purchase.
+          <p className="text-gray-700 mt-4">
+            {
+              hasFreeTrial ?
+                <>
+                  You have a <b>7-day free trial</b> on any plan. You can cancel anytime during your trial, your access still continues for the full 7 days, and you won't be charged a penny.
+                </>
+                :
+                <>
+                  Choose a plan that fits your needs. <b>Send files instantly</b> upon purchase.
+                </>
+            }
           </p>
         </div>
         <div className="mx-auto mt-8 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-12 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
-          <PricingCards tiers={tiers} compact={false} onTierSelected={handleTierSelected} />
+          <PricingCards tiers={tiers} compact={false} onTierSelected={handleTierSelected} overrideText={hasFreeTrial ? undefined : "Subscribe"} />
         </div>
         <div className={``}>
           <div className="mx-auto max-w-4xl px-6 lg:px-8 pt-16 mb-8">

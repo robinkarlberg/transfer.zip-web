@@ -9,6 +9,8 @@ import {
 export async function POST(req) {
   const { user } = await useServerAuth();
 
+  if(user.getPlan() != "pro") return NextResponse.json(resp("User needs to upgrade."), { status: 409 });
+
   const { name, iconUrl, backgroundUrl } = await req.json();
 
   if (!name || typeof name !== "string") {

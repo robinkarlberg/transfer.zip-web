@@ -49,6 +49,7 @@ const UserSchema = new mongoose.Schema({
     planValidUntil: { type: Date },
     planStatus: { type: String, default: "inactive" },
     planCancelling: { type: Boolean, default: false },
+    usedFreeTrial: { type: Boolean, default: false },
 
     // verified: { type: Boolean, default: false },
     // onboarded: { type: Boolean, default: false },
@@ -109,6 +110,9 @@ UserSchema.methods.updateSubscription = function ({ plan, status, validUntil, ca
 
     if (status !== undefined) {
         this.planStatus = status;
+        if (this.planStatus == "trialing") {
+            this.usedFreeTrial = true
+        }
     }
 
     if (cancelling !== undefined) {
@@ -147,8 +151,8 @@ UserSchema.methods.getStorage = async function () {
     const usedStorageBytes = transfers.reduce((total, transfer) => total + transfer.size, 0)
     const maxStorageBytes = this.customMaxStorageBytes || (
         IS_SELFHOST ?
-        10e12   // 10TB for good measure
-        : getMaxStorageForPlan(this.getPlan())
+            10e12   // 10TB for good measure
+            : getMaxStorageForPlan(this.getPlan())
     )
 
     const storagePercent = Math.floor((usedStorageBytes / maxStorageBytes) * 100)

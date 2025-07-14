@@ -10,7 +10,7 @@ export default {
       features: [
         // "Quick-Share files of any size",
         <span><b>Unlimited transfers</b></span>,
-        "Gigabit servers",
+        // "Gigabit servers",
         "Up to 200GB per transfer",
         "Files expire after 14 days",
         "Send files by email",
@@ -25,7 +25,7 @@ export default {
       features: [
         // "Quick-Share files of any size",
         <span><b>Unlimited transfers</b></span>,
-        "Gigabit servers",
+        // "Gigabit servers",
         <span>Up to <b>1TB</b> per transfer</span>,
         <span>Files stay up for <b>365 days</b></span>,
         <span>Send files to <b>50 emails</b></span>,

@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label"
 import { API_URL, changeSubscription, changeSubscriptionPreview, logout, putUserSettings } from "@/lib/client/Api"
 import pricing from "@/lib/pricing"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import Spinner from "@/components/elements/Spinner"
@@ -64,9 +64,15 @@ export default function ({ user }) {
 
   const [showDowngrade, setShowDowngrade] = useState(false)
 
-  const [showUpgrade, setShowUpgrade] = useState(searchParams.get("upgrade") !== null)
+  const [showUpgrade, setShowUpgrade] = useState(false)
   const [newInvoice, setNewInvoice] = useState(null)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if(searchParams.get("upgrade") !== null) {
+      showUpgradePreview("pro")
+    }
+  }, [])
 
   const showUpgradePreview = async tier => {
     setNewInvoice(null)

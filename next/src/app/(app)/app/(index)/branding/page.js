@@ -12,8 +12,15 @@ export default async function () {
 
   const profiles = await BrandProfile.find({ author: user._id })
 
+  const hasFeature = user.getPlan() == "pro"
+
+  const side = hasFeature ?
+    <Button asChild><Link href={"/app/branding/new"}><BIcon name={"plus-lg"} />New Brand Profile</Link></Button>
+    :
+    <Button disabled><BIcon name={"plus-lg"} />New Brand Profile</Button>
+
   return (
-    <GenericPage title={"Branding"} side={<Button asChild><Link href={"/app/branding/new"}><BIcon name={"plus-lg"} />New Brand Profile</Link></Button>}>
+    <GenericPage title={"Branding"} side={side}>
       {
         profiles.length > 0 ?
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -34,7 +41,9 @@ export default async function () {
           <EmptySpace
             title={"Showcase Your Unique Brand Identity"}
             subtitle={"Add your own logo, customize backgrounds, and include your branding directly in emails and download pages for a seamless, professional look."}
-          />
+          >
+            <Button asChild><Link className="mt-4" href={"/app/settings?upgrade"}>Upgrade to Pro &rarr;</Link></Button>
+          </EmptySpace>
       }
     </GenericPage>
   )

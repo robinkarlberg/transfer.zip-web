@@ -7,8 +7,8 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function PricingCards({ tiers, compact, onTierSelected }) {
-  const _buttonText = "Start 7-day Free Trial"
+export default function PricingCards({ tiers, compact, onTierSelected, overrideText }) {
+  const _buttonText = overrideText || "Start 7-day Free Trial"
   return tiers.map((tier, tierIdx) => (
     <div
       key={tier.name}

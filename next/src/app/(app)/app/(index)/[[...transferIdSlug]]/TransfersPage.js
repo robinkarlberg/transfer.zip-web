@@ -3,6 +3,7 @@
 import BIcon from "@/components/BIcon"
 import TransferList from "@/components/dashboard/TransferList"
 import TransferRequestList from "@/components/dashboard/TransferRequestList"
+import EmptySpace from "@/components/elements/EmptySpace"
 import { classNames } from "@/lib/utils"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -79,9 +80,29 @@ export default function ({ transfers, transferRequests }) {
           </div>
         </div>
       </div>
-      {selectedTab.slug == "sent" && <TransferList transfers={sentTransfers} />}
-      {selectedTab.name == "Requests" && <TransferRequestList transferRequests={transferRequests} />}
-      {selectedTab.name == "Received" && <TransferList transfers={receivedTransfers} />}
+      {selectedTab.slug == "sent" && (
+        sentTransfers.length > 0 ?
+          <TransferList transfers={sentTransfers} />
+          :
+          <EmptySpace
+            title={"Your transfers will appear here"}
+            subtitle={"You can see views and download statistics, edit, send or delete them."}
+            buttonText={"Create My First Transfer"} onClick={() => router.push("/app/new")}
+          />
+      )}
+      {selectedTab.name == "Requests" && (
+        <TransferRequestList transferRequests={transferRequests} />
+      )}
+      {selectedTab.name == "Received" && (
+        receivedTransfers.length > 0 ?
+          <TransferList transfers={receivedTransfers} />
+          :
+          <EmptySpace
+            title={"Your received files will appear here"}
+            subtitle={"Files received from request links will appear here, where you can download them."}
+            buttonText={"Create Request Link"} onClick={() => router.push("/app/new?dir=receive")}
+          />
+      )}
     </>
   )
 }
