@@ -42,7 +42,7 @@ export default async function () {
             title={"Showcase Your Unique Brand Identity"}
             subtitle={"Add your own logo, customize backgrounds, and include your branding directly in emails and download pages for a seamless, professional look."}
           >
-            <Button asChild><Link className="mt-4" href={"/app/settings?upgrade"}>Upgrade to Pro &rarr;</Link></Button>
+            {!hasFeature && <Button asChild><Link className="mt-4" href={"/app/settings?upgrade"}>Upgrade to Pro &rarr;</Link></Button>}
           </EmptySpace>
       }
     </GenericPage>
