@@ -1,28 +1,22 @@
-# ! DEV BRANCH !
-
-> [!WARNING] 
-> This is Work in Progress, not working yet
-
-This is the dev branch for a completely open-source version, with support for you to self-host everything yourself.
-
-It aims to become the best way to setup your own file transfer server, in addition to our managed solution ;)
-
 <img src="https://dev.transfer.zip/img/icon-small.png"></img>
 
 # Transfer.zip
 
-**Transfer.zip:** The open source file-sharing solution. Self-hosteable and without size limits.
+**Transfer.zip:** An open source and self-hostable complete file-sharing solution.
 
 > [!NOTE]
-> If you do not want to self-host or just try it out for yourself, it is available as a managed service at [Transfer.zip](https://transfer.zip/).
+> If you do not want to self-host or just want to try it out, it is available at [Transfer.zip](https://transfer.zip/).
 
 ## Features
+A quick overview of the main features, more info further down.
+- **Reliable uploads** - File uploads use the reliable [tus](https://tus.io/) protocol.
+- **Transfer requests** - Ability to request others to upload files to you for download later.
+- **Custom branding** - Upload your own icon and background for the transfer pages (requires an S3 bucket atm)
+- **S3/Disk stored transfers** - Supports storing files with S3-compatiable APIs as well as local disk storage.
+- **Quick Transfers** - End-to-end encrypted peer-to-peer transfers, when you don't want to store files, just send them.
+- **Self-hostable** - Easy to **self-host** on your own hardware.
 
-- End-to-end encrypted peer-to-peer realtime transfers with **no size limits**, meaning you can send **1TB** files if you want.
-- Reliable file uploads using the [tus](https://tus.io/) protocol.
-- Ability to request others to upload files to you for download later.
-- Easy to **self-host** or contribute to the codebase.
-- Supports storing files with S3-compatiable APIs as well as local disk storage.
+<img src="https://cdn.transfer.zip/img/high-level-architecture.png?" width="650"></img>
 
 ### Quick Transfers - End-to-end encrypted WebRTC file transfers in the browser
 Quick Transfers use [WebRTC](http://www.webrtc.org/) for peer-to-peer data transfer, meaning the files are streamed directly between peers and not stored anywhere in the process, not even on Transfer.zip servers. To let peers initially discover each other, a signaling server is implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through. In addition, the file data is end-to-end encrypted using [AES-GCM](https://en.wikipedia.org/wiki/Galois/Counter_Mode) with a client-side 256 bit generated key, meaning if someone could impersonate a peer or capture the traffic, they would not be able to decrypt the file without knowing the key. Because the file is streamed directly between peers, there are **no file size or bandwidth limitations**. The easiest way to Quick Transfer a file is to scan the QR code containing the file link and encryption key. It is also possible to copy the link and share it to the recipient over what medium you prefer the most. 
@@ -31,84 +25,14 @@ Because of how peer-to-peer works, some network firewalls may not allow direct c
 
 Quick Transfers only work while both users are online at the same time, due to the peer-to-peer nature of the system. 
 
-### Cloud Transfers - File uploads with resumable, scalable storage
-Instead of real-time peer-to-peer transfer like with Quick Transfers, Cloud Transfers store the file temporarily on the server (or S3-compatible backend) using the [tus](https://tus.io/) protocol, which supports resumable, chunked uploads. This means interrupted uploads or downloads can continue where they left off. Files are deleted after the transfers expiry date.
+### Stored Transfers - File uploads with resumable, scalable storage
+Instead of real-time peer-to-peer transfer like with Quick Transfers, Stored Transfers store the file temporarily on the server (or S3-compatible backend) using the [tus](https://tus.io/) protocol, which supports resumable, chunked uploads. This means interrupted uploads or downloads can retry on network interruptions. Files are permanently deleted after the transfers expiry date.
 
-Cloud Transfers are just what normal file transfer services like WeTransfer do, but you can host it yourself if you want.
+Stored Transfers are just what normal file transfer services like WeTransfer do, but you can host it yourself if you want. 
 
-To set up Cloud Transfers, you need to spin up a [node server](https://github.com/robinkarlberg/transfer.zip-node) and configure it. Having seperate servers handling the heavy-duty stuff like uploads and zip bundles, keeps the main site running smoothly. It also enables distributing of several node servers around the world, close to users, to optimize download times.
+## Self-hosting
 
-## Self-Hosting
-
-> [!NOTE]
-> Self-hosting of Stored Transfers is experimental at the moment. Please report any issues in this GitHub repo.
-
-> [!NOTE]
-> This project is tested with Docker Compose V2. Docker Compose V1 will most likely fail to build.
-
-To setup self-hosting, start by running `./createenv.sh` to create the env-files needed.
-
-### Caddy (built-in)
-
-Transfer.zip comes with a Caddy conf built-in. Run the caddy deploy script to use the `docker-compose.caddy.yml` override.
-```
-./deploy-caddy.sh
-```
-
-> [!WARNING]
-> The Caddy container listens by default on `0.0.0.0`. Make sure to firewall it if you don't want to expose it to the internet.
-
-
-### Any other reverse-proxy
-
-```
-docker compose build && docker compose up -d
-```
-
-**Apache**
-For Apache, the configuration needs to include these lines for the reverse proxy to function:
-```
-ProxyPreserveHost On
-
-ProxyPass /ws ws://localhost:9002/
-ProxyPassReverse /ws ws://localhost:9002/
-
-ProxyPass / http://localhost:9001/
-ProxyPassReverse / http://localhost:9001/
-```
-
-**NGINX**
-For NGINX:
-```
-# Put this at the top
-map $http_upgrade $connection_upgrade {
-    default upgrade;
-    '' close;
-}
-
-# Put this in your server-block
-# server {
-# ...
-    location /ws {
-        proxy_pass http://localhost:9001/ws;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection $connection_upgrade;
-        proxy_set_header Host $host;
-    }
-# ...
-# }
-```
-
-### Get public key
-
-While the worker container is running:
-`docker compose exec worker cat /worker_data/public.pem`
-
-## Local Development and Contributing
-When developing, install all dependencies with `./setup-dev.sh`. Then run the `local-dev.sh` script, it will start the signalling server and the web server for you.
-```
-./local-dev.sh
-```
+See the [self-hosting guide](SELFHOSTING.md).
 
 ## Built with
 
