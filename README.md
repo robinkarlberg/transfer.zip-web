@@ -41,7 +41,7 @@ See the [self-hosting guide](SELFHOSTING.md).
 - WebRTC
 - WebSockets
 - Node.js
-- ExpressJS
+- Fastify
 - MongoDB
 - zip.js
 
