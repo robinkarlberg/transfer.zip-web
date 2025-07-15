@@ -60,7 +60,7 @@ export default async function ({ auth }) {
               )}
               noauth={(
                 <Link href={"/app"} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-4 py-2 hover:bg-primary-light">
-                  Upload Files <span aria-hidden="true">&rarr;</span>
+                  Create Account <span aria-hidden="true">&rarr;</span>
                 </Link>
               )}
             />

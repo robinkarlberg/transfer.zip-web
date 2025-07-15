@@ -3,6 +3,7 @@
 import { sleep } from "@/lib/utils"
 import NewTransferFileUpload from "@/components/dashboard/NewTransferFileUpload"
 import Link from "next/link"
+import BIcon from "@/components/BIcon"
 
 export default function ({ user, storage, brandProfiles }) {
   return (
@@ -10,9 +11,9 @@ export default function ({ user, storage, brandProfiles }) {
       <NewTransferFileUpload user={user} storage={storage} brandProfiles={brandProfiles} />
       <div className="hidden lg:flex w-full justify-center absolute -top-7 h-13 hover:-top-13 transition-all group">
         <Link className="inline-block border-t border-x rounded-lg rounded-b-none bg-white h-full w-60 group-hover:w-80 text-center pt-0.5 transition-all" href={"/quick"}>
-          <p className="text-gray-700 font-normal">Quick Transfer <span className="relative left-0 group-hover:left-1 transition-all">&rarr;</span></p>
+          <p className="text-gray-700 font-medium">Quick Transfer <span className="relative left-0 group-hover:left-1 transition-all">&rarr;</span></p>
           <p className="text-sm text-gray-600 whitespace-nowrap">
-            Temporary file sharing, with no size limit.
+            <BIcon name={"lock-fill"}/> End-to-end encrypted, files not stored.
           </p>
         </Link>
       </div>
