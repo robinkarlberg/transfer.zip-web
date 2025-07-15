@@ -1,4 +1,5 @@
 #/bin/sh
 
 cp .env.example .env
-cp frontend/.env.example frontend/.env
+cp next/.env.example next/.env
+cp next/conf.json.example next/conf.json

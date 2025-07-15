@@ -1,107 +1,61 @@
-> [!NOTE]
-> Work is underway to make the API open source, making normal file transfers, stored on disk/S3, self-hosteable as well.
->
-> This will allow you to set up your own file transfer server, in addition to Quick Share.
-> 
-> [Dev Branch](https://github.com/robinkarlberg/transfer.zip-web/tree/dev-next)
-> [Node Repo](https://github.com/robinkarlberg/transfer.zip-node/)
+<img src="https://transfer.zip/img/icon-small.png"></img>
 
 # Transfer.zip
 
-<img src='https://cdn.transfer.zip/QuickShare.png' width="80%"></img>
+**Transfer.zip:** An open source and self-hostable complete file-sharing solution.
 
-#### A self-hostable web application that allows you to easily and securely transfer files between devices **with no size limit**. Also available on, you guessed it, [https://transfer.zip](https://transfer.zip/).
-
-As a hobby music producer, I often needed to share large WAVs, but existing services didn't really do it for me. Discord's 50MB limit was frustrating (now 10MB 😭), and Google Drive, MEGA, Dropbox etc. felt cumbersome, so I started making transfer.zip. I rarely need to save my transfered files permanently, I just want to transfer them, and I think many others do too. Because the Quick Share feature never stores the files anywhere, there are **no file size or bandwidth limitations**!
-
-Transfer.zip is easy to set up locally, to self-host or contribute to the codebase. 
+> [!NOTE]
+> If you do not want to self-host or just want to try it out, it is available at [Transfer.zip](https://transfer.zip/).
 
 ## Features
+A quick overview of the main features, more info further down.
+- **Reliable uploads** - File uploads use the reliable [tus](https://tus.io/) protocol.
+- **Transfer requests** - Ability to request others to upload files to you for download later.
+- **Custom branding** - Upload your own icon and background for the transfer pages (requires an S3 bucket atm)
+- **S3/Disk stored transfers** - Supports storing files with S3-compatiable APIs as well as local disk storage.
+- **Quick Transfers** - End-to-end encrypted peer-to-peer transfers, when you don't want to store files, just send them.
+- **Self-hostable** - Easy to **self-host** on your own hardware.
 
-### Quick Share - End-to-end encrypted WebRTC file transfers in the browser
-Quick Share uses [WebRTC](http://www.webrtc.org/) for peer-to-peer data transfer, meaning the files are streamed directly between peers and not stored anywhere in the process, not even on transfer.zip servers. To let peers initially discover each other, a signaling server is implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through. In addition, the file data is end-to-end encrypted using [AES-GCM](https://en.wikipedia.org/wiki/Galois/Counter_Mode) with a client-side 256 bit generated key, meaning if someone could impersonate a peer or capture the traffic, they would not be able to decrypt the file without knowing the key. Because the file is streamed directly between peers, there are **no file size or bandwidth limitations**. The easiest way to Quick Share a file is to scan the QR code containing the file link and encryption key. It is also possible to copy the link and share it to the recipient over what medium you prefer the most. 
+<img src="https://cdn.transfer.zip/img/high-level-architecture.png?" width="650"></img>
 
-### Quick Share Relay - For when WebRTC is blocked
+### Quick Transfers - End-to-end encrypted WebRTC file transfers in the browser
+Quick Transfers use [WebRTC](http://www.webrtc.org/) for peer-to-peer data transfer, meaning the files are streamed directly between peers and not stored anywhere in the process, not even on Transfer.zip servers. To let peers initially discover each other, a signaling server is implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through. In addition, the file data is end-to-end encrypted using [AES-GCM](https://en.wikipedia.org/wiki/Galois/Counter_Mode) with a client-side 256 bit generated key, meaning if someone could impersonate a peer or capture the traffic, they would not be able to decrypt the file without knowing the key. Because the file is streamed directly between peers, there are **no file size or bandwidth limitations**. The easiest way to Quick Transfer a file is to scan the QR code containing the file link and encryption key. It is also possible to copy the link and share it to the recipient over what medium you prefer the most. 
 
-Because of how peer-to-peer works, some network firewalls may not allow direct connections between devices. In that case, the peer-to-peer connection can fallback to using the signalling server as a relay, effectively bypassing network firewall limitations. 
+Because of how peer-to-peer works, some network firewalls may not allow direct connections between devices. In that case, the peer-to-peer connection can fallback to using the signalling server as a relay, effectively bypassing network firewall limitations. Due to WebRTC connections being much slower than using the relay, it will forced to be used if files are larger than 10MB, even if WebRTC connections are technically possible. This change was made due to people complaining of slow transfer speeds.
 
-Due to WebRTC connections being much slower than using the relay, it will forced to be used if files are larger than 10MB, even if WebRTC connections are technically possible. This change was made due to people complaining of slow transfer speeds.
+Quick Transfers only work while both users are online at the same time, due to the peer-to-peer nature of the system. 
 
-### Transfers
+### Stored Transfers - File uploads with resumable, scalable storage
+Instead of real-time peer-to-peer transfer like with Quick Transfers, Stored Transfers store the file temporarily on the server (or S3-compatible backend) using the [tus](https://tus.io/) protocol, which supports resumable, chunked uploads. This means interrupted uploads or downloads can retry on network interruptions. Files are permanently deleted after the transfers expiry date.
 
-Transfer.zip also supports permanent file transfers, but currently not on the self-hosted version. That could be enabled in the future by making the API open source and self-hostable.
+Stored Transfers are just what normal file transfer services like WeTransfer do, but you can host it yourself if you want. 
 
-## Known Problems
+## Self-hosting
 
-0-byte files gets stuck on transmit.
+See the [self-hosting guide](SELFHOSTING.md).
 
-On Firefox mobile, sending files using Quick Share does not work at the moment. This could have something to do with the path being changed after the file has been chosen in the file picker, but not been read yet. This is under investigation.
+## Built with
 
-Sending files from some Safari browsers is buggy at the moment, it has something to do with Safari terminating the WebSocket connection when unfocusing the window.
+- Next.js
+- WebRTC
+- WebSockets
+- Node.js
+- ExpressJS
+- MongoDB
+- zip.js
 
-## Self-Hosting
-To setup self-hosting, run  `./createenv.sh` to create the env-files needed. This will enable only the core features for Quick Share and the relay to function.
+## Some known problems
 
-Then, to build and deploy transfer.zip, use docker compose.
-```
-docker compose build && docker compose up
-```
-This will by default listen for connections on `localhost:9001`, the signaling server will be proxied through the web-server on the `/ws` endpoint on the same port. When self-hosting, it is recommended to put transfer.zip behind a reverse-proxy with https.
-For Apache, the configuration needs to include these lines for the reverse proxy to function:
-```
-ProxyPreserveHost On
+0-byte files gets stuck on transmit using Quick Transfers.
 
-ProxyPass /ws ws://localhost:9001/ws
-ProxyPassReverse /ws ws://localhost:9001/ws
+On Firefox mobile, sending files using Quick Transfer does not work at the moment. This could have something to do with the path being changed after the file has been chosen in the file picker, but not been read yet. This is under investigation and idk how to fix.
 
-ProxyPass / http://localhost:9001/
-ProxyPassReverse / http://localhost:9001/
-```
+Sending files from some Safari browsers is buggy at the moment, it has something to do with Safari terminating the WebSocket connection when unfocusing the window. Apple...
 
-For NGINX:
-```
-# Put this at the top
-map $http_upgrade $connection_upgrade {
-    default upgrade;
-    '' close;
-}
+## License
 
-# Put this in your server-block
-# server {
-# ...
-    location /ws {
-        proxy_pass http://localhost:9001/ws;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection $connection_upgrade;
-        proxy_set_header Host $host;
-    }
-# ...
-# }
-```
+This project is licensed under the [Business Source License 1.1](./LICENSE), with a 3-year change date to MIT.
 
-For Caddy (Thanks [7MinSec](https://github.com/7MinSec)):
-```
-zip.yourdomain.com {
-    reverse_proxy 127.0.0.1:9001
+Basically, you may self-host and use it internally or with clients, but just not offer a competing file transfer service.
 
-    log {
-        output file /var/log/caddy/zip.log
-    }
-}
-```
-
-## Local Development and Contributing
-> [!NOTE]
-> This project is tested with Docker Compose V2. Docker Compose V1 will most likely fail to build.
-
-When developing, install all dependencies with `./setup.sh`. Then run the `local-dev.sh` script, it will start the signalling server and the web server for you.
-```
-./local-dev.sh
-```
-
-
-
-
-
-
-
+See [LICENSE](./LICENSE) for details.

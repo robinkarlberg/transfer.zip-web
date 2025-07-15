@@ -1,0 +1,12 @@
+{
+  "nodes": [
+    {
+      "url": "http://localhost:3050",
+      "region": "EU"
+    },
+    {
+      "url": "http://localhost:3050",
+      "region": "US"
+    }
+  ]
+}

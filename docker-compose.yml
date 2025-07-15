@@ -1,17 +1,37 @@
 services:
-  frontend:
-    build:
-      context: frontend
+  mongo:
+    image: mongo:8.0-noble
     restart: unless-stopped
+    volumes:
+      - ./_db:/data/db
     ports:
-      - 127.0.0.1:${WEB_SERVER_FORWARD_PORT:-9001}:80
+      # I made mongodb listen on localhost here to enable MongoDB compass to inspect the database
+      - 127.0.0.1:${MONGODB_FORWARD_PORT:-27017}:27017
+    env_file:
+      - .env
+
+  next:
+    build: next
+    restart: unless-stopped
+    env_file:
+      - .env
+      - next/.env
+    ports:
+      - 127.0.0.1:${WEB_SERVER_FORWARD_PORT:-9001}:9001
     
   signaling-server:
     build: signaling-server
     restart: unless-stopped
     ports:
-      - 127.0.0.1:9002:8001
-    deploy:
-      resources:
-        limits:
-          memory: 2700M
+      - 127.0.0.1:${SIGNALING_SERVER_FORWARD_PORT:-9002}:9002
+    
+  worker:
+    build: worker
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - worker_data:/worker_data
+
+volumes:
+  worker_data: {}
