@@ -16,6 +16,8 @@ A quick overview of the main features, more info further down.
 - **Quick Transfers** - End-to-end encrypted peer-to-peer transfers, when you don't want to store files, just send them.
 - **Self-hostable** - Easy to **self-host** on your own hardware.
 
+<img src="https://cdn.transfer.zip/img/high-level-architecture.png?" width="650"></img>
+
 ### Quick Transfers - End-to-end encrypted WebRTC file transfers in the browser
 Quick Transfers use [WebRTC](http://www.webrtc.org/) for peer-to-peer data transfer, meaning the files are streamed directly between peers and not stored anywhere in the process, not even on Transfer.zip servers. To let peers initially discover each other, a signaling server is implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through. In addition, the file data is end-to-end encrypted using [AES-GCM](https://en.wikipedia.org/wiki/Galois/Counter_Mode) with a client-side 256 bit generated key, meaning if someone could impersonate a peer or capture the traffic, they would not be able to decrypt the file without knowing the key. Because the file is streamed directly between peers, there are **no file size or bandwidth limitations**. The easiest way to Quick Transfer a file is to scan the QR code containing the file link and encryption key. It is also possible to copy the link and share it to the recipient over what medium you prefer the most. 
 
@@ -24,21 +26,20 @@ Because of how peer-to-peer works, some network firewalls may not allow direct c
 Quick Transfers only work while both users are online at the same time, due to the peer-to-peer nature of the system. 
 
 ### Stored Transfers - File uploads with resumable, scalable storage
-Instead of real-time peer-to-peer transfer like with Quick Transfers, Cloud Transfers store the file temporarily on the server (or S3-compatible backend) using the [tus](https://tus.io/) protocol, which supports resumable, chunked uploads. This means interrupted uploads or downloads can continue where they left off. Files are deleted after the transfers expiry date.
+Instead of real-time peer-to-peer transfer like with Quick Transfers, Stored Transfers store the file temporarily on the server (or S3-compatible backend) using the [tus](https://tus.io/) protocol, which supports resumable, chunked uploads. This means interrupted uploads or downloads can retry on network interruptions. Files are permanently deleted after the transfers expiry date.
 
-Stored Transfers are just what normal file transfer services like WeTransfer do, but you can host it yourself if you want.
+Stored Transfers are just what normal file transfer services like WeTransfer do, but you can host it yourself if you want. 
 
-To set up Stored Transfers, you need to spin up a [node server](https://github.com/robinkarlberg/transfer.zip-node) and configure it. Having seperate servers handling the heavy-duty stuff like uploads and zip bundles, keeps the main site running smoothly. It also enables distributing of several node servers around the world, close to users, to optimize download times.
+## Self-hosting
 
-## Self-Hosting
+To setup self-hosting, start by running `./createenv.sh` to create the env-files needed.
 
-> [!NOTE]
-> Self-hosting of Stored Transfers is experimental at the moment. Please report any issues in this GitHub repo.
+Quick Transfers will work out of the box without configuration, but Stored Transfers needs some configuration to work properly. 
+
+To set up Stored Transfers, you need to spin up a [node server](https://github.com/robinkarlberg/transfer.zip-node) and configure it. Having seperate servers handling the heavy-duty stuff like uploads and zip bundles, keeps the main site running smoothly. It also enables distributing of several node servers around the world, close to users, to optimize upload & download times.
 
 > [!NOTE]
 > This project is tested with Docker Compose V2. Docker Compose V1 will most likely fail to build.
-
-To setup self-hosting, start by running `./createenv.sh` to create the env-files needed.
 
 ### Caddy (built-in)
 
@@ -49,7 +50,6 @@ Transfer.zip comes with a Caddy conf built-in. Run the caddy deploy script to us
 
 > [!WARNING]
 > The Caddy container listens by default on `0.0.0.0`. Make sure to firewall it if you don't want to expose it to the internet.
-
 
 ### Any other reverse-proxy
 
@@ -94,13 +94,10 @@ map $http_upgrade $connection_upgrade {
 ### Get public key
 
 While the worker container is running:
-`docker compose exec worker cat /worker_data/public.pem`
+```docker compose exec worker cat /worker_data/public.pem```
 
-## Local Development and Contributing
-When developing, install all dependencies with `./setup-dev.sh`. Then run the `local-dev.sh` script, it will start the signalling server and the web server for you.
-```
-./local-dev.sh
-```
+or when it has ran at least once:
+```docker compose logs worker```
 
 ## Built with
 
