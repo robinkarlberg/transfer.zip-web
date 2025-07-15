@@ -2,6 +2,8 @@
 
 This is the self-hosting guide. It will show you how to set up your own compelete file-sharing server.
 
+The self-host guide is still a work in progress. If you encounter issues or notice any inconsistencies, please open an issue - feedback is welcome as development continues.
+
 > [!NOTE]
 > This project is tested with Docker Compose V2. Docker Compose V1 will most likely fail to build.
 
