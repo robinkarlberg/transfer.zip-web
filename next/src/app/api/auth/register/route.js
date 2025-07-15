@@ -5,6 +5,7 @@ import { ROLE_ADMIN } from '@/lib/roles';
 import { createCookieParams, resp } from '@/lib/server/serverUtils';
 import { NextResponse } from 'next/server';
 import { IS_SELFHOST } from '@/lib/isSelfHosted';
+import { headers } from 'next/headers';
 
 export async function POST(req, res) {
   const data = await req.json()
@@ -16,6 +17,12 @@ export async function POST(req, res) {
 
   await dbConnect()
 
+  const headers = await headers()
+
+  if (IS_SELFHOST && headers.get('x-forwarded-for')) {
+    return NextResponse.json(resp("Signup not allowed from behind a proxy in self-hosted mode"), { status: 403 })
+  }
+
   if (IS_SELFHOST && await User.countDocuments() > 0) {
     return NextResponse.json(resp("Signup not allowed: users already exist in self-hosted mode"), { status: 409 })
   }
@@ -24,7 +31,7 @@ export async function POST(req, res) {
   // user.addRole(ROLE_ADMIN)
   user.setPassword(pass)
 
-  if(IS_SELFHOST) {
+  if (IS_SELFHOST) {
     user.updateSubscription({
       plan: "pro",
       status: "active",

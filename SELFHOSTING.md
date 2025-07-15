@@ -25,7 +25,8 @@ Having seperate servers handling the heavy-duty stuff like uploads and zip bundl
 6. Create a `./keys/public.pem` file and paste the public key you got from the main worker server. 
 7. Deploy the new node server using `docker compose` or the `./deploy-caddy.sh` script.
 8. Back to your main repo, change the `next/conf.json` to include the public url to your new node server.
-<!-- 9. **If you want to use custom branded transfers**:  -->
+9. **If you want to use custom branded transfers**: Modify the `S3_` env variables in `next/.env`.
+10. Create an account by running `./create-account.sh` while the main server is running. Account creation is not supported by the UI when self-hosting.
 
 ## Deploying
 
