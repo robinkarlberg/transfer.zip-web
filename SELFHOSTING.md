@@ -9,9 +9,13 @@ The self-host guide is still a work in progress. If you encounter issues or noti
 
 ## Setting up
 
+### Prerequisites
+
 ### Quick Transfers
 
-1. Run `./createenv.sh` to create the env-files needed.
+1. Run `./createenv.sh` to create the env-files needed. This will create a random password for mongo as well.
+
+That's all that you need for using Quick Transfers, you can now deploy the service. You can skip the `worker` and `mongo` containers as they are not used.
 
 ### Stored Transfers
 
@@ -19,16 +23,21 @@ To set up Stored Transfers, you need to spin up a [node server](https://github.c
 
 Having seperate servers handling the heavy-duty stuff like uploads and zip bundles, keeps the main site running smoothly. It also enables distributing of several node servers around the world, close to users, to optimize download times.
 
-1. Run the main worker once, `docker compose up worker`, until the public key appears. Save this key for later.
-2. Clone the [transfer.zip-node](https://github.com/robinkarlberg/transfer.zip-node) repo, on the same machine or any other machine with internet connection. 
-3. Run `./createenv.sh` in the new repo, to create the env-files needed.
-4. **If you want to use S3 for file storage**: Edit `server/conf.json` with your acess keys, and change the `active` provider to the new provider name.
-5. **If you want to use the built-in caddy**: Edit `.env` and add your domain and email for automatic SSL certificates.
-6. Create a `./keys/public.pem` file and paste the public key you got from the main worker server. 
-7. Deploy the new node server using `docker compose` or the `./deploy-caddy.sh` script.
-8. Back to your main repo, change the `next/conf.json` to include the public url to your new node server.
-9. **If you want to use custom branded transfers**: Modify the `S3_` env variables in `next/.env`.
-10. Create an account by running `./create-account.sh` while the main server is running. Account creation is not supported by the UI when self-hosting.
+#### Retrieve public key from the main server
+2. Run the main worker once (`docker compose up worker`), or view the logs. A public key will be printed, save this key for later.
+
+#### Setup the node server
+3. Clone the [transfer.zip-node](https://github.com/robinkarlberg/transfer.zip-node) repo, on the same machine or any other machine with internet connection. 
+4. Run `./createenv.sh` in the new repo, to create the env-files needed.
+5. **If you want to use S3 for file storage**: Edit `server/conf.json` with your acess keys, and change the `active` provider to the new provider name. If you want to use disk storage, that's already on by default! :)
+6. **If you want to use the built-in caddy**: Edit `.env` and add your domain and email for automatic SSL certificates.
+7. Create a `public.pem` file in the `keys` directory in the root of the repo (`./keys/public.pem`) and paste the public key you got from the main worker server. 
+8. Deploy the new node server using `docker compose` or the `./deploy-caddy.sh` script.
+
+#### Finishing setup on the main server
+9. Edit the `next/conf.json` to include the public url to your new node server.
+10. **If you want to use custom branded transfers**: Modify the `S3_` env variables in `next/.env`. Branding assets are stored in buckets atm.
+11. Create an account by running `./create-account.sh` while the main server is running. Account creation is not supported by the UI when self-hosting.
 
 ## Deploying
 
@@ -36,7 +45,11 @@ There are multiple ways to deploy Transfer.zip, the easiest is to use the built-
 
 ### Caddy (built-in)
 
-Transfer.zip comes with a Caddy conf built-in. Run the caddy deploy script to use the `docker-compose.caddy.yml` override.
+Transfer.zip comes with a Caddy conf built-in. 
+
+You need to edit the `.env` and set `CADDY_DOMAIN` to your domain for auto-ssl to function.
+
+Run the caddy deploy script to use the `docker-compose.caddy.yml` override.
 ```
 ./deploy-caddy.sh
 ```
