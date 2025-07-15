@@ -85,7 +85,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
           </p>
         </div>
         <div className="mx-auto mt-8 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-12 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
-          <PricingCards tiers={tiers} compact={false} onTierSelected={handleTierSelected} overrideText={hasFreeTrial ? undefined : "Subscribe"} />
+          <PricingCards tiers={tiers} compact={false} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} />
         </div>
         <div className={``}>
           <div className="mx-auto max-w-4xl px-6 lg:px-8 pt-16 mb-8">
