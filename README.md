@@ -32,72 +32,7 @@ Stored Transfers are just what normal file transfer services like WeTransfer do,
 
 ## Self-hosting
 
-To setup self-hosting, start by running `./createenv.sh` to create the env-files needed.
-
-Quick Transfers will work out of the box without configuration, but Stored Transfers needs some configuration to work properly. 
-
-To set up Stored Transfers, you need to spin up a [node server](https://github.com/robinkarlberg/transfer.zip-node) and configure it. Having seperate servers handling the heavy-duty stuff like uploads and zip bundles, keeps the main site running smoothly. It also enables distributing of several node servers around the world, close to users, to optimize upload & download times.
-
-> [!NOTE]
-> This project is tested with Docker Compose V2. Docker Compose V1 will most likely fail to build.
-
-### Caddy (built-in)
-
-Transfer.zip comes with a Caddy conf built-in. Run the caddy deploy script to use the `docker-compose.caddy.yml` override.
-```
-./deploy-caddy.sh
-```
-
-> [!WARNING]
-> The Caddy container listens by default on `0.0.0.0`. Make sure to firewall it if you don't want to expose it to the internet.
-
-### Any other reverse-proxy
-
-```
-docker compose build && docker compose up -d
-```
-
-**Apache**
-For Apache, the configuration needs to include these lines for the reverse proxy to function:
-```
-ProxyPreserveHost On
-
-ProxyPass /ws ws://localhost:9002/
-ProxyPassReverse /ws ws://localhost:9002/
-
-ProxyPass / http://localhost:9001/
-ProxyPassReverse / http://localhost:9001/
-```
-
-**NGINX**
-For NGINX:
-```
-# Put this at the top
-map $http_upgrade $connection_upgrade {
-    default upgrade;
-    '' close;
-}
-
-# Put this in your server-block
-# server {
-# ...
-    location /ws {
-        proxy_pass http://localhost:9001/ws;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection $connection_upgrade;
-        proxy_set_header Host $host;
-    }
-# ...
-# }
-```
-
-### Get public key
-
-While the worker container is running:
-```docker compose exec worker cat /worker_data/public.pem```
-
-or when it has ran at least once:
-```docker compose logs worker```
+See the [self-hosting guide](SELFHOSTING.md).
 
 ## Built with
 
