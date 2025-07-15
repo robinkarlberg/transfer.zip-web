@@ -12,6 +12,7 @@ A quick overview of the main features, more info further down.
 - **Reliable uploads** - File uploads use the reliable [tus](https://tus.io/) protocol.
 - **Transfer requests** - Ability to request others to upload files to you for download later.
 - **Custom branding** - Upload your own icon and background for the transfer pages (requires an S3 bucket atm)
+- **Email support** - Send emails to recipients, also updates to fit with the branding.
 - **S3/Disk stored transfers** - Supports storing files with S3-compatiable APIs as well as local disk storage.
 - **Quick Transfers** - End-to-end encrypted peer-to-peer transfers, when you don't want to store files, just send them.
 - **Self-hostable** - Easy to **self-host** on your own hardware.
