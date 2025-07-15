@@ -1,4 +1,4 @@
-<img src="https://dev.transfer.zip/img/icon-small.png"></img>
+<img src="https://transfer.zip/img/icon-small.png"></img>
 
 # Transfer.zip
 
