@@ -75,7 +75,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
             {
               hasFreeTrial ?
                 <>
-                  You have a <b>7-day free trial</b> on any plan. You can cancel anytime during your trial, your access still continues for the full 7 days, and you won't be charged a penny.
+                  You have a <b>7-day free trial</b> on any plan. You can cancel anytime during your trial, and you won't be charged a penny.
                 </>
                 :
                 <>
