@@ -52,15 +52,15 @@ export default function Features1() {
   return (
     <div className="bg-white py-24 sm:py-32" id="why-choose-us">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-xl text-center">
+        <div className="mx-auto max-w-2xl text-center">
           {/* <Image alt="Logo" src={logo} className="w-16 mx-auto"></Image> */}
           <h2 className="text-base/7 font-semibold text-primary">Why Choose Us?</h2>
           {/* <div className="text-blue-500 mb-4">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div> */}
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Blazingly Fast. No Bull***t
+            Blazingly Fast. No Nonsense.
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            Say goodbye to frustrating uploads, restrictive size limits, and cluttered interfaces. Transfer.zip is the easiest way to send files - no limits or "accept cookies" popups before uploading. It just works.
+            Say goodbye to <Link className="text-primary hover:underline" target="_blank" href={"https://www.reddit.com/r/editors/comments/1gk7yh8/is_swisstransfercom_slow_or_is_it_just_me/"}>slow uploads</Link>, size limits, and <Link className="text-primary hover:underline" target="_blank" href={"https://www.reddit.com/r/editors/comments/1htld1d/wetransfer_casually_doubling_my_subscription/"}>expensive pricing</Link>. Transfer.zip makes file sharing seamless without breaking the bank.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
