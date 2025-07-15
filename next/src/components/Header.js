@@ -36,7 +36,7 @@ export default function Header({ scrollAware }) {
   const [showHeader, setShowHeader] = useState(!scrollAware)
 
   const auth = false
-  const ctaText = IS_SELFHOST ? "My Transfers" : "Upload Files"
+  const ctaText = IS_SELFHOST ? "My Transfers" : "Create Account"
   const ctaLink = "/app"
 
   const handleLinkClicked = e => {

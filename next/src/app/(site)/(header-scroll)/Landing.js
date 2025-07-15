@@ -101,7 +101,7 @@ export default async function ({ auth }) {
                   noauth={(
                     <>
                       <span className="inline lg:hidden">Create Account</span>
-                      <span className="hidden lg:inline">Upload Files</span>
+                      <span className="hidden lg:inline">Create Account</span>
                       {" "}&rarr;
                     </>
                   )}
