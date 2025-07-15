@@ -1,28 +1,20 @@
-# ! DEV BRANCH !
-
-> [!WARNING] 
-> This is Work in Progress, not working yet
-
-This is the dev branch for a completely open-source version, with support for you to self-host everything yourself.
-
-It aims to become the best way to setup your own file transfer server, in addition to our managed solution ;)
-
 <img src="https://dev.transfer.zip/img/icon-small.png"></img>
 
 # Transfer.zip
 
-**Transfer.zip:** The open source file-sharing solution. Self-hosteable and without size limits.
+**Transfer.zip:** An open source and self-hostable complete file-sharing solution.
 
 > [!NOTE]
 > If you do not want to self-host or just try it out for yourself, it is available as a managed service at [Transfer.zip](https://transfer.zip/).
 
 ## Features
-
-- End-to-end encrypted peer-to-peer realtime transfers with **no size limits**, meaning you can send **1TB** files if you want.
-- Reliable file uploads using the [tus](https://tus.io/) protocol.
-- Ability to request others to upload files to you for download later.
-- Easy to **self-host** or contribute to the codebase.
-- Supports storing files with S3-compatiable APIs as well as local disk storage.
+A quick overview of the main features, more info further down.
+- **Reliable uploads** - File uploads use the reliable [tus](https://tus.io/) protocol.
+- **Transfer requests** - Ability to request others to upload files to you for download later.
+- **Custom branding** - upload your own icon and background for the transfer pages (requires an S3 bucket atm)
+- **S3/Disk stored transfers** - Supports storing files with S3-compatiable APIs as well as local disk storage.
+- **Quick Transfers** - End-to-end encrypted peer-to-peer transfers, when you don't want to store files, just send them.
+- **Self-hostable** - Easy to **self-host** on your own hardware.
 
 ### Quick Transfers - End-to-end encrypted WebRTC file transfers in the browser
 Quick Transfers use [WebRTC](http://www.webrtc.org/) for peer-to-peer data transfer, meaning the files are streamed directly between peers and not stored anywhere in the process, not even on Transfer.zip servers. To let peers initially discover each other, a signaling server is implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through. In addition, the file data is end-to-end encrypted using [AES-GCM](https://en.wikipedia.org/wiki/Galois/Counter_Mode) with a client-side 256 bit generated key, meaning if someone could impersonate a peer or capture the traffic, they would not be able to decrypt the file without knowing the key. Because the file is streamed directly between peers, there are **no file size or bandwidth limitations**. The easiest way to Quick Transfer a file is to scan the QR code containing the file link and encryption key. It is also possible to copy the link and share it to the recipient over what medium you prefer the most. 
@@ -31,12 +23,12 @@ Because of how peer-to-peer works, some network firewalls may not allow direct c
 
 Quick Transfers only work while both users are online at the same time, due to the peer-to-peer nature of the system. 
 
-### Cloud Transfers - File uploads with resumable, scalable storage
+### Stored Transfers - File uploads with resumable, scalable storage
 Instead of real-time peer-to-peer transfer like with Quick Transfers, Cloud Transfers store the file temporarily on the server (or S3-compatible backend) using the [tus](https://tus.io/) protocol, which supports resumable, chunked uploads. This means interrupted uploads or downloads can continue where they left off. Files are deleted after the transfers expiry date.
 
-Cloud Transfers are just what normal file transfer services like WeTransfer do, but you can host it yourself if you want.
+Stored Transfers are just what normal file transfer services like WeTransfer do, but you can host it yourself if you want.
 
-To set up Cloud Transfers, you need to spin up a [node server](https://github.com/robinkarlberg/transfer.zip-node) and configure it. Having seperate servers handling the heavy-duty stuff like uploads and zip bundles, keeps the main site running smoothly. It also enables distributing of several node servers around the world, close to users, to optimize download times.
+To set up Stored Transfers, you need to spin up a [node server](https://github.com/robinkarlberg/transfer.zip-node) and configure it. Having seperate servers handling the heavy-duty stuff like uploads and zip bundles, keeps the main site running smoothly. It also enables distributing of several node servers around the world, close to users, to optimize download times.
 
 ## Self-Hosting
 
