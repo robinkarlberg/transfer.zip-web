@@ -4,6 +4,8 @@
 
 **Transfer.zip:** An open source and self-hostable complete file-sharing solution.
 
+<img src="https://cdn.transfer.zip/img/screenshot-dashboard.png" width="80%"></img>
+
 > [!NOTE]
 > If you do not want to self-host or just want to try it out, it is available at [Transfer.zip](https://transfer.zip/).
 
