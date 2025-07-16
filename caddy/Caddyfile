@@ -3,7 +3,11 @@
   email {$CADDY_ACME_EMAIL}
 }
 
-{$CADDY_DOMAIN}, www.{$CADDY_DOMAIN} {
+www.{$CADDY_DOMAIN} {
+  redir https://{$CADDY_DOMAIN}{uri}
+}
+
+{$CADDY_DOMAIN} {
   # Forward websocket to signaling server
   reverse_proxy /ws signaling-server:9002
 
