@@ -17,7 +17,10 @@ export async function POST(req, res) {
 
   await dbConnect()
 
-  if (IS_SELFHOST && req.headers.get('x-forwarded-for')) {
+  const forwardedHeader = req.headers.get('x-forwarded-for')
+  console.log(forwardedHeader)
+
+  if (IS_SELFHOST && forwardedHeader) {
     return NextResponse.json(resp("Signup not allowed from behind a proxy in self-hosted mode"), { status: 403 })
   }
 
