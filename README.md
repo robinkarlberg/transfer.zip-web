@@ -52,11 +52,3 @@ See the [self-hosting guide](SELFHOSTING.md).
 On Firefox mobile, sending files using Quick Transfer does not work at the moment. This could have something to do with the path being changed after the file has been chosen in the file picker, but not been read yet. This is under investigation and idk how to fix.
 
 Sending files from some Safari browsers is buggy at the moment, it has something to do with Safari terminating the WebSocket connection when unfocusing the window. Apple...
-
-## License
-
-This project is licensed under the [Business Source License 1.1](./LICENSE), with a 3-year change date to MIT.
-
-Basically, you may self-host and use it internally or with clients, but just not offer a competing file transfer service.
-
-See [LICENSE](./LICENSE) for details.
