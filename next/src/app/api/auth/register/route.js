@@ -6,6 +6,7 @@ import { createCookieParams, resp } from '@/lib/server/serverUtils';
 import { NextResponse } from 'next/server';
 import { IS_SELFHOST } from '@/lib/isSelfHosted';
 import { headers } from 'next/headers';
+import is_ip_private from 'private-ip'
 
 export async function POST(req, res) {
   const data = await req.json()
@@ -18,10 +19,9 @@ export async function POST(req, res) {
   await dbConnect()
 
   const forwardedHeader = req.headers.get('x-forwarded-for')
-  console.log(forwardedHeader)
 
-  if (IS_SELFHOST && forwardedHeader) {
-    return NextResponse.json(resp("Signup not allowed from behind a proxy in self-hosted mode"), { status: 403 })
+  if (IS_SELFHOST && !is_ip_private(forwardedHeader)) {
+    return NextResponse.json(resp("Signup not allowed from non-private ip in self-hosted mode"), { status: 403 })
   }
 
   if (IS_SELFHOST && await User.countDocuments() > 0) {
