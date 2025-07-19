@@ -1,13 +1,14 @@
 import { Upload } from "tus-js-client";
 import Bottleneck from "bottleneck";
 import { getUploadToken, markTransferComplete } from "./Api";
+import { generateUUID } from "./clientUtils";
 
 function clampWeight(size, WINDOW) {
   return Math.min(size, WINDOW)
 }
 
 export function prepareTransferFiles(files) {
-  files.forEach(f => f.tmpId = crypto.randomUUID())
+  files.forEach(f => f.tmpId = generateUUID())
 
   const transferFiles = files.map(file => ({
     tmpId: file.tmpId,

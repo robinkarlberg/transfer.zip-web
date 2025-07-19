@@ -1,8 +1,9 @@
 import * as WebRtc from "./webrtc"
 import { FileTransfer } from "./filetransfer";
+import { generateUUID } from "./clientUtils";
 
 export const listen = async (onLink, onCandidate) => {
-  const sessionId = crypto.randomUUID().slice(0, 8)
+  const sessionId = generateUUID().slice(0, 8)
   const rtcSession = WebRtc.newRtcListener(sessionId)
   console.log("[QuickShareProvider] [listen]", sessionId)
 
@@ -52,7 +53,7 @@ export const call = async (recipientId, k, forceFallback) => {
   }, { name: "AES-GCM" }, false, ["encrypt", "decrypt"])
 
   console.log("[QuickShareProvider] [call]", recipientId)
-  const rtcSession = WebRtc.newRtcSession(crypto.randomUUID().slice(0, 8))
+  const rtcSession = WebRtc.newRtcSession(generateUUID().slice(0, 8))
   rtcSession.onclose = () => {
       console.log("[QuickShareProvider] [call] onclose")
   }
