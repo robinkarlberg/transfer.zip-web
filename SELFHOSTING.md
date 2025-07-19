@@ -115,3 +115,40 @@ map $http_upgrade $connection_upgrade {
 # ...
 # }
 ```
+
+**Traefik** (Thanks [@danve93](https://github.com/danve93))
+```
+services:
+  next:
+    build: next
+    restart: unless-stopped
+    env_file:
+      - .env
+      - next/.env
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.transferzip.rule=Host(`transferzip.example.com`)"
+      - "traefik.http.routers.transferzip.entrypoints=websecure"
+      - "traefik.http.routers.transferzip.tls.certresolver=myresolver"
+      - "traefik.http.services.transferzip.loadbalancer.server.port=9001"
+
+  signaling-server:
+    build: signaling-server
+    restart: unless-stopped
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.transferzip-ws.rule=Host(`transferzip.example.com`) && PathPrefix(`/ws`)"
+      - "traefik.http.routers.transferzip-ws.entrypoints=websecure"
+      - "traefik.http.routers.transferzip-ws.tls.certresolver=myresolver"
+      - "traefik.http.routers.transferzip-ws.service=transferzip-ws"
+      - "traefik.http.services.transferzip-ws.loadbalancer.server.port=9002"
+      - "traefik.http.services.transferzip-ws.loadbalancer.server.scheme=http"
+```
+
+Important: scheme=http is required for the signaling server even though the client uses wss:// — because Traefik handles the TLS termination.
+
+**Please note:** If WebSocket fails, the transfer QR/link is generated but never progresses beyond Step 1, reload the page, re-upload the file - I lost some time debugging this
