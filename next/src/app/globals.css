@@ -6,6 +6,26 @@
 
 @config "../../tailwind.config.js";
 
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    /* 6 rem ≈ 96 px – tweak to match your header */
+    scroll-margin-top: 6rem;
+  }
+}
+
+@layer base {
+  .prose table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  @media (max-width: 768px) {
+    .prose table {
+      white-space: nowrap;
+    }
+  }
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
