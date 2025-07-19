@@ -93,7 +93,7 @@ export default function ({ user, storage, brandProfiles }) {
     const { transfer, idMap } = await newTransfer({ name, description, expiresInDays, files: transferFiles, emails: emailRecipients, brandProfileId })
 
     const { results, failedPromises } = await uploadFiles(files, idMap, transfer, progress => {
-      console.log(progress, progress.reduce((sum, item) => sum + item[1], 0))
+      // console.log(progress, progress.reduce((sum, item) => sum + item[1], 0))
       setUploadProgressMap(progress)
     })
 
