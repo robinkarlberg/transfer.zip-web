@@ -11,13 +11,21 @@ The self-host guide is still a work in progress. If you encounter issues or noti
 
 ### Prerequisites
 
-### Quick Transfers
+- Docker
+- Docker Compose
+- CPU with AVX support (recommended but workaround exists)
+
+### Quirks
+
+MongoDB 8.0+ requires a CPU with AVX support, which is not available on older, or lower end systems. If your CPU does not support this, use `mongo:4.4`instead in the `docker-compose.yml` file.
+
+### Setting up Quick Transfers
 
 1. Run `./createenv.sh` to create the env-files needed. This will create a random password for mongo as well.
 
 That's all that you need for using Quick Transfers, you can now deploy the service. You can skip the `worker` and `mongo` containers as they are not used.
 
-### Stored Transfers
+### Setting up Stored Transfers
 
 To set up Stored Transfers, you need to spin up a [node server](https://github.com/robinkarlberg/transfer.zip-node) and configure it. The node server handles all file operations.
 
@@ -88,8 +96,18 @@ map $http_upgrade $connection_upgrade {
 # Put this in your server-block
 # server {
 # ...
+    location / {
+        proxy_buffering off;        # Enable NextJS streaming
+
+        proxy_pass http://localhost:9001/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
     location /ws {
-        proxy_pass http://localhost:9001/ws;
+        proxy_pass http://localhost:9002/;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection $connection_upgrade;
         proxy_set_header Host $host;

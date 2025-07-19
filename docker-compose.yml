@@ -1,6 +1,9 @@
 services:
   mongo:
     image: mongo:8.0-noble
+    # https://github.com/robinkarlberg/transfer.zip-web/issues/42#issue-3242349311
+    # Use an older mongodb version if your CPU does not support AVX instructions.
+    # image: mongo:4.4
     restart: unless-stopped
     volumes:
       - ./_db:/data/db
