@@ -47,9 +47,18 @@ Having seperate servers handling the heavy-duty stuff like uploads and zip bundl
 10. **If you want to use custom branded transfers**: Modify the `S3_` env variables in `next/.env`. Branding assets are stored in buckets atm.
 11. Create an account by running `./create-account.sh` while the main server is running. Account creation is not supported by the UI when self-hosting.
 
+**Finally:**
+Change these two lines in `next/.env` to reflect your current hosting setup, so cookies and api works as it should.
+```
+SITE_URL=http://localhost:9001
+COOKIE_DOMAIN=localhost   # cookie
+```
+
 ## Deploying
 
 There are multiple ways to deploy Transfer.zip, the easiest is to use the built-in caddy config. If you want more control, you can use any reverse proxy. (Examples provided)
+
+By default, the web server is exposed on port `9001`, and the signaling server on port `9002`. You can change this in the `.env` file.
 
 ### Caddy (built-in)
 
