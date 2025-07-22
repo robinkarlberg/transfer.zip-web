@@ -2,7 +2,7 @@ import Link from "next/link"
 import Image from 'next/image'
 import icon from "@/img/icon.png"
 
-export default async function ({ title, description, href, linkText, children }) {
+export default async function ({ title, description, href, linkText, slugPath, children }) {
   return (
     <div className="bg-white mb-12">
       <div className="relative isolate">
@@ -34,6 +34,52 @@ export default async function ({ title, description, href, linkText, children })
           <div className="text-xl">
             <Link className="flex items-center gap-x-2" href={"/"}><Image src={icon} width={40} alt='logo'></Image><span className="font-bold">Transfer.zip</span></Link>
           </div>
+          <div className="hidden md:block">
+            <nav className="flex items-center gap-2 text-sm lg:text-base text-gray-500">
+              <Link
+                href="/"
+                className="hover:underline transition-colors duration-150 hover:text-blue-600"
+              >
+                Home
+              </Link>
+              {slugPath
+                .split('/')
+                .map((segment, i, arr) => {
+                  const href = '/' + arr.slice(0, i + 1).join('/')
+                  const isLast = i === arr.length - 1
+                  const label = segment.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+                  return (
+                    <span key={href} className="flex items-center gap-2">
+                      <svg
+                        width="16"
+                        height="16"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        className="mx-1 text-gray-300"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M6 4l4 4-4 4" />
+                      </svg>
+                      {isLast
+                        ? (
+                          <span className="text-gray-900 font-semibold bg-gray-100 px-2 py-0.5 rounded">
+                            {label}
+                          </span>
+                        ) : (
+                          <Link
+                            href={href}
+                            className="hover:underline hover:text-blue-600 transition-colors duration-150"
+                          >
+                            {label}
+                          </Link>
+                        )
+                      }
+                    </span>
+                  )
+                })}
+            </nav>
+          </div>
           <div>
             <Link href={"/app"} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-4 py-2 hover:bg-primary-light">
               Create Account <span aria-hidden="true">&rarr;</span>
@@ -42,7 +88,7 @@ export default async function ({ title, description, href, linkText, children })
         </div>
         <div className="mx-auto max-w-7xl px-6 py-8 sm:py-32 lg:flex lg:items-center lg:gap-x-10 lg:px-8 lg:py-36">
           <div className="mx-auto max-w-2xl lg:mx-0 text-center lg:text-left lg:flex-auto">
-            <h1 className="mx-auto lg:mx-0 mt-10 max-w-xl text-5xl font-extrabold tracking-tight text-gray-900 sm:text-6xl">
+            <h1 className="mx-auto lg:mx-0 mt-10 max-w-xl text-4xl font-extrabold tracking-tight text-gray-900 sm:text-6xl">
               {title}
             </h1>
             <p className="mx-auto lg:mx-0 mt-6 text-lg leading-8 text-gray-600 max-w-xl">
@@ -58,9 +104,6 @@ export default async function ({ title, description, href, linkText, children })
                   {" "}&rarr;
                 </>
               </Link>
-              {/* <a href="https://github.com/robinkarlberg/transfer.zip-web" className="hidden sm:inline-block text-sm font-semibold leading-6 text-gray-900">
-                <BIcon name={"star"} /> Star on GitHub {stars ? `(${stars})` : ""}
-              </a> */}
             </div>
           </div>
           <div className={`hidden sm:mt-8 lg:pt-0 lg:flex items-center justify-center lg:flex-shrink-0 lg:flex-grow relative`}>
