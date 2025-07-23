@@ -41,9 +41,6 @@ COPY conf.json /app/conf.json
 
 COPY --from=builder /app/public ./public
 
-# mdx content
-COPY --from=builder /app/src/content ./src/content
-
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
