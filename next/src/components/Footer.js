@@ -32,19 +32,13 @@ export default function Footer({ }) {
               </ul>
             </div>
             <div>
-              <h4 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><a className="hover:underline" href="https://blog.transfer.zip/">Blog</a></h4>
+              <h4 className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><a className="hover:underline" href="/alternative">Alternatives</a></h4>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 <li className="mb-4">
-                  <Link href="https://blog.transfer.zip/2025/04/05/how-to-send-large-video-files.html" className="hover:underline ">Send Large Video Files</Link>
-                </li>
-                {/* <li className="mb-4">
-                  <Link href="https://blog.transfer.zip/2025/04/01/android-file-transfer-for-mac.html" className="hover:underline ">Android to Mac File Transfer</Link>
-                </li> */}
-                <li className="mb-4">
-                  <Link href="https://blog.transfer.zip/2025/03/07/how-send-100gb-files-for-free.html" className="hover:underline ">Send 100GB Files Free</Link>
+                  <Link href="/alternative/wetransfer" className="hover:underline ">WeTransfer Alternative</Link>
                 </li>
                 <li>
-                  <Link href="https://blog.transfer.zip/2025/03/08/how-send-large-audio-files.html" className="hover:underline">Send Large Audio Files</Link>
+                  <Link href="/alternative/smash" className="hover:underline ">Smash Alternative</Link>
                 </li>
               </ul>
             </div>
@@ -57,8 +51,11 @@ export default function Footer({ }) {
                 <li className="mb-4">
                   <a href={`mailto:${process.env.NEXT_PUBLIC_SUPPORT_EMAIL}`} className="hover:underline">Support</a>
                 </li>
-                <li>
+                <li className="mb-4">
                   <a href="https://github.com/robinkarlberg/transfer.zip-web?tab=readme-ov-file#self-hosting" className="hover:underline">Self Hosting</a>
+                </li>
+                <li>
+                  <a href="/how-to" className="hover:underline">How-Tos</a>
                 </li>
               </ul>
             </div>
