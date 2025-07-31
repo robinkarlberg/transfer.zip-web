@@ -7,12 +7,12 @@ const faqs = [
   {
     question: "Why pay for Transfer.zip when Quick Transfers is free?",
     answer:
-      "A paid subscription unlocks the dashboard, lets you share files that don’t expire, and offers cheaper, faster transfers than competitors."
+      "A paid subscription unlocks the dashboard, lets you share files that don't expire instantly, and offers cheaper, faster transfers than competitors."
   },
   {
     question: "Is there really no file size limit?",
     answer:
-      "Quick Transfers has no file size limit. Regular transfers have a limit based on your plan."
+      "Quick Transfers has no file size limit. Regular transfers have a limit based on your plan, but we never limit how many transfers you can send."
   },
   {
     question: "How do Quick Transfers work?",
@@ -28,7 +28,7 @@ const faqs = [
   },
   {
     question: "Is there a free trial available?",
-    answer: "No, not at the moment."
+    answer: "Yes, a free trial is available for 7 days."
   },
   {
     question: "How do I contact support if I encounter an issue?",
