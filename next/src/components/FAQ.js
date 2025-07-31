@@ -5,6 +5,11 @@ import BIcon from './BIcon'
 
 const faqs = [
   {
+    question: "Do you train AI models with my data?",
+    answer:
+      <><a className="text-primary underline" href="https://www.theartnewspaper.com/2025/07/28/wetransfer-artificial-intelligence-terms-service-artists-intellectual-property">Unlike WeTransfer</a>, we never train AI models with your data. Paid transfers are only sent from A to B and are permanently removed on expiry. Quick Transfers are end-to-end encrypted, streamed directly between peers, and are never stored. We offer unprecedented privacy for a very low price.</>
+  },
+  {
     question: "Why pay for Transfer.zip when Quick Transfers is free?",
     answer:
       "A paid subscription unlocks the dashboard, lets you share files that don't expire instantly, and offers cheaper, faster transfers than competitors."
