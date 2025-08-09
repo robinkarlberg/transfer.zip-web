@@ -21,13 +21,13 @@ const features = [
   //   icon: 'calendar',
   // },
   {
-    name: 'Custom Branding',
-    description: 'Make every transfer your own. Add your logo and background for a more professional look.',
+    name: 'Chapter Heraldry',
+    description: "Display your Chapter's colors with pride. Add your sigil and livery to every transmission.",
     icon: 'person',
   },
   {
-    name: 'Reliable Uploads',
-    description: "Connection dropped? No problem. Uploads retry in the background until they're done.",
+    name: 'Unbreakable Vox-links',
+    description: "Vox-link severed? Fear not. The Machine Spirit will ensure your transmission is completed.",
     icon: 'arrow-clockwise',
   },
   // {
@@ -36,13 +36,13 @@ const features = [
   //   icon: 'arrow-clockwise',
   // },
   {
-    name: 'Statistics',
-    description: 'See when your files are downloaded and when your links are clicked, with simple stats.',
+    name: 'Battlefield Intelligence',
+    description: 'Know when your decrees have been received and your orders followed, with precise intelligence.',
     icon: 'bar-chart',
   },
   {
-    name: 'Fully Open Source',
-    description: <>All source code is open source on GitHub. <Link className="text-primary hover:underline whitespace-nowrap" href="https://github.com/robinkarlberg/transfer.zip-web">Check it Out &rarr;</Link></>,
+    name: 'For the Omnissiah',
+    description: <>The sacred code is open to all Tech-Priests on GitHub. <Link className="text-primary hover:underline whitespace-nowrap" href="https://github.com/robinkarlberg/transfer.zip-web">Praise the Omnissiah! &rarr;</Link></>,
     icon: 'github',
   },
 ];
@@ -54,13 +54,13 @@ export default function Features1() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           {/* <Image alt="Logo" src={logo} className="w-16 mx-auto"></Image> */}
-          <h2 className="text-base/7 font-semibold text-primary">Why Choose Us?</h2>
+          <h2 className="text-base/7 font-semibold text-primary">Why Serve the Emperor?</h2>
           {/* <div className="text-blue-500 mb-4">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div> */}
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Blazingly Fast. No Nonsense.
+            For the Glory of the Imperium. No Heresy.
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            Say goodbye to <Link className="text-primary hover:underline" target="_blank" href={"https://www.reddit.com/r/editors/comments/1gk7yh8/is_swisstransfercom_slow_or_is_it_just_me/"}>slow uploads</Link>, size limits, and <Link className="text-primary hover:underline" target="_blank" href={"https://www.reddit.com/r/editors/comments/1htld1d/wetransfer_casually_doubling_my_subscription/"}>expensive pricing</Link>. Transfer.zip makes file sharing seamless without breaking the bank.
+            Banish slow transmissions, restricted data-tethers, and exorbitant tithes. Serve the Emperor with seamless data-transfer, without bankrupting your Chapter.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">

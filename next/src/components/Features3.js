@@ -4,15 +4,15 @@ import Link from 'next/link'
 
 const features = [
   {
-    name: 'Track Views and Downloads',
-    description: "The dashboard allows you to track when download links are clicked, and files downloaded - ensuring you have full visibility over the distribution of your files.",
+    name: 'Monitor Vox-traffic and Data-retrieval',
+    description: "The command console allows you to monitor when astropathic relays are accessed and data-slates retrieved - ensuring you have complete oversight of your transmissions.",
     icon: "envelope-fill",
     cta: "Send Files By Email",
     href: "/signup"
   },
   {
-    name: 'Blazing Fast Speeds',
-    description: "All files are downloaded from the same high-speed servers, ensuring your ideas get shared as quickly as possible.",
+    name: 'Warp-speed Transmissions',
+    description: "All data-slates are transmitted via the same high-speed astropathic network, ensuring your decrees are disseminated with the speed of thought.",
     icon: "fast-forward-fill",
     cta: "Send Files Fast",
     href: "/signup"
@@ -24,12 +24,12 @@ export default function Features3() {
     <div className="bg-white py-24 sm:py-32" id="send-files-by-email">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-xl text-center">
-          <h2 className="text-base/7 font-semibold text-primary">Send Files By Email</h2>
+          <h2 className="text-base/7 font-semibold text-primary">Deploy Servo Skulls</h2>
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Share Files with Your Whole Organisation.
+            Disseminate Imperial Decrees to Your Entire Chapter.
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            Transfer files to as many as 50 email addresses at once - directly from the dashboard.
+            Transmit data-slates to as many as 50 astropathic relays at once - directly from the command console.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">

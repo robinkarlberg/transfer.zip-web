@@ -5,43 +5,43 @@ import BIcon from './BIcon'
 
 const faqs = [
   {
-    question: "Do you train AI models with my data?",
+    question: "Do you submit my data-slates to the Adeptus Mechanicus for analysis?",
     answer:
-      <><a className="text-primary underline" href="https://www.theartnewspaper.com/2025/07/28/wetransfer-artificial-intelligence-terms-service-artists-intellectual-property">Unlike WeTransfer</a>, we never train AI models with your data. Paid transfers are only sent from A to B and are permanently removed on expiry. Quick Transfers are end-to-end encrypted, streamed directly between peers, and are never stored. We offer unprecedented privacy for a very low price.</>
+      <><a className="text-primary underline" href="https://www.theartnewspaper.com/2025/07/28/wetransfer-artificial-intelligence-terms-service-artists-intellectual-property">Unlike heretical data-brokers</a>, we never submit your data-slates to the Adeptus Mechanicus. Tithed transmissions are sent from one astropath to another and are permanently purged upon expiry. Expedited Astropathic Messages are end-to-end sanctioned encrypted, streamed directly between cogitators, and are never stored. We offer unparalleled security for a modest tithe.</>
   },
   {
-    question: "Why pay for Transfer.zip when Quick Transfers is free?",
+    question: "Why tithe for the Emperor's service when Expedited Astropathic Messages are free?",
     answer:
-      "A paid subscription unlocks the dashboard, lets you share files that don't expire instantly, and offers cheaper, faster transfers than competitors."
+      "A tithe-paying member of the Imperial Creed gains access to the command console, allows you to transmit data-slates that do not expire instantly, and offers more affordable and swifter transmissions than any xenos or heretical alternative."
   },
   {
-    question: "Is there really no file size limit?",
+    question: "Is there truly no limit to the size of a data-slate?",
     answer:
-      "Quick Transfers has no file size limit. Regular transfers have a limit based on your plan, but we never limit how many transfers you can send."
+      "Expedited Astropathic Messages have no data-slate size limit. Tithed transmissions have a limit based on your tithe, but we never limit how many data-slates you can transmit."
   },
   {
-    question: "How do Quick Transfers work?",
-    answer: "It uses WebRTC for peer-to-peer data transfer, meaning the files are streamed directly between peers and not stored anywhere in the process, not even on transfer.zip servers. To let peers initially discover each other, a signaling server is implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through. In addition, the file data is end-to-end encrypted using AES-GCM with a client-side 256 bit generated key, meaning if someone could impersonate a peer or capture the traffic, they would not be able to decrypt the file without knowing the key. Because the file is streamed directly between peers, there are no file size or bandwidth limitations."
+    question: "How do Expedited Astropathic Messages function?",
+    answer: "It utilizes sanctioned peer-to-peer data-transfer protocols, meaning the data-slates are streamed directly between cogitators and not stored anywhere in the process, not even on our holy servers. To allow cogitators to initially discover each other, a signaling-servitor is implemented using blessed WebSockets, through which no sensitive data is ever transmitted. In addition, the data-slate is end-to-end encrypted using AES-GCM with a client-side 256-bit generated key, meaning if a heretic could impersonate a cogitator or capture the transmission, they would not be able to decrypt the data-slate without knowing the key. Because the data-slate is streamed directly between cogitators, there are no data-slate size or bandwidth limitations."
   },
   {
-    question: "Is Transfer.zip safe to use?",
-    answer: "Yes. Transfers on our servers are encrypted, and your privacy is a priority."
+    question: "Is this data-transfer service sanctioned by the Imperium?",
+    answer: "Yes. Transmissions on our holy servers are encrypted, and your security is our sacred duty."
   },
   {
-    question: "What payment methods are accepted?",
-    answer: "All major credit cards via Stripe."
+    question: "What forms of tithe are accepted?",
+    answer: "All major forms of currency, processed by the Adeptus Administratum."
   },
   {
-    question: "Is there a free trial available?",
-    answer: "Yes, a free trial is available for 7 days."
+    question: "Is there a period of grace for new recruits?",
+    answer: "Yes, a 7-day period of grace is granted to all new recruits."
   },
   {
-    question: "How do I contact support if I encounter an issue?",
-    answer: "Click the 'Support' button on the site."
+    question: "How do I contact the Adeptus Terra for assistance?",
+    answer: "Click the 'Inquisition' button on the data-slate."
   },
   {
-    question: "Can I cancel my account?",
-    answer: "Yes, contact support to cancel your account."
+    question: "Can I renounce my oath of service?",
+    answer: "Yes, contact the Adeptus Terra to be relieved of your duties."
   },
 ]
 
@@ -50,7 +50,7 @@ export default function FAQ() {
     <div className="bg-white" id="faq">
       <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-40">
         <div className="mx-auto max-w-4xl divide-y divide-gray-900/10">
-          <h2 className="text-2xl font-bold leading-10 tracking-tight text-gray-900 pb-4">Frequently asked questions</h2>
+          <h2 className="text-2xl font-bold leading-10 tracking-tight text-gray-900 pb-4">Imperial Archives</h2>
           <dl className="mt-10 space-y-6 divide-y divide-gray-900/10">
             {faqs.map((faq) => (
               <Disclosure key={faq.question} as="div" className="pt-2">

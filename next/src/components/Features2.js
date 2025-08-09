@@ -3,15 +3,15 @@ import Link from 'next/link'
 
 const features = [
   {
-    name: 'Shareable & Embeddable',
-    description: 'Easily place upload links on your site or share them through email and social media.',
+    name: 'Astropathic Relays & Vox-Casters',
+    description: 'Establish astropathic relays on your data-slates or disseminate them via vox-casters and pict-feeds.',
     icon: "arrow-down",
     cta: "Easily Receive Files",
     href: "/signup"
   },
   {
-    name: 'Complete Control',
-    description: "You can disable or re-enable your personal links at any time. Create as many links as you desire.",
+    name: 'Total Domination',
+    description: "You can activate or deactivate your personal relays at will. Forge as many as you require for your holy purpose.",
     icon: "toggle-on",
     cta: "Create Your First Link",
     href: "/signup"
@@ -29,12 +29,12 @@ export default function Features2() {
     <div className="bg-white py-24 sm:py-32" id="receive-files">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-base/7 font-semibold text-primary">Receive Files with a Link</h2>
+          <h2 className="text-base/7 font-semibold text-primary">Receive Transmissions via Astropath</h2>
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Receive Files from Anyone, Anywhere
+            Receive Vox-casts from any Corner of the Imperium
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            Create personalized upload links to easily receive files from anyone - even if they don't have a Transfer.zip account.
+            Forge personalized astropathic relays to receive transmissions from anyone - even those who have not yet sworn allegiance to the Imperium.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">

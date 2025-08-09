@@ -3,11 +3,11 @@ import PricingCards from "./PricingCards"
 import BIcon from "./BIcon"
 
 const features = [
-  { name: "Full access to Quick Transfers", good: true },
-  { name: "Use without an account", good: true },
-  { name: "No limit on file size", good: true },
-  { name: "Transfers expire when browser tab is closed", good: false },
-  { name: "No storage", good: false },
+  { name: "Full access to Expedited Astropathic Messages", good: true },
+  { name: "Serve without an oath of allegiance", good: true },
+  { name: "No limit on data-slate size", good: true },
+  { name: "Transmissions expire when cogitator is deactivated", good: false },
+  { name: "No data-vault", good: false },
 ]
 
 export default function Pricing() {
@@ -26,20 +26,20 @@ export default function Pricing() {
         />
       </div>
       <div className="mx-auto max-w-xl text-center">
-        <h2 className="text-base/7 font-semibold text-primary" id="pricing">Pricing</h2>
+        <h2 className="text-base/7 font-semibold text-primary" id="pricing">Tithes</h2>
         <p className="mt-2 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-6xl">
-          A Fair and Simple Pricing Model
+          A Just and Simple Tithe Model
         </p>
       </div>
       <p className="mx-auto mt-6 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 sm:text-xl/8">
-        We employ a pricing strategy that values transparency and fairness, allowing you to focus on your work, without worrying about hidden fees.
+        We employ a tithing strategy that values piety and devotion, allowing you to focus on your sacred duties, without worrying about hidden levies.
       </p>
       <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
         <PricingCards tiers={tiers} hasFreeTrial={true} />
         <div className="col-span-full mt-16">
           <div className="border shadow rounded-3xl p-10 w-full flex flex-col lg:flex-row justify-between">
             <div>
-              <h3 className="text-base/7 font-semibold text-primary">Free</h3>
+              <h3 className="text-base/7 font-semibold text-primary">For the Emperor</h3>
               <p className="mt-4 flex items-baseline gap-x-2">
                 <span
                   className={'text-gray-900 text-5xl font-semibold tracking-tight'}
@@ -48,7 +48,7 @@ export default function Pricing() {
                 </span>
               </p>
               <p className={`text-gray-600 mt-6 text-base/7 max-w-md`}>
-                <span className="hidden md:inline"> Send files without size limits, with end-to-end encryption.</span> Transfer.zip can be used without an account, but without storing files for very long.
+                <span className="hidden md:inline"> Transmit data-slates without size limits, with end-to-end sanctioned encryption.</span> This holy service can be used without an oath of allegiance, but without storing data-slates for very long.
               </p>
             </div>
             <div>

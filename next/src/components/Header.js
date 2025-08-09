@@ -21,22 +21,42 @@ import Image from 'next/image'
 import { IS_SELFHOST } from '@/lib/isSelfHosted'
 
 const products = [
-  { name: 'Why Choose Us?', description: 'Blazingly Fast. No Bull***t', href: '/#why-choose-us', icon: "lightbulb" },
-  { name: 'Receive Files with a Link', description: 'Receive Files from Anyone, Anywhere', href: '/#receive-files', icon: "arrow-down" },
-  { name: 'Send Files By Email', description: 'Share Files with Your Whole Organisation.', href: '/#send-files-by-email', icon: "clock" },
-  { name: 'Quick Transfer', description: 'Keep Your Tab Open - Send Without Limits', href: '/quick', icon: "lightning-fill" },
+  { name: 'Why Serve the Emperor?', description: "For the Emperor's Glory. No Heresy.", href: '/#why-choose-us', icon: "lightbulb" },
+  { name: 'Receive Transmissions via Astropath', description: 'Receive Vox-casts from any Corner of the Imperium.', href: '/#receive-files', icon: "arrow-down" },
+  { name: 'Deploy Servo Skulls', description: 'Disseminate Imperial Decrees to Your Entire Chapter.', href: '/#send-files-by-email', icon: "clock" },
+  { name: 'Expedited Astropathic Message', description: 'Maintain the Link - Transmit Without Restriction.', href: '/quick', icon: "lightning-fill" },
 ]
 const callsToAction = [
-  { name: 'FAQ', href: "/#faq", icon: "question-lg" },
-  { name: 'Contact', href: `mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}`, icon: "envelope-fill" },
+  { name: 'Imperial Archives', href: "/#faq", icon: "question-lg" },
+  { name: 'Contact the Inquisition', href: `mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}`, icon: "envelope-fill" },
 ]
 
 export default function Header({ scrollAware }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showHeader, setShowHeader] = useState(!scrollAware)
+  const [isDarkMode, setIsDarkMode] = useState(false)
+
+  useEffect(() => {
+    const isDark = localStorage.getItem('isDarkMode') === 'true'
+    setIsDarkMode(isDark)
+    if (isDark) {
+      document.documentElement.classList.add('dark')
+    }
+  }, [])
+
+  const toggleDarkMode = () => {
+    const isDark = !isDarkMode
+    setIsDarkMode(isDark)
+    localStorage.setItem('isDarkMode', isDark)
+    if (isDark) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }
 
   const auth = false
-  const ctaText = IS_SELFHOST ? "My Transfers" : "Create Account"
+  const ctaText = IS_SELFHOST ? "My Transfers" : "Join the Crusade"
   const ctaLink = "/app"
 
   const handleLinkClicked = e => {
@@ -152,14 +172,17 @@ export default function Header({ scrollAware }) {
               </Popover>
 
               <Link href="/#pricing" className="text-sm/6 font-semibold text-gray-900">
-                Pricing
+                Tithes
               </Link>
               <Link href="/legal/privacy-policy" className="text-sm/6 font-semibold text-gray-900">
-                Privacy
+                Imperial Law
               </Link>
             </PopoverGroup>
           )}
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+          <div className="hidden lg:flex lg:flex-1 lg:justify-end items-center gap-x-4">
+            <button onClick={toggleDarkMode} className="text-sm/6 font-semibold text-gray-900 dark:text-white">
+              <BIcon name={isDarkMode ? 'sun' : 'moon'} />
+            </button>
             <Link href={ctaLink} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-3 py-0.5 hover:bg-primary-light">
               {ctaText} <span aria-hidden="true">&rarr;</span>
             </Link>
@@ -213,7 +236,7 @@ export default function Header({ scrollAware }) {
                     href="/#pricing"
                     className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                   >
-                    Pricing
+                    Tithes
                   </Link>
                   {/* <Link
                   href="/explore"
@@ -226,7 +249,7 @@ export default function Header({ scrollAware }) {
                     href="/legal/privacy-policy"
                     className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                   >
-                    Privacy
+                    Imperial Law
                   </Link>
                 </div>
                 <div className="py-6">
