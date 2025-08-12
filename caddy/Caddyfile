@@ -3,6 +3,12 @@
   email {$CADDY_ACME_EMAIL}
 }
 
+# This is needed for a while, I am removing the blog I've had for a while and
+# redirecting everything to Transfer.zip. Will remove later.
+blog.transfer.zip {
+  redir https://{$CADDY_DOMAIN}{uri}
+}
+
 www.{$CADDY_DOMAIN} {
   redir https://{$CADDY_DOMAIN}{uri}
 }
