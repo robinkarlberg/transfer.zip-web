@@ -5,7 +5,14 @@ export default {
     {
       id: "starter",
       name: "Starter",
-      price: "$9",
+      price: {
+        "monthly": "$9",
+        "yearly": "$6"
+      },
+      priceInt: {
+        "monthly": 9,
+        "yearly": 6
+      },
       description: "For personal use and quick file sharing.",
       features: [
         // "Quick-Share files of any size",
@@ -20,7 +27,14 @@ export default {
     {
       id: "pro",
       name: "Pro",
-      price: "$19",
+      price: {
+        "monthly": "$19",
+        "yearly": "$12.6"
+      },
+      priceInt: {
+        "monthly": 19,
+        "yearly": 12.6
+      },
       description: "For power users & professionals.",
       features: [
         // "Quick-Share files of any size",

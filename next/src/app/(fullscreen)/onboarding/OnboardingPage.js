@@ -10,6 +10,7 @@ import logo from "@/img/icon.png"
 import Image from "next/image"
 import { API_URL, createCheckoutSession, logout } from "@/lib/client/Api"
 import { ExternalLink, ExternalLinkIcon } from "lucide-react"
+import PricingToggle from "@/components/PricingToggle"
 
 const testimonials = [
   {
@@ -58,6 +59,8 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
     }
   }
 
+  const [frequency, setFrequency] = useState("yearly")
+
   return (
     <>
       <div className="flex min-h-[100vh] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -69,7 +72,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
             className="mx-auto h-10 w-auto"
           />
           <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            Welcome to Transfer.zip! 🎉
+            Transfer.zip
           </h1>
           <p className="text-gray-700 mt-4">
             {
@@ -84,8 +87,11 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
             }
           </p>
         </div>
-        <div className="mx-auto mt-8 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-12 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
-          <PricingCards tiers={tiers} compact={false} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} />
+        <div className="mt-8">
+          <PricingToggle frequency={frequency} setFrequency={setFrequency}/>
+        </div>
+        <div className="mx-auto mt-4 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-8 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
+          <PricingCards frequency={frequency} tiers={tiers} compact={false} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} />
         </div>
         <div className={``}>
           <div className="mx-auto max-w-4xl px-6 lg:px-8 pt-16 mb-8">

@@ -1,13 +1,14 @@
 "use client"
 
-import Link from 'next/link'
+import Link from "next/link"
 import BIcon from "./BIcon"
+import NumberFlow from '@number-flow/react'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function PricingCards({ tiers, compact, onTierSelected, hasFreeTrial }) {
+export default function PricingCards({ frequency, tiers, compact, onTierSelected, hasFreeTrial }) {
   const _buttonText = hasFreeTrial ? "Start 7-day Free Trial" : "Subscribe"
   return tiers.map((tier, tierIdx) => (
     <div
@@ -28,17 +29,24 @@ export default function PricingCards({ tiers, compact, onTierSelected, hasFreeTr
       >
         {tier.name}
       </h3>
-      <p className="mt-4 flex items-baseline gap-x-2">
-        <span
+      <div className="mt-4 flex items-baseline gap-x-2">
+        <div
           className={classNames(
             tier.featured ? 'text-white' : 'text-gray-900',
             'text-5xl font-semibold tracking-tight',
           )}
         >
-          {tier.price}
-        </span>
+          <div className="-my-3">
+            <NumberFlow
+              value={tier.priceInt[frequency]}
+              prefix="$"
+              continous={false}
+            />
+          </div>
+        </div>
         <span className={classNames(tier.featured ? 'text-gray-400' : 'text-gray-500', 'text-base')}>{tier.lifetime ? "once" : "/month"}</span>
-      </p>
+        {frequency == "yearly" && <span className={`text-sm ${tier.featured ? 'text-gray-500' : 'text-gray-400'}`}>${tier.priceInt[frequency]*12}/year</span>}
+      </div>
       {!compact && (<p className={classNames(tier.featured ? 'text-gray-300' : 'text-gray-600', 'mt-6 text-base/7')}>
         {tier.description}
       </p>)}
