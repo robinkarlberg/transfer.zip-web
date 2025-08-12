@@ -219,6 +219,12 @@ export async function getDownloadToken(secretCode) {
     return await post(`/sign`, { secretCode, scope: "download" })
 }
 
+// errors
+
+export async function sendTrackError(payload) {
+    return await post("/error", payload)
+}
+
 // node
 
 const nodePost = async (nodeUrl, token, endpoint, payload) => {

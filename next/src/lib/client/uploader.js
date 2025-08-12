@@ -2,6 +2,7 @@ import { Upload } from "tus-js-client";
 import Bottleneck from "bottleneck";
 import { getUploadToken, markTransferComplete } from "./Api";
 import { generateUUID } from "./clientUtils";
+import { trackError } from "./errorTracking";
 
 function clampWeight(size, WINDOW) {
   return Math.min(size, WINDOW)
@@ -88,7 +89,7 @@ export async function uploadFiles(files, idMap, transfer, progress) {
           }).start()
         })
           .catch(err => {
-            console.error(err)
+            trackError("uploader.js max_retries_exceeded", err, { transferId: transfer.id, file: { name: file.name, size: file.size, type: file.type } })
           })
           .finally(() =>
             bytesLimiter.incrementReservoir(clampWeight(file.size * MIN_PARALLEL, UPLOAD_WIN) / MIN_PARALLEL)
@@ -101,6 +102,7 @@ export async function uploadFiles(files, idMap, transfer, progress) {
   const failedPromises = results.filter(r => r.status === "rejected")
 
   if (failedPromises.length > 0) {
+    trackError("uploader.js not_all_files_uploaded", err, { transferId: transfer.id })
     console.error("Not all files could be uploaded! :(")
     console.log(failedPromises)
   }
