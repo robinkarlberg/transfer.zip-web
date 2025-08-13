@@ -48,7 +48,7 @@ export default function SignUpPage() {
       if (!validateEmail(email)) throw { message: "Invalid email" }
       if (password.length < 6) throw { message: "Password too short (minimum 8 characters)" }
 
-      if (window.sa_loaded) window.sa_event("signup")
+      sendEvent("signup_event")
 
       const res = await register(email, password)
       if (res.success) {

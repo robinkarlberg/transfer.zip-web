@@ -20,6 +20,7 @@ import { useQuickShare } from "@/hooks/client/useQuickShare"
 import { DashboardContext } from "@/context/DashboardContext"
 import { IS_SELFHOST } from "@/lib/isSelfHosted"
 import SignUpModal from "@/components/SignUpModal"
+import { sendEvent } from "@/lib/client/umami"
 
 const TRANSFER_STATE_WAIT_FOR_USER = "wait_for_user"
 const TRANSFER_STATE_IDLE = "idle"
@@ -275,7 +276,7 @@ export default function QuickShareProgress({ isLoggedIn }) {
       return router.replace("/quick")
     }
 
-    console.log("AFTER",hasBeenSentLink, k, remoteSessionId, transferDirection)
+    console.log("AFTER", hasBeenSentLink, k, remoteSessionId, transferDirection)
 
     // Setup WebRtc websocket connection, and close it when leaving page.
     // startProgress is run before websocket connects, but webrtc.js code handles the waiting for us
@@ -353,9 +354,9 @@ export default function QuickShareProgress({ isLoggedIn }) {
             <Link
               href={"/app/new"}
               onNavigate={e => {
+                sendEvent("quick_transfer_upsell_click", { is_logged_in: isLoggedIn })
                 if (!isLoggedIn) {
                   e.preventDefault()
-                  if (window.sa_loaded) window.sa_event("quick-share_upsell_clicked")
                   setShowSignUpModal(true)
                 }
               }}

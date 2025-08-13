@@ -3,12 +3,13 @@
 import Link from "next/link"
 import BIcon from "./BIcon"
 import NumberFlow from '@number-flow/react'
+import { sendEvent } from "@/lib/client/umami"
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function PricingCards({ frequency, tiers, compact, onTierSelected, hasFreeTrial }) {
+export default function PricingCards({ frequency, tiers, compact, onTierSelected, hasFreeTrial, eventName }) {
   const _buttonText = hasFreeTrial ? "Start 7-day Free Trial" : "Subscribe"
   return tiers.map((tier, tierIdx) => (
     <div
@@ -80,12 +81,15 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
         ))}
       </ul>
       <Link
-        onClick={!!onTierSelected && (
-          e => {
+        onClick={e => {
+          if(eventName) {
+            sendEvent(eventName, { tier: tier.id, is_trial: hasFreeTrial })
+          }
+          if (!!onTierSelected) {
             e.preventDefault()
             onTierSelected(tier.name)
           }
-        )}
+        }}
         href={"/signup"}
         aria-describedby={tier.name}
         className={classNames(

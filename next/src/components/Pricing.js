@@ -44,7 +44,7 @@ export default function Pricing() {
         <PricingToggle frequency={frequency} setFrequency={setFrequency} />
       </div>
       <div className="mx-auto mt-4 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-8 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
-        <PricingCards frequency={frequency} tiers={tiers} hasFreeTrial={true} />
+        <PricingCards frequency={frequency} tiers={tiers} hasFreeTrial={true} eventName={"pricing_card_landing_click"} />
         <div className="col-span-full mt-16">
           <div className="border shadow rounded-3xl p-10 w-full flex flex-col lg:flex-row justify-between">
             <div>

@@ -92,7 +92,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
           <PricingToggle frequency={frequency} setFrequency={setFrequency}/>
         </div>
         <div className="mx-auto mt-4 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-8 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
-          <PricingCards frequency={frequency} tiers={tiers} compact={false} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} />
+          <PricingCards frequency={frequency} tiers={tiers} compact={false} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_onboarding_click"} />
         </div>
         <IndieStatement compact/>
         <div className={``}>
