@@ -66,11 +66,15 @@ const handleSubscription = async object => {
   if (user) {
     const { plan } = object
 
+    const item = object.items?.data?.[0];
+    const price = item?.price || item?.plan;
+
     user.updateSubscription({
       plan: getPlanNameByProductId(plan.product),
       status: object.status,
       validUntil: new Date(object.current_period_end + 3600),
-      cancelling: !!object.cancel_at
+      cancelling: !!object.cancel_at,
+      interval: price?.recurring?.interval || item?.plan?.interval
     });
 
     await user.save()

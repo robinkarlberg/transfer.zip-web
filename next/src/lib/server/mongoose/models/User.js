@@ -49,6 +49,7 @@ const UserSchema = new mongoose.Schema({
     planValidUntil: { type: Date },
     planStatus: { type: String, default: "inactive" },
     planCancelling: { type: Boolean, default: false },
+    planInterval: { type: String, default: "month" },
     usedFreeTrial: { type: Boolean, default: false },
 
     // verified: { type: Boolean, default: false },
@@ -78,6 +79,7 @@ UserSchema.methods.friendlyObj = function () {
         verified: this.verified,
         planValidUntil: this.planValidUntil,
         planCancelling: this.planCancelling,
+        planInterval: this.planInterval,
         isTrial: this.planStatus == "trialing",
         onboarded: this.onboarded,
         notificationSettings: this.notificationSettings.friendlyObj()
@@ -96,7 +98,7 @@ UserSchema.methods.getPlan = function () {
     else return "free"
 }
 
-UserSchema.methods.updateSubscription = function ({ plan, status, validUntil, cancelling }) {
+UserSchema.methods.updateSubscription = function ({ plan, status, validUntil, cancelling, interval }) {
     if (plan !== undefined) {
         if (!(plan == "free" || plan == "starter" || plan == "pro")) {
             throw new Error("plan " + plan + " is invalid!");
@@ -117,6 +119,10 @@ UserSchema.methods.updateSubscription = function ({ plan, status, validUntil, ca
 
     if (cancelling !== undefined) {
         this.planCancelling = cancelling;
+    }
+
+    if(interval !== undefined) {
+        this.planInterval = interval
     }
 }
 // If user is in waitlist and user is less than 30 days old, it has early offer

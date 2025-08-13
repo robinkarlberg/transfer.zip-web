@@ -4,13 +4,23 @@ import { useServerAuth } from "@/lib/server/wrappers/auth";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
-  const { tier } = await req.json()
+  const { tier, frequency } = await req.json()
 
   if (!["starter", "pro"].includes(tier.toLowerCase())) {
     return NextResponse.json(resp("Invalid tier. Tier must be 'starter' or 'pro'."), { status: 400 })
   }
 
-  const priceId = tier.toLowerCase() == "starter" ? process.env.STRIPE_SUB_STARTER_PRICE_ID : process.env.STRIPE_SUB_PRO_PRICE_ID
+  if (!["yearly", "monthly"].includes(frequency.toLowerCase())) {
+    return NextResponse.json(resp("Invalid Frequency. Frequency must be 'yearly' or 'monthly'."), { status: 400 })
+  }
+
+  const priceId = (tier.toLowerCase() == "starter")
+    ? (frequency.toLowerCase() == "yearly"
+      ? process.env.STRIPE_SUB_STARTER_PRICE_YEARLY_ID
+      : process.env.STRIPE_SUB_STARTER_PRICE_ID)
+    : (frequency.toLowerCase() == "yearly"
+      ? process.env.STRIPE_SUB_PRO_PRICE_YEARLY_ID
+      : process.env.STRIPE_SUB_PRO_PRICE_ID)
 
   const { user } = await useServerAuth()
   console.log("create-checkout-session:", user.email)

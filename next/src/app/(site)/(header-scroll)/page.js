@@ -9,6 +9,7 @@ import Pricing from "@/components/Pricing";
 import TestimonialCloud from "@/components/TestimonialCloud";
 import { FileProvider } from "@/context/FileProvider";
 import Landing from "./Landing";
+import IndieStatement from "@/components/IndieStatement";
 
 export default function () {
   return (
@@ -21,6 +22,7 @@ export default function () {
       <Features3 />
       {/* <FeaturesNew /> */}
       {/* <TestimonialCloud /> */}
+      <IndieStatement/>
       <Pricing />
       <FAQ />
       <CTA />

@@ -29,11 +29,11 @@ export default {
       name: "Pro",
       price: {
         "monthly": "$19",
-        "yearly": "$12.6"
+        "yearly": "$12.5"
       },
       priceInt: {
         "monthly": 19,
-        "yearly": 12.6
+        "yearly": 12.5
       },
       description: "For power users & professionals.",
       features: [

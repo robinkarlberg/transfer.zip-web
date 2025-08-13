@@ -11,6 +11,7 @@ import Image from "next/image"
 import { API_URL, createCheckoutSession, logout } from "@/lib/client/Api"
 import { ExternalLink, ExternalLinkIcon } from "lucide-react"
 import PricingToggle from "@/components/PricingToggle"
+import IndieStatement from "@/components/IndieStatement"
 
 const testimonials = [
   {
@@ -35,6 +36,8 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
 
   const [isRequesting, setIsRequesting] = useState(false);
 
+  const [frequency, setFrequency] = useState("yearly")
+
   if (!user) return <></>
 
   const handleLogout = async () => {
@@ -50,7 +53,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
     setIsRequesting(true); // Set the state to indicate a request is in progress.
 
     try {
-      const res = await createCheckoutSession(tier);
+      const res = await createCheckoutSession(tier, frequency);
       window.location.href = res.url;
     } catch (error) {
       console.error('Error creating checkout session:', error);
@@ -58,8 +61,6 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
       setIsRequesting(false); // Reset the state after the request is complete.
     }
   }
-
-  const [frequency, setFrequency] = useState("yearly")
 
   return (
     <>
@@ -93,6 +94,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
         <div className="mx-auto mt-4 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-8 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
           <PricingCards frequency={frequency} tiers={tiers} compact={false} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} />
         </div>
+        <IndieStatement compact/>
         <div className={``}>
           <div className="mx-auto max-w-4xl px-6 lg:px-8 pt-16 mb-8">
             {/* <div className="mb-8 text-center">

@@ -24,7 +24,9 @@ export async function POST(req) {
 
   const stripe = getStripe()
 
-  const priceId = tier.toLowerCase() == "starter" ? process.env.STRIPE_SUB_STARTER_PRICE_ID : process.env.STRIPE_SUB_PRO_PRICE_ID
+  const priceId = user.planInterval == "month" ?
+    (tier.toLowerCase() == "starter" ? process.env.STRIPE_SUB_STARTER_PRICE_ID : process.env.STRIPE_SUB_PRO_PRICE_ID)
+    : (tier.toLowerCase() == "starter" ? process.env.STRIPE_SUB_STARTER_PRICE_YEARLY_ID : process.env.STRIPE_SUB_PRO_PRICE_YEARLY_ID)
 
   let subscription;
   try {

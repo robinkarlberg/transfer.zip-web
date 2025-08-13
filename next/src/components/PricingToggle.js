@@ -19,7 +19,7 @@ export default function ({ frequency, setFrequency }) {
               defaultChecked={value == frequency}
               className="cursor-pointer rounded-full px-2.5 py-1 text-stone-500 data-[checked]:bg-primary-600 data-[checked]:text-white"
             >
-              {capitalizeFirstLetter(value)}{value == "yearly" && <span className="inline-block ml-2 text-xs bg-primary-50 text-primary px-1 rounded-full">SAVE 33%</span>}
+              {capitalizeFirstLetter(value)}{value == "yearly" && <span className="inline-block ml-2 text-xs bg-primary-50 text-primary px-1 rounded-full">33% OFF</span>}
             </Radio>
           ))}
         </RadioGroup>

@@ -45,8 +45,19 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
           </div>
         </div>
         <span className={classNames(tier.featured ? 'text-gray-400' : 'text-gray-500', 'text-base')}>{tier.lifetime ? "once" : "/month"}</span>
-        {frequency == "yearly" && <span className={`text-sm ${tier.featured ? 'text-gray-500' : 'text-gray-400'}`}>${tier.priceInt[frequency]*12}/year</span>}
+        {frequency == "yearly" && <span className={`text-sm ${tier.featured ? 'text-gray-500' : 'text-gray-400'}`}>${Math.round(tier.priceInt[frequency] * 12 * 100) / 100}/year</span>}
       </div>
+      {frequency === "yearly" && (
+        <span
+          className={`badge-bling relative overflow-hidden inline-block px-2.5 mt-4 border rounded-full
+      ${tier.featured
+              ? 'text-amber-300 border-amber-300 bg-amber-900'
+              : 'text-amber-500 border-amber-500 bg-amber-50'
+            }`}
+        >
+          Get 4 months for free
+        </span>
+      )}
       {!compact && (<p className={classNames(tier.featured ? 'text-gray-300' : 'text-gray-600', 'mt-6 text-base/7')}>
         {tier.description}
       </p>)}

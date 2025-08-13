@@ -34,11 +34,11 @@ export default function Pricing() {
       <div className="mx-auto max-w-xl text-center">
         <h2 className="text-base/7 font-semibold text-primary" id="pricing">Pricing</h2>
         <p className="mt-2 text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-6xl">
-          A Fair and Simple Pricing Model
+          Less to Spend, More to Send.
         </p>
       </div>
       <p className="mx-auto mt-6 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 sm:text-xl/8">
-        We employ a pricing strategy that values transparency and fairness, allowing you to focus on your work, without worrying about hidden fees.
+        Get all the speed and reliability you need, at a fraction of the cost. We charge less than other services, it's as simple as that.
       </p>
       <div className="mt-12 sm:mt-16">
         <PricingToggle frequency={frequency} setFrequency={setFrequency} />

@@ -7,7 +7,13 @@
 @config "../../tailwind.config.js";
 
 @layer base {
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     /* 6 rem ≈ 96 px – tweak to match your header */
     scroll-margin-top: 6rem;
   }
@@ -24,6 +30,70 @@
       white-space: nowrap;
     }
   }
+}
+
+@layer base {
+
+  /* Entrance + glistering sweep (no breathing/pulse) */
+  .badge-bling {
+    isolation: isolate;
+    opacity: 0;
+    transform: translateY(6px) scale(.98);
+    will-change: transform, opacity;
+    animation: badgeIn 480ms cubic-bezier(.21, .8, .35, 1) forwards;
+  }
+
+  .badge-bling::after {
+    content: "";
+    position: absolute;
+    inset: -25% -40%;
+    /* extends beyond edges, but clipped by overflow-hidden */
+    background: linear-gradient(120deg,
+        rgba(255, 255, 255, 0) 35%,
+        rgba(255, 255, 255, .65) 50%,
+        rgba(255, 255, 255, 0) 65%);
+    transform: translateX(-120%) rotate(12deg);
+    opacity: 0;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    /* looks good on dark + light */
+    animation: shine 1200ms ease-out 260ms forwards;
+  }
+
+  @keyframes badgeIn {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes shine {
+    0% {
+      opacity: 0;
+      transform: translateX(-120%) rotate(12deg);
+    }
+
+    10% {
+      opacity: .9;
+    }
+
+    100% {
+      opacity: 0;
+      transform: translateX(120%) rotate(12deg);
+    }
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+
+    .badge-bling,
+    .badge-bling::after {
+      animation: none !important;
+      transform: none !important;
+      opacity: 1 !important;
+    }
+  }
+
 }
 
 @theme inline {

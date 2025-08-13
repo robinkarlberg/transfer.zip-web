@@ -20,15 +20,15 @@ const parseDollar = cents => {
   return `${cents < 0 ? '-' : ''}$${amount}`
 }
 
-function TierCard({ isCurrent, isTrial, planCancelling, planValidUntil, tier, isUpgrade, onAction }) {
-  const { id, name, price, features } = tier
+function TierCard({ isCurrent, isTrial, planCancelling, planValidUntil, planInterval, tier, isUpgrade, onAction }) {
+  const { id, name, priceInt, features } = tier
   return (
     <div className={`relative border-2 rounded-lg py-3 px-4 col-span-1 flex flex-col ${isCurrent ? "border-primary bg-primary-50" : "border-gray-200"}`}>
       {isCurrent && <p className="text-xs bg-primary-50 absolute -top-2 text-primary px-1 rounded-full font-bold uppercase">{isTrial || planCancelling ? <>{planCancelling ? "CANCELLING" : "FREE TRIAL"} - {humanTimeUntil(planValidUntil)} LEFT</> : "CURRENT PLAN"}</p>}
       <div>
         <div className="flex justify-between">
           <p className="font-bold">{name}</p>
-          <p><span className="font-bold">{price}</span><span className="font-medium text-gray-600">/mo</span></p>
+          <p><span className="font-bold">${priceInt[planInterval == "month" ? "monthly" : "yearly"]*(planInterval == "month" ? 1 : 12)}</span><span className="font-medium text-gray-600">{planInterval == "month" ? "/mo" : "/year"}</span></p>
         </div>
         <ul className="text-sm mt-2 text-gray-700">
           {features.map((feature, i) => <li key={i}>{id == "pro" && <BIcon className={"text-primary me-2"} name={"check-lg"} />}{feature}</li>)}
@@ -136,7 +136,7 @@ export default function ({ user }) {
                       <div>
                         <p className="text-gray-800 font-bold">{line.description}</p>
                         <p className="text-gray-600 text-sm">
-                          {line.amount < 0 ? "Refunded amount for unused remaining time." : "Billed monthly, starting today."}
+                          {line.amount < 0 ? "Refunded amount for unused remaining time." : `Billed ${user.planInterval}ly, starting today.`}
                         </p>
                       </div>
                       <span className={`font-bold ${line.amount < 0 ? "text-green-600" : "text-gray-800"}`}>{parseDollar(line.amount)}</span>
@@ -248,7 +248,7 @@ export default function ({ user }) {
             )} */}
             <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
               {
-                pricing.tiers.map(tier => <TierCard key={tier.id} isTrial={user.isTrial} planCancelling={user.planCancelling} planValidUntil={user.planValidUntil} isCurrent={user.plan == tier.id} tier={tier} isUpgrade={user.plan != "pro" && tier.id == "pro"}
+                pricing.tiers.map(tier => <TierCard key={tier.id} isTrial={user.isTrial} planCancelling={user.planCancelling} planValidUntil={user.planValidUntil} planInterval={user.planInterval} isCurrent={user.plan == tier.id} tier={tier} isUpgrade={user.plan != "pro" && tier.id == "pro"}
                   onAction={action => {
                     if (action == "upgrade") {
                       showUpgradePreview(tier.id)

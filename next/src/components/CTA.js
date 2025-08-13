@@ -22,11 +22,11 @@ export default function CTA() {
           </svg>
           <div className="mx-auto max-w-2xl text-center lg:flex-auto py-16 lg:pt-32 lg:pb-16">
             <h2 className="text-balance text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-              Join Thousands Who Switched to Us
+              Try the Better Way to Send Files
             </h2>
             <p className="mt-6 text-pretty text-lg/8 text-gray-300">
               {/* Share your files effortlessly and securely. There are no hidden fees, and it only takes a minute to get started. */}
-              Transfer.zip was created to solve the longest-standing problem on the web: sending files easily. Like thousands of people every month, try it out!
+              Thousands of people switch to Transfer.zip every month because they're tired of big companies overcharging. Send big files quickly, easily, and for less - start now.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link
