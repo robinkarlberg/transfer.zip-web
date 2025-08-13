@@ -16,7 +16,9 @@ const legacyRedirects = [
   { from: "/quick-share", to: "/quick" },
   { from: "/login", to: "/signin" },
   { from: "/about", to: "/" },
-  { from: "/pricing", to: "/" }
+  { from: "/pricing", to: "/" },
+  { from: "/posts/easy_ways_to_share_files_anonymously_in_2025", to: "/how-to/share-files/anonymously" },
+  { from: /^\/posts.*$/, to: "/how-to" },
 ]
 
 export function middleware(req) {
@@ -31,7 +33,10 @@ export function middleware(req) {
   }
 
   // legacy redirects
-  const legacyMatch = legacyRedirects.find(entry => pathname === entry.from)
+  const legacyMatch = legacyRedirects.find((entry) => {
+    if (entry.from instanceof RegExp) return entry.from.test(pathname)
+    return pathname === entry.from
+  })
   if (legacyMatch) {
     const newUrl = req.nextUrl.clone()
     newUrl.pathname = legacyMatch.to
