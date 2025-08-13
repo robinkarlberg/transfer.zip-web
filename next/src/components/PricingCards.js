@@ -90,7 +90,7 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
             onTierSelected(tier.name)
           }
         }}
-        href={"/signup"}
+        href={"/app"}
         aria-describedby={tier.name}
         className={classNames(
           tier.featured

@@ -7,7 +7,7 @@ import robin from "@/img/robin.jpg"
 export default function IndieStatement({ compact }) {
   return (
     <section className="bg-white py-12 sm:py-12" id="message-from-founder">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl">
         {/* Who we are */}
         {/* <h2 className="text-base/7 font-semibold text-primary text-center">Message from the founder:</h2> */}
         <div className="mx-auto mt-8 max-w-3xl">
@@ -50,10 +50,10 @@ export default function IndieStatement({ compact }) {
                 {!compact && (
                   <div className="mt-6 flex flex-wrap items-center gap-3">
                     <a
-                      href="/quick"
+                      href="/app"
                       className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2.5 text-white font-semibold hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
-                      Start for Free
+                      Experience it free for 7 days
                     </a>
                     <a
                       href="#pricing"
