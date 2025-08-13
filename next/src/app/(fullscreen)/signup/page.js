@@ -9,6 +9,7 @@ import SignInWithGoogleButton from "@/components/SignInWithGoogleButton";
 import Spinner from "@/components/elements/Spinner";
 import Image from "next/image";
 import Link from "next/link";
+import { sendEvent } from "@/lib/client/umami";
 
 /*
   This example requires some changes to your config:

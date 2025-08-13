@@ -10,6 +10,7 @@ import Spinner from "./elements/Spinner"
 import { sleep } from "@/lib/utils"
 import { register } from "@/lib/client/Api"
 import QuestionCircle from "./elements/QuestionCircle"
+import { sendEvent } from "@/lib/client/umami"
 
 const features = [
   <span>Make your files available for <b>a year</b></span>,

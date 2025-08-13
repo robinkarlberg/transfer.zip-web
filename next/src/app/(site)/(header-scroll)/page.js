@@ -23,7 +23,7 @@ export default function () {
       {/* <FeaturesNew /> */}
       {/* <TestimonialCloud /> */}
       <div className="px-6 sm:px-8">
-        <IndieStatement />
+        <IndieStatement compact />
       </div>
       <Pricing />
       <FAQ />
