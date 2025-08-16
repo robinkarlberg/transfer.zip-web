@@ -7,14 +7,14 @@ const features = [
     description: 'Easily place upload links on your site or share them through email and social media.',
     icon: "arrow-down",
     cta: "Easily Receive Files",
-    href: "/signup"
+    href: "/signin"
   },
   {
     name: 'Complete Control',
     description: "You can disable or re-enable your personal links at any time. Create as many links as you desire.",
     icon: "toggle-on",
     cta: "Create Your First Link",
-    href: "/signup"
+    href: "/signin"
   },
   // {
   //   name: 'Statistics',

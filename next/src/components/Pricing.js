@@ -1,12 +1,10 @@
 "use client"
 
 import pricing from "@/lib/pricing"
-import PricingCards from "./PricingCards"
+import { useState } from "react"
 import BIcon from "./BIcon"
+import PricingCards from "./PricingCards"
 import PricingToggle from "./PricingToggle"
-import { useEffect, useState } from "react"
-import { getAbTestClient } from "@/lib/client/abtestClient"
-import { AB_TEST_IS_FREE_TRIAL_AVAILABLE } from "@/lib/abtests"
 
 const features = [
   { name: "Full access to Quick Transfers", good: true },
@@ -24,9 +22,9 @@ export default function Pricing() {
 
   const [hasFreeTrial, setHasFreeTrial] = useState(true)
 
-  useEffect(() => {
-    setHasFreeTrial(getAbTestClient(AB_TEST_IS_FREE_TRIAL_AVAILABLE) != "false")
-  }, [])
+  // useEffect(() => {
+  //   setHasFreeTrial(getAbTestClient(AB_TEST_IS_FREE_TRIAL_AVAILABLE) != "false")
+  // }, [])
 
   return (
     <div className="relative isolate bg-white px-6 py-24 sm:py-32 lg:px-8">

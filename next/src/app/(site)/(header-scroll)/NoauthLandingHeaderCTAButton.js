@@ -15,7 +15,7 @@ export default function () {
   }
 
   return (
-    <Link onNavigate={handleCtaLinkNavigate} href={"/signup"} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-4 py-2 hover:bg-primary-light">
+    <Link onNavigate={handleCtaLinkNavigate} href={"/signin"} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-4 py-2 hover:bg-primary-light">
       Create Account <span aria-hidden="true">&rarr;</span>
     </Link>
   )

@@ -18,6 +18,7 @@ import Link from "next/link"
 import Checkmark from "./Checkmark"
 import { useRouter } from "next/navigation"
 import { sendEvent } from "@/lib/client/umami"
+import NewSignUpArea from "./NewSignUpArea"
 
 const STATE_START = "start"
 const STATE_LOGGING_IN = "logging_in"
@@ -26,8 +27,6 @@ const STATE_CHECK_EMAIL = "check_email"
 export default function ({ open, setOpen, files }) {
 
   const [state, setState] = useState(STATE_START)
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
 
   const router = useRouter()
   const interval = useRef(null)
@@ -41,29 +40,12 @@ export default function ({ open, setOpen, files }) {
       files?.length == 0 || !files ? `files` : <span>your <span className="font-mono bg-gray-50 px-0.5 text-gray-800">{files?.length} files</span></span>
     )
 
-  const handleSubmit = async e => {
-    e.preventDefault()
-    setError(false)
-    setLoading(true)
-
-    const formData = new FormData(e.target)
-    const email = formData.get("email")
-
-    try {
-      const res = await requestMagicLink(email)
-      sendEvent("dialog-signup-event")
-      setState(STATE_CHECK_EMAIL)
-    }
-    catch (err) {
-      setError(err.msg || err.message)
-    }
-    finally {
-      setLoading(false)
-    }
+  const handleGoogleLogin = () => {
+    setState(STATE_LOGGING_IN)
   }
 
-  const handleGoogleClick = () => {
-    setState(STATE_LOGGING_IN)
+  const handleEmailLogin = () => {
+    setState(STATE_CHECK_EMAIL)
   }
 
   const pollAuth = async () => {
@@ -82,7 +64,14 @@ export default function ({ open, setOpen, files }) {
   useEffect(() => {
     if (open) {
       pollAuth()
-        .then(() => router.push("/app/new"))
+        .then(() => {
+          if (files) {
+            router.push("/app/new")
+          }
+          else {
+            router.push("/app")
+          }
+        })
         .catch(() => console.log("pullAuth cancelled (catch)"))
     }
     else {
@@ -102,7 +91,7 @@ export default function ({ open, setOpen, files }) {
   )
 
   const onOpenChangeProxy = (value) => {
-    if(state == STATE_START) setOpen(value)
+    if (state == STATE_START) setOpen(value)
   }
 
   return (
@@ -110,7 +99,7 @@ export default function ({ open, setOpen, files }) {
       <DialogContent showCloseButton={false} className={"w-sm"}>
         <DialogHeader>
           <DialogTitle className={"text-center text-2xl"}>
-            {state == STATE_START && (files ? "Extend your link's life!" : "Unlock faster file sharing.")}
+            {state == STATE_START && (files ? "Extend your link's life!" : "Unlock better file sharing.")}
             {state == STATE_LOGGING_IN || state == STATE_CHECK_EMAIL && "Finish signup in new tab."}
           </DialogTitle>
           {/* <DialogDescription>
@@ -121,30 +110,20 @@ export default function ({ open, setOpen, files }) {
           {state == STATE_START && (
             <div>
               <p className="text-gray-600 mb-4 text-center">
-                Keep {filename} available for up to a year.
+                {
+                  files ?
+                    <>Keep {filename} available for up to a year.</>
+                    : <>See why Transfer.zip is loved by thousands.</>
+                }
               </p>
-              <SignInWithGoogleButton onClick={handleGoogleClick} newtab />
-              <div className="relative">
-                <hr className="absolute top-0 mt-2.5 w-full" />
-                <p className="relative z-10 text-center text-gray-600 my-2 text-sm"><span className="bg-white px-3">OR</span></p>
-              </div>
-              <form onSubmit={handleSubmit}>
-                <Input
-                  name="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  required
-                ></Input>
-                <Button disabled={loading} className={"mt-2 w-full"}>{loading && <Spinner />} Sign In with Email</Button>
-              </form>
-              {error && <p className="text-red-600 text-sm mt-2 text-center">{error}</p>}
+              <NewSignUpArea onGoogleLogin={handleGoogleLogin} onEmailLogin={handleEmailLogin} newtab />
             </div>
           )}
           {state == STATE_LOGGING_IN && (
             <div>
               {waitingElems}
               <p className="text-gray-600 mb-4 text-center">
-                Finish the signup 
+                Finish the signup
               </p>
             </div>
           )}

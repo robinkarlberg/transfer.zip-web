@@ -8,14 +8,14 @@ const features = [
     description: "The dashboard allows you to track when download links are clicked, and files downloaded - ensuring you have full visibility over the distribution of your files.",
     icon: "envelope-fill",
     cta: "Send Files By Email",
-    href: "/signup"
+    href: "/signin"
   },
   {
     name: 'Blazing Fast Speeds',
     description: "All files are downloaded from the same high-speed servers, ensuring your ideas get shared as quickly as possible.",
     icon: "fast-forward-fill",
     cta: "Send Files Fast",
-    href: "/signup"
+    href: "/signin"
   },
 ]
 

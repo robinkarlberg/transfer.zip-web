@@ -41,12 +41,12 @@ export default function Header({ scrollAware }) {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  const ctaText = IS_SELFHOST || isLoggedIn ? "My Transfers" : "Create Account"
-  const ctaLink = IS_SELFHOST || isLoggedIn ? "/app" : "/signup"
+  const ctaText = isLoggedIn ? "My Transfers" : "Create Account"
+  const ctaLink = isLoggedIn ? "/app" : "/signin"
 
   const handleCtaLinkClicked = e => {
     sendEvent("header-cta-click", { is_logged_in: isLoggedIn })
-    if (!isLoggedIn) {
+    if (!IS_SELFHOST && !isLoggedIn) {
       e.preventDefault()
       openSignupDialog()
     }

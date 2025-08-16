@@ -17,7 +17,7 @@ export default async function DashboardLayout({ children }) {
     auth = await useServerAuth();
   } catch (error) {
     // console.error("Error during authentication:", error);
-    return redirect(IS_SELFHOST ? "/signin" : "/signup");
+    return redirect("/signin");
   }
 
   if (auth.user.getPlan() == "free") {

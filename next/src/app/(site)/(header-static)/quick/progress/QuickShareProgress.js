@@ -19,7 +19,6 @@ import * as zip from "@zip.js/zip.js"
 import { useQuickShare } from "@/hooks/client/useQuickShare"
 import { DashboardContext } from "@/context/DashboardContext"
 import { IS_SELFHOST } from "@/lib/isSelfHosted"
-import SignUpModal from "@/components/SignUpModal"
 import { sendEvent } from "@/lib/client/umami"
 import { GlobalContext } from "@/context/GlobalContext"
 
@@ -34,7 +33,7 @@ export default function QuickShareProgress({ isLoggedIn }) {
 
   const router = useRouter()
 
-  const {openSignupDialog} = useContext(GlobalContext)
+  const { openSignupDialog } = useContext(GlobalContext)
   const { files } = useContext(FileContext)
   const { displayNotification } = useContext(DashboardContext)
   const { hasBeenSentLink, k, remoteSessionId, transferDirection } = useQuickShare()

@@ -5,7 +5,7 @@ import { API_URL } from "../Api"
 
 export default function ManageSubscriptionButton({ buttonClassName }) {
 
-    const { setShowSignUpModal, setShowSubscribeModal } = useContext(ApplicationContext)
+    const { setShowSubscribeModal } = useContext(ApplicationContext)
     const { user, isGuestUser } = useContext(AuthContext)
 
     const onFormSubmit = e => {

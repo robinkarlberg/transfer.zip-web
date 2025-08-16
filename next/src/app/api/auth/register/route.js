@@ -9,6 +9,8 @@ import { headers } from 'next/headers';
 import is_ip_private from 'private-ip'
 
 export async function POST(req, res) {
+  if (!IS_SELFHOST) return NextResponse.json(resp("This signup api is not supported anymore."), { status: 409 })
+    
   const data = await req.json()
   const { email, password: pass } = data;
 

@@ -8,7 +8,7 @@ export const GlobalContext = createContext({})
 export default function GlobalProvider({ children }) {
 
     const [_showSignupDialog, setShowSignupDialog] = useState(false)
-    const [files, setFiles] = useState([])
+    const [files, setFiles] = useState(null)
     const openSignupDialog = (files) => {
         setFiles(files)
         setShowSignupDialog(true)
@@ -18,7 +18,7 @@ export default function GlobalProvider({ children }) {
         <GlobalContext.Provider value={{
             openSignupDialog
         }}>
-            <NewSignUpDialog filename={"files.zip"} open={_showSignupDialog} setOpen={setShowSignupDialog} files={files}/>
+            <NewSignUpDialog open={_showSignupDialog} setOpen={setShowSignupDialog} files={files}/>
             {children}
         </GlobalContext.Provider >
     );

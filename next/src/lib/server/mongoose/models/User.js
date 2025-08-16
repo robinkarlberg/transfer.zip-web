@@ -82,7 +82,8 @@ UserSchema.methods.friendlyObj = function () {
         planInterval: this.planInterval,
         isTrial: this.planStatus == "trialing",
         onboarded: this.onboarded,
-        notificationSettings: this.notificationSettings.friendlyObj()
+        notificationSettings: this.notificationSettings.friendlyObj(),
+        hasPassword: this.hasPassword
     }
 }
 
@@ -173,6 +174,10 @@ UserSchema.methods.getStorage = async function () {
 
 UserSchema.virtual("verified").get(function () {
     return true;
+});
+
+UserSchema.virtual("hasPassword").get(function () {
+    return !!this.hash
 });
 
 UserSchema.virtual("onboarded").get(function () {

@@ -1,8 +1,6 @@
 import "server-only"
 import Transfer from "./mongoose/models/Transfer"
 import { getStripe } from "./stripe"
-import { getAbTestServer } from "./abtestServer"
-import { AB_TEST_IS_FREE_TRIAL_AVAILABLE } from "../abtests"
 
 export const IS_DEV = process.env.NODE_ENV == "development"
 
@@ -76,8 +74,8 @@ async function customerHasPaid(customerId) {
 }
 
 export async function doesUserHaveFreeTrial(user, cookies) {
-  const abTestFreeTrialAvailable = await getAbTestServer(AB_TEST_IS_FREE_TRIAL_AVAILABLE, cookies)
-  if (abTestFreeTrialAvailable == "false") return false
+  // const abTestFreeTrialAvailable = await getAbTestServer(AB_TEST_IS_FREE_TRIAL_AVAILABLE, cookies)
+  // if (abTestFreeTrialAvailable == "false") return false
 
   if (user && !!user.stripe_customer_id) {
     try {

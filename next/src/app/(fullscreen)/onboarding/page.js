@@ -10,7 +10,7 @@ export default async function () {
     auth = await useServerAuth()
   }
   catch (err) {
-    return redirect("/signup")
+    return redirect("/signin")
   }
 
   // Check if user already has active plan

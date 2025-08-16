@@ -8,7 +8,7 @@ const selfHostBlacklist = [
 ]
 
 const selfHostWhitelist = [
-  "/signin", "/change-password",
+  "/change-password",
   "/app", "/legal", "/api",
   "/transfer", "/upload",
   "/quick"
@@ -17,6 +17,7 @@ const selfHostWhitelist = [
 const legacyRedirects = [
   { from: "/quick-share", to: "/quick" },
   { from: "/login", to: "/signin" },
+  { from: "/signup", to: "/signin" },
   { from: "/about", to: "/" },
   { from: "/pricing", to: "/" },
   { from: "/posts/easy_ways_to_share_files_anonymously_in_2025", to: "/how-to/share-files/anonymously" },
@@ -38,11 +39,11 @@ function applyAbTests(req, res) {
 export function middleware(req) {
   const { pathname } = req.nextUrl
 
-  // Redirect back to /signup or /signin if user has no token and wants to use /app
+  // Redirect back to /signin if user has no token and wants to use /app
   const token = req.cookies.get("token")
   if (!token && pathname.startsWith("/app")) {
     const newUrl = req.nextUrl.clone()
-    newUrl.pathname = IS_SELFHOST ? "/signin" : "/signup"
+    newUrl.pathname = "/signin"
     return applyAbTests(req, NextResponse.redirect(newUrl, { status: 302 }))
   }
 
