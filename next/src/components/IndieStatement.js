@@ -27,7 +27,7 @@ export default function IndieStatement({ compact }) {
                   {/* Transfer.zip is a small, independent service. There are no big profit targets. 
                   We focus on building something fast, reliable, and user-friendly.
                   We keep costs down by running an efficient service without the overhead of a large corporation. */}
-                  Transfer.zip is a small, independent service without big profit targets to chase. We put our energy into making file transfers fast, reliable, and simple, and we keep costs low by running efficiently instead of carrying the overhead of a large corporation.
+                  Transfer.zip is an independent service without big profit targets to chase. We put our energy into making file transfers fast, reliable, and simple, and we keep costs low by not carrying the overhead of a large corporation.
                 </p>
                 <ul className="mt-4 space-y-4 sm:space-y-2 text-gray-700">
                   <li className="flex gap-2">
@@ -40,12 +40,12 @@ export default function IndieStatement({ compact }) {
                   </li>
                   <li className="flex gap-2">
                     <span className="text-primary">✓</span>
-                    <span>We will <b>never</b> please shareholders.</span>
+                    <span>We will <b>never</b> put shareholders before users.</span>
                   </li>
-                  <li className="flex gap-2">
+                  {/* <li className="flex gap-2">
                     <span className="text-primary">✓</span>
-                    <span>Fully open source.</span>
-                  </li>
+                    <span>The platform is fully open source.</span>
+                  </li> */}
                 </ul>
                 {!compact && (
                   <div className="mt-6 flex flex-wrap items-center gap-3">
