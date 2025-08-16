@@ -7,14 +7,18 @@ import { Button } from "./ui/button"
 import Spinner from "./elements/Spinner"
 import { sendEvent } from "@/lib/client/umami"
 import { requestMagicLink } from "@/lib/client/Api"
+import BIcon from "./BIcon"
+import { emailDomains } from "../lib/emailDomains"
 
 export default function ({ onGoogleLogin, onEmailLogin, newtab }) {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState(null)
 
   const handleSubmit = async e => {
     e.preventDefault()
     setError(false)
+    setMessage(null)
     setLoading(true)
 
     const formData = new FormData(e.target)
@@ -24,6 +28,10 @@ export default function ({ onGoogleLogin, onEmailLogin, newtab }) {
       const res = await requestMagicLink(email)
       sendEvent(newtab ? "signup-modal-event" : "signup-event")
       onEmailLogin && onEmailLogin()
+      const domain = email.split("@")[1];
+      const mailInfo = emailDomains[domain];
+      const mailLink = mailInfo ? <a className="text-primary hover:underline" href={mailInfo.url} target="_blank" rel="noopener noreferrer">{mailInfo.prettyName}</a> : <a className="text-primary hover:underline" href={`https://${domain}`} target="_blank" rel="noopener noreferrer">{domain}</a>;
+      setMessage(<><BIcon name={"envelope-fill"}/> Check your inbox at {mailLink}!</>)
     }
     catch (err) {
       setError(err.msg || err.message)
@@ -55,6 +63,7 @@ export default function ({ onGoogleLogin, onEmailLogin, newtab }) {
         <Button disabled={loading} className={"mt-2 w-full"}>{loading && <Spinner />} Sign In with Email</Button>
       </form>
       {error && <p className="text-red-600 text-sm mt-2 text-center">{error}</p>}
+      {message && <p className="text-gray-800 text-sm mt-2 text-center">{message}</p>}
     </div>
   )
 }
