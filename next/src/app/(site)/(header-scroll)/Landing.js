@@ -54,12 +54,12 @@ export default async function ({ auth }) {
           <div>
             <AuthConditional
               auth={(
-                <Link href={"/app"} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-4 py-2 hover:bg-primary-light">
+                <Link data-umami-event="landing-header-cta-click" data-umami-event-is_logged_in="true" href={"/app"} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-4 py-2 hover:bg-primary-light">
                   My Transfers <span aria-hidden="true">&rarr;</span>
                 </Link>
               )}
               noauth={(
-                <Link href={"/app"} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-4 py-2 hover:bg-primary-light">
+                <Link data-umami-event="landing-header-cta-click" data-umami-event-is_logged_in="false" href={"/app"} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-4 py-2 hover:bg-primary-light">
                   Create Account <span aria-hidden="true">&rarr;</span>
                 </Link>
               )}
