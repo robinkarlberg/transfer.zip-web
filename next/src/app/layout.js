@@ -5,6 +5,7 @@ import { FileProvider } from "@/context/FileProvider";
 import Script from "next/script";
 import Head from "next/head";
 import { IS_SELFHOST } from "@/lib/isSelfHosted";
+import GlobalProvider from "@/context/GlobalContext";
 
 // const playfairDisplay = Playfair_Display({
 //   weight: ['400', '500', '600', '700', '800', '900'],
@@ -31,9 +32,11 @@ export default function RootLayout({ children }) {
       <body
         className={`${roboto.className} antialiased`} // ${roboto.className} ${playfairDisplay.className} 
       >
-        <FileProvider>
-          {children}
-        </FileProvider>
+        <GlobalProvider>
+          <FileProvider>
+            {children}
+          </FileProvider>
+        </GlobalProvider>
       </body>
     </html>
   );

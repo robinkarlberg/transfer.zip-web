@@ -1,6 +1,7 @@
 "use client"
 
 import Modal from "@/components/elements/Modal"
+import NewSignUpDialog from "@/components/NewSignUpDialog"
 import { createContext, useState } from "react"
 // import WaitlistModal from "../components/elements/modals/WaitlistModal";
 
@@ -11,7 +12,7 @@ export default function ApplicationProvider({ children }) {
     const [showWaitlistModal, setShowWaitlistModal] = useState(false)
     const [showGenericModal, setShowGenericModal] = useState(false)
     const [genericModalProps, setGenericModalProps] = useState(null)
-    
+
     const displayGenericModal = (props) => {
         if (props === false) {
             return setShowGenericModal(false)
