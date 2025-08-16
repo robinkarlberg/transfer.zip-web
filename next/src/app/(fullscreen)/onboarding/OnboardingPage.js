@@ -20,14 +20,14 @@ const testimonials = [
     proof: "https://www.reddit.com/r/techsupport/comments/bjqmm6/comment/kilzfob/",
   },
   {
-    quote: "... after spending hours browsing for a simple way to send a 23 GB file, this is the answer.",
+    quote: "After spending hours browsing for a simple way to send a 23 GB file, this is the answer.",
     author: "amca12006",
     proof: "https://www.reddit.com/r/techsupport/comments/bjqmm6/comment/lgjz9lh/"
   },
   {
-    quote: "F*****g THANK you. ...",
-    author: "Bravo-Xray",
-    proof: "https://www.reddit.com/r/techsupport/comments/bjqmm6/comment/lj01kxe/"
+    quote: "This is amazing",
+    author: "jormaig",
+    proof: "https://www.reddit.com/r/techsupport/comments/bjqmm6/comment/lsqqo1h/"
   },
 ]
 
@@ -94,9 +94,8 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
         <div className="mx-auto mt-4 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-8 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
           <PricingCards frequency={frequency} tiers={tiers} compact={false} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_onboarding_click"} />
         </div>
-        <IndieStatement compact/>
         <div className={``}>
-          <div className="mx-auto max-w-4xl px-6 lg:px-8 pt-16 mb-8">
+          <div className="mx-auto max-w-4xl px-6 lg:px-8 pt-16 mb-0">
             {/* <div className="mb-8 text-center">
               <h2 className="inline-block font-medium text-lg text-gray-500">
                 Trusted by more than 11k users every month!
@@ -118,6 +117,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
             </div>
           </div>
         </div>
+        <IndieStatement compact/>
         {/* <p className="text-primary text-center text-sm mb-2">
           <a href="/legal/terms-and-conditions" target="_blank" className="hover:underline"><BIcon name={"patch-check-fill"} className={"text-xs"} /> 7 day money-back guarantee</a>
         </p> */}

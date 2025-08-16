@@ -17,19 +17,19 @@ export default function IndieStatement({ compact }) {
                 <Image alt="Portrait photo of Robin, the creator of Transfer.zip" src={robin}></Image>
               </div>
               <div className="flex-1">
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">
                   Hey 👋
                 </h2>
-                <p className="mt-2 text-gray-600">
+                <p className="mt-2 sm:text-lg text-gray-700">
                   I'm Robin, the founder.
                 </p>
-                <p className="mt-2 text-gray-600">
+                <p className="mt-2 sm:text-lg text-gray-700">
                   {/* Transfer.zip is a small, independent service. There are no big profit targets. 
                   We focus on building something fast, reliable, and user-friendly.
                   We keep costs down by running an efficient service without the overhead of a large corporation. */}
                   Transfer.zip is an independent service without big profit targets to chase. We put our energy into making file transfers fast, reliable, and simple, and we keep costs low by not carrying the overhead of a large corporation.
                 </p>
-                <ul className="mt-4 space-y-4 sm:space-y-2 text-gray-700">
+                <ul className="mt-4 space-y-4 sm:space-y-2 sm:text-lg text-gray-700">
                   <li className="flex gap-2">
                     <span className="text-primary">✓</span>
                     <span>We will <b>never</b> train AI on your content.</span>
