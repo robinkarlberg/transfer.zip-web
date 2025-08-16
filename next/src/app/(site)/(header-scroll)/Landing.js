@@ -11,7 +11,7 @@ import AuthConditional from "./AuthConditional"
 import LandingQuickShare from "./LandingQuickShare"
 
 export default async function ({ auth }) {
-  
+
   const res = await fetch("https://api.github.com/repos/robinkarlberg/transfer.zip-web",
     {
       next: { revalidate: 3600 }
@@ -84,11 +84,12 @@ export default async function ({ auth }) {
             </h1>
             <p className="mx-auto lg:mx-0 mt-6 text-lg leading-8 text-gray-600 max-w-md">
               {/* Send files with <span className="underline decoration-primary decoration-dashed font-semibold">no size limit</span> in real-time, with end-to-end encryption and blazingly fast speeds. */}
-              Ultrafast, Reliable and Secure file transfers. <br className="hidden sm:inline"/>
+              Ultrafast, Reliable and Secure file transfers. <br className="hidden sm:inline" />
               No throttling. No size limits.
             </p>
             <div className="flex mt-10 items-center gap-6 justify-center lg:justify-start">
               <Link
+                data-umami-event="landing-cta-click"
                 href="/app"
                 className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >

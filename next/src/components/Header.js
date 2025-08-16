@@ -160,7 +160,7 @@ export default function Header({ scrollAware }) {
             </PopoverGroup>
           )}
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <Link href={ctaLink} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-3 py-0.5 hover:bg-primary-light">
+            <Link data-umami-event="header-cta-click" href={ctaLink} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-3 py-0.5 hover:bg-primary-light">
               {ctaText} <span aria-hidden="true">&rarr;</span>
             </Link>
           </div>
