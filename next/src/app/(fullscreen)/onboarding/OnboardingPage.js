@@ -94,8 +94,9 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
         <div className="mx-auto mt-4 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-8 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
           <PricingCards frequency={frequency} tiers={tiers} compact={false} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_onboarding_click"} />
         </div>
+        <IndieStatement compact/>
         <div className={``}>
-          <div className="mx-auto max-w-4xl px-6 lg:px-8 pt-16 mb-0">
+          <div className="mx-auto max-w-4xl px-6 mt-4 lg:px-8">
             {/* <div className="mb-8 text-center">
               <h2 className="inline-block font-medium text-lg text-gray-500">
                 Trusted by more than 11k users every month!
@@ -105,7 +106,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
               {testimonials.map(testimonial => {
                 return (
                   <div key={testimonial.proof} className="col-span-1 text-center h-32">
-                    <div className="text-blue-500 mb-2"><BIcon name={"reddit"} className={"me-1.5 text-orange-600"} />{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div>
+                    <div className="text-blue-500 mb-2">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div>
                     <div className="text-gray-600 mb-2 hover:underline"><a target="_blank" href={testimonial.proof}><BIcon name={"quote"} /> {testimonial.quote}</a></div>
                     {/* <div className="font-bold text-gray-700">
                       
@@ -117,11 +118,10 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
             </div>
           </div>
         </div>
-        <IndieStatement compact/>
         {/* <p className="text-primary text-center text-sm mb-2">
           <a href="/legal/terms-and-conditions" target="_blank" className="hover:underline"><BIcon name={"patch-check-fill"} className={"text-xs"} /> 7 day money-back guarantee</a>
         </p> */}
-        <div className="mt-0 rounded-lg shadow-lg p-2 px-4 border mx-auto">
+        <div className="mt-16 rounded-lg shadow-lg p-2 px-4 border mx-auto">
           <div className="text-xs">
             <p className="text-center text-gray-500">
               You are logged in as {user?.email}{" "}

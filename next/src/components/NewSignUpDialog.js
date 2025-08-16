@@ -58,7 +58,7 @@ export default function ({ open, setOpen, files }) {
       <DialogContent showCloseButton={false} className={"w-sm"}>
         <DialogHeader>
           <DialogTitle className={"text-center text-2xl"}>
-            {state == STATE_START && "Extend your link's life!"}
+            {state == STATE_START && (files ? "Extend your link's life!" : "Unlock faster file sharing.")}
             {state == STATE_LOGGING_IN && "Finish signup in new tab."}
           </DialogTitle>
           {/* <DialogDescription>
