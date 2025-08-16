@@ -5,6 +5,8 @@ import SignInWithGoogleButton from "./SignInWithGoogleButton"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
 import Spinner from "./elements/Spinner"
+import { sendEvent } from "@/lib/client/umami"
+import { requestMagicLink } from "@/lib/client/Api"
 
 export default function ({ onGoogleLogin, onEmailLogin, newtab }) {
   const [error, setError] = useState(null)
@@ -20,7 +22,8 @@ export default function ({ onGoogleLogin, onEmailLogin, newtab }) {
 
     try {
       const res = await requestMagicLink(email)
-      sendEvent("dialog-signup-event")
+      sendEvent(newtab ? "signup-modal-event" : "signup-event")
+      onEmailLogin && onEmailLogin()
     }
     catch (err) {
       setError(err.msg || err.message)
@@ -30,9 +33,14 @@ export default function ({ onGoogleLogin, onEmailLogin, newtab }) {
     }
   }
 
+  const handleGoogleLogin = e => {
+    sendEvent(newtab ? "signup-modal-google-event" : "signup-google-event")
+    onGoogleLogin && onGoogleLogin()
+  }
+
   return (
     <div>
-      <SignInWithGoogleButton onClick={onGoogleLogin} newtab={newtab} />
+      <SignInWithGoogleButton onClick={handleGoogleLogin} newtab={newtab} />
       <div className="relative">
         <hr className="absolute top-0 mt-2.5 w-full" />
         <p className="relative z-10 text-center text-gray-600 my-2 text-sm"><span className="bg-white px-3">OR</span></p>

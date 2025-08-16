@@ -3,26 +3,18 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog"
-import { useEffect, useRef, useState } from "react"
-import SignInWithGoogleButton from "./SignInWithGoogleButton"
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
-import { getAbTestClient } from "@/lib/server/abtestServer"
-import { getUser, requestMagicLink } from "@/lib/client/Api"
-import Spinner from "./elements/Spinner"
-import Link from "next/link"
-import Checkmark from "./Checkmark"
+import { getUser } from "@/lib/client/Api"
 import { useRouter } from "next/navigation"
-import { sendEvent } from "@/lib/client/umami"
+import { useEffect, useRef, useState } from "react"
 import NewSignUpArea from "./NewSignUpArea"
 
 const STATE_START = "start"
-const STATE_LOGGING_IN = "logging_in"
+const STATE_GMAIL_TAB = "gmail_tab"
 const STATE_CHECK_EMAIL = "check_email"
+const STATE_NOT_PAID = "not_paid"
 
 export default function ({ open, setOpen, files }) {
 
@@ -41,7 +33,7 @@ export default function ({ open, setOpen, files }) {
     )
 
   const handleGoogleLogin = () => {
-    setState(STATE_LOGGING_IN)
+    setState(STATE_GMAIL_TAB)
   }
 
   const handleEmailLogin = () => {
@@ -52,10 +44,16 @@ export default function ({ open, setOpen, files }) {
     return new Promise((resolve) => {
       interval.current = setInterval(async () => {
         const res = await getUser();
-        if (res.user !== null && res.user.plan != "free") {
-          clearInterval(interval.current);
-          resolve(res);
-          setOpen(false)
+        if (res.user !== null) {
+          if (res.user.plan == "free") {
+            setState(STATE_NOT_PAID)
+          }
+          else {
+            // done!
+            clearInterval(interval.current);
+            resolve(res);
+            setOpen(false)
+          }
         }
       }, 1000);
     });
@@ -84,9 +82,11 @@ export default function ({ open, setOpen, files }) {
 
   const waitingElems = (
     <>
-      <p className="text-gray-600 mb-1 text-center">
-        Your <span className="font-mono bg-gray-50 px-0.5 text-gray-800">{filename}</span> {files?.length == 1 ? "is" : "are"} ready to upload.
-      </p>
+      {files && (
+        <p className="text-gray-600 mb-1 text-center">
+          Your <span className="font-mono bg-gray-50 px-0.5 text-gray-800">{filename}</span> {files?.length == 1 ? "is" : "are"} ready to upload.
+        </p>
+      )}
     </>
   )
 
@@ -99,8 +99,10 @@ export default function ({ open, setOpen, files }) {
       <DialogContent showCloseButton={false} className={"w-sm"}>
         <DialogHeader>
           <DialogTitle className={"text-center text-2xl"}>
-            {state == STATE_START && (files ? "Extend your link's life!" : "Unlock better file sharing.")}
-            {state == STATE_LOGGING_IN || state == STATE_CHECK_EMAIL && "Finish signup in new tab."}
+            {state == STATE_START && (files ? "Extend your link's life!" : "Unlock Better File Sharing")}
+            {state == STATE_GMAIL_TAB && "Sign in on the new tab."}
+            {state == STATE_CHECK_EMAIL && "Check your email."}
+            {state == STATE_NOT_PAID && "Aaaalmost there!"}
           </DialogTitle>
           {/* <DialogDescription>
             {typeof window === "undefined" ? "" : getAbTestClient("default_plan_frequency")}
@@ -113,17 +115,17 @@ export default function ({ open, setOpen, files }) {
                 {
                   files ?
                     <>Keep {filename} available for up to a year.</>
-                    : <>See why Transfer.zip is loved by thousands.</>
+                    : <>The simplest way to send files on the web.</>
                 }
               </p>
               <NewSignUpArea onGoogleLogin={handleGoogleLogin} onEmailLogin={handleEmailLogin} newtab />
             </div>
           )}
-          {state == STATE_LOGGING_IN && (
+          {state == STATE_GMAIL_TAB && (
             <div>
               {waitingElems}
               <p className="text-gray-600 mb-4 text-center">
-                Finish the signup
+                Finish the signin in the new tab.
               </p>
             </div>
           )}
@@ -131,7 +133,15 @@ export default function ({ open, setOpen, files }) {
             <div>
               {waitingElems}
               <p className="text-gray-600 mb-4 text-center">
-                Check your email to finish the sign up!
+                Follow the link in the email to finish the sign in!
+              </p>
+            </div>
+          )}
+          {state == STATE_NOT_PAID && (
+            <div>
+              {waitingElems}
+              <p className="text-gray-600 mb-4 text-center">
+                Pick the perfect plan for you. Starting sharing files in seconds.
               </p>
             </div>
           )}

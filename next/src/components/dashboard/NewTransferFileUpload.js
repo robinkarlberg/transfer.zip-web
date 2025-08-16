@@ -10,7 +10,7 @@ import { markTransferComplete, newTransfer, newTransferRequest } from "@/lib/cli
 import { EXPIRATION_TIMES } from "@/lib/constants";
 import { Radio, RadioGroup } from "@headlessui/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useContext, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectTriggerFix, SelectValue } from "@/components/ui/select";
@@ -69,6 +69,12 @@ export default function ({ user, storage, brandProfiles }) {
     if (!uploadProgressMap) return 0
     return uploadProgressMap.reduce((sum, item) => sum + item[1], 0)
   }, [uploadProgressMap])
+
+  useEffect(() => {
+    if(files?.length > 0) {
+      // TODO: display a helper tooltip "we added the files for you"
+    }
+  }, [])
 
   const tooLittleStorage = useMemo(() => storage ? totalBytesToSend > storage.maxStorageBytes - storage.usedStorageBytes : false, [totalBytesToSend, storage])
 

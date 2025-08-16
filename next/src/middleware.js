@@ -11,7 +11,7 @@ const selfHostWhitelist = [
   "/change-password",
   "/app", "/legal", "/api",
   "/transfer", "/upload",
-  "/quick"
+  "/quick", "/signin"
 ]
 
 const legacyRedirects = [

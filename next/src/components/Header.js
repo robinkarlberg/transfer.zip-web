@@ -41,7 +41,7 @@ export default function Header({ scrollAware }) {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  const ctaText = isLoggedIn ? "My Transfers" : "Create Account"
+  const ctaText = isLoggedIn ? "My Transfers" : (IS_SELFHOST ? "Sign in" : "Create Account")
   const ctaLink = isLoggedIn ? "/app" : "/signin"
 
   const handleCtaLinkClicked = e => {
