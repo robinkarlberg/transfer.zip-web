@@ -9,7 +9,7 @@ export default function () {
   const { openSignupDialog } = useContext(GlobalContext)
 
   const handleCtaLinkNavigate = e => {
-    sendEvent("landing-cta-click", { is_logged_in: false })
+    sendEvent("landing_cta_click", { is_logged_in: false })
     e.preventDefault()
     openSignupDialog()
   }

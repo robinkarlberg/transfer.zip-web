@@ -26,7 +26,7 @@ export default function ({ onGoogleLogin, onEmailLogin, newtab }) {
 
     try {
       const res = await requestMagicLink(email)
-      sendEvent(newtab ? "signup-modal-event" : "signup-event")
+      sendEvent(newtab ? "signup_modal_event" : "signup_event")
       onEmailLogin && onEmailLogin()
       const domain = email.split("@")[1];
       const mailInfo = emailDomains[domain];
@@ -42,7 +42,7 @@ export default function ({ onGoogleLogin, onEmailLogin, newtab }) {
   }
 
   const handleGoogleLogin = e => {
-    sendEvent(newtab ? "signup-modal-google-event" : "signup-google-event")
+    sendEvent(newtab ? "signup_modal_google_event" : "signup_google_event")
     onGoogleLogin && onGoogleLogin()
   }
 

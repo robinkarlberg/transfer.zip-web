@@ -53,7 +53,7 @@ export default async function ({ auth }) {
           <div>
             <AuthConditional
               auth={(
-                <Link data-umami-event="landing-header-cta-click" data-umami-event-is_logged_in="true" href={"/app"} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-4 py-2 hover:bg-primary-light">
+                <Link data-umami-event="landing_header_cta_click" data-umami-event-is_logged_in="true" href={"/app"} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-4 py-2 hover:bg-primary-light">
                   My Transfers <span aria-hidden="true">&rarr;</span>
                 </Link>
               )}
@@ -88,7 +88,7 @@ export default async function ({ auth }) {
               <AuthConditional
                 auth={(
                   <Link
-                    data-umami-event="landing-cta-click"
+                    data-umami-event="landing_cta_click"
                     data-umami-event-is_logged_in="true"
                     href="/app"
                     className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
