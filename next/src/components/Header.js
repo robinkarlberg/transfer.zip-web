@@ -19,6 +19,9 @@ import logo from "../img/icon.png"
 import Link from 'next/link'
 import Image from 'next/image'
 import { IS_SELFHOST } from '@/lib/isSelfHosted'
+import { getUser } from '@/lib/client/Api'
+import { GlobalContext } from '@/context/GlobalContext'
+import { sendEvent } from '@/lib/client/umami'
 
 const products = [
   { name: 'Why Choose Us?', description: 'Blazingly Fast. No Bull***t', href: '/#why-choose-us', icon: "lightbulb" },
@@ -32,12 +35,30 @@ const callsToAction = [
 ]
 
 export default function Header({ scrollAware }) {
+  const { openSignupDialog } = useContext(GlobalContext)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [showHeader, setShowHeader] = useState(!scrollAware)
 
-  const auth = false
-  const ctaText = IS_SELFHOST ? "My Transfers" : "Create Account"
-  const ctaLink = "/app"
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  const ctaText = IS_SELFHOST || isLoggedIn ? "My Transfers" : "Create Account"
+  const ctaLink = IS_SELFHOST || isLoggedIn ? "/app" : "/signup"
+
+  const handleCtaLinkClicked = e => {
+    sendEvent("header-cta-click", { is_logged_in: isLoggedIn })
+    if (!isLoggedIn) {
+      e.preventDefault()
+      openSignupDialog()
+    }
+  }
+
+  useEffect(() => {
+    getUser().then(res => {
+      if (res.user != null) {
+        setIsLoggedIn(true)
+      }
+    })
+  }, [])
 
   const handleLinkClicked = e => {
     setMobileMenuOpen(false)
@@ -160,7 +181,7 @@ export default function Header({ scrollAware }) {
             </PopoverGroup>
           )}
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <Link data-umami-event="header-cta-click" href={ctaLink} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-3 py-0.5 hover:bg-primary-light">
+            <Link onNavigate={handleCtaLinkClicked} href={ctaLink} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-3 py-0.5 hover:bg-primary-light">
               {ctaText} <span aria-hidden="true">&rarr;</span>
             </Link>
           </div>
@@ -231,6 +252,7 @@ export default function Header({ scrollAware }) {
                 </div>
                 <div className="py-6">
                   <Link
+                    onNavigate={handleCtaLinkClicked}
                     href={ctaLink}
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                   >

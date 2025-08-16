@@ -1,14 +1,13 @@
-import Link from "next/link"
-import NewTransferFileUpload from '@/components/dashboard/NewTransferFileUpload'
-import { useServerAuth } from '@/lib/server/wrappers/auth'
-import { Suspense } from 'react'
-import Image from 'next/image'
-import icon from "@/img/icon.png"
 import BIcon from "@/components/BIcon"
-import ConditionalLandingFileUpload from "./ConditionalLandingFileUpload"
-import { Button } from "@/components/ui/button"
+import icon from "@/img/icon.png"
+import Image from 'next/image'
+import Link from "next/link"
+import { Suspense } from 'react'
 import AuthConditional from "./AuthConditional"
+import ConditionalLandingFileUpload from "./ConditionalLandingFileUpload"
 import LandingQuickShare from "./LandingQuickShare"
+import NoauthLandingCTAButton from "./NoauthLandingCTAButton"
+import NoauthLandingHeaderCTAButton from "./NoauthLandingHeaderCTAButton"
 
 export default async function ({ auth }) {
 
@@ -59,9 +58,7 @@ export default async function ({ auth }) {
                 </Link>
               )}
               noauth={(
-                <Link data-umami-event="landing-header-cta-click" data-umami-event-is_logged_in="false" href={"/app"} className="text-sm/6 font-semibold text-white rounded-full bg-primary px-4 py-2 hover:bg-primary-light">
-                  Create Account <span aria-hidden="true">&rarr;</span>
-                </Link>
+                <NoauthLandingHeaderCTAButton/>
               )}
             />
           </div>
@@ -88,26 +85,21 @@ export default async function ({ auth }) {
               No throttling. No size limits.
             </p>
             <div className="flex mt-10 items-center gap-6 justify-center lg:justify-start">
-              <Link
-                data-umami-event="landing-cta-click"
-                href="/app"
-                className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              >
-                <AuthConditional
-                  auth={(
-                    <>
-                      <span>My Transfers</span>{" "}&rarr;
-                    </>
-                  )}
-                  noauth={(
-                    <>
-                      <span className="inline lg:hidden">Create Account</span>
-                      <span className="hidden lg:inline">Create Account</span>
-                      {" "}&rarr;
-                    </>
-                  )}
-                />
-              </Link>
+              <AuthConditional
+                auth={(
+                  <Link
+                    data-umami-event="landing-cta-click"
+                    data-umami-event-is_logged_in="true"
+                    href="/app"
+                    className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  >
+                    <span>My Transfers</span>{" "}&rarr;
+                  </Link>
+                )}
+                noauth={(
+                  <NoauthLandingCTAButton />
+                )}
+              />
               <a href="https://github.com/robinkarlberg/transfer.zip-web" className="hidden sm:inline-block text-sm font-semibold leading-6 text-gray-900">
                 <BIcon name={"star"} /> Star on GitHub {stars ? `(${stars})` : ""}
               </a>
@@ -134,6 +126,6 @@ export default async function ({ auth }) {
           </div> */}
         </div>
       </div>
-    </div>
+    </div >
   )
 }
