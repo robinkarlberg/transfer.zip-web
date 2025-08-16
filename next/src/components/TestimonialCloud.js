@@ -2,20 +2,20 @@ import BIcon from "./BIcon"
 
 const testimonials = [
   {
-    quote: "F*****g THANK you. Everyone else has recommended site that all have limits on file size that are just too small for me ...",
-    author: "Bravo-Xray",
-    proof: "https://www.reddit.com/r/techsupport/comments/bjqmm6/comment/lj01kxe/"
-  },
-  {
     quote: "Love how simple and no-BS Transfer.zip is.",
     author: "maddogmdd",
     proof: "https://www.reddit.com/r/techsupport/comments/bjqmm6/comment/kilzfob/",
   },
   {
-    quote: "... after spending hours browsing for a simple way to send a 23 GB file, this is the answer.",
+    quote: "After spending hours browsing for a simple way to send a 23 GB file, this is the answer.",
     author: "amca12006",
     proof: "https://www.reddit.com/r/techsupport/comments/bjqmm6/comment/lgjz9lh/"
-  }
+  },
+  {
+    quote: "This is amazing",
+    author: "jormaig",
+    proof: "https://www.reddit.com/r/techsupport/comments/bjqmm6/comment/lsqqo1h/"
+  },
 ]
 
 export default function TestimonialCloud({ className }) {
