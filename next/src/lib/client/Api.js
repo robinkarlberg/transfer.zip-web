@@ -86,6 +86,14 @@ export function getGoogleLink() {
     return `${API_URL}/auth/google`
 }
 
+export async function requestMagicLink(email) {
+    return await post("/auth/magic-link", { email })
+}
+
+export async function useMagicLink(token) {
+    return await post(`/auth/magic-link/${token}`)
+}
+
 // export async function requestVerification() {
 //     return await post("/auth/verification/request", {})
 // }

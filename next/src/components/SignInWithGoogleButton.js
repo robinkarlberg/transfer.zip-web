@@ -3,10 +3,15 @@
 import { getGoogleLink } from "@/lib/client/Api"
 import BIcon from "./BIcon"
 
-export default function SignInWithGoogleButton({ disabled }) {
+export default function SignInWithGoogleButton({ disabled, newtab }) {
 
   const handleGoogleLogin = e => {
-    window.location.href = getGoogleLink()
+    if(newtab) {
+      window.open(getGoogleLink(), "_blank")
+    }
+    else {
+      window.location.href = getGoogleLink()
+    }
   }
 
   return (

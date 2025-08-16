@@ -4,7 +4,9 @@ import pricing from "@/lib/pricing"
 import PricingCards from "./PricingCards"
 import BIcon from "./BIcon"
 import PricingToggle from "./PricingToggle"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { getAbTestClient } from "@/lib/client/abtestClient"
+import { AB_TEST_IS_FREE_TRIAL_AVAILABLE } from "@/lib/abtests"
 
 const features = [
   { name: "Full access to Quick Transfers", good: true },
@@ -19,6 +21,12 @@ export default function Pricing() {
   const { tiers } = pricing
 
   const [frequency, setFrequency] = useState("yearly")
+
+  const [hasFreeTrial, setHasFreeTrial] = useState(true)
+
+  useEffect(() => {
+    setHasFreeTrial(getAbTestClient(AB_TEST_IS_FREE_TRIAL_AVAILABLE) != "false")
+  }, [])
 
   return (
     <div className="relative isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
@@ -44,7 +52,7 @@ export default function Pricing() {
         <PricingToggle frequency={frequency} setFrequency={setFrequency} />
       </div>
       <div className="mx-auto mt-4 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-8 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
-        <PricingCards frequency={frequency} tiers={tiers} hasFreeTrial={true} eventName={"pricing_card_landing_click"} />
+        <PricingCards frequency={frequency} tiers={tiers} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_landing_click"} />
         <div className="col-span-full mt-16">
           <div className="border shadow rounded-3xl p-10 w-full flex flex-col lg:flex-row justify-between">
             <div>

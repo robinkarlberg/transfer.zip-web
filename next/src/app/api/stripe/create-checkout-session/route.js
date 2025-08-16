@@ -1,6 +1,7 @@
 import { doesUserHaveFreeTrial, resp } from "@/lib/server/serverUtils";
 import { getStripe } from "@/lib/server/stripe";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
@@ -29,7 +30,7 @@ export async function POST(req) {
 
   // Check if has free trial before setting first stripe customer id
   // otherwise it will make a unneccesarry (how2spell?) api call 
-  const hasFreeTrial = await doesUserHaveFreeTrial(user)
+  const hasFreeTrial = await doesUserHaveFreeTrial(user, await cookies())
 
   let existingCustomerId = user.stripe_customer_id
   try {

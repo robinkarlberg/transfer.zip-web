@@ -1,14 +1,14 @@
 import { Button, Heading, Hr, Text } from '@react-email/components';
 import EmailLayout from './EmailLayout.jsx';
 
-export default function PasswordResetEmail({ link }) {
+export default function MagicLinkEmail({ link }) {
   return (
     <EmailLayout>
-      <Heading style={h1}>Password reset request</Heading>
+      <Heading style={h1}>Sign in to Transfer.zip</Heading>
       <Text style={text}>
-        Click the button below to reset your password.
+        Click the button below to sign in to your acount.
       </Text>
-      <Button style={button} href={link}>Reset Password</Button>
+      <Button style={button} href={link}>Sign In</Button>
       <Hr style={{ marginTop: '24px' }} />
       <Text style={{ color: '#2563eb', textDecoration: 'underline' }}>
         <a href={link}>{link}</a>

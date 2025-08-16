@@ -2,6 +2,7 @@ import { useServerAuth } from "@/lib/server/wrappers/auth";
 import OnboardingPage from "./OnboardingPage";
 import { redirect } from "next/navigation";
 import { doesUserHaveFreeTrial } from "@/lib/server/serverUtils";
+import { cookies } from "next/headers";
 
 export default async function () {
   let auth
@@ -17,7 +18,7 @@ export default async function () {
     return redirect("/app")
   }
 
-  let hasFreeTrial = await doesUserHaveFreeTrial(auth.user)
+  let hasFreeTrial = await doesUserHaveFreeTrial(auth.user, await cookies())
 
   return <OnboardingPage user={auth.user.friendlyObj()} hasStripeAccount={!!auth.user.stripe_customer_id} hasFreeTrial={hasFreeTrial} />
 }

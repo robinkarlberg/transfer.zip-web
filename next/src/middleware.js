@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
 import { IS_SELFHOST } from "./lib/isSelfHosted"
+import { AB_TESTS } from "./lib/abtests"
+import { abTest } from "./lib/server/abtestServer"
 
 const selfHostBlacklist = [
   "/api/stripe"
@@ -18,8 +20,20 @@ const legacyRedirects = [
   { from: "/about", to: "/" },
   { from: "/pricing", to: "/" },
   { from: "/posts/easy_ways_to_share_files_anonymously_in_2025", to: "/how-to/share-files/anonymously" },
+  { from: "/posts/easy_ways_to_send_large_files_online_free_without_registration", to: "/how-to/share-files/no-sign-up" },
   { from: /^\/posts.*$/, to: "/how-to" },
 ]
+
+function applyAbTests(req, res) {
+  if (IS_SELFHOST) return res
+
+  // Run AB tests
+  AB_TESTS.forEach(test => {
+    abTest(test, req, res)
+  })
+
+  return res
+}
 
 export function middleware(req) {
   const { pathname } = req.nextUrl
@@ -29,7 +43,7 @@ export function middleware(req) {
   if (!token && pathname.startsWith("/app")) {
     const newUrl = req.nextUrl.clone()
     newUrl.pathname = IS_SELFHOST ? "/signin" : "/signup"
-    return NextResponse.redirect(newUrl, { status: 302 })
+    return applyAbTests(req, NextResponse.redirect(newUrl, { status: 302 }))
   }
 
   // legacy redirects
@@ -40,7 +54,7 @@ export function middleware(req) {
   if (legacyMatch) {
     const newUrl = req.nextUrl.clone()
     newUrl.pathname = legacyMatch.to
-    return NextResponse.redirect(newUrl, { status: 301 })
+    return applyAbTests(req, NextResponse.redirect(newUrl, { status: 301 }))
   }
 
   if (IS_SELFHOST) {
@@ -58,7 +72,7 @@ export function middleware(req) {
       return NextResponse.redirect(newUrl, { status: 301 })
     }
   }
-  else return NextResponse.next()
+  else return applyAbTests(req, NextResponse.next())
 }
 
 export const config = {

@@ -10,7 +10,7 @@ function classNames(...classes) {
 }
 
 export default function PricingCards({ frequency, tiers, compact, onTierSelected, hasFreeTrial, eventName }) {
-  const _buttonText = hasFreeTrial ? "Start 7-day Free Trial" : "Subscribe"
+  const _buttonText = hasFreeTrial ? "Start Sending for Free" : "Subscribe"
   return tiers.map((tier, tierIdx) => (
     <div
       key={tier.name}

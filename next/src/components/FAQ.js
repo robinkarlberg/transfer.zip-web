@@ -33,7 +33,7 @@ const faqs = [
   },
   {
     question: "Is there a free trial available?",
-    answer: "Yes, a free trial is available for 7 days."
+    answer: "Yes, a 7-day free trial is available for most users."
   },
   {
     question: "How do I contact support if I encounter an issue?",

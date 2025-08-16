@@ -1,6 +1,8 @@
 import "server-only"
 import Transfer from "./mongoose/models/Transfer"
 import { getStripe } from "./stripe"
+import { getAbTestServer } from "./abtestServer"
+import { AB_TEST_IS_FREE_TRIAL_AVAILABLE } from "../abtests"
 
 export const IS_DEV = process.env.NODE_ENV == "development"
 
@@ -43,7 +45,6 @@ export const listTransfersForUser = async (user) => {
     .sort({ createdAt: -1 })
 
   const filteredTransfers = transfers.filter(transfer => !transfer.transferRequest || (transfer.transferRequest && transfer.transferRequest.author._id.toString() === user._id.toString()))
-
   return filteredTransfers
 }
 
@@ -74,7 +75,10 @@ async function customerHasPaid(customerId) {
   return !!sub.latest_invoice?.paid;            // fall‑back for past_due/unpaid
 }
 
-export async function doesUserHaveFreeTrial(user) {
+export async function doesUserHaveFreeTrial(user, cookies) {
+  const abTestFreeTrialAvailable = await getAbTestServer(AB_TEST_IS_FREE_TRIAL_AVAILABLE, cookies)
+  if (abTestFreeTrialAvailable == "false") return false
+
   if (user && !!user.stripe_customer_id) {
     try {
       if (user.usedFreeTrial) {

@@ -21,6 +21,7 @@ import { DashboardContext } from "@/context/DashboardContext"
 import { IS_SELFHOST } from "@/lib/isSelfHosted"
 import SignUpModal from "@/components/SignUpModal"
 import { sendEvent } from "@/lib/client/umami"
+import { GlobalContext } from "@/context/GlobalContext"
 
 const TRANSFER_STATE_WAIT_FOR_USER = "wait_for_user"
 const TRANSFER_STATE_IDLE = "idle"
@@ -33,11 +34,10 @@ export default function QuickShareProgress({ isLoggedIn }) {
 
   const router = useRouter()
 
+  const {openSignupDialog} = useContext(GlobalContext)
   const { files } = useContext(FileContext)
   const { displayNotification } = useContext(DashboardContext)
   const { hasBeenSentLink, k, remoteSessionId, transferDirection } = useQuickShare()
-
-  const [showSignUpModal, setShowSignUpModal] = useState(false)
 
   const [transferState, _setTransferState] = useState(hasBeenSentLink ? TRANSFER_STATE_IDLE : TRANSFER_STATE_WAIT_FOR_USER)
   const setTransferState = (ts) => {
@@ -303,7 +303,6 @@ export default function QuickShareProgress({ isLoggedIn }) {
 
   return (
     <>
-      <SignUpModal show={showSignUpModal} onShowChange={setShowSignUpModal} />
       <div className="flex flex-col md:flex-row gap-4">
         <div className="w-full max-w-64">
           <h1 className="text-3xl font-bold mb-4 block md:hidden">{title}</h1>
@@ -357,7 +356,7 @@ export default function QuickShareProgress({ isLoggedIn }) {
                 sendEvent("quick_transfer_upsell_click", { is_logged_in: isLoggedIn })
                 if (!isLoggedIn) {
                   e.preventDefault()
-                  setShowSignUpModal(true)
+                  openSignupDialog(files)
                 }
               }}
               className="text-start flex md:inline-flex gap-2 border rounded-lg shadow-sm py-2 ps-3 pe-4 bg-primary-50 group">

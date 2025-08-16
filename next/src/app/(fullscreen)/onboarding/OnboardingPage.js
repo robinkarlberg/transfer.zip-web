@@ -67,23 +67,23 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
       <div className="flex min-h-[100vh] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <Link href={"/"} className="absolute top-8 text-xl me-1 text-primary hover:text-primary-light">&larr; Back</Link>
         <div className="sm:mx-auto sm:w-full sm:max-w-xl text-center">
-          <Image
+          {/* <Image
             alt="Transfer.zip logo"
             src={logo}
             className="mx-auto h-10 w-auto"
-          />
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            Transfer.zip
+          /> */}
+          <h1 className={`text-4xl ${hasStripeAccount ? "sm:text-6xl" : "sm:text-7xl"} font-bold mt-8 sm:mt-12 tracking-tight text-gray-900`}>
+            {hasStripeAccount ? "Welcome back 👋" : "Welcome 👋"}
           </h1>
-          <p className="text-gray-700 mt-4">
+          <p className="text-gray-700 mt-4 text-base sm:text-xl">
             {
               hasFreeTrial ?
                 <>
-                  We offer a <b>7-day free trial</b> on any plan. You can cancel anytime during your trial.
+                  We offer a <b>7-day free trial</b> on any plan. You can cancel anytime during your trial, and you won't be charged a penny.
                 </>
                 :
                 <>
-                  Choose a plan that fits your needs. <b>Send files instantly</b> upon purchase.
+                  Pick the perfect plan for you. Starting sharing files in seconds.
                 </>
             }
           </p>
