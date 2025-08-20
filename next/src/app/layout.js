@@ -18,8 +18,33 @@ const roboto = Roboto({
 })
 
 export const metadata = {
-  title: "Transfer.zip - Send Large Files | 100GB+",
-  description: "Ultrafast, Reliable and Secure file transfers. No throttling. No size limits. Open source.",
+  title: "Transfer.zip | Quick & Easy File Transfer",
+  description:
+    "Free sharing of photos, videos and documents. Send large files instantly with a link or email. Simple, fast and secure file sharing with Transfer.zip.",
+  openGraph: {
+    title: "Quick & Easy File Transfer | Transfer.zip",
+    description:
+      "Free sharing of photos, videos and documents. Send large files instantly with a link or email. Simple, fast and secure file sharing with Transfer.zip.",
+    url: "https://transfer.zip",
+    siteName: "Transfer.zip",
+    images: [
+      {
+        url: "https://cdn.transfer.zip/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Transfer.zip tagline \"Send Big Files Without Limits\".",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Quick & Easy File Sharing - Transfer.zip",
+    description:
+      "Send large files instantly with a link or email. Simple, fast and secure file sharing with Transfer.zip.",
+    images: ["https://cdn.transfer.zip/og.png"],
+  },
 };
 
 export default function RootLayout({ children }) {
