@@ -54,7 +54,7 @@ export default function Pricing() {
         <div className="col-span-full mt-16">
           <div className="border shadow rounded-3xl p-10 w-full flex flex-col lg:flex-row justify-between">
             <div>
-              <h3 className="text-base/7 font-semibold text-primary">Free</h3>
+              <p className="text-base/7 font-semibold text-primary">Free</p>
               <p className="mt-4 flex items-baseline gap-x-2">
                 <span
                   className={'text-gray-900 text-5xl font-semibold tracking-tight'}

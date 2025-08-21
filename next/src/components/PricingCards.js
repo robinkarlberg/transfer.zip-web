@@ -24,12 +24,12 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
         'rounded-3xl p-8 ring-1 ring-gray-900/10 sm:p-10 sm:min-w-96',
       )}
     >
-      <h3
+      <p
         id={tier.id}
         className={classNames(tier.featured ? 'text-primary-lighter' : 'text-primary', 'text-base/7 font-semibold')}
       >
         {tier.name}
-      </h3>
+      </p>
       <div className="mt-4 flex items-baseline gap-x-2">
         <div
           className={classNames(

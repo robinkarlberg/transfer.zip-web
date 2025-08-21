@@ -58,7 +58,7 @@ export default async function ({ auth }) {
                 </Link>
               )}
               noauth={(
-                <NoauthLandingHeaderCTAButton/>
+                <NoauthLandingHeaderCTAButton />
               )}
             />
           </div>
@@ -126,6 +126,6 @@ export default async function ({ auth }) {
           </div> */}
         </div>
       </div>
-    </div >
+    </div>
   )
 }

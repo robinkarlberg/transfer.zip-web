@@ -48,7 +48,7 @@ export default function UnzipFilesTool() {
       <div className="mt-4">
         {richFiles ? (
           <div>
-            <h3 className="text-2xl font-bold mb-4">{zipFile?.name}</h3>
+            <p className="text-2xl font-bold mb-4">{zipFile?.name}</p>
             <FileBrowser richFiles={richFiles} onAction={handleAction} />
           </div>
         ) : (

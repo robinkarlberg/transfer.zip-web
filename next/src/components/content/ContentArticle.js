@@ -1,4 +1,5 @@
 export default function ({ children }) {
+
   return (
     <div className="w-full">
       <div className="mx-auto max-w-7xl flex justify-between px-4 lg:px-8 mb-20">
