@@ -18,7 +18,7 @@ const roboto = Roboto({
 })
 
 export const metadata = {
-  title: "Transfer.zip | Quick & Easy File Transfer",
+  title: "Transfer.zip | Quick & Easy File Transfer - Send Files",
   description:
     "Free sharing of photos, videos and documents. Send large files instantly with a link or email. Simple, fast and secure file sharing with Transfer.zip.",
   openGraph: {

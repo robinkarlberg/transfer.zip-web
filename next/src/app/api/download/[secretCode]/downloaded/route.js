@@ -23,7 +23,7 @@ export async function POST(req, { params }) {
     return NextResponse.json(resp('transfer not found'), { status: 404 });
   }
 
-  if (auth && auth.user._id.toString() === transfer.author._id.toString()) {
+  if (!!transfer?.author && auth && auth.user._id.toString() === transfer.author._id.toString()) {
     return NextResponse.json(resp({}));
   }
 
