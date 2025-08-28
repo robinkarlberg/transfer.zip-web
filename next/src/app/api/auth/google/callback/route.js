@@ -17,7 +17,7 @@ export async function GET(req) {
   await dbConnect()
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
-  if (!code) return NextResponse.redirect("/signin");
+  if (!code) return NextResponse.redirect(new URL("/signin", process.env.SITE_URL));
 
   const { tokens } = await client.getToken(code);
   const ticket = await client.verifyIdToken({
