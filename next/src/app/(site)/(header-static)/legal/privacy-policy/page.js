@@ -49,7 +49,7 @@ export default function ({ }) {
           <strong className="font-semibold text-gray-900">Data Security.</strong> We prioritize the security of your data. The "Quick Transfer" feature ensures that files are never stored on our servers but are streamed directly between devices using WebRTC peer-to-peer technology with end-to-end encryption using an AES-GCM 256-bit key. For normal file transfers, files are stored encrypted at rest using AES256 bit encryption.
         </p>
         <p className="mt-8">
-          <strong className="font-semibold text-gray-900">User Rights.</strong> You have the right to access, modify, or delete your data. To exercise these rights, you can delete your account via the account page or send a request to {process.env.NEXT_PUBLIC_SUPPORT_EMAIL} for data deletion and related inquiries.
+          <strong className="font-semibold text-gray-900">User Rights.</strong> You have the right to access, modify, or delete your data. To exercise these rights, you can delete your account by sending a request to {process.env.NEXT_PUBLIC_SUPPORT_EMAIL} for data deletion and related inquiries.
         </p>
         <p className="mt-8">
           <strong className="font-semibold text-gray-900">Cookies.</strong> We use only a functional session cookie named <code>token</code> to enable login functionality. This cookie is essential for the operation of our services. We use no tracking cookies, or track you in any other way.
