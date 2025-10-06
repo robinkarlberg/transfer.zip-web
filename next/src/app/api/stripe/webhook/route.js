@@ -85,6 +85,25 @@ const handleSubscription = async object => {
 }
 
 const handleSubscriptionCreated = async object => {
+  // Check if subscription has a trial period and block SUTTON BANK
+  const stripe = getStripe()
+
+  // Get the default payment method
+  const paymentMethodId = object.default_payment_method
+  if (paymentMethodId) {
+    const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId)
+
+    console.log(paymentMethod)
+    // Check if issuer is SUTTON BANK
+    if (paymentMethod?.card?.issuer?.toUpperCase().includes('SUTTON BANK')) {
+      console.log(`Blocking SUTTON BANK payment for trial subscription: ${object.id}`)
+
+      // Cancel the subscription immediately
+      await stripe.subscriptions.cancel(object.id)
+      return
+    }
+  }
+
   handleSubscription(object)
 }
 
