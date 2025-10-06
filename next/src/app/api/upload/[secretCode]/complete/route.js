@@ -6,6 +6,8 @@ import { workerUploadComplete } from "@/lib/server/workerApi";
 import { sendTransferRequestReceived, sendTransferShare } from "@/lib/server/mail/mail";
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/server/mongoose/db";
+import SentEmail from "@/lib/server/mongoose/models/SentEmail";
+import { EMAILS_PER_DAY_LIMIT } from "@/lib/getMaxRecipientsForPlan";
 
 export async function POST(req, { params }) {
   const { secretCode } = await params
@@ -34,6 +36,15 @@ export async function POST(req, { params }) {
     const unique = [...new Set(transfer.emailsSharedWith.map(e => e.email))];
     const brand = transfer.brandProfile ? transfer.brandProfile.friendlyObj() : undefined;
     for (const email of unique) {
+      const sentEmailsLastDay = await SentEmail.countDocuments({ user: transfer.author._id })
+      if (sentEmailsLastDay >= EMAILS_PER_DAY_LIMIT) {
+        return NextResponse.json(resp("You have sent too many emails today, please contact support."));
+      }
+      const sentEmail = new SentEmail({
+        user: transfer.author._id,
+        to: [email]
+      })
+      await sentEmail.save()
       await sendTransferShare(email, {
         name: transfer.name || 'Untitled Transfer',
         description: transfer.description,

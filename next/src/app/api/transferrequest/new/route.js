@@ -5,6 +5,8 @@ import { getTransferRequestUploadLink, resp } from "@/lib/server/serverUtils";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
+import SentEmail from "@/lib/server/mongoose/models/SentEmail";
+import { EMAILS_PER_DAY_LIMIT, getMaxRecipientsForPlan } from "@/lib/getMaxRecipientsForPlan";
 
 export async function POST(req) {
   const { user } = await useServerAuth()
@@ -35,8 +37,21 @@ export async function POST(req) {
 
   console.log(transferRequest, getTransferRequestUploadLink(transferRequest))
 
+  if (emails.length > getMaxRecipientsForPlan(user.getPlan())) {
+    return NextResponse.json(resp("too many recipients"));
+  }
+
   if (emails?.length) {
     for (const email of emails) {
+      const sentEmailsLastDay = await SentEmail.countDocuments({ user: user._id })
+      if (sentEmailsLastDay >= EMAILS_PER_DAY_LIMIT) {
+        return NextResponse.json(resp("You have sent too many emails today, please contact support."));
+      }
+      const sentEmail = new SentEmail({
+        user: user._id,
+        to: [email]
+      })
+      await sentEmail.save()
       await sendTransferRequestShare(email, {
         name: name || "Untitled Transfer Request",
         description: description,

@@ -18,12 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { prepareTransferFiles, uploadFiles } from "@/lib/client/uploader";
 import Image from "next/image";
-
-const getMaxRecipientsForPlan = (plan) => {
-  if (plan == "pro") return 50;
-  else if (plan == "starter") return 20
-  else return 20
-}
+import { getMaxRecipientsForPlan } from "../../lib/getMaxRecipientsForPlan";
 
 function AddedEmailField({ email, onAction }) {
   return (
@@ -71,7 +66,7 @@ export default function ({ user, storage, brandProfiles }) {
   }, [uploadProgressMap])
 
   useEffect(() => {
-    if(files?.length > 0) {
+    if (files?.length > 0) {
       // TODO: display a helper tooltip "we added the files for you"
     }
   }, [])
@@ -98,10 +93,15 @@ export default function ({ user, storage, brandProfiles }) {
     // response: { idMap: [{ tmpId, id }, ...] } - what your API returned
     const { transfer, idMap } = await newTransfer({ name, description, expiresInDays, files: transferFiles, emails: emailRecipients, brandProfileId })
 
-    const { results, failedPromises } = await uploadFiles(files, idMap, transfer, progress => {
-      // console.log(progress, progress.reduce((sum, item) => sum + item[1], 0))
-      setUploadProgressMap(progress)
-    })
+    try {
+      const { results, failedPromises } = await uploadFiles(files, idMap, transfer, progress => {
+        // console.log(progress, progress.reduce((sum, item) => sum + item[1], 0))
+        setUploadProgressMap(progress)
+      })
+    }
+    catch (err) {
+      displayErrorModal(err.message)
+    }
 
     setFinished(true)
     router.replace(`/app/${transfer.id}`)
@@ -118,7 +118,12 @@ export default function ({ user, storage, brandProfiles }) {
     const name = formData.get("name")
     const description = formData.get("description")
 
-    const { transferRequest } = await newTransferRequest({ name, description, emails: emailRecipients, brandProfileId })
+    try {
+      const { transferRequest } = await newTransferRequest({ name, description, emails: emailRecipients, brandProfileId })
+    }
+    catch (err) {
+      displayErrorModal(err.message)
+    }
     // if (emailRecipients.length > 0) {
     //   await sendTransferRequestByEmail(transferRequest.id, emailRecipients)
     // }

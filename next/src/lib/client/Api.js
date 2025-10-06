@@ -8,8 +8,7 @@ const get = async (endpoint, extraHeaders, omitCredentials) => {
     })).json()
 
     if (!res.success) {
-        console.log(res)
-        throw res
+        throw new Error(res.message || "uknown error")
     }
     else {
         return res
@@ -27,7 +26,7 @@ const withBody = async (verb, endpoint, payload) => {
     })).json()
 
     if (!res.success) {
-        throw res
+        throw new Error(res.message || "uknown error")
     }
     else {
         return res

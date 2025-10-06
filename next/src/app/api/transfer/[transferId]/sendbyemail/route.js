@@ -4,6 +4,8 @@ import Transfer from '@/lib/server/mongoose/models/Transfer';
 import BrandProfile from '@/lib/server/mongoose/models/BrandProfile';
 import { resp } from '@/lib/server/serverUtils';
 import { sendTransferShare } from '@/lib/server/mail/mail';
+import SentEmail from '@/lib/server/mongoose/models/SentEmail';
+import { EMAILS_PER_DAY_LIMIT, getMaxRecipientsForPlan } from '@/lib/getMaxRecipientsForPlan';
 
 export async function POST(req, { params }) {
   const { transferId } = await params;
@@ -27,6 +29,10 @@ export async function POST(req, { params }) {
   const existing = new Set(transfer.emailsSharedWith.map(e => e.email));
   const uniqueNew = [...new Set(emails)].filter(email => !existing.has(email));
 
+  if (uniqueNew.length > getMaxRecipientsForPlan(auth.user.getPlan())) {
+    return NextResponse.json(resp("too many recipients"));
+  }
+
   for (const email of uniqueNew) {
     transfer.addSharedEmail(email);
   }
@@ -36,6 +42,15 @@ export async function POST(req, { params }) {
   if (transfer.finishedUploading) {
     const brand = transfer.brandProfile ? transfer.brandProfile.friendlyObj() : undefined;
     for (const email of uniqueNew) {
+      const sentEmailsLastDay = await SentEmail.countDocuments({ user: auth.user._id })
+      if (sentEmailsLastDay >= EMAILS_PER_DAY_LIMIT) {
+        return NextResponse.json(resp("You have sent too many emails today, please contact support."));
+      }
+      const sentEmail = new SentEmail({
+        user: auth.user._id,
+        to: [email]
+      })
+      await sentEmail.save()
       await sendTransferShare(email, {
         name: transfer.name || 'Untitled Transfer',
         description: transfer.description,

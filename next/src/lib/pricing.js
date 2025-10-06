@@ -42,7 +42,7 @@ export default {
         // "Gigabit servers",
         <span>Up to <b>1TB</b> per transfer</span>,
         <span>Files stay up for <b>365 days</b></span>,
-        <span>Send files to <b>50 emails</b></span>,
+        <span>Send files to <b>30 emails</b></span>,
         "Priority support",
         "Track views and downloads",
         // <span><b>Custom</b> branding<span className="ms-1.5 px-1.5 py-0.5 text-xs font-semibold text-white bg-primary rounded-full whitespace-nowrap">Coming Soon</span></span>,
