@@ -29,7 +29,7 @@ export default async function DashboardLayout({ children }) {
 
   return (
     <div>
-      {!IS_SELFHOST && <DismissibleBanner />}
+      {/* {!IS_SELFHOST && <DismissibleBanner />} */}
       <div className="flex flex-col lg:flex-row min-h-screen">
         <ApplicationProvider>
           <DashboardProvider>
