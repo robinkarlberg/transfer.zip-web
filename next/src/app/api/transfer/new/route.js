@@ -12,15 +12,19 @@ import { toLargeRegion } from '@/lib/server/region'
 import { workerGeoSlow } from '@/lib/server/workerApi'
 
 export async function POST(req) {
+  const { name, description, expiresInDays, transferRequestSecretCode, files, emails, brandProfileId } = await req.json()
+
   let auth
   try {
     auth = await useServerAuth()
+    if (auth.user.getPlan() === "free") {
+      const fakeObjectIdHex = new mongoose.Types.ObjectId().toHexString()
+      return NextResponse.json(resp({ transfer: { id: fakeObjectIdHex, name, description, emails, brandProfileId } }))
+    }
   }
   catch (err) {
     // No auth, it's ok if it is for a transferRequest
   }
-
-  const { name, description, expiresInDays, transferRequestSecretCode, files, emails, brandProfileId } = await req.json()
 
   if (!expiresInDays) {
     return NextResponse.json(resp("expiresInDays not provided"), { status: 400 })
