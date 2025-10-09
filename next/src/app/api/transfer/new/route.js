@@ -19,7 +19,7 @@ export async function POST(req) {
     auth = await useServerAuth()
     if (auth.user.getPlan() === "free") {
       const fakeObjectIdHex = new mongoose.Types.ObjectId().toHexString()
-      return NextResponse.json(resp({ transfer: { id: fakeObjectIdHex, name, description, emails, brandProfileId } }))
+      return NextResponse.json(resp({ transfer: { id: fakeObjectIdHex, name, description, emails, brandProfileId }, error: "at least buy a plan if you're doing cybercrime lil bro" }))
     }
   }
   catch (err) {
