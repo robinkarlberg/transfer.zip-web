@@ -20,6 +20,7 @@ const legacyRedirects = [
   { from: "/signup", to: "/signin" },
   { from: "/about", to: "/" },
   { from: "/pricing", to: "/" },
+  { from: "/tools/heic-convert", to: "/tools/convert-heic-to-jpg" },
   { from: "/posts/easy_ways_to_share_files_anonymously_in_2025", to: "/how-to/share-files/anonymously" },
   { from: "/posts/easy_ways_to_send_large_files_online_free_without_registration", to: "/how-to/share-files/no-sign-up" },
   { from: /^\/posts.*$/, to: "/how-to" },
