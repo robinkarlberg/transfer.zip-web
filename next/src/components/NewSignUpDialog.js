@@ -91,7 +91,9 @@ export default function ({ open, setOpen, files }) {
   )
 
   const onOpenChangeProxy = (value) => {
-    if (state == STATE_START) setOpen(value)
+    // if (state == STATE_START) setOpen(value)
+    // We make users be able to close it all the time now
+    setOpen(value)
   }
 
   return (

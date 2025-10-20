@@ -38,7 +38,7 @@ function TierCard({ isCurrent, isTrial, planCancelling, planValidUntil, planInte
         {
           isCurrent ?
             <form method="POST" action={API_URL + "/stripe/create-customer-portal-session"}>
-              <button className="text-sm bg-primary text-white px-3 py-1.5 rounded-md hover:bg-primary-light font-bold">Manage Subscription &rarr;</button>
+              <button className="text-sm bg-primary text-white px-3 py-1.5 rounded-md hover:bg-primary-light font-bold">Cancel Subscription &rarr;</button>
             </form>
             :
             <div>

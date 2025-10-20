@@ -18,7 +18,7 @@ export default function Pricing() {
 
   const { tiers } = pricing
 
-  const [frequency, setFrequency] = useState("yearly")
+  const [frequency, setFrequency] = useState("monthly")
 
   const [hasFreeTrial, setHasFreeTrial] = useState(true)
 

@@ -36,7 +36,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
 
   const [isRequesting, setIsRequesting] = useState(false);
 
-  const [frequency, setFrequency] = useState("yearly")
+  const [frequency, setFrequency] = useState("monthly")
 
   if (!user) return <></>
 
