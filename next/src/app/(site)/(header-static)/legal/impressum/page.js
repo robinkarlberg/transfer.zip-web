@@ -8,12 +8,12 @@ export default function ({ }) {
 
       <div className="mt-10 max-w-2xl space-y-6">
         <p>
-          <strong className="font-semibold text-gray-900">Name:</strong><br />
-          Transfer.zip
+          <strong className="font-semibold text-gray-900">Company:</strong><br />
+          Robin Karlberg Technologies AB
         </p>
         <p>
-          <strong className="font-semibold text-gray-900">Operator:</strong><br />
-          Robin Karlberg (Sole proprietorship)
+          <strong className="font-semibold text-gray-900">Organisation Number:</strong><br />
+          559549-4146
         </p>
         <p>
           <strong className="font-semibold text-gray-900">Address:</strong><br />
