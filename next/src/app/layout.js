@@ -1,16 +1,11 @@
-import { Playfair_Display, Roboto } from "next/font/google";
-import "./globals.css";
-import 'bootstrap-icons/font/bootstrap-icons.css';
 import { FileProvider } from "@/context/FileProvider";
-import Script from "next/script";
-import Head from "next/head";
-import { IS_SELFHOST } from "@/lib/isSelfHosted";
 import GlobalProvider from "@/context/GlobalContext";
-
-// const playfairDisplay = Playfair_Display({
-//   weight: ['400', '500', '600', '700', '800', '900'],
-//   subsets: ["latin"]
-// })
+import { IS_SELFHOST } from "@/lib/isSelfHosted";
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Roboto } from "next/font/google";
+import Head from "next/head";
+import Script from "next/script";
+import "./globals.css";
 
 const roboto = Roboto({
   weight: ['400', '500', '600', '700', '800', '900'],

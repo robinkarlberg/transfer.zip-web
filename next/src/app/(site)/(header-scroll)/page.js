@@ -10,12 +10,14 @@ import TestimonialCloud from "@/components/TestimonialCloud";
 import { FileProvider } from "@/context/FileProvider";
 import Landing from "./Landing";
 import IndieStatement from "@/components/IndieStatement";
+import LandingNew from "./LandingNew";
 
 export default function () {
   return (
     <div>
       <HashInterceptor />
-      <Landing />
+      {/* <Landing /> */}
+      <LandingNew/>
       <Features1 />
       <TestimonialCloud />
       <Features2 />

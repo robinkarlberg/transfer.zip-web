@@ -1,7 +1,6 @@
-import { useServerAuth } from "@/lib/server/wrappers/auth"
-import LandingQuickShare from "./LandingQuickShare"
-import LandingTransferCarousel from "./LandingTransferCarousel"
+import NewTransferFileUploadNew from "@/components/NewTransferFileUploadNew"
 import BrandProfile from "@/lib/server/mongoose/models/BrandProfile"
+import { useServerAuth } from "@/lib/server/wrappers/auth"
 
 export default async function () {
 
@@ -19,7 +18,7 @@ export default async function () {
 
   return (
     auth && auth.user.getPlan() != "free" ?
-      <LandingTransferCarousel user={auth.user.friendlyObj()} storage={await auth.user.getStorage()} brandProfiles={brandProfiles.map(profile => profile.friendlyObj())} />
-      : <LandingQuickShare />
+      <NewTransferFileUploadNew user={auth.user.friendlyObj()} storage={await auth.user.getStorage()} brandProfiles={brandProfiles.map(profile => profile.friendlyObj())} />
+      : <NewTransferFileUploadNew />
   )
 }
