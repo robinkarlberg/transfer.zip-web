@@ -65,10 +65,12 @@ export default async function ({ auth }) {
           </div>
         </div>
         <div className="grow mx-auto w-full max-w-7xl px-6 flex flex-col items-center justify-center mb-12">
-          <h1 className="mx-auto text-center max-w-lg text-5xl font-extrabold tracking-tight text-gray-900 sm:text-6xl mb-12">
-            Send Big Files
-            Without Limits
+          <h1 className="mx-auto text-center max-w-xl text-4xl font-bold tracking-tight text-gray-800 mb-2">
+            Try the easiest way to send files.
           </h1>
+          <p className="mx-auto text-center text-lg leading-8 text-gray-700 max-w-md mb-12">
+            No queue. No size limits.
+          </p>
           <Suspense fallback={<NewTransferFileUploadNew />}>
             <ConditionalLandingFileUpload />
           </Suspense>

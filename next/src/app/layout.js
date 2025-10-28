@@ -2,13 +2,13 @@ import { FileProvider } from "@/context/FileProvider";
 import GlobalProvider from "@/context/GlobalContext";
 import { IS_SELFHOST } from "@/lib/isSelfHosted";
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { Roboto } from "next/font/google";
+import { Bricolage_Grotesque, Roboto } from "next/font/google";
 import Head from "next/head";
 import Script from "next/script";
 import "./globals.css";
 
-const roboto = Roboto({
-  weight: ['400', '500', '600', '700', '800', '900'],
+const roboto = Bricolage_Grotesque({
+  weight: ['400', '500', '600', '700', '800'],
   subsets: ["latin"]
 })
 

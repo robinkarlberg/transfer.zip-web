@@ -1,5 +1,12 @@
 export const EXPIRATION_TIMES = [
   {
+    period: "3 days",
+    days: "3",
+    free: true,
+    starter: true,
+    pro: true
+  },
+  {
     period: "7 days",
     days: "7",
     starter: true,
