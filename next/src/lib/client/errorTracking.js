@@ -3,10 +3,9 @@ import { sendTrackError } from "./Api";
 
 export function trackError(identifier, err, metadata) {
   try {
-    console.error(identifier)
-    console.error(err)
     if (IS_SELFHOST) return
-
+    
+    console.error("Track error:", identifier, err, metadata)
     const error = buildErrorDetails(err);
     const md = sanitizeMetadata(metadata);
 

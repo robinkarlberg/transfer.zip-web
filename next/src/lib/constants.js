@@ -1,5 +1,12 @@
 export const EXPIRATION_TIMES = [
   {
+    period: "tab is closed",
+    days: "0",
+    free: true,
+    starter: true,
+    pro: true
+  },
+  {
     period: "3 days",
     days: "3",
     free: true,

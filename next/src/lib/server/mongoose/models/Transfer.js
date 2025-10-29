@@ -42,6 +42,7 @@ File.methods.friendlyObj = function () {
 const TransferSchema = new mongoose.Schema({
     transferRequest: { type: mongoose.Schema.Types.ObjectId, ref: "TransferRequest" },
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true },
+    guestEmail: { type: String },
     name: String,
     description: String,
     expiresAt: { type: Date },

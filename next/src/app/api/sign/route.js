@@ -22,17 +22,19 @@ export async function POST(req) {
     }
 
     if (scope == "upload") {
-      if (!transfer.transferRequest) {
-        const auth = await useServerAuth()
-        if (auth) {
-          if (transfer.author._id.toString() !== auth.user._id.toString()) {
-            return NextResponse.json(resp("not authorized"), { status: 403 })
-          }
-        }
-        else {
-          return NextResponse.json(resp("not authenticated"), { status: 401 })
-        }
-      }
+      // TODO: enforce auth for slightly better security (if someone sends the transfer before its uploaded??)
+      // We use secretCode to upload, so we can assume the signing user is the same as the uploading user
+      // if (!transfer.transferRequest) {
+      //   const auth = await useServerAuth()
+      //   if (auth) {
+      //     if (transfer.author._id.toString() !== auth.user._id.toString()) {
+      //       return NextResponse.json(resp("not authorized"), { status: 403 })
+      //     }
+      //   }
+      //   else {
+      //     return NextResponse.json(resp("not authenticated"), { status: 401 })
+      //   }
+      // }
 
       // const storage = await transfer.author.getStorage()
 

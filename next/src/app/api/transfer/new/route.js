@@ -10,9 +10,10 @@ import { resp } from '@/lib/server/serverUtils'
 import { getConf } from '@/lib/server/config'
 import { toLargeRegion } from '@/lib/server/region'
 import { workerGeoSlow } from '@/lib/server/workerApi'
+import { EXPIRATION_TIMES } from '@/lib/constants'
 
 export async function POST(req) {
-  const { name, description, expiresInDays, transferRequestSecretCode, files, emails, brandProfileId } = await req.json()
+  const { name, description, expiresInDays, transferRequestSecretCode, files, emails, brandProfileId, guestEmail } = await req.json()
 
   let auth
   try {
@@ -24,6 +25,27 @@ export async function POST(req) {
   }
   catch (err) {
     // No auth, it's ok if it is for a transferRequest
+  }
+
+  const isAuthorized = () => {
+    const plan = auth?.user?.getPlan()
+
+    if (!plan && !guestEmail && !transferRequestSecretCode) {
+      return false
+    }
+
+    const expirationTimeEntry = EXPIRATION_TIMES.find(time.days == expiresInDays)
+    if(!expirationTimeEntry) return false
+
+    if(expirationTimeEntry.starter && (plan != "starter" || plan != "pro")) {
+      return false
+    }
+
+    if(expirationTimeEntry.pro && (plan != "pro")) {
+      return false
+    }
+
+    return true
   }
 
   if (!expiresInDays) {
@@ -46,11 +68,10 @@ export async function POST(req) {
     return NextResponse.json(resp("cannot send emails when uploading to a request"), { status: 400 })
   }
 
+  if(!isAuthorized()) NextResponse.json(resp("Unauthorized"), { status: 401 })
+
   let brandProfile
   if (brandProfileId) {
-    if (!auth) {
-      return NextResponse.json(resp("Auth required"), { status: 401 })
-    }
     if (!mongoose.Types.ObjectId.isValid(brandProfileId)) {
       return NextResponse.json(resp("invalid brandProfileId"), { status: 400 })
     }
@@ -64,16 +85,9 @@ export async function POST(req) {
     return NextResponse.json(resp("No files provided?"), { status: 400 })
   }
 
-  console.log("New Transfer: ", name, description)
-
   let transferRequest
   if (transferRequestSecretCode) {
     transferRequest = await TransferRequest.findOne({ secretCode: transferRequestSecretCode }).populate('brandProfile')
-  }
-  else {
-    if (!auth) {
-      return NextResponse.json(resp("Auth required"), { status: 401 })
-    }
   }
 
   // We ensure to create new keys for every transfer.
