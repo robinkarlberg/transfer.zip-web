@@ -127,6 +127,7 @@ TransferSchema.methods.registerFile = function (fileInfo) {
     })
 }
 
+// TODO: Fix this mess
 TransferSchema.methods.friendlyObj = function () {
     const { _id, name, description, expiresAt, secretCode, emailsSharedWith, createdAt, downloads, views, files, size } = this
     return {

@@ -41,6 +41,15 @@ export const theme = {
         "900": compColor[900],
       }
     },
+    animation: {
+      "fade-in": "fade-in 300ms ease-out forwards",
+    },
+    keyframes: {
+      "fade-in": {
+        "0%": { opacity: "0" },
+        "100%": { opacity: "1" },
+      },
+    },
     // fontFamily: {
     //   'sans': ['Montserrat', 'sans-serif'],
     //   'serif': ['Playfair Display', 'serif'],
@@ -51,4 +60,3 @@ export const theme = {
 export const plugins = [
   require('@tailwindcss/forms'),
 ]
-

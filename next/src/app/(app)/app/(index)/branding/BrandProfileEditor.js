@@ -140,7 +140,7 @@ export default function ({ initialProfile, isNew }) {
                           src={iconImageUrl}
                         />
                         :
-                        <div className="w-8 h-8 border border-dashed rounded-md border-gray-200 text-gray-300">
+                        <div className="w-8 h-8 border border-dashed rounded-md border-gray-300 text-gray-400">
                           <BIcon className={"w-8 h-8"} name={"plus-circle-dotted"} center />
                         </div>
                       }

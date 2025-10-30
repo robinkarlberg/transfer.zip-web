@@ -1,35 +1,63 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000"
 
 const get = async (endpoint, extraHeaders, omitCredentials) => {
-    const res = await (await fetch(API_URL + endpoint, {
+    const res = await fetch(API_URL + endpoint, {
         credentials: (omitCredentials ? "omit" : "include"),
         headers: extraHeaders,
-        signal: AbortSignal.timeout(6000)
-    })).json()
+        // signal: AbortSignal.timeout(10000)
+    })
 
-    if (!res.success) {
-        throw new Error(res.message || "uknown error")
+    // TODO: fix this shit ugly ass error handling
+    if (!res.ok) {
+        let messageToThrow = "unknown error"
+        const text = await res.text()
+        try {
+            const json = JSON.parse(text)
+            if (json?.message) messageToThrow = json.message
+        } catch (e) {
+            messageToThrow = text
+        }
+        throw new Error(messageToThrow)
+    }
+
+    const json = await res.json()
+    if (!json.success) {
+        throw new Error(json.message || "unknown error")
     }
     else {
-        return res
+        return json
     }
 }
 
 const withBody = async (verb, endpoint, payload) => {
-    const res = await (await fetch(API_URL + endpoint, {
+    const res = await fetch(API_URL + endpoint, {
         credentials: "include",
         method: verb,
         body: JSON.stringify(payload),
         headers: {
             "Content-Type": "application/json"
         }
-    })).json()
+    })
 
-    if (!res.success) {
-        throw new Error(res.message || "uknown error")
+    // TODO: fix this shit ugly ass error handling
+    if (!res.ok) {
+        let messageToThrow = "unknown error"
+        const text = await res.text()
+        try {
+            const json = JSON.parse(text)
+            if (json?.message) messageToThrow = json.message
+        } catch (e) {
+            messageToThrow = text
+        }
+        throw new Error(messageToThrow)
+    }
+
+    const json = await res.json()
+    if (!json.success) {
+        throw new Error(json.message || "unknown error")
     }
     else {
-        return res
+        return json
     }
 }
 

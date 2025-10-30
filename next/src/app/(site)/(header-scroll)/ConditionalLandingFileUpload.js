@@ -2,8 +2,7 @@ import NewTransferFileUploadNew from "@/components/NewTransferFileUploadNew"
 import BrandProfile from "@/lib/server/mongoose/models/BrandProfile"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
 
-export default async function () {
-
+export default async function ConditionalLandingFileUpload() {
   let auth
   try {
     auth = await useServerAuth()
@@ -12,13 +11,23 @@ export default async function () {
     // cookie is removed or token not present
   }
 
-  let brandProfiles = auth
-    ? await BrandProfile.find({ author: auth.user._id }).sort({ lastUsed: -1 })
-    : undefined
+  if (!auth || auth.user.getPlan() === "free") {
+    return <NewTransferFileUploadNew loaded={true} />
+  }
+
+  const [storage, brandProfilesDocs] = await Promise.all([
+    auth.user.getStorage(),
+    BrandProfile.find({ author: auth.user._id }).sort({ lastUsed: -1 }),
+  ])
+
+  const brandProfiles = brandProfilesDocs.map(profile => profile.friendlyObj())
 
   return (
-    auth && auth.user.getPlan() != "free" ?
-      <NewTransferFileUploadNew user={auth.user.friendlyObj()} storage={await auth.user.getStorage()} brandProfiles={brandProfiles.map(profile => profile.friendlyObj())} />
-      : <NewTransferFileUploadNew />
+    <NewTransferFileUploadNew
+      loaded={true}
+      user={auth.user.friendlyObj()}
+      storage={storage}
+      brandProfiles={brandProfiles}
+    />
   )
 }

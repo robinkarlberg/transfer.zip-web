@@ -71,8 +71,8 @@ export default async function ({ auth }) {
           <p className="mx-auto text-center text-lg leading-8 text-gray-700 max-w-md mb-12">
             No queue. No size limits.
           </p>
-          <Suspense fallback={<NewTransferFileUploadNew />}>
-            <ConditionalLandingFileUpload />
+          <Suspense fallback={<NewTransferFileUploadNew loaded={false} />}>
+            <ConditionalLandingFileUpload/>
           </Suspense>
         </div>
       </div>
