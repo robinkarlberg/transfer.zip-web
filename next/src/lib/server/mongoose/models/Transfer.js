@@ -65,7 +65,9 @@ const TransferSchema = new mongoose.Schema({
     nodeUrl: String,
 
     finishedUploading: { type: Boolean, default: false },
-    lastDownloadEmailSentAt: Date
+    lastDownloadEmailSentAt: Date,
+
+    backendVersion: { type: Number, required: true, default: 1 }
 }, { timestamps: true })
 
 function encPassword(pass) {
@@ -180,6 +182,10 @@ TransferSchema.methods.getDownloadLink = function () {
 // Add a virtual field for transfer.size
 TransferSchema.virtual('size').get(function () {
     return this.files.reduce((total, file) => total + (file.size || 0), 0)
+})
+
+TransferSchema.virtual('authorEmail').get(function () {
+    return this.author?.email || this.guestEmail
 })
 
 // Make sure the virtuals are included in JSON outputs

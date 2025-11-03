@@ -57,6 +57,7 @@ export async function POST(req) {
         await workerSign({
           ...basePayload,
           name: transfer.files.length == 1 ? transfer.files[0].name : `${transfer.name} - Transfer.zip`,
+          backendVersion: transfer.backendVersion,
           scope: "download"
         }, "1m")
 

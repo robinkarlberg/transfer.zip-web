@@ -288,6 +288,15 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
     }
   }
 
+  const handleViewTransferClick = e => {
+    if (user) {
+      router.push(`/app/${transfer.id}`)
+    }
+    else {
+      
+    }
+  }
+
   const [brandProfileId, setBrandProfileId] = useState(brandProfiles && brandProfiles.length > 0 ? brandProfiles[0].id : null)
   const brandProfile = brandProfiles && brandProfiles.find(profile => profile.id === brandProfileId)
 
@@ -329,7 +338,7 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
                     {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Reload Page <RotateCcwIcon size={12} /></Button>}
                     {/* {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Send more files</Button>} */}
                   </> : <>
-                    {finished && <Button size={"sm"} onClick={() => router.push(`/app/${transfer.id}`)}>View transfer <ArrowRightIcon size={12} /></Button>}
+                    {finished && <Button size={"sm"} onClick={handleViewTransferClick}>View transfer <ArrowRightIcon size={12} /></Button>}
                     {finished && <Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Send more files</Button>}
                   </>
               }
@@ -402,6 +411,32 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
                   />
                 </div>
               </>}
+              {tab == "email" && <>
+                <div>
+                  {/* <Label htmlFor="email">Recipients <span className="text-gray-400 font-normal text-xs leading-0">{emailRecipients.length > 0 ? (emailRecipients.length + " / " + getMaxRecipientsForPlan(user?.plan)) : ""}</span></Label> */}
+                  <div className="relative flex items-center">
+                    <Input
+                      ref={emailRef}
+                      onKeyDown={handleEmailInputKeyDown}
+                      onBlur={handleEmailBlur}
+                      id="email"
+                      placeholder="Recipient(s) email"
+                      type="email"
+                      className={"pe-24"}
+                    />
+                    <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
+                      <button type="button" onClick={handleEmailAdd} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
+                        <PlusIcon size={12} /> Add Email
+                      </button>
+                    </div>
+                  </div>
+                  {emailRecipients.length > 0 && (
+                    <ul className="max-h-40 flex flex-wrap gap-x-1">
+                      {emailRecipients.map((email, index) => <AddedEmailField key={index} email={email} onAction={handleEmailFieldAction} />)}
+                    </ul>
+                  )}
+                </div>
+              </>}
               {tab != "quick" && <>
                 <div>
                   <Input
@@ -419,30 +454,6 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
                       type="text"
                       name="description"
                     />
-                  </div>
-                  <div>
-                    {/* <Label htmlFor="email">Recipients <span className="text-gray-400 font-normal text-xs leading-0">{emailRecipients.length > 0 ? (emailRecipients.length + " / " + getMaxRecipientsForPlan(user?.plan)) : ""}</span></Label> */}
-                    <div className="relative flex items-center">
-                      <Input
-                        ref={emailRef}
-                        onKeyDown={handleEmailInputKeyDown}
-                        onBlur={handleEmailBlur}
-                        id="email"
-                        placeholder="Recipient(s)"
-                        type="email"
-                        className={"pr-18"}
-                      />
-                      <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-                        <button type="button" onClick={handleEmailAdd} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
-                          <PlusIcon size={12} /> Add
-                        </button>
-                      </div>
-                    </div>
-                    {emailRecipients.length > 0 && (
-                      <ul className="max-h-40 flex flex-wrap gap-x-1">
-                        {emailRecipients.map((email, index) => <AddedEmailField key={index} email={email} onAction={handleEmailFieldAction} />)}
-                      </ul>
-                    )}
                   </div>
                 </>}
                 <div className="py-1">

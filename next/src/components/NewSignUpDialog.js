@@ -16,7 +16,7 @@ const STATE_GMAIL_TAB = "gmail_tab"
 const STATE_CHECK_EMAIL = "check_email"
 const STATE_NOT_PAID = "not_paid"
 
-export default function ({ open, setOpen, files }) {
+export default function ({ open, setOpen, files, transfer }) {
 
   const [state, setState] = useState(STATE_START)
 
@@ -101,7 +101,8 @@ export default function ({ open, setOpen, files }) {
       <DialogContent showCloseButton={false} className={"w-sm"}>
         <DialogHeader>
           <DialogTitle className={"text-center text-2xl"}>
-            {state == STATE_START && (files ? "Extend your link's life!" : "Unlock Better File Sharing")}
+            {state == STATE_START && (transfer ? "View all your transfers in one Dashboard" :
+              (files ? "Extend your link's life!" : "Unlock Better File Sharing"))}
             {state == STATE_GMAIL_TAB && "Sign in on the new tab."}
             {state == STATE_CHECK_EMAIL && "Check your email."}
             {state == STATE_NOT_PAID && "Aaaalmost there!"}

@@ -42,12 +42,12 @@ export async function POST(req, { params }) {
   if (transfer.finishedUploading) {
     const brand = transfer.brandProfile ? transfer.brandProfile.friendlyObj() : undefined;
     for (const email of uniqueNew) {
-      const sentEmailsLastDay = await SentEmail.countDocuments({ user: auth.user._id })
+      const sentEmailsLastDay = await SentEmail.countDocuments({ userEmail: auth.user.email})
       if (sentEmailsLastDay >= EMAILS_PER_DAY_LIMIT) {
         return NextResponse.json(resp("You have sent too many emails today, please contact support."));
       }
       const sentEmail = new SentEmail({
-        user: auth.user._id,
+        userEmail: auth.user.email,
         to: [email]
       })
       await sentEmail.save()

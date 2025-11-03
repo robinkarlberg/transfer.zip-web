@@ -11,9 +11,16 @@ import { getConf } from '@/lib/server/config'
 import { toLargeRegion } from '@/lib/server/region'
 import { workerGeoSlow } from '@/lib/server/workerApi'
 import { EXPIRATION_TIMES } from '@/lib/constants'
+import dbConnect from '@/lib/server/mongoose/db'
+import * as EmailValidator from 'email-validator';
+import {
+  isDisposableEmail,
+  isDisposableEmailDomain,
+} from 'disposable-email-domains-js';
 
 export async function POST(req) {
   try {
+    await dbConnect()
     const { name, description, expiresInDays, transferRequestSecretCode, files, emails, brandProfileId, guestEmail } = await req.json()
 
     let auth
@@ -31,9 +38,20 @@ export async function POST(req) {
     const checkAuth = () => {
       const plan = auth?.user?.getPlan()
 
-      if (!plan && !guestEmail && !transferRequestSecretCode) {
+      if (!plan && (!guestEmail || !EmailValidator.validate(guestEmail)) && !transferRequestSecretCode) {
         if (IS_DEV) console.log("Unauthorized: no plan, guestEmail, or transferRequestSecretCode")
         return { authorized: false }
+      }
+
+      if (!plan && guestEmail) {
+        if (guestEmail.includes('+')) {
+          if (IS_DEV) console.log("Unauthorized: plus addressing not allowed for emails")
+          return { authorized: false, reason: "No plus-characters are allowed without an account. Please sign up to use plus-addresses." }
+        }
+        if (isDisposableEmail(guestEmail)) {
+          if (IS_DEV) console.log("Unauthorized: disposable email not allowed")
+          return { authorized: false, reason: "Disposable emails are not allowed without an account. Please sign up to use disposable emails." }
+        }
       }
 
       const expirationTimeEntry = EXPIRATION_TIMES.find(time => time.days == expiresInDays)
@@ -124,13 +142,15 @@ export async function POST(req) {
     const transfer = new Transfer({
       transferRequest: transferRequest ? transferRequest._id : undefined,
       author: auth ? auth.user._id : undefined,
+      guestEmail: guestEmail,
       name: transferRequest ? transferRequest.name : name,
       description,
       expiresAt: new Date(addMilliscondsToCurrentTime(1000 * 60 * 60 * 24 * expiresInDays)),
       encryptionKey,
       encryptionIV,
       files: transferFiles,
-      brandProfile: usedBrandProfile ? usedBrandProfile._id : undefined
+      brandProfile: usedBrandProfile ? usedBrandProfile._id : undefined,
+      backendVersion: 2
     })
 
     const xForwardedFor = process.env.NODE_ENV === "development" ? "127.0.0.1" : req.headers.get("x-forwarded-for")

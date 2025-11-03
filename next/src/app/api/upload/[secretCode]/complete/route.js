@@ -36,12 +36,12 @@ export async function POST(req, { params }) {
     const unique = [...new Set(transfer.emailsSharedWith.map(e => e.email))];
     const brand = transfer.brandProfile ? transfer.brandProfile.friendlyObj() : undefined;
     for (const email of unique) {
-      const sentEmailsLastDay = await SentEmail.countDocuments({ user: transfer.author._id })
+      const sentEmailsLastDay = await SentEmail.countDocuments({ userEmail: transfer.authorEmail })
       if (sentEmailsLastDay >= EMAILS_PER_DAY_LIMIT) {
         return NextResponse.json(resp("You have sent too many emails today, please contact support."));
       }
       const sentEmail = new SentEmail({
-        user: transfer.author._id,
+        userEmail: transfer.authorEmail,
         to: [email]
       })
       await sentEmail.save()

@@ -43,12 +43,12 @@ export async function POST(req) {
 
   if (emails?.length) {
     for (const email of emails) {
-      const sentEmailsLastDay = await SentEmail.countDocuments({ user: user._id })
+      const sentEmailsLastDay = await SentEmail.countDocuments({ userEmail: user.email })
       if (sentEmailsLastDay >= EMAILS_PER_DAY_LIMIT) {
         return NextResponse.json(resp("You have sent too many emails today, please contact support."));
       }
       const sentEmail = new SentEmail({
-        user: user._id,
+        userEmail: user.email,
         to: [email]
       })
       await sentEmail.save()
