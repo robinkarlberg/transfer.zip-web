@@ -7,6 +7,7 @@ import { FileProvider } from "@/context/FileProvider";
 import { SelectedTransferProvider } from "@/context/SelectedTransferProvider";
 import { IS_SELFHOST } from "@/lib/isSelfHosted";
 import DismissibleBanner from "./DismissibleBanner";
+import Link from "next/link";
 
 export const metadata = {
   title: "Dashboard"
@@ -30,12 +31,23 @@ export default async function DashboardLayout({ children }) {
   return (
     <div>
       {/* {!IS_SELFHOST && <DismissibleBanner />} */}
-      <div className="flex flex-col lg:flex-row min-h-screen">
+      <div className="h-screen flex flex-col bg-primary-700 overflow-hidden">
         <ApplicationProvider>
           <DashboardProvider>
             <SelectedTransferProvider>
-              <Sidebar user={auth.user.friendlyObj()} storage={storage} />
-              {children}
+              <div className="h-10 flex-none w-full flex">
+                <div className="flex-1 flex items-center justify-center">
+                  {/* <Image alt="logo" src={logo} className="w-6" /> */}
+                  <h1 className="text-white text-lg text-center font-bold"><Link href="/">{process.env.NEXT_PUBLIC_SITE_NAME}</Link></h1>
+                  {/* <span className="ms-2 text-primary-50 text-sm">{process.env.NEXT_PUBLIC_VERSION || "v0.1"}</span> */}
+                </div>
+              </div>
+              <div className="flex-1 flex overflow-hidden">
+                <Sidebar user={auth.user.friendlyObj()} storage={storage} />
+                <div className="flex-1 flex flex-col bg-white rounded-tl-xl w-full overflow-clip">
+                  {children}
+                </div>
+              </div>
             </SelectedTransferProvider>
           </DashboardProvider>
         </ApplicationProvider>

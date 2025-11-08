@@ -1,4 +1,4 @@
-import Transfer from '@/lib/server/mongoose/models/Transfer'
+import Transfer from "@/lib/server/mongoose/models/Transfer"
 import TransferRequest from '@/lib/server/mongoose/models/TransferRequest'
 import BrandProfile from '@/lib/server/mongoose/models/BrandProfile'
 import { useServerAuth } from '@/lib/server/wrappers/auth'
@@ -17,10 +17,33 @@ import {
   isDisposableEmail,
   isDisposableEmailDomain,
 } from 'disposable-email-domains-js';
+import { RateLimiterMongo } from 'rate-limiter-flexible'
+
+/**
+ * 
+ * @param {*} conn 
+ * @returns {RateLimiterMongo}
+ */
+const getRateLimiter = (conn) => {
+  // const conn = await dbConnect()
+  let cached = global.newTransferRateLimiter;
+  if (cached) return cached
+
+  // max 5 transfers every 18 hours
+  const rateLimiter = new RateLimiterMongo({
+    storeClient: conn.connections[0], // hope this doesnt create errors
+    points: 5,
+    tableName: "ratelimit-new-transfer",
+    dbName: process.env.MONGODB_DB_NAME,
+    duration: 3600 * 18 // 18hrs
+  })
+  global.newTransferRateLimiter = rateLimiter
+  return rateLimiter
+}
 
 export async function POST(req) {
   try {
-    await dbConnect()
+    const conn = await dbConnect()
     const { name, description, expiresInDays, transferRequestSecretCode, files, emails, brandProfileId, guestEmail } = await req.json()
 
     let auth
@@ -35,7 +58,9 @@ export async function POST(req) {
       // No auth, it's ok if it is for a transferRequest
     }
 
-    const checkAuth = () => {
+    const xForwardedFor = process.env.NODE_ENV === "development" ? "127.0.0.1" : req.headers.get("x-forwarded-for")
+
+    const checkAuth = async () => {
       const plan = auth?.user?.getPlan()
 
       if (!plan && (!guestEmail || !EmailValidator.validate(guestEmail)) && !transferRequestSecretCode) {
@@ -46,7 +71,7 @@ export async function POST(req) {
       if (!plan && guestEmail) {
         if (guestEmail.includes('+')) {
           if (IS_DEV) console.log("Unauthorized: plus addressing not allowed for emails")
-          return { authorized: false, reason: "No plus-characters are allowed without an account. Please sign up to use plus-addresses." }
+          return { authorized: false, reason: "No plus-characters in the email are not allowed without an account. Please sign up to use plus-addresses." }
         }
         if (isDisposableEmail(guestEmail)) {
           if (IS_DEV) console.log("Unauthorized: disposable email not allowed")
@@ -58,6 +83,23 @@ export async function POST(req) {
       if (!expirationTimeEntry) {
         if (IS_DEV) console.log("Unauthorized: no expiration time entry found for days:", expiresInDays)
         return { authorized: false }
+      }
+
+      if (!transferRequestSecretCode && (!plan || plan == "free")) {
+        console.log(conn)
+        const rateLimiter = getRateLimiter(conn)
+        try {
+          await rateLimiter.consume(xForwardedFor, 1)
+        }
+        catch (err) {
+          return { authorized: false, reason: "You can send 5 transfers every 18 hours, please sign up for a plan to send more." }
+        }
+        try {
+          await rateLimiter.consume(auth?.user?.email || guestEmail, 1)
+        }
+        catch (err) {
+          return { authorized: false, reason: "You can send 5 transfers every 18 hours, please sign up for a plan to send more." }
+        }
       }
 
       if (!expirationTimeEntry.free && expirationTimeEntry.starter && (plan != "starter" && plan != "pro")) {
@@ -97,7 +139,7 @@ export async function POST(req) {
       return NextResponse.json(resp("cannot send emails when uploading to a request"), { status: 400 })
     }
 
-    const checkedAuth = checkAuth()
+    const checkedAuth = await checkAuth()
     if (!checkedAuth.authorized) {
       return NextResponse.json(resp(checkedAuth.reason || "Unauthorized"), { status: 401 })
     }
@@ -153,7 +195,6 @@ export async function POST(req) {
       backendVersion: 2
     })
 
-    const xForwardedFor = process.env.NODE_ENV === "development" ? "127.0.0.1" : req.headers.get("x-forwarded-for")
     const conf = await getConf()
 
     let nodeUrl
@@ -207,6 +248,7 @@ export async function POST(req) {
     return NextResponse.json(resp({ transfer: transfer.friendlyObj(), idMap }))
   }
   catch (err) {
+    console.error(err)
     return NextResponse.json(resp(err.message || "Internal server error"), { status: 500 })
   }
 }

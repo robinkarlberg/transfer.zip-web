@@ -9,7 +9,7 @@ export default function GlobalProvider({ children }) {
 
     const [_showSignupDialog, setShowSignupDialog] = useState(false)
     const [files, setFiles] = useState(null)
-    const openSignupDialog = (files) => {
+    const openSignupDialog = (files, transfer) => {
         setFiles(files)
         setShowSignupDialog(true)
     }

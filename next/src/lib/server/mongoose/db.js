@@ -6,6 +6,10 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
+/**
+ * 
+ * @returns {Promise<mongoose>}
+ */
 async function dbConnect() {
   if (cached.conn) {
     return cached.conn;

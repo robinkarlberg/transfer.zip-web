@@ -4,7 +4,7 @@ import BIcon from "@/components/BIcon";
 import { humanFileSize, humanFileType } from "@/lib/transferUtils";
 import { Transition } from "@headlessui/react";
 import { ArrowRightIcon, CircleDashedIcon, FileIcon, FolderPlusIcon, HexagonIcon, LinkIcon, PlusIcon, RotateCcwIcon, SquircleIcon, XIcon } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { useContext, useMemo, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
@@ -33,6 +33,7 @@ import {
 import Image from "next/image";
 import { getMaxRecipientsForPlan } from "@/lib/getMaxRecipientsForPlan";
 import Link from "next/link";
+import { GlobalContext } from "@/context/GlobalContext";
 
 function AddedEmailField({ email, onAction }) {
   return (
@@ -46,6 +47,8 @@ function AddedEmailField({ email, onAction }) {
 export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
 
   const router = useRouter()
+
+  const { openSignupDialog } = useContext(GlobalContext)
 
   const [files, setFiles] = useState([
     // { name: "test.zip", size: 123152134523, type: "application/zip" },
@@ -232,6 +235,10 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
   }
 
   const handleEmailAdd = () => {
+    const value = emailRef.current.value.trim();
+
+    if(!value) return
+
     if ((!user || user.plan == "free")) {
       if (emailRecipients.length >= 2) {
         displayErrorMessage({
@@ -258,7 +265,7 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
       }
     }
 
-    const value = emailRef.current.value.trim();
+    
 
     // Basic email validation regex pattern
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -293,7 +300,7 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
       router.push(`/app/${transfer.id}`)
     }
     else {
-      
+      openSignupDialog()
     }
   }
 
