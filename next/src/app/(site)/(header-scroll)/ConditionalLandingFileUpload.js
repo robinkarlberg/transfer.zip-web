@@ -1,4 +1,4 @@
-import NewTransferFileUploadNew from "@/components/NewTransferFileUploadNew"
+import NewTransferFileUploadNew from "@/components/newtransfer/NewTransferFileUploadNew"
 import BrandProfile from "@/lib/server/mongoose/models/BrandProfile"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
 

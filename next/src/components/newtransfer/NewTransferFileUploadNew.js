@@ -3,11 +3,11 @@
 import BIcon from "@/components/BIcon";
 import { humanFileSize, humanFileType } from "@/lib/transferUtils";
 import { Transition } from "@headlessui/react";
-import { ArrowRightIcon, CircleDashedIcon, FileIcon, FolderPlusIcon, HexagonIcon, LinkIcon, PlusIcon, RotateCcwIcon, SquircleIcon, XIcon } from "lucide-react";
+import { ArrowDownIcon, ArrowRightIcon, CircleDashedIcon, FileIcon, FolderPlusIcon, HexagonIcon, LinkIcon, PaintbrushIcon, PlusIcon, RotateCcwIcon, SquircleIcon, XIcon } from "lucide-react";
 import { useContext, useMemo, useRef, useState } from "react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectTriggerFix, SelectValue } from "@/components/ui/select";
 import { newTransfer } from "@/lib/client/Api";
@@ -15,10 +15,8 @@ import { prepareTransferFiles, uploadFiles } from "@/lib/client/uploader";
 import { EXPIRATION_TIMES } from "@/lib/constants";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import Progress from "./elements/Progress";
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import { Label } from "./ui/label";
-import { Switch } from "./ui/switch";
+import Progress from "../elements/Progress";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 import {
   Dialog,
@@ -34,6 +32,7 @@ import Image from "next/image";
 import { getMaxRecipientsForPlan } from "@/lib/getMaxRecipientsForPlan";
 import Link from "next/link";
 import { GlobalContext } from "@/context/GlobalContext";
+import BrandingToggle from "./BrandingToggle";
 
 function AddedEmailField({ email, onAction }) {
   return (
@@ -237,7 +236,7 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
   const handleEmailAdd = () => {
     const value = emailRef.current.value.trim();
 
-    if(!value) return
+    if (!value) return
 
     if ((!user || user.plan == "free")) {
       if (emailRecipients.length >= 2) {
@@ -265,7 +264,7 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
       }
     }
 
-    
+
 
     // Basic email validation regex pattern
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -332,7 +331,12 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
         <input ref={fileInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" multiple></input>
         <input ref={folderInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" webkitdirectory="true"></input>
       </form>
-      <div className={`w-full h-96 bg-white border shadow-xs relative overflow-clip rounded-xl ${small ? "max-w-xs" : "max-w-2xl"} transition-all duration-1000`}>
+      <div className={`w-full h-96 bg-white border shadow-xs relative rounded-xl ${small ? "max-w-xs" : "max-w-2xl"} transition-all duration-1000 relative`}>
+        <div className="hidden lg:flex w-full justify-center absolute -top-7 h-6">
+          <Link className="inline-block border-t border-x rounded-lg rounded-b-none hover:scale-102 bg-white h-full w-60 text-center pt-0.5 transition-all text-gray-600 hover:text-primary-light hover:font-medium" href={"/receive-files"}>
+            <p className="">Receive Files Instead</p>
+          </Link>
+        </div>
         <Transition show={uploadingFiles}>
           <div className="z-20 bg-white absolute left-0 top-0 w-full h-full flex flex-col items-center justify-center group transition data-[closed]:opacity-0">
             <div className="relative w-full h-full max-w-44 max-h-44">
@@ -356,7 +360,7 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
         <div className="grid grid-cols-1 md:grid-cols-5 h-full">
           <div className="col-span-2 flex flex-col overflow-hidden relative">
             <Transition show={files.length == 0}>
-              <div type="button" onClick={handlePickFiles} className="z-10 bg-white absolute left-0 top-0 w-full h-full flex flex-col justify-center items-center group transition data-[closed]:opacity-0 hover:cursor-pointer">
+              <div type="button" onClick={handlePickFiles} className="z-10 bg-white rounded-l-xl absolute left-0 top-0 w-full h-full flex flex-col justify-center items-center group transition data-[closed]:opacity-0 hover:cursor-pointer">
                 <div className="text-white rounded-full bg-primary w-12 h-12 flex items-center justify-center group-hover:bg-primary-light">
                   <PlusIcon size={24} />
                 </div>
@@ -390,7 +394,7 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
               <span className="ms-auto text-gray-500 text-sm me-2 hidden sm:inline">{humanFileSize(totalFileSize, true)}</span>
             </div>
           </div>
-          <form onSubmit={handleSubmit} className={`col-span-3 border-l flex flex-col overflow-hidden bg-white`}>
+          <form onSubmit={handleSubmit} className={`col-span-3 border-l flex flex-col overflow-hidden bg-white rounded-r-xl`}>
             <div className="flex-none grid grid-cols-2 border-b">
               {["email", "link"].map(key => (
                 <button
@@ -471,7 +475,7 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
                     </div>
                   </div>
                 </div>
-                <div>
+                {/* <div>
                   <Select value={brandProfileId} onValueChange={setBrandProfileId}>
                     <SelectTrigger size="sm">
                       {
@@ -485,7 +489,7 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
                           </>
                           :
                           <>
-                            <span className="text-sm text-gray-900">Customize Transfer</span>
+                            <span className="text-sm text-gray-900 flex items-center gap-2"><PaintbrushIcon className="text-gray-900" /> Brand</span>
                           </>
                       }
                     </SelectTrigger>
@@ -508,7 +512,7 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
                       }
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
                 {/* <div className="flex items-center gap-2">
                   <Switch className={"peer"} id="removeAfterFirstDownload" defaultChecked={false} />
                   <Label htmlFor="removeAfterFirstDownload" className="cursor-pointer text-gray-500 peer-data-[state=checked]:text-gray-800">
@@ -521,6 +525,7 @@ export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
                   End-to-end encryption
                 </Label>
               </div> */}
+                <BrandingToggle brandProfiles={brandProfiles} brandProfileId={brandProfileId} setBrandProfileId={setBrandProfileId}/>
               </>}
               {tab == "link" && <>
 

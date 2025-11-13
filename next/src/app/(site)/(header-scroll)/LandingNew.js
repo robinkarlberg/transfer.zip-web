@@ -8,7 +8,7 @@ import ConditionalLandingFileUpload from "./ConditionalLandingFileUpload"
 import LandingQuickShare from "./LandingQuickShare"
 import NoauthLandingCTAButton from "./NoauthLandingCTAButton"
 import NoauthLandingHeaderCTAButton from "./NoauthLandingHeaderCTAButton"
-import NewTransferFileUploadNew from "@/components/NewTransferFileUploadNew"
+import NewTransferFileUploadNew from "@/components/newtransfer/NewTransferFileUploadNew"
 
 export default async function ({ auth }) {
 

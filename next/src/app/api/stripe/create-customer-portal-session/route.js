@@ -7,7 +7,7 @@ export async function POST() {
   const { user } = await useServerAuth()
 
   if (!user.stripe_customer_id) {
-    return NextResponse.redirect(`${SITE_URL}/`)
+    return NextResponse.redirect(`${process.env.SITE_URL}/`)
   }
 
   try {

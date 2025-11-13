@@ -31,7 +31,7 @@ export default async function DashboardLayout({ children }) {
   return (
     <div>
       {/* {!IS_SELFHOST && <DismissibleBanner />} */}
-      <div className="h-screen flex flex-col bg-primary-700 overflow-hidden">
+      <div className="h-screen flex flex-col bg-primary-700/85 overflow-hidden">
         <ApplicationProvider>
           <DashboardProvider>
             <SelectedTransferProvider>
