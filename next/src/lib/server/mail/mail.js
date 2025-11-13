@@ -12,7 +12,7 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 async function sendMail(reactElement, { from, to, subject }) {
   if (resend) {
     await resend.emails.send({
-      from: from || 'noreply@transfer.zip',
+      from: from || `noreply@${process.env.RESEND_DOMAIN || `transfer.zip`}`,
       to,
       subject,
       react: reactElement,
