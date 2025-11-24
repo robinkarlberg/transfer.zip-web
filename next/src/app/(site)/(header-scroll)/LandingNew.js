@@ -10,7 +10,7 @@ import NoauthLandingCTAButton from "./NoauthLandingCTAButton"
 import NoauthLandingHeaderCTAButton from "./NoauthLandingHeaderCTAButton"
 import NewTransferFileUploadNew from "@/components/newtransfer/NewTransferFileUploadNew"
 
-export default async function ({ auth }) {
+export default async function ({ mode }) {
 
   const res = await fetch("https://api.github.com/repos/robinkarlberg/transfer.zip-web",
     {
@@ -65,8 +65,8 @@ export default async function ({ auth }) {
           </div>
         </div>
         <div className="grow mx-auto w-full max-w-7xl px-6 flex flex-col items-center justify-center mb-12">
-          <h1 className="mx-auto text-center max-w-xl text-4xl font-bold tracking-tight text-gray-800 mb-2">
-            Try the easiest way to send files.
+          <h1 className="mx-auto text-center max-w-2xl text-4xl font-bold tracking-tight text-gray-800 mb-2">
+            Try the easiest way to {mode === "receive" ? "receive" : "send"} files.
           </h1>
           <p className="mx-auto text-center text-lg leading-8 text-gray-700 max-w-md mb-12">
             No queue. No size limits.

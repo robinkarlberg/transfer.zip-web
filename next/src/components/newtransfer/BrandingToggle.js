@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectTriggerFix, Sel
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 import { useState } from "react";
+import { PaintbrushIcon } from "lucide-react";
 
 export default function ({ brandProfiles, brandProfileId, setBrandProfileId }) {
 
@@ -13,16 +14,26 @@ export default function ({ brandProfiles, brandProfileId, setBrandProfileId }) {
     setSelecting(true)
   }
 
+  const brandProfile = brandProfiles && brandProfiles.find(profile => profile.id === brandProfileId)
+
   return (
     <div>
-      <Select open={selecting} value={brandProfileId} onValueChange={setBrandProfileId}>
-        <SelectTriggerFix as="div">
-          <div className="flex items-center gap-2">
-            <Switch onCheckedChange={handleCheckedChange} id="custom-branding" className={"peer"} />
-            <Label className={`text-gray-500 peer-data-[state=checked]:text-gray-800`} htmlFor="custom-brandinge">
-              Custom Branding
-            </Label>
-          </div>
+      <Select value={brandProfileId} onValueChange={setBrandProfileId}>
+        <SelectTriggerFix size="sm">
+          {
+            brandProfile ?
+              <>
+                {brandProfile.iconUrl ?
+                  <Image alt="Brand Profile Icon" width={24} height={24} src={brandProfile.iconUrl} /> :
+                  <HexagonIcon className="w-[24px] h-[24px] p-0.5 rounded-lg border-2 border-dashed border-gray-400" />
+                }
+                <span className="text-sm font-medium text-gray-700">{brandProfile.name}</span>
+              </>
+              :
+              <>
+                <span className="text-sm text-gray-700 flex items-center gap-2"><PaintbrushIcon className="text-gray-700" /> Brand</span>
+              </>
+          }
         </SelectTriggerFix>
         <SelectContent align={"start"}>
           {brandProfiles && brandProfiles.length > 0
