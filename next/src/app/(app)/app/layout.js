@@ -8,6 +8,9 @@ import { SelectedTransferProvider } from "@/context/SelectedTransferProvider";
 import { IS_SELFHOST } from "@/lib/isSelfHosted";
 import DismissibleBanner from "./DismissibleBanner";
 import Link from "next/link";
+import Image from "next/image";
+
+import logo from "@/img/icon.png"
 
 export const metadata = {
   title: "Dashboard"
@@ -31,20 +34,22 @@ export default async function DashboardLayout({ children }) {
   return (
     <div>
       {/* {!IS_SELFHOST && <DismissibleBanner />} */}
-      <div className="h-screen flex flex-col bg-primary-700/85 overflow-hidden">
+      <div className="h-screen flex flex-col bg-gray-100 overflow-hidden relative">
         <ApplicationProvider>
           <DashboardProvider>
             <SelectedTransferProvider>
               <div className="h-10 flex-none w-full flex">
+                {/* <div className="h-10 flex items-center justify-center w-24">
+                  <Image alt="logo" src={logo} className="w-10 h-10" />
+                </div> */}
                 <div className="flex-1 flex items-center justify-center">
-                  {/* <Image alt="logo" src={logo} className="w-6" /> */}
-                  <h1 className="text-white text-lg text-center font-bold"><Link href="/">{process.env.NEXT_PUBLIC_SITE_NAME}</Link></h1>
+                  {/* <h1 className="text-white text-lg text-center font-bold"><Link href="/">{process.env.NEXT_PUBLIC_SITE_NAME}</Link></h1> */}
                   {/* <span className="ms-2 text-primary-50 text-sm">{process.env.NEXT_PUBLIC_VERSION || "v0.1"}</span> */}
                 </div>
               </div>
-              <div className="flex-1 flex overflow-hidden">
+              <div className="flex-1 flex overflow-hidden bg-white mx-auto max-w-7xl rounded-t-xl w-full">
                 <Sidebar user={auth.user.friendlyObj()} storage={storage} />
-                <div className="flex-1 flex flex-col bg-white rounded-tl-xl w-full overflow-clip">
+                <div className="flex-1 flex flex-col w-full">
                   {children}
                 </div>
               </div>

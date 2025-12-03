@@ -2,7 +2,7 @@ import NewTransferFileUploadNew from "@/components/newtransfer/NewTransferFileUp
 import BrandProfile from "@/lib/server/mongoose/models/BrandProfile"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
 
-export default async function ConditionalLandingFileUpload() {
+export default async function ConditionalLandingFileUpload({ mode }) {
   let auth
   try {
     auth = await useServerAuth()
@@ -12,7 +12,7 @@ export default async function ConditionalLandingFileUpload() {
   }
 
   if (!auth || auth.user.getPlan() === "free") {
-    return <NewTransferFileUploadNew loaded={true} />
+    return <NewTransferFileUploadNew loaded={true} mode={mode} />
   }
 
   const [storage, brandProfilesDocs] = await Promise.all([
@@ -28,6 +28,7 @@ export default async function ConditionalLandingFileUpload() {
       user={auth.user.friendlyObj()}
       storage={storage}
       brandProfiles={brandProfiles}
+      mode={mode}
     />
   )
 }

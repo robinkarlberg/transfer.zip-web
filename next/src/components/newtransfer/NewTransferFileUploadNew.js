@@ -43,7 +43,7 @@ function AddedEmailField({ email, onAction }) {
   )
 }
 
-export default function ({ loaded, user, storage, brandProfiles, initialTab }) {
+export default function ({ loaded, user, storage, brandProfiles, initialTab, mode }) {
 
   const router = useRouter()
 

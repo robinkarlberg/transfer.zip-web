@@ -5,6 +5,7 @@ import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 import { useState } from "react";
 import { PaintbrushIcon } from "lucide-react";
+import Image from "next/image";
 
 export default function ({ brandProfiles, brandProfileId, setBrandProfileId }) {
 
