@@ -53,6 +53,7 @@ export default function RootLayout({ children }) {
       <Head>
         <script src="/lib/ponyfill.min.js"></script>
       </Head>
+      {!IS_SELFHOST && process.env.MEGADESK_PUB && <Script src="https://getmegadesk.com/embed.js" data-pub={process.env.MEGADESK_PUB}></Script>}
       {!IS_SELFHOST && process.env.UMAMI_ANALYTICS_WEBSITE_ID && process.env.UMAMI_ANALYTICS_WEBSITE_ID.length == "36" ? <Script defer src="https://umami.w0bb.com/script.js" data-website-id={process.env.UMAMI_ANALYTICS_WEBSITE_ID}></Script> : <></>}
       <body
         className={`${roboto.className} antialiased`} // ${roboto.className} ${playfairDisplay.className} 
