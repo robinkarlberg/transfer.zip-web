@@ -40,6 +40,32 @@ function applyAbTests(req, res) {
 export function middleware(req) {
   const { pathname } = req.nextUrl
 
+  // Add CORS headers for /api requests if NEXT_PUBLIC_DL_DOMAIN is set
+  if (pathname.startsWith('/api') && process.env.NEXT_PUBLIC_DL_DOMAIN) {
+    const origin = `https://${process.env.NEXT_PUBLIC_DL_DOMAIN}`
+
+    // Handle preflight OPTIONS request
+    if (req.method === 'OPTIONS') {
+      return new NextResponse(null, {
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': origin,
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          'Access-Control-Max-Age': '86400',
+        },
+      })
+    }
+
+    // For other requests, continue with CORS headers
+    const response = NextResponse.next()
+    response.headers.set('Access-Control-Allow-Origin', origin)
+    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+
+    return response
+  }
+
   if(process.env.NEXT_PUBLIC_DL_DOMAIN) {
     const host = req.headers.get("host")
 
@@ -53,26 +79,12 @@ export function middleware(req) {
         const secretCode = match[1]
         const newUrl = req.nextUrl.clone()
         newUrl.pathname = `/transfer/${secretCode}`
-        const response = NextResponse.rewrite(newUrl)
-
-        // Add CORS headers
-        response.headers.set('Access-Control-Allow-Origin', '*')
-        response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-        response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-
-        return response
+        return NextResponse.rewrite(newUrl)
       }
 
       // If it's not a valid UUID, redirect to main domain with same pathname
       const redirectUrl = new URL(pathname, process.env.SITE_URL)
-      const response = NextResponse.redirect(redirectUrl)
-
-      // Add CORS headers
-      response.headers.set('Access-Control-Allow-Origin', '*')
-      response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-
-      return response
+      return NextResponse.redirect(redirectUrl)
     }
   }
 
