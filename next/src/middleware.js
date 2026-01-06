@@ -53,12 +53,26 @@ export function middleware(req) {
         const secretCode = match[1]
         const newUrl = req.nextUrl.clone()
         newUrl.pathname = `/transfer/${secretCode}`
-        return NextResponse.rewrite(newUrl)
+        const response = NextResponse.rewrite(newUrl)
+
+        // Add CORS headers
+        response.headers.set('Access-Control-Allow-Origin', '*')
+        response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+        response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+
+        return response
       }
 
       // If it's not a valid UUID, redirect to main domain with same pathname
       const redirectUrl = new URL(pathname, process.env.SITE_URL)
-      return NextResponse.redirect(redirectUrl)
+      const response = NextResponse.redirect(redirectUrl)
+
+      // Add CORS headers
+      response.headers.set('Access-Control-Allow-Origin', '*')
+      response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+      response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+
+      return response
     }
   }
 
