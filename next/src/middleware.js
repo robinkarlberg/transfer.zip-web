@@ -57,7 +57,7 @@ export function middleware(req) {
       }
 
       // If it's not a valid UUID, redirect to main domain with same pathname
-      const redirectUrl = new URL(pathname, process.env.NEXT_PUBLIC_SITE_URL)
+      const redirectUrl = new URL(pathname, process.env.SITE_URL)
       return NextResponse.redirect(redirectUrl)
     }
   }
