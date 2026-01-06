@@ -40,6 +40,28 @@ function applyAbTests(req, res) {
 export function middleware(req) {
   const { pathname } = req.nextUrl
 
+  if(process.env.NEXT_PUBLIC_DL_DOMAIN) {
+    const host = req.headers.get("host")
+
+    // Check if request is coming from the download domain
+    if (host === process.env.NEXT_PUBLIC_DL_DOMAIN) {
+      // Match paths like /{uuid} - UUID v4 format
+      const uuidPattern = /^\/([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/i
+      const match = pathname.match(uuidPattern)
+
+      if (match) {
+        const secretCode = match[1]
+        const newUrl = req.nextUrl.clone()
+        newUrl.pathname = `/transfer/${secretCode}`
+        return NextResponse.rewrite(newUrl)
+      }
+
+      // If it's not a valid UUID, redirect to main domain with same pathname
+      const redirectUrl = new URL(pathname, process.env.NEXT_PUBLIC_SITE_URL)
+      return NextResponse.redirect(redirectUrl)
+    }
+  }
+
   // Redirect back to /signin if user has no token and wants to use /app
   const token = req.cookies.get("token")
   if (!token && pathname.startsWith("/app")) {

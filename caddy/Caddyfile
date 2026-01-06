@@ -20,3 +20,10 @@ www.{$CADDY_DOMAIN} {
   # Forward the rest to next
   reverse_proxy next:9001
 }
+
+# Optional: Download domain - only include this in your actual .env if NEXT_PUBLIC_DL_DOMAIN is set
+# Remove the leading # below and ensure NEXT_PUBLIC_DL_DOMAIN is set in your environment
+# This enables you to have short download links (trnsf.to/[code])
+# {$NEXT_PUBLIC_DL_DOMAIN} {
+#   reverse_proxy next:9001
+# }
