@@ -58,7 +58,11 @@ export async function POST(req) {
           scope: "download"
         }, "1m")
 
-      return NextResponse.json(resp({ token, nodeUrl: transfer.nodeUrl }))
+      let nodeUrl = transfer.nodeUrl
+      if (process.env.NEXT_PUBLIC_DL_DOMAIN) {
+        nodeUrl = nodeUrl.replaceAll("transfer.zip", NEXT_PUBLIC_DL_DOMAIN)
+      }
+      return NextResponse.json(resp({ token, nodeUrl }))
     }
   }
   else {
