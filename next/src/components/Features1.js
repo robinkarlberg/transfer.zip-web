@@ -57,7 +57,7 @@ export default function Features1() {
           <h2 className="text-base/7 font-semibold text-primary">Why Choose Us?</h2>
           {/* <div className="text-blue-500 mb-4">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div> */}
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Blazingly Fast. No Nonsense.
+            File Sharing Like it Should Be
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
             Say goodbye to <Link className="text-primary hover:underline" target="_blank" href={"https://www.reddit.com/r/editors/comments/1gk7yh8/is_swisstransfercom_slow_or_is_it_just_me/"}>slow uploads</Link>, size limits, and <Link className="text-primary hover:underline" target="_blank" href={"https://www.reddit.com/r/editors/comments/1htld1d/wetransfer_casually_doubling_my_subscription/"}>expensive pricing</Link>. Transfer.zip makes file sharing seamless without breaking the bank.

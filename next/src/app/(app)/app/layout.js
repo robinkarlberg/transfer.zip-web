@@ -2,7 +2,7 @@ import DashboardProvider from "@/context/DashboardContext";
 import { redirect } from "next/navigation";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 import ApplicationProvider from "@/context/ApplicationContext";
-import Sidebar from "./Sidebar";
+import FloatingBar from "./FloatingBar";
 import { FileProvider } from "@/context/FileProvider";
 import { SelectedTransferProvider } from "@/context/SelectedTransferProvider";
 import { IS_SELFHOST } from "@/lib/isSelfHosted";
@@ -34,25 +34,13 @@ export default async function DashboardLayout({ children }) {
   return (
     <div>
       {/* {!IS_SELFHOST && <DismissibleBanner />} */}
-      <div className="h-screen flex flex-col bg-gray-100 overflow-hidden relative">
+      <div className="w-full h-screen absolute grain bg-linear-to-b from-primary-600 to-primary-300" />
+      <div className="h-screen flex flex-col overflow-auto relative">
         <ApplicationProvider>
           <DashboardProvider>
             <SelectedTransferProvider>
-              <div className="h-10 flex-none w-full flex">
-                {/* <div className="h-10 flex items-center justify-center w-24">
-                  <Image alt="logo" src={logo} className="w-10 h-10" />
-                </div> */}
-                <div className="flex-1 flex items-center justify-center">
-                  {/* <h1 className="text-white text-lg text-center font-bold"><Link href="/">{process.env.NEXT_PUBLIC_SITE_NAME}</Link></h1> */}
-                  {/* <span className="ms-2 text-primary-50 text-sm">{process.env.NEXT_PUBLIC_VERSION || "v0.1"}</span> */}
-                </div>
-              </div>
-              <div className="flex-1 flex overflow-hidden bg-white mx-auto max-w-7xl rounded-t-xl w-full">
-                <Sidebar user={auth.user.friendlyObj()} storage={storage} />
-                <div className="flex-1 flex flex-col w-full">
-                  {children}
-                </div>
-              </div>
+              {children}
+              <FloatingBar user={auth.user.friendlyObj()} />
             </SelectedTransferProvider>
           </DashboardProvider>
         </ApplicationProvider>

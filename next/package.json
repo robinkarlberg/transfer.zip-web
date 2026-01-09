@@ -43,7 +43,6 @@
     "heic2any": "^0.0.4",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.514.0",
-    "moment-timezone": "^0.5.48",
     "mongoose": "^8.13.2",
     "next": "^15.3.5",
     "p-limit": "^6.2.0",

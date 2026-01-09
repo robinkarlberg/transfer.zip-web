@@ -93,7 +93,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
   const [failed, setFailed] = useState(false)
   const [tab, setTab] = useState(initialTab || "email")
 
-  const small = useMemo(() => uploadingFiles || files.length == 0, [uploadingFiles, files])
+  const small = true
   // useEffect(() => {
   //   setTimeout(() => setUploadingFiles(true), 1000)
   // }, [])
@@ -323,32 +323,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     </div>
   )
 
-  const showPickFiles = files.length == 0
-
-  const leftSectionContent = files.map((file, i) => {
-    return (
-      <div key={i} className="p-3 py-2 -my-1 hover:bg-gray-50 rounded-lg select-none relative group">
-        <div className="flex items-center gap-1">
-          <FileIcon size={16} className="flex-none text-gray-600" />
-          <p className="overflow-hidden text-ellipsis whitespace-nowrap font-medium text-gray-600">{file.name}</p>
-        </div>
-        <span className="text-sm text-gray-500">{humanFileSize(file.size, true)}<BIcon name={"dot"} />{humanFileType(file.type)}</span>
-        <div className="absolute top-0 right-5 flex h-full items-center opacity-0 group-hover:opacity-100">
-          <button onClick={() => removeFile(file)} className="p-1 bg-white border rounded-md text-gray-700">
-            <XIcon size={16} />
-          </button>
-        </div>
-      </div>
-    )
-  })
-
-  const leftSectionLowerBar = (
-    <>
-      <Button onClick={handlePickFiles} size={"sm"} variant={"outline"}><PlusIcon /> Files</Button>
-      <Button onClick={handleSelectFolder} size={"sm"} variant={"outline"}><FolderPlusIcon /> Folder</Button>
-      <span className="ms-auto text-gray-500 text-sm me-2 hidden sm:inline">{humanFileSize(totalFileSize, true)}</span>
-    </>
-  )
+  const showPickFiles = false
 
   const endOverlay = (
     <>
@@ -386,8 +361,11 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
             <button className="py-2 text-gray-500 hover:bg-gray-50">Link</button> */}
       </div>
       <div className={`flex-1 overflow-y-auto p-4 space-y-2 ${loaded ? "animate-fade-in" : "opacity-0 pointer-events-none"}`}>
-        {/* {!user && <>
+        {!user && <>
           <div>
+            {/* <Label className={"mb-1 text-gray-800"}>
+                  Your email
+                </Label> */}
             <Input
               placeholder="Your email"
               type={"email"}
@@ -395,7 +373,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
               required
             />
           </div>
-        </>} */}
+        </>}
         {tab == "email" && <>
           <div>
             {/* <Label htmlFor="email">Recipients <span className="text-gray-400 font-normal text-xs leading-0">{emailRecipients.length > 0 ? (emailRecipients.length + " / " + getMaxRecipientsForPlan(user?.plan)) : ""}</span></Label> */}
@@ -518,8 +496,8 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
       </div>
       <div className="flex-none p-2 flex items-center gap-2 --border-t">
         {tab != "quick" ? <>
-          <span className="ms-auto text-sm text-gray-500">Expire in</span>
-          <Select id="expiresInDays" name="expiresInDays" defaultValue={EXPIRATION_TIMES[0].days}>
+          <span className="ms-auto text-sm text-gray-500">Expires</span>
+          <Select id="expiresInDays" name="expiresInDays" defaultValue={EXPIRATION_TIMES[1].days}>
             <SelectTrigger size="sm" className={"w-[8.5rem]"}>
               <SelectValue placeholder="Expires" />
             </SelectTrigger>
@@ -571,11 +549,9 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
       </form>
       <DynamicIsland
         expand={!small}
-        leftSectionContent={leftSectionContent}
-        leftSectionLowerBar={leftSectionLowerBar}
         showQuickLink={files.length == 0}
-        quickLinkHref={isDashboard ? "/app/receive" : "/receive"}
-        quickLinkContent={"Receive Files"}
+        quickLinkHref={isDashboard ? "/app" : "/"}
+        quickLinkContent={"Send Files Instead"}
         showStartOverlay={showPickFiles}
         startOverlay={PickFiles}
         showEndOverlay={uploadingFiles}

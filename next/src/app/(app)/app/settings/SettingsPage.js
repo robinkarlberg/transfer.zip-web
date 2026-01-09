@@ -14,6 +14,7 @@ import Spinner from "@/components/elements/Spinner"
 import { DashboardContext } from "@/context/DashboardContext"
 import { humanTimeUntil, sleep } from "@/lib/utils"
 import { IS_SELFHOST } from "@/lib/isSelfHosted"
+import { MailIcon } from "lucide-react"
 
 const parseDollar = cents => {
   const amount = Math.abs(cents / 100).toFixed(2)
@@ -28,7 +29,7 @@ function TierCard({ isCurrent, isTrial, planCancelling, planValidUntil, planInte
       <div>
         <div className="flex justify-between">
           <p className="font-bold">{name}</p>
-          <p><span className="font-bold">${priceInt[planInterval == "month" ? "monthly" : "yearly"]*(planInterval == "month" ? 1 : 12)}</span><span className="font-medium text-gray-600">{planInterval == "month" ? "/mo" : "/year"}</span></p>
+          <p><span className="font-bold">${priceInt[planInterval == "month" ? "monthly" : "yearly"] * (planInterval == "month" ? 1 : 12)}</span><span className="font-medium text-gray-600">{planInterval == "month" ? "/mo" : "/year"}</span></p>
         </div>
         <ul className="text-sm mt-2 text-gray-700">
           {features.map((feature, i) => <li key={i}>{id == "pro" && <BIcon className={"text-primary me-2"} name={"check-lg"} />}{feature}</li>)}
@@ -185,88 +186,83 @@ export default function ({ user }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <div className="pt-4">
-        <div className="border rounded-2xl shadow-xs p-6 border-gray-900/10 max-w-xl mb-3">
-          <h2 className="text-lg font-semibold text-gray-900 ">General</h2>
-          {!IS_SELFHOST && (
-            <p className="mt-1 text-sm/6 text-gray-600">
-              To change your email or delete your account, <a className="text-primary" href={`mailto:${process.env.NEXT_PUBLIC_SUPPORT_EMAIL}`}>contact us</a>.
-            </p>
-          )}
-
-          <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-
-            <div className="sm:col-span-4">
-              <label htmlFor="email" className="block text-sm/6 font-semibold text-gray-900">
-                Email address
-              </label>
-              <div className="mt-2">
-                <span
-                  disabled
-                  autoComplete="email"
-                  className="text-gray-900 sm:text-sm/6"
-                >
-                  {user.email}
-                </span>
+      <div className="">
+        {!IS_SELFHOST && (
+          <p className="text-gray-600">
+            To change your email or delete your account, <a className="text-primary" href={`mailto:${process.env.NEXT_PUBLIC_SUPPORT_EMAIL}`}>contact us</a>.
+          </p>
+        )}
+        <div className="mt-12 grid grid-cols-1 gap-12">
+          <div className="col-span-1">
+            <h2 className="text-lg font-semibold text-gray-900 ">User Details</h2>
+            <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div className="sm:col-span-4 flex gap-3 items-center">
+                  <MailIcon size={16} className="text-primary"/>
+                  <span
+                    disabled
+                    autoComplete="email"
+                    className="text-gray-900 text-sm font-medium"
+                  >
+                    {user.email}
+                  </span>
               </div>
             </div>
           </div>
-        </div>
-        <div className="border rounded-2xl shadow-xs p-6 border-gray-900/10 max-w-xl mb-3">
-          <h2 className="text-lg font-semibold text-gray-900 ">Notifications</h2>
-          <p className="mt-1 text-sm/6 text-gray-600">Choose how you receive notifications.</p>
+          <div className="col-span-1">
+            <h2 className="text-lg font-semibold text-gray-900 ">Notifications</h2>
+            {/* <p className="mt-1 text-sm/6 text-gray-600">Choose how you receive notifications.</p> */}
 
-          <div className="space-y-4 mt-4">
-            <div className="flex items-center space-x-3">
-              <Checkbox id="transferDownloaded" defaultChecked={notificationSettings.transferDownloaded} onCheckedChange={handleCheckedChange("transferDownloaded")} />
-              <Label htmlFor="transferDownloaded" className="cursor-pointer">
-                User Downloaded your Files
-              </Label>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Checkbox id="transferReceived" defaultChecked={notificationSettings.transferReceived} onCheckedChange={handleCheckedChange("transferReceived")} />
-              <Label htmlFor="transferReceived" className="cursor-pointer">
-                Files Received from Transfer Request
-              </Label>
-            </div>
-            {/* <div className="flex items-center space-x-3">
+            <div className="space-y-4 mt-4">
+              <div className="flex items-center space-x-3">
+                <Checkbox id="transferDownloaded" defaultChecked={notificationSettings.transferDownloaded} onCheckedChange={handleCheckedChange("transferDownloaded")} />
+                <Label htmlFor="transferDownloaded" className="cursor-pointer">
+                  User Downloaded your Files
+                </Label>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Checkbox id="transferReceived" defaultChecked={notificationSettings.transferReceived} onCheckedChange={handleCheckedChange("transferReceived")} />
+                <Label htmlFor="transferReceived" className="cursor-pointer">
+                  Files Received from Transfer Request
+                </Label>
+              </div>
+              {/* <div className="flex items-center space-x-3">
               <Checkbox id="expiryWarnings" defaultChecked={notificationSettings.expiryWarnings} onCheckedChange={handleCheckedChange("expiryWarnings")} />
               <Label htmlFor="expiryWarnings" className="cursor-pointer">
                 Expiry Warnings <QuestionCircle text={"Receive an email if a transfer is about to expire, but has not yet been downloaded."} />
               </Label>
             </div> */}
+            </div>
           </div>
-        </div>
-        {!IS_SELFHOST && (
-          <div className="border rounded-2xl shadow-xs p-6 border-gray-900/10 max-w-xl mb-3">
-            <h2 className="text-lg font-semibold text-gray-900 ">Subscription</h2>
-            <p className="mt-1 text-sm/6 text-gray-600">View and change your subscription details.</p>
-            {/* {user.isTrial && (
+          {!IS_SELFHOST && (
+            <div className="col-span-full">
+              <h2 className="text-lg font-semibold text-gray-900 ">Subscription</h2>
+              <p className="mt-1 text-gray-600 text-sm/6">View and change your subscription details.</p>
+              {/* {user.isTrial && (
               <div className="border-2 border-primary bg-primary-50 p-4 rounded-lg">
                 <span className="font-bold">Free Trial</span>
               </div>
             )} */}
-            <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
-              {
-                pricing.tiers.map(tier => <TierCard key={tier.id} isTrial={user.isTrial} planCancelling={user.planCancelling} planValidUntil={user.planValidUntil} planInterval={user.planInterval} isCurrent={user.plan == tier.id} tier={tier} isUpgrade={user.plan != "pro" && tier.id == "pro"}
-                  onAction={action => {
-                    if (action == "upgrade") {
-                      showUpgradePreview(tier.id)
-                    }
-                    else if (action == "downgrade") {
-                      setShowDowngrade(true)
-                    }
-                  }}
-                />)
-              }
+              <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-2">
+                {
+                  pricing.tiers.map(tier => <TierCard key={tier.id} isTrial={user.isTrial} planCancelling={user.planCancelling} planValidUntil={user.planValidUntil} planInterval={user.planInterval} isCurrent={user.plan == tier.id} tier={tier} isUpgrade={user.plan != "pro" && tier.id == "pro"}
+                    onAction={action => {
+                      if (action == "upgrade") {
+                        showUpgradePreview(tier.id)
+                      }
+                      else if (action == "downgrade") {
+                        setShowDowngrade(true)
+                      }
+                    }}
+                  />)
+                }
+              </div>
             </div>
-          </div>
-        )}
-        <div className="sm:col-span-6 text-red-500 font-bold">
+          )}
+        </div>
+        <div className="mt-4 sm:col-span-6 text-red-500 font-bold">
           <button className="text-sm" onClick={handleLogout}>&larr; Logout</button>
         </div>
       </div>
     </>
-
   )
 }

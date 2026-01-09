@@ -16,14 +16,11 @@ export default function () {
   return (
     <div>
       <HashInterceptor />
-      {/* <Landing /> */}
       <LandingNew/>
       <Features1 />
       <TestimonialCloud />
       <Features2 />
       <Features3 />
-      {/* <FeaturesNew /> */}
-      {/* <TestimonialCloud /> */}
       <div className="px-6 sm:px-8">
         <IndieStatement compact />
       </div>

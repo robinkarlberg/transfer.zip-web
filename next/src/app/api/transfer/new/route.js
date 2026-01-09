@@ -63,6 +63,11 @@ export async function POST(req) {
     const checkAuth = async () => {
       const plan = auth?.user?.getPlan()
 
+      if (plan == "free" || !plan) {
+        if (IS_DEV) console.log("Unauthorized: no plan or its free plan")
+        return { authorized: false }
+      }
+
       if (!plan && (!guestEmail || !EmailValidator.validate(guestEmail)) && !transferRequestSecretCode) {
         if (IS_DEV) console.log("Unauthorized: no plan, guestEmail, or transferRequestSecretCode")
         return { authorized: false }
@@ -86,7 +91,6 @@ export async function POST(req) {
       }
 
       if (!transferRequestSecretCode && (!plan || plan == "free")) {
-        console.log(conn)
         const rateLimiter = getRateLimiter(conn)
         try {
           await rateLimiter.consume(xForwardedFor, 1)
@@ -102,12 +106,12 @@ export async function POST(req) {
         }
       }
 
-      if (!expirationTimeEntry.free && expirationTimeEntry.starter && (plan != "starter" && plan != "pro")) {
-        if (IS_DEV) console.log("Unauthorized: starter plan required but user has plan:", plan)
-        return { authorized: false }
-      }
+      // if (expirationTimeEntry.starter && (plan != "starter" && plan != "pro")) {
+      //   if (IS_DEV) console.log("Unauthorized: starter plan required but user has plan:", plan)
+      //   return { authorized: false }
+      // }
 
-      if (!expirationTimeEntry.free && expirationTimeEntry.pro && (plan != "pro")) {
+      if (!expirationTimeEntry.starter && expirationTimeEntry.pro && (plan != "pro")) {
         if (IS_DEV) console.log("Unauthorized: pro plan required but user has plan:", plan)
         return { authorized: false }
       }

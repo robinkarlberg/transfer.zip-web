@@ -1,12 +1,9 @@
-export default function Main({ children, size }) {
-  const _size = size || "max-w-6xl"
+export default function Main({ children }) {
   return (
-    <div className="flex-1 flex flex-col overflow-y-auto">
-      <main className={`flex-1 w-full py-12 mx-auto ${_size} `}>
-        <div className="px-4 sm:px-6 lg:px-8">
-          {children}
-        </div>
-      </main>
-    </div>
+    <main className={`w-full mx-auto`}>
+      <div className="px-4 sm:px-6 lg:px-10">
+        {children}
+      </div>
+    </main>
   )
 }
