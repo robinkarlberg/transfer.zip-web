@@ -63,26 +63,21 @@ export async function POST(req) {
     const checkAuth = async () => {
       const plan = auth?.user?.getPlan()
 
-      if (plan == "free" || !plan) {
-        if (IS_DEV) console.log("Unauthorized: no plan or its free plan")
-        return { authorized: false }
-      }
-
-      if (!plan && (!guestEmail || !EmailValidator.validate(guestEmail)) && !transferRequestSecretCode) {
+      if ((!plan || plan == "free") && !transferRequestSecretCode) {
         if (IS_DEV) console.log("Unauthorized: no plan, guestEmail, or transferRequestSecretCode")
         return { authorized: false }
       }
 
-      if (!plan && guestEmail) {
-        if (guestEmail.includes('+')) {
-          if (IS_DEV) console.log("Unauthorized: plus addressing not allowed for emails")
-          return { authorized: false, reason: "No plus-characters in the email are not allowed without an account. Please sign up to use plus-addresses." }
-        }
-        if (isDisposableEmail(guestEmail)) {
-          if (IS_DEV) console.log("Unauthorized: disposable email not allowed")
-          return { authorized: false, reason: "Disposable emails are not allowed without an account. Please sign up to use disposable emails." }
-        }
-      }
+      // if (!plan && guestEmail) {
+      //   if (guestEmail.includes('+')) {
+      //     if (IS_DEV) console.log("Unauthorized: plus addressing not allowed for emails")
+      //     return { authorized: false, reason: "No plus-characters in the email are not allowed without an account. Please sign up to use plus-addresses." }
+      //   }
+      //   if (isDisposableEmail(guestEmail)) {
+      //     if (IS_DEV) console.log("Unauthorized: disposable email not allowed")
+      //     return { authorized: false, reason: "Disposable emails are not allowed without an account. Please sign up to use disposable emails." }
+      //   }
+      // }
 
       const expirationTimeEntry = EXPIRATION_TIMES.find(time => time.days == expiresInDays)
       if (!expirationTimeEntry) {
@@ -90,28 +85,28 @@ export async function POST(req) {
         return { authorized: false }
       }
 
-      if (!transferRequestSecretCode && (!plan || plan == "free")) {
-        const rateLimiter = getRateLimiter(conn)
-        try {
-          await rateLimiter.consume(xForwardedFor, 1)
-        }
-        catch (err) {
-          return { authorized: false, reason: "You can send 5 transfers every 18 hours, please sign up for a plan to send more." }
-        }
-        try {
-          await rateLimiter.consume(auth?.user?.email || guestEmail, 1)
-        }
-        catch (err) {
-          return { authorized: false, reason: "You can send 5 transfers every 18 hours, please sign up for a plan to send more." }
-        }
-      }
+      // if (!transferRequestSecretCode && (!plan || plan == "free")) {
+      //   const rateLimiter = getRateLimiter(conn)
+      //   try {
+      //     await rateLimiter.consume(xForwardedFor, 1)
+      //   }
+      //   catch (err) {
+      //     return { authorized: false, reason: "You can send 5 transfers every 18 hours, please sign up for a plan to send more." }
+      //   }
+      //   try {
+      //     await rateLimiter.consume(auth?.user?.email || guestEmail, 1)
+      //   }
+      //   catch (err) {
+      //     return { authorized: false, reason: "You can send 5 transfers every 18 hours, please sign up for a plan to send more." }
+      //   }
+      // }
 
       // if (expirationTimeEntry.starter && (plan != "starter" && plan != "pro")) {
       //   if (IS_DEV) console.log("Unauthorized: starter plan required but user has plan:", plan)
       //   return { authorized: false }
       // }
 
-      if (!expirationTimeEntry.starter && expirationTimeEntry.pro && (plan != "pro")) {
+      if (!expirationTimeEntry.starter && expirationTimeEntry.pro && (plan != "pro") && !transferRequestSecretCode) {
         if (IS_DEV) console.log("Unauthorized: pro plan required but user has plan:", plan)
         return { authorized: false }
       }

@@ -40,7 +40,7 @@ export default function FloatingBar({ user }) {
     href.split("/").length > 2 ? pathname.startsWith(href) : pathname === href;
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 fade-in-up">
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-20 fade-in-up">
       <div className="flex items-center gap-0.5 sm:gap-1 bg-gray-900 rounded-full px-2 sm:px-3 py-2 shadow-2xl">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 mr-1 sm:mr-2">

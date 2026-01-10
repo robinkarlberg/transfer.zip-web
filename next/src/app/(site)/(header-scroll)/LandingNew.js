@@ -27,7 +27,7 @@ export default async function ({ mode }) {
 
   return (
     <div>
-      <div className="w-full h-screen absolute grain bg-linear-to-b from-primary-600 to-primary-300" />
+      <div className="w-full h-screen overflow-hidden absolute grain bg-linear-to-b from-primary-600 to-primary-300" />
       <div className="relative isolate flex min-h-screen flex-col">
         {/* <svg
           aria-hidden="true"
@@ -57,11 +57,10 @@ export default async function ({ mode }) {
           <div className="flex items-center bg-white px-2 py-1 rounded-xl fade-in-up-fast">
             <div className="ms-2 flex items-center text-xl gap-x-2">
               <Image src={icon} width={40} alt='logo'></Image>
-              {/* <span className="font-bold">Transfer.zip</span> */}
             </div>
-            <div className="ms-2 flex">
+            <div className="ms-2 hidden sm:flex">
               <Button asChild size={"sm"} variant={"ghost"}>
-                <Link href={"/#message-from-founder"}>Who are we?</Link>
+                <Link href={"/#message-from-founder"}>About us</Link>
               </Button>
               <Button asChild size={"sm"} variant={"ghost"}>
                 <Link href={"/#pricing"}>Pricing</Link>
@@ -72,12 +71,12 @@ export default async function ({ mode }) {
             </div>
           </div>
           <div className="fade-in-up-fast">
-            <FreeConditional
-              free={(
+            <AuthConditional
+              noauth={(
                 <NoauthLandingHeaderCTAButton />
               )}
-              nofree={(
-                <Link data-umami-event="landing_header_cta_click" data-umami-event-is_logged_in="true" href={"/app"} className="flex items-center text-sm font-semibold text-gray-800 rounded-xl bg-white px-5 h-12 hover:bg-primary-50">
+              auth={(
+                <Link data-umami-event="landing_header_cta_click" data-umami-event-is_logged_in="true" href={"/app/sent"} className="flex items-center text-sm font-semibold text-gray-800 rounded-xl bg-white px-5 h-12 hover:bg-primary-50">
                   My Transfers <span aria-hidden="true">&rarr;</span>
                 </Link>
               )}
@@ -85,7 +84,7 @@ export default async function ({ mode }) {
           </div>
         </div>
         <div className="grow mx-auto w-full max-w-7xl px-6 flex flex-col items-center justify-center mt-12 sm:mt-0">
-          <h1 className="mx-auto text-center max-w-2xl text-4xl font-bold tracking-tight text-white mb-24 fade-in-up">
+          <h1 className="mx-auto text-center max-w-2xl text-4xl font-bold tracking-tight text-white mb-24 2xl:mb-32 fade-in-up">
             Try the{" "}
             <span className="relative">
               <span className="relative z-10">easiest</span>
@@ -129,10 +128,10 @@ export default async function ({ mode }) {
         </div>
         <div className="mx-auto px-6 flex flex-col md:flex-row items-center justify-center gap-8 mt-4 mb-16 fade-in-up-slow">
           {[
-            { icon: <ZapIcon size={16} />, text: "No waiting queue" },
+            { icon: <ZapIcon size={16} />, text: "Data is encrypted" },
             { icon: <ZapIcon size={16} />, text: "No size limit" },
             { icon: <ZapIcon size={16} />, text: "Send 100GB+ for free" },
-          ].map(({ icon, text }) => <div key={text} className="flex items-center gap-2 rounded-xl font-semibold text-white"><span className="ms-0.5">{icon}</span> {text}</div>)}
+          ].map(({ icon, text }) => <div key={text} className="text-shadow-sm flex items-center gap-2 rounded-xl font-semibold text-white"><span className="ms-0.5">{icon}</span> {text}</div>)}
         </div>
       </div>
     </div>

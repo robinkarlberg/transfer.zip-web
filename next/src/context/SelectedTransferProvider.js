@@ -16,7 +16,7 @@ export function SelectedTransferProvider({ children }) {
 
   useEffect(() => {
     if (transferIdSlug && transferIdSlug.length > 0) {
-      setSelectedTransferId(transferIdSlug[0])
+      setSelectedTransferId(transferIdSlug)
     }
     else {
       setSelectedTransferId(null)

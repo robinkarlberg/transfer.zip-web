@@ -6,9 +6,8 @@ import { useServerAuth } from "@/lib/server/wrappers/auth"
 export default async function () {
   const { user } = await useServerAuth()
   const transfers = await listTransfersForUser(user)
-
   // const sentTransfers = transfers.filter(transfer => !transfer.hasTransferRequest)
-  const receivedTransfers = transfers.filter(transfer => transfer.hasTransferRequest)
+  const receivedTransfers = transfers.filter(transfer => transfer.transferRequest)
 
   return (
     <GenericPage title={"Received"}>

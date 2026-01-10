@@ -3,19 +3,16 @@
 import BIcon from "@/components/BIcon"
 import Modal from "@/components/elements/Modal"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ApplicationContext } from "@/context/ApplicationContext"
 import { DashboardContext } from "@/context/DashboardContext"
 import { SelectedTransferContext } from "@/context/SelectedTransferProvider"
 import { deleteTransfer, getTransferDownloadLink, putTransfer, sendTransferByEmail } from "@/lib/client/Api"
 import { EXPIRATION_TIMES } from "@/lib/constants"
 import { humanFileSize } from "@/lib/transferUtils"
 import { parseTransferExpiryDate, tryCopyToClipboard } from "@/lib/utils"
-import { Transition } from "@headlessui/react"
-import { useRouter } from "next/navigation"
-import { useContext, useEffect, useMemo, useRef, useState } from "react"
-import { YesNo } from "../../../../../components/dashboard/YesNo"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectTriggerFix } from "@/components/ui/select"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useContext, useMemo, useRef, useState } from "react"
+import { YesNo } from "./YesNo"
 
 export default function ({ user, selectedTransfer }) {
 

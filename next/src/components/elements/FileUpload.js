@@ -5,7 +5,7 @@ import BIcon from "../BIcon"
 import Link from 'next/link'
 import { Transition } from "@headlessui/react"
 import { humanFileSize, humanFileType } from "@/lib/transferUtils"
-import { humanFileName } from "@/lib/utils"
+import { cn, humanFileName } from "@/lib/utils"
 
 import {
   Popover,
@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/popover"
 import { PopoverClose } from "@radix-ui/react-popover"
 
-export default function FileUpload({ initialFiles, onFilesChange, onFiles, onReceiveClicked, progressElement, showProgress, buttonText, singleFile, disabled, accept, headless, children }) {
+export default function FileUpload({ initialFiles, onFilesChange, onFiles, onReceiveClicked, progressElement, showProgress, buttonText, singleFile, disabled, accept, headless, className, children }) {
 
   const _buttonText = buttonText ?? "Transfer"
 
@@ -132,7 +132,10 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
           </div>
         </PopoverContent>
       </Popover>
-      <div ref={divRef} className={`text-start relative w-full flex flex-col min-h-56 ${headless ? "" : "rounded-2xl bg-white border shadow-lg"} ${onReceiveClicked ? "mt-8" : ""}`}>
+      <div ref={divRef} className={cn(
+        `text-start relative w-full flex flex-col min-h-56 ${headless ? "" : "rounded-2xl bg-white border shadow-lg"} ${onReceiveClicked ? "mt-8" : ""}`,
+        className
+      )}>
         {onReceiveClicked && (
           <div className="absolute w-full flex">
             <button type="button" onClick={onReceiveClicked} className="text-sm font-medium text-gray-500 relative mx-auto bg-white border py-1 px-10 rounded-t-lg transition-all h-7 -top-7 hover:h-8 hover:-top-8 hover:text-primary">

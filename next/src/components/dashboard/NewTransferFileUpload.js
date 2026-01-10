@@ -104,7 +104,7 @@ export default function ({ user, storage, brandProfiles }) {
     }
 
     setFinished(true)
-    router.replace(`/app/${transfer.id}`)
+    router.replace(`/app/sent/${transfer.id}`)
   }
 
   const handleCreateLinkClicked = async e => {

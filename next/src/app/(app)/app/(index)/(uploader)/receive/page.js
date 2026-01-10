@@ -13,7 +13,7 @@ export default async function () {
         <h1 className="mx-auto text-center max-w-2xl text-4xl font-bold tracking-tight text-white mb-20">
           Let's{" "}
           <span className="relative">
-            <span className="relative z-10">receive</span>
+            <span className="relative z-10">request</span>
             <svg
               className="absolute left-0 bottom-[0.08em] w-full text-primary-100"
               style={{ height: "0.15em" }}

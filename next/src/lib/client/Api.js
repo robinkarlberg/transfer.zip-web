@@ -177,9 +177,7 @@ export async function deleteTransfer(transferId) {
 }
 
 export const getTransferDownloadLink = (transfer) => {
-    if (!transfer) return null
-    if (typeof window === "undefined") return null
-    return `${window.location.protocol}//${window.location.host}/transfer/${transfer.secretCode}`
+    return typeof window === "undefined" ? `${process.env.SITE_URL}/transfer/${transfer.secretCode}` : `${window.location.origin}/transfer/${transfer.secretCode}`
 }
 
 export const getTransferAttachmentLink = (transfer) => {

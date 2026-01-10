@@ -8,9 +8,11 @@ export default async function () {
 
   const { user } = auth
 
+  const storage = await user.getStorage()
+
   return (
     <GenericPage title={"Account"}>
-      <SettingsPage user={user.friendlyObj()} />
+      <SettingsPage user={user.friendlyObj()} storage={storage} />
     </GenericPage>
   )
 }

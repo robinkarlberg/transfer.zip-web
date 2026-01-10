@@ -1,17 +1,13 @@
 "use client"
 
 import BIcon from "@/components/BIcon";
-import { humanFileSize, humanFileType } from "@/lib/transferUtils";
-import { Transition } from "@headlessui/react";
-import { ArrowDownIcon, ArrowRightIcon, CircleDashedIcon, FileIcon, FolderPlusIcon, HexagonIcon, LinkIcon, PaintbrushIcon, PlusIcon, RotateCcwIcon, SquircleIcon, XIcon } from "lucide-react";
-import { useContext, useMemo, useRef, useState } from "react";
+import { ArrowRightIcon, LinkIcon, PlusIcon, RotateCcwIcon } from "lucide-react";
+import { useContext, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectTriggerFix, SelectValue } from "@/components/ui/select";
-import { newTransfer } from "@/lib/client/Api";
-import { prepareTransferFiles, uploadFiles } from "@/lib/client/uploader";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EXPIRATION_TIMES } from "@/lib/constants";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -22,19 +18,15 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import Image from "next/image";
-import { getMaxRecipientsForPlan } from "@/lib/getMaxRecipientsForPlan";
-import Link from "next/link";
+  DialogTitle
+} from "@/components/ui/dialog";
 import { GlobalContext } from "@/context/GlobalContext";
+import Link from "next/link";
 import BrandingToggle from "./BrandingToggle";
-import QRCode from "react-qr-code";
 import DynamicIsland from "./DynamicIsland";
+import { newTransferRequest } from "@/lib/client/Api";
 
 function AddedEmailField({ email, onAction }) {
   return (
@@ -51,37 +43,11 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   const { openSignupDialog } = useContext(GlobalContext)
 
-  const [files, setFiles] = useState([
-    // { name: "test.zip", size: 123152134523, type: "application/zip" },
-    // { name: "file.png", size: 123152134523, type: "image/png" },
-    // { name: "loandasodnasdaosdasd asdasd 12-12-12.zip", size: 94737 },
-  ])
-
-  const [uploadProgressMap, setUploadProgressMap] = useState(null)
-  const [finished, setFinished] = useState(false)
-  const [uploadingFiles, setUploadingFiles] = useState(false)
-  const [filesToUpload, setFilesToUpload] = useState(null)
-
-  const totalBytesToSend = useMemo(() => {
-    if (filesToUpload) {
-      return filesToUpload.reduce((total, file) => total + file.size, 0);
-    }
-    return 0;
-  }, [filesToUpload]);
-
-  const tooLittleStorage = useMemo(() => storage ? totalBytesToSend > storage.maxStorageBytes - storage.usedStorageBytes : false, [totalBytesToSend, storage])
-
-  const bytesTransferred = useMemo(() => {
-    if (!uploadProgressMap) return 0
-    return uploadProgressMap.reduce((sum, item) => sum + item[1], 0)
-  }, [uploadProgressMap])
-
-  const fileInputRef = useRef()
-  const folderInputRef = useRef()
-
   const emailRef = useRef(null)
   const [emailRecipients, setEmailRecipients] = useState([])
-  // const [uploadErrors, setUploadErrors] = useState([])
+
+  const [brandProfileId, setBrandProfileId] = useState(brandProfiles && brandProfiles.length > 0 ? brandProfiles[0].id : null)
+
   const [errorMessage, setErrorMessage] = useState(null)
   const [showErrorMessage, setShowErrorMessage] = useState(false)
 
@@ -89,150 +55,39 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     setErrorMessage(message)
     setShowErrorMessage(true)
   }
+  const [finished, setFinished] = useState(false)
 
   const [failed, setFailed] = useState(false)
   const [tab, setTab] = useState(initialTab || "email")
 
   const small = true
-  // useEffect(() => {
-  //   setTimeout(() => setUploadingFiles(true), 1000)
-  // }, [])
-
-  const [transfer, setTransfer] = useState(null)
 
   const handleSubmit = async e => {
     e.preventDefault()
-    const form = e.target;
+    const form = e.target
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
 
-    if (files.length === 0)
-      return displayErrorMessage({
-        title: "Oops.",
-        body: "Add some files first ;)"
-      })
-
-    if (tab == "email" && emailRecipients.length === 0)
-      return displayErrorMessage({
-        title: "Oops.",
-        body: "You did not add any recipient email!"
-      })
-
-    setFilesToUpload(files) // Just to be safe
-    setUploadingFiles(true)
-
     const formData = new FormData(form)
     const name = formData.get("name")
     const description = formData.get("description")
-    const guestEmail = formData.get("guestEmail")
-    const expiresInDays = formData.get("expiresInDays")
-
-    const transferFiles = prepareTransferFiles(files)
-
-    // response: { idMap: [{ tmpId, id }, ...] } - what your API returned
 
     try {
-      const { transfer, idMap } = await newTransfer({
-        name,
-        description,
-        expiresInDays,
-        files: transferFiles,
-        guestEmail,
-        brandProfileId,
-        emails: (tab == "email" ? emailRecipients : [])
-      })
-
-      const success = await uploadFiles(files, idMap, transfer,
-        progress => {
-          setUploadProgressMap(progress)
-        },
-        fatalErr => {
-          console.error("FATAL:", fatalErr)
-          setFailed(true)
-        },
-        err => {
-          console.error(err)
-        }
-      )
-      setTransfer(transfer)
-    }
-    catch (err) {
-      setFailed(true)
-      displayErrorMessage({
-        title: "Error",
-        body: err.message
-      })
-      console.error(err)
-    }
-    finally {
+      const { transferRequest } = await newTransferRequest({ name, description, emails: emailRecipients, brandProfileId })
       setFinished(true)
-    }
-    // TODO: only when authenticated
-    // router.replace(`/app/${transfer.id}`)
-  }
-
-  const handleFileInputChange = (e) => {
-    const newFiles = [...files, ...e.target.files]
-
-    const names = new Set()
-
-    try {
-      const relPaths = new Set()
-      for (const file of newFiles) {
-        if (file.webkitRelativePath && file.webkitRelativePath.length > 0) {
-          if (relPaths.has(file.webkitRelativePath)) {
-            throw new Error(file.webkitRelativePath)
-          }
-          relPaths.add(file.webkitRelativePath)
-        } else {
-          if (names.has(file.name)) {
-            throw new Error(file.name)
-          }
-          names.add(file.name)
-        }
-      }
+      // router.replace(`/app/requests`)
     }
     catch (err) {
-      displayErrorMessage({
-        title: "Oops.",
-        body: (
-          <>
-            <p>
-              We can't send multiple files with the same name! Try again.
-            </p>
-            <p className="text-gray-500 text-sm mt-2">
-              <span className="font-medium">Name:</span> <span className="font-mono break-all">{err.message}</span>
-            </p>
-          </>
-        )
-      })
-      return
+      displayErrorModal(err.message)
+      setFailed(true)
     }
+    // if (emailRecipients.length > 0) {
+    //   await sendTransferRequestByEmail(transferRequest.id, emailRecipients)
+    // }
 
-    setFiles(newFiles)
-    // onFilesChange(newFiles)
-  }
-
-  const handlePickFiles = e => {
-    e.preventDefault()
-    e.stopPropagation()
-    fileInputRef.current.click()
-  }
-
-  const handleSelectFolder = e => {
-    e.preventDefault()
-    e.stopPropagation()
-    folderInputRef.current.click()
-  }
-
-  const totalFileSize = useMemo(() => {
-    return files.reduce((total, file) => total + file.size, 0);
-  }, [files]);
-
-  const removeFile = file => {
-    setFiles(files.filter(otherFile => otherFile !== file))
+    // router.replace(`/app/requests`)
   }
 
   const handleEmailAdd = () => {
@@ -298,7 +153,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   const handleViewTransferClick = e => {
     if (user) {
-      router.push(`/app/${transfer.id}`)
+      router.push(`/app/requests/`)
     }
     else {
       openSignupDialog()
@@ -309,26 +164,10 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   }
 
-  const [brandProfileId, setBrandProfileId] = useState(brandProfiles && brandProfiles.length > 0 ? brandProfiles[0].id : null)
-
-  const PickFiles = (
-    <div type="button" onClick={handlePickFiles} className="z-10 bg-white absolute left-0 top-0 w-full h-full flex flex-col justify-center items-center group transition duration-300 data-leave:delay-500 data-closed:opacity-0 hover:cursor-pointer">
-      <div className="text-white rounded-full bg-primary w-12 h-12 flex items-center justify-center group-hover:bg-primary-light">
-        <PlusIcon size={24} />
-      </div>
-      <span className="font-medium mt-2 text-lg">Pick files</span>
-      <button onClick={handleSelectFolder} className="text-gray-500 text-sm font-medium mt-2 underline hover:text-primary">
-        or select a folder
-      </button>
-    </div>
-  )
-
-  const showPickFiles = false
-
   const endOverlay = (
     <>
       <div className="relative w-full h-full max-w-44 max-h-44">
-        <Progress max={totalBytesToSend} now={bytesTransferred} showUnits={true} finished={finished} finishedText={`Your files were ${tab == "email" ? "sent" : "uploaded"}!`} failed={failed} />
+        <Progress max={1} now={1} showUnits={false} finished={true} finishedText={`Your request was sent!`} failed={failed} />
       </div>
       <div className="flex flex-col gap-2">
         {
@@ -337,7 +176,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
               {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Reload Page <RotateCcwIcon size={12} /></Button>}
               {/* {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Send more files</Button>} */}
             </> : <>
-              {finished && <Button size={"sm"} onClick={handleViewTransferClick}>View transfer <ArrowRightIcon size={12} /></Button>}
+              {finished && <Button size={"sm"} onClick={handleViewTransferClick}>View Request <ArrowRightIcon size={12} /></Button>}
               {finished && <Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Send more files</Button>}
             </>
         }
@@ -357,15 +196,10 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
             {capitalizeFirstLetter(key)}
           </button>
         ))}
-        {/* <button className="py-2 font-medium text-primary bg-primary-50">Email</button>
-            <button className="py-2 text-gray-500 hover:bg-gray-50">Link</button> */}
       </div>
       <div className={`flex-1 overflow-y-auto p-4 space-y-2 ${loaded ? "animate-fade-in" : "opacity-0 pointer-events-none"}`}>
         {!user && <>
           <div>
-            {/* <Label className={"mb-1 text-gray-800"}>
-                  Your email
-                </Label> */}
             <Input
               placeholder="Your email"
               type={"email"}
@@ -427,56 +261,6 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
               </div>
             </div>
           </div>
-          {/* <div>
-                  <Select value={brandProfileId} onValueChange={setBrandProfileId}>
-                    <SelectTrigger size="sm">
-                      {
-                        brandProfile ?
-                          <>
-                            {brandProfile.iconUrl ?
-                              <Image alt="Brand Profile Icon" width={24} height={24} src={brandProfile.iconUrl} /> :
-                              <HexagonIcon className="w-[24px] h-[24px] p-0.5 rounded-lg border-2 border-dashed border-gray-400" />
-                            }
-                            <span className="text-sm font-medium text-gray-700">{brandProfile.name}</span>
-                          </>
-                          :
-                          <>
-                            <span className="text-sm text-gray-900 flex items-center gap-2"><PaintbrushIcon className="text-gray-900" /> Brand</span>
-                          </>
-                      }
-                    </SelectTrigger>
-                    <SelectContent align={"start"}>
-                      {brandProfiles && brandProfiles.length > 0
-                        ?
-                        [brandProfiles.map(profile => (
-                          <SelectItem
-                            key={profile.id}
-                            value={profile.id}>
-                            {profile.iconUrl ?
-                              <Image alt="Brand Profile Icon" width={24} height={24} src={profile.iconUrl} /> :
-                              <HexagonIcon className="w-[24px] h-[24px] p-0.5 rounded-lg border-2 border-dashed border-gray-400" />
-                            }
-                            <span className="text-sm font-medium text-gray-700">{profile.name}</span>
-                          </SelectItem>)
-                        ), <SelectItem key={"nonee"} value={null}>No brand profile</SelectItem>]
-                        :
-                        <SelectItem key={"none"} value={"none"} disabled>No brand profiles.</SelectItem>
-                      }
-                    </SelectContent>
-                  </Select>
-                </div> */}
-          {/* <div className="flex items-center gap-2">
-                  <Switch className={"peer"} id="removeAfterFirstDownload" defaultChecked={false} />
-                  <Label htmlFor="removeAfterFirstDownload" className="cursor-pointer text-gray-500 peer-data-[state=checked]:text-gray-800">
-                    Delete after first download
-                  </Label>
-                </div> */}
-          {/* <div className="flex items-center gap-2">
-                <Switch id="airplane-mode" className={"peer"} />
-                <Label className={`text-gray-500 peer-data-[state=checked]:text-gray-800`} htmlFor="airplane-mode">
-                  End-to-end encryption
-                </Label>
-              </div> */}
           <BrandingToggle brandProfiles={brandProfiles} brandProfileId={brandProfileId} setBrandProfileId={setBrandProfileId} />
         </>}
         {tab == "link" && <>
@@ -494,30 +278,8 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
           </Alert>
         </>}
       </div>
-      <div className="flex-none p-2 flex items-center gap-2 --border-t">
-        {tab != "quick" ? <>
-          <span className="ms-auto text-sm text-gray-500">Expires</span>
-          <Select id="expiresInDays" name="expiresInDays" defaultValue={EXPIRATION_TIMES[1].days}>
-            <SelectTrigger size="sm" className={"w-[8.5rem]"}>
-              <SelectValue placeholder="Expires" />
-            </SelectTrigger>
-            <SelectContent side="top">
-              {EXPIRATION_TIMES.map(item => (
-                <SelectItem
-                  key={item.days}
-                  value={item.days}
-                  disabled={!item[user?.plan || "free"]}>
-                  {/* remove the badge when its selected */}
-                  {item.period}{(!user || user.plan == "free") && item.free && <span className="font-bold px-1 text-xs bg-primary-100 text-primary-500 rounded">FREE</span>}
-                </SelectItem>)
-              )}
-            </SelectContent>
-          </Select>
-        </> : <>
-          <span className="ms-auto text-sm text-gray-500 me-1">Expires when tab is closed</span>
-        </>}
-
-        <Button disabled={tooLittleStorage} size={"sm"}>{tab == "email" ? <>Transfer <ArrowRightIcon /></> : <>Get Link <LinkIcon /></>} </Button>
+      <div className="flex-none p-2 flex flex-row-reverse items-center gap-2 --border-t">
+        <Button size={"sm"}>{tab == "email" ? <>Request Files <ArrowRightIcon /></> : <>Get Link <LinkIcon /></>} </Button>
       </div>
     </form>
   )
@@ -543,18 +305,13 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <form style={{ display: "none" }}>
-        <input ref={fileInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" multiple></input>
-        <input ref={folderInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" webkitdirectory="true"></input>
-      </form>
       <DynamicIsland
         expand={!small}
-        showQuickLink={files.length == 0}
+        showQuickLink={true}
         quickLinkHref={isDashboard ? "/app" : "/"}
         quickLinkContent={"Send Files Instead"}
-        showStartOverlay={showPickFiles}
-        startOverlay={PickFiles}
-        showEndOverlay={uploadingFiles}
+        showStartOverlay={false}
+        showEndOverlay={finished}
         endOverlay={endOverlay}
         rightSection={rightSection}
       />

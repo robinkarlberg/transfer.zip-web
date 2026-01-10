@@ -17,7 +17,7 @@ export default function ({ expand, quickLinkHref, quickLinkContent, showQuickLin
           </Link>
         </div>
       </Transition>
-      <div className={`w-full md:h-96 bg-white border shadow-xs relative overflow-clip rounded-xl ${!expand ? "max-w-xs" : "max-w-2xl"} transition-all duration-700 relative`}>
+      <div className={`w-full h-96 bg-white border shadow-xs relative overflow-clip rounded-xl ${!expand ? "max-w-xs" : "max-w-2xl"} transition-all duration-700 relative`}>
         <Transition show={showEndOverlay}>
           <div className="z-20 bg-white absolute left-0 top-0 w-full h-full flex flex-col items-center justify-center group transition data-[closed]:opacity-0">
             {endOverlay}
@@ -43,7 +43,7 @@ export default function ({ expand, quickLinkHref, quickLinkContent, showQuickLin
           {rightSection && (
             <div className={cn(
               (leftSectionContent || leftSectionLowerBar) ? "col-span-3" : "col-span-5",
-              "grid overflow-hidden"
+              "grid overflow-hidden min-w-80"
             )}>
               {rightSection}
             </div>

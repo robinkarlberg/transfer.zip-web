@@ -1,7 +1,7 @@
 "use client"
 
 import { useContext, useEffect, useState } from "react"
-import TransferSidebar from "./TransferSidebar"
+import TransferSidebar from "../../../../../components/dashboard/TransferSidebar"
 import { Transition } from "@headlessui/react"
 import { SelectedTransferContext } from "@/context/SelectedTransferProvider"
 import { getTransfer } from "@/lib/client/Api"

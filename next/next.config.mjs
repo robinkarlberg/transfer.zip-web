@@ -1,7 +1,7 @@
-import createMDX from '@next/mdx'
-import remarkFrontmatter from 'remark-frontmatter'
-import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
-import remarkGfm from 'remark-gfm';
+// import createMDX from '@next/mdx'
+// import remarkFrontmatter from 'remark-frontmatter'
+// import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
+// import remarkGfm from 'remark-gfm';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -19,16 +19,16 @@ const nextConfig = {
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'mdx']
 };
 
-const withMDX = createMDX({
-  options: {
-    remarkPlugins: [
-      remarkGfm,
-      remarkFrontmatter,
-      [remarkMdxFrontmatter, { name: "frontmatter" }],
-    ],
-    // rehypePlugins: [rehypeSlug],
-  }
-})
+// const withMDX = createMDX({
+//   options: {
+//     remarkPlugins: [
+//       remarkGfm,
+//       remarkFrontmatter,
+//       [remarkMdxFrontmatter, { name: "frontmatter" }],
+//     ],
+//     // rehypePlugins: [rehypeSlug],
+//   }
+// })
 
 // Merge MDX config with Next.js config
-export default withMDX(nextConfig)
+export default nextConfig

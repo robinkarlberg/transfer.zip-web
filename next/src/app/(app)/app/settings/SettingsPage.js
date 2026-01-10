@@ -14,7 +14,9 @@ import Spinner from "@/components/elements/Spinner"
 import { DashboardContext } from "@/context/DashboardContext"
 import { humanTimeUntil, sleep } from "@/lib/utils"
 import { IS_SELFHOST } from "@/lib/isSelfHosted"
-import { MailIcon } from "lucide-react"
+import { User, UserIcon } from "lucide-react"
+import { Progress } from "@/components/ui/progress"
+import { humanFileSize } from "@/lib/transferUtils"
 
 const parseDollar = cents => {
   const amount = Math.abs(cents / 100).toFixed(2)
@@ -57,7 +59,7 @@ function TierCard({ isCurrent, isTrial, planCancelling, planValidUntil, planInte
   )
 }
 
-export default function ({ user }) {
+export default function ({ user, storage }) {
 
   const { displayNotification } = useContext(DashboardContext)
   const searchParams = useSearchParams()
@@ -117,6 +119,7 @@ export default function ({ user }) {
 
   const { notificationSettings } = user
 
+  console.log(storage)
   return (
     <>
       <Dialog open={showUpgrade} onOpenChange={setShowUpgrade}>
@@ -186,32 +189,35 @@ export default function ({ user }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <div className="">
-        {!IS_SELFHOST && (
-          <p className="text-gray-600">
-            To change your email or delete your account, <a className="text-primary" href={`mailto:${process.env.NEXT_PUBLIC_SUPPORT_EMAIL}`}>contact us</a>.
-          </p>
-        )}
-        <div className="mt-12 grid grid-cols-1 gap-12">
-          <div className="col-span-1">
-            <h2 className="text-lg font-semibold text-gray-900 ">User Details</h2>
-            <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <div className="sm:col-span-4 flex gap-3 items-center">
-                  <MailIcon size={16} className="text-primary"/>
-                  <span
-                    disabled
-                    autoComplete="email"
-                    className="text-gray-900 text-sm font-medium"
-                  >
-                    {user.email}
-                  </span>
-              </div>
+      <div className="p-5 sm:p-6 bg-white rounded-xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+          <div className="sm:col-span-1">
+            <div className="flex items-center gap-4">
+              <UserIcon size={48} className="text-white bg-primary p-3 rounded-full" />
+              <span className="text-gray-800 text-lg font-semibold">{user.email}</span>
             </div>
+            {!IS_SELFHOST && (
+              <p className="text-gray-600 text-sm/6 mt-4">
+                To change your email or delete your account, <a className="text-primary" href={`mailto:${process.env.NEXT_PUBLIC_SUPPORT_EMAIL}`}>contact us</a>.
+              </p>
+            )}
           </div>
-          <div className="col-span-1">
+          <div className="sm:col-span-1">
+            <h2 className="text-lg font-semibold text-gray-900 ">Storage</h2>
+            {storage && (
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-gray-600">{storage.storagePercent}% used</span>
+                  <span className="text-sm text-gray-600">
+                    {humanFileSize(storage.usedStorageBytes, true)} / {humanFileSize(storage.maxStorageBytes, true)}
+                  </span>
+                </div>
+                <Progress className="h-2" value={storage.storagePercent} />
+              </div>
+            )}
+          </div>
+          <div className="sm:col-span-2">
             <h2 className="text-lg font-semibold text-gray-900 ">Notifications</h2>
-            {/* <p className="mt-1 text-sm/6 text-gray-600">Choose how you receive notifications.</p> */}
-
             <div className="space-y-4 mt-4">
               <div className="flex items-center space-x-3">
                 <Checkbox id="transferDownloaded" defaultChecked={notificationSettings.transferDownloaded} onCheckedChange={handleCheckedChange("transferDownloaded")} />
@@ -234,7 +240,7 @@ export default function ({ user }) {
             </div>
           </div>
           {!IS_SELFHOST && (
-            <div className="col-span-full">
+            <div className="sm:col-span-full">
               <h2 className="text-lg font-semibold text-gray-900 ">Subscription</h2>
               <p className="mt-1 text-gray-600 text-sm/6">View and change your subscription details.</p>
               {/* {user.isTrial && (
@@ -259,7 +265,7 @@ export default function ({ user }) {
             </div>
           )}
         </div>
-        <div className="mt-4 sm:col-span-6 text-red-500 font-bold">
+        <div className="mt-4 sm:col-span-full text-red-500 font-bold">
           <button className="text-sm" onClick={handleLogout}>&larr; Logout</button>
         </div>
       </div>

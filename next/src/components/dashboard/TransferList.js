@@ -10,6 +10,8 @@ import { humanTimeUntil, parseTransferExpiryDate, sleep, tryCopyToClipboard } fr
 import BIcon from "../BIcon"
 import Link from "next/link"
 import { SelectedTransferContext } from "@/context/SelectedTransferProvider"
+import { Separator } from "../ui/separator"
+import { ArrowDownIcon, ArrowUpIcon, SendIcon } from "lucide-react"
 
 const Entry = ({ transfer }) => {
   const router = useRouter()
@@ -64,7 +66,7 @@ const Entry = ({ transfer }) => {
 
     }
     else {
-      isSelected ? router.replace(".") : router.push(`/app/${id}`)
+      isSelected ? router.replace(".") : router.push(hasTransferRequest ? `/app/received/${id}` : `/app/sent/${id}`)
     }
   }
 
@@ -104,18 +106,21 @@ const Entry = ({ transfer }) => {
   }, [formData])
 
   return (
-    <div onClick={handleClicked} className={`group text-start shadow-xs rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-5 py-4 group ${disabled ? "hover:cursor-default" : "hover:cursor-pointer hover:bg-gray-50"}`}>
+    <div onClick={handleClicked} className={`border border-gray-200 group text-start rounded-xl ${isSelected ? "bg-gray-100" : "bg-white"} px-5 py-4 group ${disabled ? "hover:cursor-default" : "hover:cursor-pointer hover:bg-gray-100"} shadow-xs`}>
       {hasTransferRequest && (
         <form method={"POST"} action={formData?.url} ref={formRef} className="hidden">
           <input hidden name="token" value={formData?.token ?? ""} readOnly />
         </form>
       )}
-      <div className="">
+      <div className="flex gap-4">
+        <div className="w-12 aspect-square flex items-center justify-center text-center bg-primary-500 text-white rounded-lg">
+          {hasTransferRequest ? <ArrowDownIcon/> : <ArrowUpIcon />}
+        </div>
         <div>
           <div className="flex">
             <h3 className={`text-lg font-bold mb-0.5 me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
             {hasTransferRequest && <div className="ms-1">
-              <span className="text-xs bg-gray-400 text-white font-semibold rounded-full px-1.5 py-0.5">Requested</span>
+              <span className="text-xs bg-gray-400 text-white font-semibold rounded-full px-1.5 py-0.5">Received</span>
             </div>}
           </div>
           <div className="text-sm text-gray-600 font-medium group-hover:hidden">
@@ -123,7 +128,7 @@ const Entry = ({ transfer }) => {
               {!finishedUploading ?
                 <><BIcon name={"cloud-slash"} /> Incomplete</>
                 :
-                <>{!hasTransferRequest ? <>Sent</> : <><BIcon name={"arrow-down"} /> Received</>} {files.length} file{files.length != 1 ? "s" : ""}</>
+                <>{files.length} file{files.length != 1 ? "s" : ""}</>
               }
             </span>
             {transfer.statistics.downloads.length > 1 ?
@@ -164,45 +169,18 @@ const Entry = ({ transfer }) => {
                 :
                 (
                   <>
-                    {/* {!transfer.hasTransferRequest && (
-                      <>
-                        <Link href={`/app/resume/${id}`} className="underline hover:text-primary">Resume Upload</Link>
-                        <BIcon name="dot" />
-                      </>
-                    )} */}
                     <button onClick={handleDelete} className="underline hover:text-destructive">Delete</button>
                   </>
                 )
             }
-
           </div>
         </div>
-        {/* <div className="flex items-center gap-2">
-          {
-            disabled ?
-              <Link onClick={handleDelete} className="text-sm text-red-500 bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50 hidden group-hover:inline-block">
-                <BIcon name={"trash"} />
-              </Link>
-              :
-              (
-                hasTransferRequest && finishedUploading ?
-                  <Link onClick={handleDownloadClicked} className={`font-medium text-sm px-2.5 py-1.5 rounded-lg ${transfer.statistics.downloads.length > 0 ? "hover:bg-gray-50 text-primary bg-white border hidden group-hover:inline-block" : "hover:bg-primary-light text-white bg-primary"}`}>
-                    Download {transfer.statistics.downloads.length > 0 && "Again"}
-                  </Link>
-                  :
-                  <Link onClick={handleCopyLinkClicked} className="text-sm text-primary bg-white border px-2.5 py-1.5 rounded-lg hover:bg-gray-50 hidden group-hover:inline-block">
-                    <BIcon name={"copy"} /> Copy Link
-                  </Link>
-              )
-          }
-        </div> */}
       </div>
     </div >
   )
 }
 
 export default function TransferList({ transfers }) {
-  const router = useRouter()
   return (
     <div className="">
       <div className={`grid grid-cols-1 gap-3`}>

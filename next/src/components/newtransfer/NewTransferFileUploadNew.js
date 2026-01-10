@@ -35,6 +35,8 @@ import { GlobalContext } from "@/context/GlobalContext";
 import BrandingToggle from "./BrandingToggle";
 import QRCode from "react-qr-code";
 import DynamicIsland from "./DynamicIsland";
+import { Switch } from "../ui/switch";
+import { Label } from "../ui/label";
 
 function AddedEmailField({ email, onAction }) {
   return (
@@ -50,6 +52,8 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
   const router = useRouter()
 
   const { openSignupDialog } = useContext(GlobalContext)
+
+  const payingUser = user && user.plan != "free"
 
   const [files, setFiles] = useState([
     // { name: "test.zip", size: 123152134523, type: "application/zip" },
@@ -81,7 +85,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   const emailRef = useRef(null)
   const [emailRecipients, setEmailRecipients] = useState([])
-  // const [uploadErrors, setUploadErrors] = useState([])
+
   const [errorMessage, setErrorMessage] = useState(null)
   const [showErrorMessage, setShowErrorMessage] = useState(false)
 
@@ -90,8 +94,12 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     setShowErrorMessage(true)
   }
 
+  // track what exiry time is selected, to change to quick transfer
+  const [selectedExpiryTime, setSelectedExpiryTime] = useState(payingUser ? EXPIRATION_TIMES[1].days : EXPIRATION_TIMES[0].days)
+  const quickTransferEnabled = selectedExpiryTime == "0"
+
   const [failed, setFailed] = useState(false)
-  const [tab, setTab] = useState(initialTab || "email")
+  const [tab, setTab] = useState(initialTab || (payingUser ? "email" : "link"))
 
   const small = useMemo(() => uploadingFiles || files.length == 0, [uploadingFiles, files])
   // useEffect(() => {
@@ -126,7 +134,6 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     const formData = new FormData(form)
     const name = formData.get("name")
     const description = formData.get("description")
-    const guestEmail = formData.get("guestEmail")
     const expiresInDays = formData.get("expiresInDays")
 
     const transferFiles = prepareTransferFiles(files)
@@ -139,7 +146,6 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
         description,
         expiresInDays,
         files: transferFiles,
-        guestEmail,
         brandProfileId,
         emails: (tab == "email" ? emailRecipients : [])
       })
@@ -298,7 +304,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   const handleViewTransferClick = e => {
     if (user) {
-      router.push(`/app/${transfer.id}`)
+      router.push(`/app/sent/${transfer.id}`)
     }
     else {
       openSignupDialog()
@@ -373,32 +379,25 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
   const rightSection = (
     <form onSubmit={handleSubmit} className={`border-l flex flex-col overflow-hidden bg-white`}>
       <div className="flex-none grid grid-cols-2 border-b">
-        {["email", "link"].map(key => (
+        {[
+          { key: "email", free: false },
+          { key: "link", free: true }
+        ].map(({ key, free }) => (
           <button
             type="button"
             onClick={() => setTab(key)}
             key={key}
-            className={`py-2 ${key == tab ? "font-medium text-primary bg-primary-50" : "text-gray-500 hover:bg-gray-50"}`}>
-            {capitalizeFirstLetter(key)}
+            disabled={!free && !payingUser}
+            className={`py-2 flex justify-center items-center gap-2 ${key == tab ? "font-medium text-primary bg-primary-50" : "text-gray-500 not-disable:hover:bg-gray-50"}`}>
+            {capitalizeFirstLetter(key)}{(free && !payingUser) && <span className="font-bold px-1 text-xs bg-white text-primary-500 rounded">FREE</span>}
           </button>
         ))}
         {/* <button className="py-2 font-medium text-primary bg-primary-50">Email</button>
             <button className="py-2 text-gray-500 hover:bg-gray-50">Link</button> */}
       </div>
       <div className={`flex-1 overflow-y-auto p-4 space-y-2 ${loaded ? "animate-fade-in" : "opacity-0 pointer-events-none"}`}>
-        {/* {!user && <>
-          <div>
-            <Input
-              placeholder="Your email"
-              type={"email"}
-              name="guestEmail"
-              required
-            />
-          </div>
-        </>} */}
         {tab == "email" && <>
           <div>
-            {/* <Label htmlFor="email">Recipients <span className="text-gray-400 font-normal text-xs leading-0">{emailRecipients.length > 0 ? (emailRecipients.length + " / " + getMaxRecipientsForPlan(user?.plan)) : ""}</span></Label> */}
             <div className="relative flex items-center">
               <Input
                 ref={emailRef}
@@ -422,7 +421,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
             )}
           </div>
         </>}
-        {tab != "quick" && <>
+        {!quickTransferEnabled && <>
           <div>
             <Input
               placeholder="Title"
@@ -449,63 +448,13 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
               </div>
             </div>
           </div>
-          {/* <div>
-                  <Select value={brandProfileId} onValueChange={setBrandProfileId}>
-                    <SelectTrigger size="sm">
-                      {
-                        brandProfile ?
-                          <>
-                            {brandProfile.iconUrl ?
-                              <Image alt="Brand Profile Icon" width={24} height={24} src={brandProfile.iconUrl} /> :
-                              <HexagonIcon className="w-[24px] h-[24px] p-0.5 rounded-lg border-2 border-dashed border-gray-400" />
-                            }
-                            <span className="text-sm font-medium text-gray-700">{brandProfile.name}</span>
-                          </>
-                          :
-                          <>
-                            <span className="text-sm text-gray-900 flex items-center gap-2"><PaintbrushIcon className="text-gray-900" /> Brand</span>
-                          </>
-                      }
-                    </SelectTrigger>
-                    <SelectContent align={"start"}>
-                      {brandProfiles && brandProfiles.length > 0
-                        ?
-                        [brandProfiles.map(profile => (
-                          <SelectItem
-                            key={profile.id}
-                            value={profile.id}>
-                            {profile.iconUrl ?
-                              <Image alt="Brand Profile Icon" width={24} height={24} src={profile.iconUrl} /> :
-                              <HexagonIcon className="w-[24px] h-[24px] p-0.5 rounded-lg border-2 border-dashed border-gray-400" />
-                            }
-                            <span className="text-sm font-medium text-gray-700">{profile.name}</span>
-                          </SelectItem>)
-                        ), <SelectItem key={"nonee"} value={null}>No brand profile</SelectItem>]
-                        :
-                        <SelectItem key={"none"} value={"none"} disabled>No brand profiles.</SelectItem>
-                      }
-                    </SelectContent>
-                  </Select>
-                </div> */}
-          {/* <div className="flex items-center gap-2">
-                  <Switch className={"peer"} id="removeAfterFirstDownload" defaultChecked={false} />
-                  <Label htmlFor="removeAfterFirstDownload" className="cursor-pointer text-gray-500 peer-data-[state=checked]:text-gray-800">
-                    Delete after first download
-                  </Label>
-                </div> */}
-          {/* <div className="flex items-center gap-2">
-                <Switch id="airplane-mode" className={"peer"} />
-                <Label className={`text-gray-500 peer-data-[state=checked]:text-gray-800`} htmlFor="airplane-mode">
-                  End-to-end encryption
-                </Label>
-              </div> */}
           <BrandingToggle brandProfiles={brandProfiles} brandProfileId={brandProfileId} setBrandProfileId={setBrandProfileId} />
         </>}
         {tab == "link" && <>
 
         </>}
-        {tab == "quick" && <>
-          <Alert>
+        {quickTransferEnabled && <>
+          <Alert className="min-w-0">
             {/* <InfoIcon /> */}
             <AlertTitle>
               Quick Transfer
@@ -517,28 +466,25 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
         </>}
       </div>
       <div className="flex-none p-2 flex items-center gap-2 --border-t">
-        {tab != "quick" ? <>
-          <span className="ms-auto text-sm text-gray-500">Expire in</span>
-          <Select id="expiresInDays" name="expiresInDays" defaultValue={EXPIRATION_TIMES[0].days}>
-            <SelectTrigger size="sm" className={"w-[8.5rem]"}>
-              <SelectValue placeholder="Expires" />
-            </SelectTrigger>
-            <SelectContent side="top">
-              {EXPIRATION_TIMES.map(item => (
-                <SelectItem
-                  key={item.days}
-                  value={item.days}
-                  disabled={!item[user?.plan || "free"]}>
-                  {/* remove the badge when its selected */}
-                  {item.period}{(!user || user.plan == "free") && item.free && <span className="font-bold px-1 text-xs bg-primary-100 text-primary-500 rounded">FREE</span>}
-                </SelectItem>)
-              )}
-            </SelectContent>
-          </Select>
-        </> : <>
-          <span className="ms-auto text-sm text-gray-500 me-1">Expires when tab is closed</span>
-        </>}
-
+        <span className="ms-auto text-sm text-gray-500">Expires after</span>
+        <Select value={selectedExpiryTime} onValueChange={e => {
+          setSelectedExpiryTime(e)
+        }} id="expiresInDays" name="expiresInDays" defaultValue={EXPIRATION_TIMES[0].days}>
+          <SelectTrigger size="sm" className={"w-[8.5rem]"}>
+            <SelectValue placeholder="Expires" />
+          </SelectTrigger>
+          <SelectContent side="top">
+            {EXPIRATION_TIMES.map(item => (
+              <SelectItem
+                key={item.days}
+                value={item.days}
+                disabled={!item[user?.plan || "free"]}>
+                {/* remove the badge when its selected */}
+                {item.period}{(!user || user.plan == "free") && item.free && <span className="font-bold px-1 text-xs bg-primary-100 text-primary-500 rounded">FREE</span>}
+              </SelectItem>)
+            )}
+          </SelectContent>
+        </Select>
         <Button disabled={tooLittleStorage} size={"sm"}>{tab == "email" ? <>Transfer <ArrowRightIcon /></> : <>Get Link <LinkIcon /></>} </Button>
       </div>
     </form>
@@ -575,7 +521,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
         leftSectionLowerBar={leftSectionLowerBar}
         showQuickLink={files.length == 0}
         quickLinkHref={isDashboard ? "/app/receive" : "/receive"}
-        quickLinkContent={"Receive Files"}
+        quickLinkContent={"Request Files"}
         showStartOverlay={showPickFiles}
         startOverlay={PickFiles}
         showEndOverlay={uploadingFiles}

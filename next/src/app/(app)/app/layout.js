@@ -29,7 +29,7 @@ export default async function DashboardLayout({ children }) {
     return redirect("/onboarding")
   }
 
-  const storage = await auth.user.getStorage()
+  // const storage = await auth.user.getStorage()
 
   return (
     <div>

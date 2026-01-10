@@ -5,10 +5,11 @@ import { useParams, useRouter } from "next/navigation"
 import { useContext, useMemo } from "react"
 import EmptySpace from "../elements/EmptySpace"
 import { DashboardContext } from "@/context/DashboardContext"
-import { tryCopyToClipboard } from "@/lib/utils"
+import { cn, tryCopyToClipboard } from "@/lib/utils"
 import { activateTransferRequest, deactivateTransferRequest, getTransferRequestUploadLink } from "@/lib/client/Api"
 import BIcon from "../BIcon"
 import Link from "next/link"
+import { Link2OffIcon, LinkIcon } from "lucide-react"
 
 const Entry = ({ transferRequest }) => {
   const router = useRouter()
@@ -58,7 +59,13 @@ const Entry = ({ transferRequest }) => {
 
   return (
     <div onClick={handleClicked} className={`hover:cursor-default group text-start shadow-xs rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-5 py-4 group`}>
-      <div className="">
+      <div className="flex gap-4">
+        <div className={cn(
+          "w-12 aspect-square flex items-center justify-center text-center text-white rounded-lg",
+          active ? "bg-primary-500" : "bg-gray-300"
+        )}>
+          {active ? <LinkIcon/> : <Link2OffIcon/>}
+        </div>
         <div>
           <h3 className={`text-lg font-bold mb-0.5 me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
           <div className="text-sm text-gray-600 font-medium group-hover:hidden">
@@ -67,7 +74,7 @@ const Entry = ({ transferRequest }) => {
                 active ?
                   (
                     transferRequest.receivedTransfersCount == 0 ?
-                      <><BIcon name={"hourglass-split"} /> Waiting for files...</>
+                      <>Request link is active</>
                       :
                       <><BIcon name={"arrow-down"} /> {transferRequest.receivedTransfersCount} transfer{transferRequest.receivedTransfersCount != 1 && "s"} received</>
                   )
@@ -127,11 +134,11 @@ export default function TransferRequestList({ transferRequests }) {
       {transferRequests.length == 0 && (
         <EmptySpace onClick={() => router.push("/app/new?dir=receive")} buttonText={"Create Request Link"} title={"Your request links will appear here"} subtitle={"You can view or revoke invdividual links."} />
       )}
-      <div className={`grid grid-cols-1 gap-2 mb-2`}>
+      <div className={`grid grid-cols-1 gap-3 mb-2`}>
         {activeRequests.map((transferRequest, index) => <Entry key={transferRequest.id} transferRequest={transferRequest} />)}
       </div>
-      {inactiveRequests.length > 0 && <h3 className="font-semibold mb-1 text-gray-500">Inactive Links</h3>}
-      <div className={`grid grid-cols-1 gap-2`}>
+      {inactiveRequests.length > 0 && <h3 className="font-semibold mb-1 text-white">Inactive Links</h3>}
+      <div className={`grid grid-cols-1 gap-3`}>
         {inactiveRequests.map((transferRequest, index) => <Entry key={transferRequest.id} transferRequest={transferRequest} />)}
       </div>
     </div>
