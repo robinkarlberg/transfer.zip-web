@@ -25,6 +25,7 @@ import GenericPage from "./GenericPage"
 import { YesNo } from "./YesNo"
 
 import logo from "@/img/icon.png"
+import BIcon from "../BIcon"
 
 export default function ({ user, transfer }) {
 
@@ -214,6 +215,19 @@ export default function ({ user, transfer }) {
                 <Image alt="Brand Profile Icon" className="rounded-full" width={32} height={32} src={transfer?.brandProfile?.iconUrl || logo} />
                 <span className="ms-3 text-xl font-bold text-gray-700">{transfer?.brandProfile?.name || "Transfer.zip"}</span>
               </div>
+              <div className="relative flex items-center text-sm -top-1 text-gray-600 select-none">
+                {transfer.statistics.downloads.length > 1 ?
+                  <span>{transfer.statistics.downloads.length} downloads<i className="bi bi-arrow-down-circle-fill ms-1"></i></span>
+                  :
+                  transfer.statistics.downloads.length == 1 ?
+                    <span>Downloaded<i className="bi bi-arrow-down-circle ms-1"></i></span>
+                    :
+                    transfer.statistics.views.length >= 1 ?
+                      <span>Viewed<i className="bi bi-eye ms-1"></i></span>
+                      :
+                      <span></span>
+                }
+              </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="col-span-full h-28">
@@ -275,8 +289,8 @@ export default function ({ user, transfer }) {
                   </label>
                 </div>
                 <div className="mt-2 max-w-52 min-w-40 w-fit">
-                    {dateInput}
-                  </div>
+                  {dateInput}
+                </div>
               </div>
             </div>
           </div>

@@ -8,8 +8,20 @@ import fastifySensible from '@fastify/sensible'
 import { SignJWT } from "jose"
 import { getPrivateKey, getPublicKey } from "./lib/keyManager.js"
 import { lookup } from "doc999tor-fast-geoip"
+import pino from "pino"
 
-const app = Fastify({ logger: true, requestTimeout: 0 })
+const PINO_CONF = {
+  level: "info",
+  formatters: {
+    level: (label) => {
+      return { level: label };
+    },
+  },
+}
+
+const logger = pino(PINO_CONF)
+
+const app = Fastify({ logger: PINO_CONF, requestTimeout: 0 })
 app.register(fastifySensible)
 
 let client
@@ -20,7 +32,7 @@ async function dbConnect() {
   const MONGODB_HOST = process.env.NODE_ENV == "development" ? "localhost" : "mongo"
   const MONGODB_URL = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@${MONGODB_HOST}:${process.env.MONGODB_HOST_PORT}`
 
-  console.log(`MONGODB_URL: mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:**************@${MONGODB_HOST}:${process.env.MONGODB_HOST_PORT}`)
+  logger.info(`MONGODB_URL: mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:**************@${MONGODB_HOST}:${process.env.MONGODB_HOST_PORT}`)
 
   if (!client) {
     client = new MongoClient(MONGODB_URL)
@@ -34,6 +46,7 @@ await dbConnect()
 const deleteExpiredTransfers = async () => {
   const currentTime = new Date()
 
+  logger.debug(`Deleting expired transfers...`)
   const expiredTransfers = await db.collection("transfers").find({
     $and: [
       { expiresAt: { $lt: currentTime } },
@@ -45,7 +58,7 @@ const deleteExpiredTransfers = async () => {
     await db.collection("transfers").deleteOne({ _id: transfer._id })
   }
 
-  console.log("[", currentTime, "]", "Deleted", expiredTransfers.length, "expired transfers...")
+  logger.info(`Deleted ${expiredTransfers.length} expired transfers`)
 }
 
 app.post("/sign", async (req, reply) => {
