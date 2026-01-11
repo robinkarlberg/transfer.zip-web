@@ -2,14 +2,13 @@
 
 import BIcon from "@/components/BIcon";
 import { humanFileSize, humanFileType } from "@/lib/transferUtils";
-import { Transition } from "@headlessui/react";
-import { ArrowDownIcon, ArrowRightIcon, CircleDashedIcon, FileIcon, FolderPlusIcon, HexagonIcon, LinkIcon, PaintbrushIcon, PlusIcon, RotateCcwIcon, SquircleIcon, XIcon } from "lucide-react";
+import { ArrowRightIcon, FileIcon, FolderPlusIcon, LinkIcon, PlusIcon, RotateCcwIcon, XIcon, ZapIcon } from "lucide-react";
 import { useContext, useMemo, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectTriggerFix, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { newTransfer } from "@/lib/client/Api";
 import { prepareTransferFiles, uploadFiles } from "@/lib/client/uploader";
 import { EXPIRATION_TIMES } from "@/lib/constants";
@@ -22,21 +21,14 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import Image from "next/image";
-import { getMaxRecipientsForPlan } from "@/lib/getMaxRecipientsForPlan";
-import Link from "next/link";
+  DialogTitle
+} from "@/components/ui/dialog";
 import { GlobalContext } from "@/context/GlobalContext";
+import Link from "next/link";
 import BrandingToggle from "./BrandingToggle";
-import QRCode from "react-qr-code";
 import DynamicIsland from "./DynamicIsland";
-import { Switch } from "../ui/switch";
-import { Label } from "../ui/label";
 
 function AddedEmailField({ email, onAction }) {
   return (
@@ -457,12 +449,18 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
           <Alert className="min-w-0">
             {/* <InfoIcon /> */}
             <AlertTitle>
-              Quick Transfer
+              Link expires when tab is closed.
             </AlertTitle>
             <AlertDescription>
-              Uses end-to-end encryption and files are not stored on our servers. The link expires instantly when the tab is closed.
+              This will create a temporary link for transfers. It uses end-to-end encryption and files are not stored on our servers. The link expires instantly when the tab is closed.
             </AlertDescription>
           </Alert>
+          {!payingUser && (
+            <button onClick={() => openSignupDialog(files)} type="button" className="w-full bg-purple-50 text-purple-600 rounded-lg p-2 px-3 flex justify-between hover:bg-purple-100">
+              <div className="flex items-center gap-2"><ZapIcon fill="currentColor" size={16} /> Keep download links for a year. </div>
+              <span>&rarr;</span>
+            </button>
+          )}
         </>}
       </div>
       <div className="flex-none p-2 flex items-center gap-2 --border-t">
