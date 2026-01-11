@@ -350,7 +350,7 @@ export default function QuickShareProgress({ isLoggedIn }) {
           }
           {!IS_SELFHOST && transferState != TRANSFER_STATE_FINISHED && (
             <Link
-              href={"/app/new"}
+              href={"/app"}
               onNavigate={e => {
                 sendEvent("quick_transfer_upsell_click", { is_logged_in: isLoggedIn })
                 if (!isLoggedIn) {

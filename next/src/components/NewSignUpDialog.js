@@ -67,7 +67,7 @@ export default function ({ open, setOpen, files, transfer }) {
             router.push("/app/new")
           }
           else {
-            router.push("/app")
+            router.push("/app/sent")
           }
         })
         .catch(() => console.log("pullAuth cancelled (catch)"))

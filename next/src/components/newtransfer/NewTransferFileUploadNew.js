@@ -29,6 +29,7 @@ import { GlobalContext } from "@/context/GlobalContext";
 import Link from "next/link";
 import BrandingToggle from "./BrandingToggle";
 import DynamicIsland from "./DynamicIsland";
+import { FileContext } from "@/context/FileProvider";
 
 function AddedEmailField({ email, onAction }) {
   return (
@@ -43,15 +44,10 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   const router = useRouter()
 
+  const { files, setFiles } = useContext(FileContext)
   const { openSignupDialog } = useContext(GlobalContext)
 
   const payingUser = user && user.plan != "free"
-
-  const [files, setFiles] = useState([
-    // { name: "test.zip", size: 123152134523, type: "application/zip" },
-    // { name: "file.png", size: 123152134523, type: "image/png" },
-    // { name: "loandasodnasdaosdasd asdasd 12-12-12.zip", size: 94737 },
-  ])
 
   const [uploadProgressMap, setUploadProgressMap] = useState(null)
   const [finished, setFinished] = useState(false)
@@ -102,73 +98,76 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   const handleSubmit = async e => {
     e.preventDefault()
-    const form = e.target;
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
+
+    if (quickTransferEnabled) {
+      router.push("/quick/progress#S", { scroll: false })
     }
+    else {
+      const form = e.target;
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
 
-    if (files.length === 0)
-      return displayErrorMessage({
-        title: "Oops.",
-        body: "Add some files first ;)"
-      })
+      if (files.length === 0)
+        return displayErrorMessage({
+          title: "Oops.",
+          body: "Add some files first ;)"
+        })
 
-    if (tab == "email" && emailRecipients.length === 0)
-      return displayErrorMessage({
-        title: "Oops.",
-        body: "You did not add any recipient email!"
-      })
+      if (tab == "email" && emailRecipients.length === 0)
+        return displayErrorMessage({
+          title: "Oops.",
+          body: "You did not add any recipient email!"
+        })
 
-    setFilesToUpload(files) // Just to be safe
-    setUploadingFiles(true)
+      setFilesToUpload(files) // Just to be safe
+      setUploadingFiles(true)
 
-    const formData = new FormData(form)
-    const name = formData.get("name")
-    const description = formData.get("description")
-    const expiresInDays = formData.get("expiresInDays")
+      const formData = new FormData(form)
+      const name = formData.get("name")
+      const description = formData.get("description")
+      const expiresInDays = formData.get("expiresInDays")
 
-    const transferFiles = prepareTransferFiles(files)
+      const transferFiles = prepareTransferFiles(files)
+      // response: { idMap: [{ tmpId, id }, ...] } - what your API returned
 
-    // response: { idMap: [{ tmpId, id }, ...] } - what your API returned
+      try {
+        const { transfer, idMap } = await newTransfer({
+          name,
+          description,
+          expiresInDays,
+          files: transferFiles,
+          brandProfileId,
+          emails: (tab == "email" ? emailRecipients : [])
+        })
 
-    try {
-      const { transfer, idMap } = await newTransfer({
-        name,
-        description,
-        expiresInDays,
-        files: transferFiles,
-        brandProfileId,
-        emails: (tab == "email" ? emailRecipients : [])
-      })
-
-      const success = await uploadFiles(files, idMap, transfer,
-        progress => {
-          setUploadProgressMap(progress)
-        },
-        fatalErr => {
-          console.error("FATAL:", fatalErr)
-          setFailed(true)
-        },
-        err => {
-          console.error(err)
-        }
-      )
-      setTransfer(transfer)
+        const success = await uploadFiles(files, idMap, transfer,
+          progress => {
+            setUploadProgressMap(progress)
+          },
+          fatalErr => {
+            console.error("FATAL:", fatalErr)
+            setFailed(true)
+          },
+          err => {
+            console.error(err)
+          }
+        )
+        setTransfer(transfer)
+      }
+      catch (err) {
+        setFailed(true)
+        displayErrorMessage({
+          title: "Error",
+          body: err.message
+        })
+        console.error(err)
+      }
+      finally {
+        setFinished(true)
+      }
     }
-    catch (err) {
-      setFailed(true)
-      displayErrorMessage({
-        title: "Error",
-        body: err.message
-      })
-      console.error(err)
-    }
-    finally {
-      setFinished(true)
-    }
-    // TODO: only when authenticated
-    // router.replace(`/app/${transfer.id}`)
   }
 
   const handleFileInputChange = (e) => {
@@ -263,8 +262,6 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
         return
       }
     }
-
-
 
     // Basic email validation regex pattern
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -373,11 +370,16 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
       <div className="flex-none grid grid-cols-2 border-b">
         {[
           { key: "email", free: false },
-          { key: "link", free: true }
-        ].map(({ key, free }) => (
+          { key: "link", free: true, supportsQuickTransfer: true }
+        ].map(({ key, free, supportsQuickTransfer }) => (
           <button
             type="button"
-            onClick={() => setTab(key)}
+            onClick={() => {
+              if (!supportsQuickTransfer && selectedExpiryTime == "0") {
+                setSelectedExpiryTime(EXPIRATION_TIMES[1].days)
+              }
+              setTab(key)
+            }}
             key={key}
             disabled={!free && !payingUser}
             className={`py-2 flex justify-center items-center gap-2 ${key == tab ? "font-medium text-primary bg-primary-50" : "text-gray-500 not-disable:hover:bg-gray-50"}`}>
@@ -446,19 +448,24 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
         </>}
         {quickTransferEnabled && <>
-          <Alert className="min-w-0">
-            {/* <InfoIcon /> */}
-            <AlertTitle>
-              Link expires when tab is closed.
-            </AlertTitle>
-            <AlertDescription>
-              This will create a temporary link for transfers. It uses end-to-end encryption and files are not stored on our servers. The link expires instantly when the tab is closed.
-            </AlertDescription>
-          </Alert>
+          {/* "w-0 min-w-full" prevents the box from stretching the parent */}
+          <div className="p-4 ring-1 ring-inset text-gray-800 ring-gray-200 rounded-lg w-0 min-w-full">
+            <p className="font-semibold">Link expires when tab is closed.</p>
+            <p className="mt-1 text-sm text-gray-600">
+              This will create a temporary link for transfers. It uses end-to-end encryption and files are not stored on our servers.
+            </p>
+          </div>
           {!payingUser && (
-            <button onClick={() => openSignupDialog(files)} type="button" className="w-full bg-purple-50 text-purple-600 rounded-lg p-2 px-3 flex justify-between hover:bg-purple-100">
-              <div className="flex items-center gap-2"><ZapIcon fill="currentColor" size={16} /> Keep download links for a year. </div>
-              <span>&rarr;</span>
+            <button onClick={() => openSignupDialog(files)} type="button" className="w-full bg-purple-50 text-purple-600 rounded-lg p-3 px-4 hover:bg-purple-100">
+              <div className="flex justify-between">
+                <div className="flex items-center gap-2">Keep download links for a year. </div>
+                <span>&rarr;</span>
+              </div>
+              <div className="mt-1 text-start text-sm text text-purple-500">
+                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Unlimited transfers</p>
+                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Send files by email</p>
+                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Starts at $6/mo</p>
+              </div>
             </button>
           )}
         </>}
@@ -466,8 +473,11 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
       <div className="flex-none p-2 flex items-center gap-2 --border-t">
         <span className="ms-auto text-sm text-gray-500">Expires after</span>
         <Select value={selectedExpiryTime} onValueChange={e => {
+          if (e == "0") {
+            setTab("link")
+          }
           setSelectedExpiryTime(e)
-        }} id="expiresInDays" name="expiresInDays" defaultValue={EXPIRATION_TIMES[0].days}>
+        }} id="expiresInDays" name="expiresInDays">
           <SelectTrigger size="sm" className={"w-[8.5rem]"}>
             <SelectValue placeholder="Expires" />
           </SelectTrigger>
@@ -478,7 +488,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
                 value={item.days}
                 disabled={!item[user?.plan || "free"]}>
                 {/* remove the badge when its selected */}
-                {item.period}{(!user || user.plan == "free") && item.free && <span className="font-bold px-1 text-xs bg-primary-100 text-primary-500 rounded">FREE</span>}
+                {item.period}{!payingUser && item.free && <span className="font-bold px-1 text-xs bg-primary-100 text-primary-500 rounded">FREE</span>}
               </SelectItem>)
             )}
           </SelectContent>

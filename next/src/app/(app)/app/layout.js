@@ -38,10 +38,8 @@ export default async function DashboardLayout({ children }) {
       <div className="h-screen flex flex-col overflow-auto relative">
         <ApplicationProvider>
           <DashboardProvider>
-            <SelectedTransferProvider>
-              {children}
-              <FloatingBar user={auth.user.friendlyObj()} />
-            </SelectedTransferProvider>
+            {children}
+            <FloatingBar user={auth.user.friendlyObj()} />
           </DashboardProvider>
         </ApplicationProvider>
       </div>
