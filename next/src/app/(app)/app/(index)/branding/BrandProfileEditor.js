@@ -86,33 +86,6 @@ export default function ({ initialProfile, isNew }) {
   }
 
   const side = <div className="flex gap-2">
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button className={"text-black"} variant="outline" disabled={loading}>
-          {deleting && <Spinner />} Delete
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete Brand Profile</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete this brand profile? This action cannot be undone.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DialogClose>
-          <Button
-            variant="destructive"
-            disabled={loading}
-            onClick={handleDelete}
-          >
-            {deleting && <Spinner />} Delete
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
     <Button onClick={handleSave} disabled={loading}>
       {saving && <Spinner />} Save
     </Button>
@@ -244,6 +217,35 @@ export default function ({ initialProfile, isNew }) {
               {backgroundImageUrl != null && <Button className={"w-10"} variant={"outline"} onClick={() => setBackgroundImageUrl(null)}><BIcon name={"x-lg"} /></Button>}
             </div>
           </div>
+        </div>
+        <div className="mt-4 flex flex-row-reverse">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className={"text-white text-shadow-xs"} variant="link" disabled={loading}>
+                {deleting && <Spinner />} Delete
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Delete Brand Profile</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this brand profile? This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button
+                  variant="destructive"
+                  disabled={loading}
+                  onClick={handleDelete}
+                >
+                  {deleting && <Spinner />} Delete
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </GenericPage >
     </>

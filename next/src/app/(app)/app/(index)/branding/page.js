@@ -23,7 +23,7 @@ export default async function () {
     <GenericPage title={"Branding"} side={side}>
       {
         profiles.length > 0 ?
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {profiles.map(profile => {
               const { id, name, iconUrl, backgroundUrl } = profile.friendlyObj()
               return (

@@ -15,16 +15,16 @@ export async function POST(req, { params }) {
   // const ownedGuestTransfers = await Transfer.find({ guestEmail: { $eq: magicLink.user.email } })
 
   // Update guest transfers with emails of this user, so they show up in the dashboard
-  await Transfer.updateMany(
-    {
-      guestEmail: { $eq: magicLink.user.email },
-      $or: [
-        { author: { $exists: false } },
-        { author: null }
-      ]
-    },
-    { $set: { author: magicLink.user._id } }
-  )
+  // await Transfer.updateMany(
+  //   {
+  //     guestEmail: { $eq: magicLink.user.email },
+  //     $or: [
+  //       { author: { $exists: false } },
+  //       { author: null }
+  //     ]
+  //   },
+  //   { $set: { author: magicLink.user._id } }
+  // )
 
   const session = new Session({ user: magicLink.user._id })
   await session.save()

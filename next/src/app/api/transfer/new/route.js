@@ -6,7 +6,7 @@ import mongoose from 'mongoose'
 import { NextResponse } from 'next/server'
 import crypto from "crypto"
 import { addMilliscondsToCurrentTime } from '@/lib/utils'
-import { IS_DEV, resp } from '@/lib/server/serverUtils'
+import { resp } from '@/lib/server/serverUtils'
 import { getConf } from '@/lib/server/config'
 import { toLargeRegion } from '@/lib/server/region'
 import { workerGeoSlow } from '@/lib/server/workerApi'
@@ -18,6 +18,86 @@ import {
   isDisposableEmailDomain,
 } from 'disposable-email-domains-js';
 import { RateLimiterMongo } from 'rate-limiter-flexible'
+import { z } from 'zod'
+
+const fileSchema = z.object({
+  tmpId: z.string(),
+  name: z.string(),
+  size: z.number(),
+  type: z.string().optional(),
+})
+
+const baseTransferSchema = z.object({
+  files: z.array(fileSchema).min(1, "No files provided")
+})
+
+// Schema for uploads to an existing transfer request (guest uploads)
+const transferRequestUploadSchema = baseTransferSchema.extend({
+  transferRequestSecretCode: z.string().min(1),
+  emails: z.array(z.string()).max(0, "Cannot send emails when uploading to a request").optional()
+})
+
+// Schema for regular authenticated transfers
+const regularTransferSchema = baseTransferSchema.extend({
+  name: z.string().nullable().optional(),
+  description: z.string().max(400, "Message too long").nullable().optional(),
+  expiresInDays: z.number().int().min(1).max(365),
+  emails: z.array(z.string().email()).optional(),
+  brandProfileId: z.string().refine(
+    val => !val || mongoose.Types.ObjectId.isValid(val),
+    "Invalid brandProfileId"
+  ).optional(),
+})
+
+/**
+ * Validates transfer input and checks authorization
+ * @returns {{ data, transferRequest, error, status }}
+ */
+const validateAndAuthorize = async (body, auth) => {
+  const isTransferRequestUpload = !!body.transferRequestSecretCode
+
+  // Parse with appropriate schema
+  const schema = isTransferRequestUpload ? transferRequestUploadSchema : regularTransferSchema
+  const parsed = schema.safeParse(body)
+
+  if (!parsed.success) {
+    return { error: parsed.error.message, status: 400 }
+  }
+
+  const data = parsed.data
+
+  if (isTransferRequestUpload) {
+    // Validate transfer request exists
+    const transferRequest = await TransferRequest.findOne({
+      secretCode: data.transferRequestSecretCode
+    }).populate('brandProfile')
+
+    if (!transferRequest) {
+      return { error: "Transfer request not found", status: 404 }
+    }
+
+    return { data, transferRequest }
+  }
+  else {
+    // Regular transfer - requires paid plan
+    const plan = auth?.user?.getPlan()
+    if (!plan || plan === "free") {
+      return { error: "Subscription required", status: 401 }
+    }
+
+    // Check expiration time is allowed for user's plan
+    const expirationTimeEntry = EXPIRATION_TIMES.find(t => t.days === data.expiresInDays)
+    if (!expirationTimeEntry) {
+      return { error: "Invalid expiration time", status: 400 }
+    }
+
+    if (expirationTimeEntry.pro && plan !== "pro") {
+      return { error: "Pro plan required for this expiration time", status: 401 }
+    }
+
+    return { data, transferRequest: null }
+  }
+}
 
 /**
  * 
@@ -44,124 +124,32 @@ const getRateLimiter = (conn) => {
 export async function POST(req) {
   try {
     const conn = await dbConnect()
-    const { name, description, expiresInDays, transferRequestSecretCode, files, emails, brandProfileId, guestEmail } = await req.json()
+    const body = await req.json()
 
-    let auth
-    try {
-      auth = await useServerAuth()
-      // if (!transferRequestSecretCode && auth.user.getPlan() === "free") {
-      //   const fakeObjectIdHex = new mongoose.Types.ObjectId().toHexString()
-      //   return NextResponse.json(resp({ transfer: { id: fakeObjectIdHex, name, description, emails, brandProfileId }, error: "at least buy a plan if you're doing cybercrime lil bro" }))
-      // }
-    }
-    catch (err) {
-      // No auth, it's ok if it is for a transferRequest
+    // Get auth (optional - guest uploads via transfer request don't require auth)
+    const auth = await useServerAuth().catch(() => null)
+
+    // Validate input and check authorization
+    const { data, transferRequest, error, status } = await validateAndAuthorize(body, auth)
+    if (error) {
+      return NextResponse.json(resp(error), { status })
     }
 
-    const xForwardedFor = process.env.NODE_ENV === "development" ? "127.0.0.1" : req.headers.get("x-forwarded-for")
+    const { name, description, expiresInDays, files, emails, brandProfileId } = data
 
-    const checkAuth = async () => {
-      const plan = auth?.user?.getPlan()
-
-      if ((!plan || plan == "free") && !transferRequestSecretCode) {
-        if (IS_DEV) console.log("Unauthorized: no plan, guestEmail, or transferRequestSecretCode")
-        return { authorized: false }
-      }
-
-      // if (!plan && guestEmail) {
-      //   if (guestEmail.includes('+')) {
-      //     if (IS_DEV) console.log("Unauthorized: plus addressing not allowed for emails")
-      //     return { authorized: false, reason: "No plus-characters in the email are not allowed without an account. Please sign up to use plus-addresses." }
-      //   }
-      //   if (isDisposableEmail(guestEmail)) {
-      //     if (IS_DEV) console.log("Unauthorized: disposable email not allowed")
-      //     return { authorized: false, reason: "Disposable emails are not allowed without an account. Please sign up to use disposable emails." }
-      //   }
-      // }
-
-      const expirationTimeEntry = EXPIRATION_TIMES.find(time => time.days == expiresInDays)
-      if (!expirationTimeEntry) {
-        if (IS_DEV) console.log("Unauthorized: no expiration time entry found for days:", expiresInDays)
-        return { authorized: false }
-      }
-
-      // if (!transferRequestSecretCode && (!plan || plan == "free")) {
-      //   const rateLimiter = getRateLimiter(conn)
-      //   try {
-      //     await rateLimiter.consume(xForwardedFor, 1)
-      //   }
-      //   catch (err) {
-      //     return { authorized: false, reason: "You can send 5 transfers every 18 hours, please sign up for a plan to send more." }
-      //   }
-      //   try {
-      //     await rateLimiter.consume(auth?.user?.email || guestEmail, 1)
-      //   }
-      //   catch (err) {
-      //     return { authorized: false, reason: "You can send 5 transfers every 18 hours, please sign up for a plan to send more." }
-      //   }
-      // }
-
-      // if (expirationTimeEntry.starter && (plan != "starter" && plan != "pro")) {
-      //   if (IS_DEV) console.log("Unauthorized: starter plan required but user has plan:", plan)
-      //   return { authorized: false }
-      // }
-
-      if (!expirationTimeEntry.starter && expirationTimeEntry.pro && (plan != "pro") && !transferRequestSecretCode) {
-        if (IS_DEV) console.log("Unauthorized: pro plan required but user has plan:", plan)
-        return { authorized: false }
-      }
-
-      return { authorized: true }
-    }
-
-    if (!expiresInDays) {
-      return NextResponse.json(resp("expiresInDays not provided"), { status: 400 })
-    }
-
-    if (expiresInDays < 1 || expiresInDays > 365) {
-      return NextResponse.json(resp("expiresInDays must be between 1 and 365 (inclusive)"), { status: 400 })
-    }
-
-    if ((name != null && typeof name !== "string") || (description != null && typeof description !== "string")) {
-      return NextResponse.json(resp("name and description must be strings"), { status: 400 })
-    }
-
-    if (description && description.length > 2000) {
-      return NextResponse.json(resp("Message too long."), { status: 400 })
-    }
-
-    if (emails && !Array.isArray(emails)) {
-      return NextResponse.json(resp("emails must be an array"), { status: 400 })
-    }
-
-    if (transferRequestSecretCode && emails && emails.length > 0) {
-      return NextResponse.json(resp("cannot send emails when uploading to a request"), { status: 400 })
-    }
-
-    const checkedAuth = await checkAuth()
-    if (!checkedAuth.authorized) {
-      return NextResponse.json(resp(checkedAuth.reason || "Unauthorized"), { status: 401 })
-    }
-
+    // Validate brand profile ownership (only for regular transfers)
     let brandProfile
-    if (brandProfileId) {
-      if (!mongoose.Types.ObjectId.isValid(brandProfileId)) {
-        return NextResponse.json(resp("Invalid brandProfileId"), { status: 400 })
-      }
+    if (brandProfileId && !transferRequest) {
       brandProfile = await BrandProfile.findOne({ _id: brandProfileId, author: auth.user._id })
       if (!brandProfile) {
         return NextResponse.json(resp("Brand profile not found"), { status: 404 })
       }
     }
 
-    if (!files || files.length === 0) {
-      return NextResponse.json(resp("No files provided?"), { status: 400 })
-    }
+    // Transfer request uploads default to 14 days expiration
+    const effectiveExpiresInDays = transferRequest ? 14 : expiresInDays
 
-    let transferRequest
-    if (transferRequestSecretCode) {
-      transferRequest = await TransferRequest.findOne({ secretCode: transferRequestSecretCode }).populate('brandProfile')
-    }
+    const xForwardedFor = process.env.NODE_ENV === "development" ? "127.0.0.1" : req.headers.get("x-forwarded-for")
 
     // We ensure to create new keys for every transfer.
     // Encryption keys are used when writing to disk, not buckets
@@ -183,10 +171,9 @@ export async function POST(req) {
     const transfer = new Transfer({
       transferRequest: transferRequest ? transferRequest._id : undefined,
       author: auth ? auth.user._id : undefined,
-      guestEmail: guestEmail,
       name: transferRequest ? transferRequest.name : name,
-      description,
-      expiresAt: new Date(addMilliscondsToCurrentTime(1000 * 60 * 60 * 24 * expiresInDays)),
+      description: transferRequest ? undefined : description,
+      expiresAt: new Date(addMilliscondsToCurrentTime(1000 * 60 * 60 * 24 * effectiveExpiresInDays)),
       encryptionKey,
       encryptionIV,
       files: transferFiles,

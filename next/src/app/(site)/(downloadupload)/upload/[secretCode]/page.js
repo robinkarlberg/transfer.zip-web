@@ -9,6 +9,7 @@ import Features1 from "@/components/Features1";
 import TestimonialCloud from "@/components/TestimonialCloud";
 import FAQ from "@/components/FAQ";
 import Image from "next/image";
+import NewTransferFileUploadForRequest from "@/components/newtransfer/NewTransferFileUploadForRequest";
 
 export default async function ({ params }) {
   const { secretCode } = await params
@@ -35,15 +36,7 @@ export default async function ({ params }) {
             src={brandProfile.backgroundUrl}
           />
         )}
-        <div className={`bg-white backdrop-blur-sm rounded-2xl border shadow-xl w-full flex flex-col max-w-80`}>
-          <div className="p-6">
-            {/* <h1 className="text-3xl font-semibold tracking-tight text-gray-900 text-start mb-4">You got files!</h1> */}
-            <h2 className="font-bold text-xl/8 text-gray-800">{transferRequest.name}</h2>
-            <p className="text-gray-600">{transferRequest.description || "No description"}</p>
-          </div>
-          <hr className="my-2 mx-6" />
-          <UploadArea />
-        </div>
+        <NewTransferFileUploadForRequest brandProfile={brandProfile.friendlyObj()} transferRequest={transferRequest.friendlyObj()} />
       </div>
       {(!IS_SELFHOST && !brandProfile) && (
         <>

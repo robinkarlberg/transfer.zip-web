@@ -63,7 +63,8 @@
     "stripe": "^18.3.0",
     "tailwind-merge": "^3.3.1",
     "tooltip": "^1.6.1",
-    "tus-js-client": "^4.3.1"
+    "tus-js-client": "^4.3.1",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

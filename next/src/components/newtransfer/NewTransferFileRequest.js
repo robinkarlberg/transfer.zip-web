@@ -198,16 +198,6 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
         ))}
       </div>
       <div className={`flex-1 overflow-y-auto p-4 space-y-2 ${loaded ? "animate-fade-in" : "opacity-0 pointer-events-none"}`}>
-        {!user && <>
-          <div>
-            <Input
-              placeholder="Your email"
-              type={"email"}
-              name="guestEmail"
-              required
-            />
-          </div>
-        </>}
         {tab == "email" && <>
           <div>
             {/* <Label htmlFor="email">Recipients <span className="text-gray-400 font-normal text-xs leading-0">{emailRecipients.length > 0 ? (emailRecipients.length + " / " + getMaxRecipientsForPlan(user?.plan)) : ""}</span></Label> */}
