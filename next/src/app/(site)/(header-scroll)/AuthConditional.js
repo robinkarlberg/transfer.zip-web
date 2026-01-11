@@ -2,13 +2,7 @@ import { useServerAuth } from "@/lib/server/wrappers/auth"
 import { Suspense } from "react"
 
 export async function Conditional({ auth, noauth }) {
-  let _auth
-  try {
-    _auth = await useServerAuth()
-  }
-  catch (err) {
-    // cookie is removed or token not present
-  }
+  const _auth = await useServerAuth()
 
   return (
     _auth ?

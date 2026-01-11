@@ -9,7 +9,11 @@ import SentEmail from "@/lib/server/mongoose/models/SentEmail";
 import { EMAILS_PER_DAY_LIMIT, getMaxRecipientsForPlan } from "@/lib/getMaxRecipientsForPlan";
 
 export async function POST(req) {
-  const { user } = await useServerAuth()
+  const auth = await useServerAuth()
+  if (!auth) {
+    return NextResponse.json(resp("Unauthorized"), { status: 401 })
+  }
+  const { user } = auth
 
   const { name, description, emails, brandProfileId } = await req.json()
 

@@ -127,7 +127,7 @@ export async function POST(req) {
     const body = await req.json()
 
     // Get auth (optional - guest uploads via transfer request don't require auth)
-    const auth = await useServerAuth().catch(() => null)
+    const auth = await useServerAuth()
 
     // Validate input and check authorization
     const { data, transferRequest, error, status } = await validateAndAuthorize(body, auth)

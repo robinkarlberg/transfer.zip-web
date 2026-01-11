@@ -10,7 +10,7 @@ export async function useServerAuthServerAction() {
   const token = cookieStore.get('token')?.value;
 
   if (!token || typeof token !== 'string') {
-    throw new Error("No token provided");
+    return null;
   }
 
   await dbConnect();
@@ -19,7 +19,7 @@ export async function useServerAuthServerAction() {
 
   if (!session || !session.user) {
     // cookieStore.delete("token")
-    throw new Error("Invalid session");
+    return null;
   }
 
   return {

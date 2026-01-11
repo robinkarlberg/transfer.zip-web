@@ -16,6 +16,9 @@ export async function POST(req, { params }) {
   }
 
   const auth = await useServerAuth();
+  if (!auth) {
+    return NextResponse.json(resp('Unauthorized'), { status: 401 });
+  }
   const transfer = await Transfer.findOne({ _id: transferId, author: auth.user._id }).populate('brandProfile');
 
   if (!transfer) {

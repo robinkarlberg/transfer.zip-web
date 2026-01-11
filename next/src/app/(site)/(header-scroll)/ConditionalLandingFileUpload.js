@@ -3,13 +3,7 @@ import BrandProfile from "@/lib/server/mongoose/models/BrandProfile"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
 
 export default async function ConditionalLandingFileUpload({  }) {
-  let auth
-  try {
-    auth = await useServerAuth()
-  }
-  catch (err) {
-    // cookie is removed or token not present
-  }
+  const auth = await useServerAuth()
 
   if (!auth || auth.user.getPlan() === "free") {
     return <NewTransferFileUploadNew loaded={true} />

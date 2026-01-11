@@ -3,16 +3,15 @@ import { useServerAuth } from "@/lib/server/wrappers/auth"
 import { NextResponse } from "next/server"
 
 export async function GET() {
-  try {
-    const auth = await useServerAuth()
+  const auth = await useServerAuth()
 
-    return NextResponse.json(resp({
-      user: auth.user.friendlyObj()
-    }))
-  }
-  catch {
+  if (!auth) {
     return NextResponse.json(resp({
       user: null
     }))
   }
+
+  return NextResponse.json(resp({
+    user: auth.user.friendlyObj()
+  }))
 }

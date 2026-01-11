@@ -17,11 +17,8 @@ export const metadata = {
 };
 
 export default async function DashboardLayout({ children }) {
-  let auth;
-  try {
-    auth = await useServerAuth();
-  } catch (error) {
-    // console.error("Error during authentication:", error);
+  const auth = await useServerAuth();
+  if (!auth) {
     return redirect("/signin");
   }
 

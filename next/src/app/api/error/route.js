@@ -12,13 +12,9 @@ export async function POST(req) {
   delete payload._id
   delete payload.user
 
-  let auth
-  try {
-    auth = await useServerAuth()
+  const auth = await useServerAuth()
+  if (auth) {
     payload.user = auth.user._id
-  }
-  catch {
-    // no auth
   }
 
   const error = new Error(payload)

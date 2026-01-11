@@ -5,11 +5,8 @@ import { doesUserHaveFreeTrial } from "@/lib/server/serverUtils";
 import { cookies } from "next/headers";
 
 export default async function () {
-  let auth
-  try {
-    auth = await useServerAuth()
-  }
-  catch (err) {
+  const auth = await useServerAuth()
+  if (!auth) {
     return redirect("/signin")
   }
 

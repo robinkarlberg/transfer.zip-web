@@ -7,7 +7,11 @@ import {
 } from "@/app/api/brandprofile/brandProfileUtils";
 
 export async function POST(req) {
-  const { user } = await useServerAuth();
+  const auth = await useServerAuth();
+  if (!auth) {
+    return NextResponse.json(resp("Unauthorized"), { status: 401 });
+  }
+  const { user } = auth;
 
   if(user.getPlan() != "pro") return NextResponse.json(resp("User needs to upgrade."), { status: 409 });
 

@@ -1,3 +1,4 @@
+import { ArrowDownIcon, LinkIcon, SettingsIcon, ToggleRightIcon } from "lucide-react"
 import BIcon from "./BIcon"
 import Link from 'next/link'
 
@@ -5,14 +6,14 @@ const features = [
   {
     name: 'Shareable & Embeddable',
     description: 'Easily place upload links on your site or share them through email and social media.',
-    icon: "arrow-down",
+    icon: LinkIcon,
     cta: "Easily Receive Files",
     href: "/signin"
   },
   {
     name: 'Complete Control',
     description: "You can disable or re-enable your personal links at any time. Create as many links as you desire.",
-    icon: "toggle-on",
+    icon: SettingsIcon,
     cta: "Create Your First Link",
     href: "/signin"
   },
@@ -42,8 +43,8 @@ export default function Features2() {
             {features.map((feature) => (
               <div key={feature.name} className="relative pl-16">
                 <dt className="text-lg font-bold text-gray-900">
-                  <div className="absolute left-0 top-0 flex size-10 items-center justify-center rounded-lg bg-primary">
-                    <BIcon center name={feature.icon} aria-hidden="true" className="size-6 text-white" />
+                  <div className="absolute left-0 top-0 flex size-10 items-center justify-center rounded-lg bg-primary text-white">
+                    <feature.icon size={16}/>
                   </div>
                   {feature.name}
                 </dt>

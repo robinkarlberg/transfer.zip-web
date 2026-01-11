@@ -10,7 +10,11 @@ export async function POST(req) {
     return NextResponse.json(resp("Invalid tier. Tier must be 'pro'."), { status: 400 })
   }
 
-  const { user } = await useServerAuth()
+  const auth = await useServerAuth()
+  if (!auth) {
+    return NextResponse.json(resp("Unauthorized"), { status: 401 })
+  }
+  const { user } = auth
 
   if (user.getPlan() == "free") {
     return NextResponse.json(resp("User is on free plan..."), { status: 409 })

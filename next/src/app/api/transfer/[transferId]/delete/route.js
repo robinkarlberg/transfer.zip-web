@@ -8,7 +8,11 @@ import { NextResponse } from "next/server";
 export async function POST(req, { params }) {
   const { transferId } = await params
 
-  const { user } = await useServerAuth()
+  const auth = await useServerAuth()
+  if (!auth) {
+    return NextResponse.json(resp("Unauthorized"), { status: 401 })
+  }
+  const { user } = auth
 
   // Pull the document first
   const transfer = await Transfer.findById(transferId)

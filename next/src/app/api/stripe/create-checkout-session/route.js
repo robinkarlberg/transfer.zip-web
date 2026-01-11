@@ -23,7 +23,11 @@ export async function POST(req) {
       ? process.env.STRIPE_SUB_PRO_PRICE_YEARLY_ID
       : process.env.STRIPE_SUB_PRO_PRICE_ID)
 
-  const { user } = await useServerAuth()
+  const auth = await useServerAuth()
+  if (!auth) {
+    return NextResponse.json(resp("Unauthorized"), { status: 401 })
+  }
+  const { user } = auth
   console.log("create-checkout-session:", user.email)
 
   const stripe = getStripe()

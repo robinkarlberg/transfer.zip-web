@@ -4,7 +4,11 @@ import { useServerAuth } from "@/lib/server/wrappers/auth";
 import { NextResponse } from "next/server";
 
 export async function POST() {
-  const { user } = await useServerAuth()
+  const auth = await useServerAuth()
+  if (!auth) {
+    return NextResponse.json(resp("Unauthorized"), { status: 401 })
+  }
+  const { user } = auth
 
   if (!user.stripe_customer_id) {
     return NextResponse.redirect(`${process.env.SITE_URL}/`)

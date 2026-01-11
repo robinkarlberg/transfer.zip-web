@@ -10,13 +10,7 @@ const DOWNLOAD_EMAIL_COOLDOWN_MS = 1000 * 60 * 30;
 export async function POST(req, { params }) {
   const { secretCode } = await params;
 
-  let auth
-  try {
-    auth = await useServerAuth()
-  }
-  catch (err) {
-
-  }
+  const auth = await useServerAuth()
 
   const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } }).populate('author').populate('brandProfile');
   if (!transfer) {

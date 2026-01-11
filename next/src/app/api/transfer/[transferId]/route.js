@@ -7,6 +7,9 @@ import { NextResponse } from "next/server";
 
 export async function PUT(req, { params }) {
   const auth = await useServerAuth()
+  if (!auth) {
+    return NextResponse.json(resp("Unauthorized"), { status: 401 })
+  }
   const { transferId } = await params
   const { name, description, expiresAt, brandProfileId } = await req.json()
 
@@ -53,6 +56,9 @@ export async function PUT(req, { params }) {
 
 export async function GET(req, { params }) {
   const auth = await useServerAuth()
+  if (!auth) {
+    return NextResponse.json(resp("Unauthorized"), { status: 401 })
+  }
   const { transferId } = await params
   const { user } = auth
 

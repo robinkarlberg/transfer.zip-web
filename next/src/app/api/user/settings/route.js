@@ -5,6 +5,9 @@ import { NextResponse } from "next/server";
 
 export async function PUT(req) {
   const auth = await useServerAuth()
+  if (!auth) {
+    return NextResponse.json(resp("Unauthorized"), { status: 401 })
+  }
 
   const { notificationSettings } = await req.json()
 

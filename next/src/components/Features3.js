@@ -1,19 +1,20 @@
 import { useContext } from "react"
 import BIcon from "./BIcon"
 import Link from 'next/link'
+import { FastForwardIcon, MailIcon } from "lucide-react"
 
 const features = [
   {
     name: 'Track Views and Downloads',
     description: "The dashboard allows you to track when download links are clicked, and files downloaded - ensuring you have full visibility over the distribution of your files.",
-    icon: "envelope-fill",
+    icon: MailIcon,
     cta: "Send Files By Email",
     href: "/signin"
   },
   {
     name: 'Blazing Fast Speeds',
     description: "All files are downloaded from the same high-speed servers, ensuring your ideas get shared as quickly as possible.",
-    icon: "fast-forward-fill",
+    icon: FastForwardIcon,
     cta: "Send Files Fast",
     href: "/signin"
   },
@@ -37,8 +38,8 @@ export default function Features3() {
             {features.map((feature) => (
               <div key={feature.name} className="relative pl-16">
                 <dt className="text-lg font-bold text-gray-900">
-                  <div className="absolute left-0 top-0 flex size-10 items-center justify-center rounded-lg bg-primary">
-                    <BIcon center name={feature.icon} aria-hidden="true" className="size-6 text-white" />
+                  <div className="absolute left-0 top-0 flex size-10 items-center justify-center rounded-lg bg-primary text-white">
+                    <feature.icon size={16}/>
                   </div>
                   {feature.name}
                 </dt>
