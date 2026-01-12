@@ -19,6 +19,7 @@ import {
 } from 'disposable-email-domains-js';
 import { RateLimiterMongo } from 'rate-limiter-flexible'
 import { z } from 'zod'
+import { logError, logWarn } from "@/lib/server/errors"
 
 const fileSchema = z.object({
   tmpId: z.string(),
@@ -46,7 +47,7 @@ const regularTransferSchema = baseTransferSchema.extend({
   brandProfileId: z.string().refine(
     val => !val || mongoose.Types.ObjectId.isValid(val),
     "Invalid brandProfileId"
-  ).optional(),
+  ).optional().nullable(),
 })
 
 /**
@@ -123,16 +124,18 @@ const getRateLimiter = (conn) => {
 }
 
 export async function POST(req) {
+  let auth
   try {
     const conn = await dbConnect()
     const body = await req.json()
 
     // Get auth (optional - guest uploads via transfer request don't require auth)
-    const auth = await useServerAuth()
+    auth = await useServerAuth()
 
     // Validate input and check authorization
     const { data, transferRequest, error, status } = await validateAndAuthorize(body, auth)
     if (error) {
+      logWarn(error).forRoute("/api/transfer/new").forUserId(auth?.user?._id?.toString())
       return NextResponse.json(resp(error), { status })
     }
 
@@ -235,7 +238,7 @@ export async function POST(req) {
     return NextResponse.json(resp({ transfer: transfer.friendlyObj(), idMap }))
   }
   catch (err) {
-    console.error(err)
+    logError(err).forRoute("/api/transfer/new").forUserId(auth?.user?._id?.toString())
     return NextResponse.json(resp(err.message || "Internal server error"), { status: 500 })
   }
 }
