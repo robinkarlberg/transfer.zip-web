@@ -15,9 +15,9 @@ export default async function () {
   const hasFeature = user.getPlan() == "pro"
 
   const side = hasFeature ?
-    <Button className={"text-gray-800 rounded-xl"} variant={"outline"} asChild><Link href={"/app/branding/new"}><BIcon name={"plus-lg"} />New Brand Profile</Link></Button>
+    <Button variant={"white"} asChild><Link href={"/app/branding/new"}><BIcon name={"plus-lg"} />New Brand Profile</Link></Button>
     :
-    <Button className={"text-gray-800 rounded-xl"} variant={"outline"} disabled><BIcon name={"plus-lg"} />New Brand Profile</Button>
+    <Button variant={"white"} disabled><BIcon name={"plus-lg"} />New Brand Profile</Button>
 
   return (
     <GenericPage title={"Branding"} side={side}>

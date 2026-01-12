@@ -15,7 +15,7 @@ import { useRef, useState } from "react"
 import { deleteBrandProfile, newBrandProfile, updateBrandProfile } from "@/lib/client/Api"
 import { useRouter } from "next/navigation"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { SaveIcon } from "lucide-react"
+import { ImageIcon, SaveIcon } from "lucide-react"
 
 export default function ({ initialProfile, isNew }) {
   const [profile, setProfile] = useState(initialProfile)
@@ -86,9 +86,12 @@ export default function ({ initialProfile, isNew }) {
     window.location.replace("/app/branding")
   }
 
-  const side = <div className="flex gap-2 text-gray-800">
-    <Button className={"rounded-xl"} variant={"outline"} onClick={handleSave} disabled={loading}>
-      <SaveIcon />
+  const side = <div className="flex gap-2">
+    <Button className={"text-white text-shadow-xs"} variant={"link"} onClick={() => router.push(".")} disabled={loading}>
+      Cancel
+    </Button>
+    <Button variant={"white"} onClick={handleSave} disabled={loading}>
+      {/* <SaveIcon /> */}
       Save
       {saving && <Spinner />}
     </Button>
@@ -104,187 +107,98 @@ export default function ({ initialProfile, isNew }) {
       </form>
       <GenericPage category={"Branding"} title={isNew ? "New Brand Profile" : profile.name} side={side}>
         <div className="p-5 sm:p-6 bg-white rounded-xl">
-          <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-8">
+          <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-8">
             <div className="sm:col-span-2">
-              <h2 className="text-lg font-semibold text-gray-900 ">Icon</h2>
-              <p className="mt-1 text-gray-600 text-sm/6">Choose an icon that fits your brand.</p>
+              <h2 className="text-lg font-semibold text-gray-900 ">Icon & Brand name</h2>
+              <p className="mt-1 text-gray-600 text-sm/6">Choose an icon and a name for your brand. Could be your company logo and name.</p>
               <div className="mt-4">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button onClick={handleChooseIcon}>
-                      {iconImageUrl ?
-                        <Image
-                          alt="Brand Profile Logo"
-                          width={32}
-                          height={32}
-                          src={iconImageUrl}
-                        />
-                        :
-                        <div className="w-8 h-8 border border-dashed rounded-md border-gray-300 text-gray-400">
-                          <BIcon className={"w-8 h-8"} name={"plus-circle-dotted"} center />
-                        </div>
-                      }
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side={"bottom"}>
-                    Click to change icon
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-            </div>
-            <div className="sm:col-span-2">
-              <h2 className="text-lg font-semibold text-gray-900 ">Brand name</h2>
-              <p className="mt-1 text-gray-600 text-sm/6">Your company name.</p>
-              <div className="mt-4">
-                {
-                  editingName ?
-                    <div className="flex gap-2">
-                      <Input
-                        placeholder="Your Company Name"
-                        className="h-8 w-40"
-                        ref={nameRef}
-                        defaultValue={profile.name}
-                        onKeyDown={e => {
-                          if (e.key === "Enter") {
-                            handleSetName()
-                          }
-                        }}
-                      />
-                      <YesNo onYes={handleSetName} onNo={() => setEditingName(false)} />
-                    </div>
-                    :
-                    <div>
-                      <Tooltip>
-                        <TooltipTrigger onClick={() => setEditingName(true)}>
-                          {/* <button> */}
-                          <span className='ms-0.5 font-bold'>{profile.name || "Your Company Name"}</span>
-                          {/* </button> */}
-                        </TooltipTrigger>
-                        <TooltipContent side={"bottom"}>
-                          Click to change company name
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                }
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-center border-b border-b-gray-200 p-4">
-            <span className="-m-1.5 p-1.5 flex items-center gap-x-1">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button onClick={handleChooseIcon}>
-                    {iconImageUrl ?
-                      <Image
-                        alt="Brand Profile Logo"
-                        width={32}
-                        height={32}
-                        src={iconImageUrl}
-                      />
-                      :
-                      <div className="w-8 h-8 border border-dashed rounded-md border-gray-300 text-gray-400">
-                        <BIcon className={"w-8 h-8"} name={"plus-circle-dotted"} center />
-                      </div>
-                    }
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side={"bottom"}>
-                  Click to change icon
-                </TooltipContent>
-              </Tooltip>
-              {
-                editingName ?
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Your Company Name"
-                      className="h-8 w-40"
-                      ref={nameRef}
-                      defaultValue={profile.name}
-                      onKeyDown={e => {
-                        if (e.key === "Enter") {
-                          handleSetName()
+                <span className="-m-1.5 p-1.5 flex items-center gap-x-1">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button onClick={handleChooseIcon}>
+                        {iconImageUrl ?
+                          <Image
+                            alt="Brand Profile Logo"
+                            width={32}
+                            height={32}
+                            src={iconImageUrl}
+                          />
+                          :
+                          <div className="w-8 h-8 border border-dashed rounded-md border-gray-300 text-gray-400">
+                            <BIcon className={"w-8 h-8"} name={"plus-circle-dotted"} center />
+                          </div>
                         }
-                      }}
-                    />
-                    <YesNo onYes={handleSetName} onNo={() => setEditingName(false)} />
-                  </div>
-                  :
-                  <div>
-                    <Tooltip>
-                      <TooltipTrigger onClick={() => setEditingName(true)}>
-                        {/* <button> */}
-                        <span className='ms-0.5 font-bold'>{profile.name || "Your Company Name"}</span>
-                        {/* </button> */}
-                      </TooltipTrigger>
-                      <TooltipContent side={"bottom"}>
-                        Click to change company name
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-              }
-            </span>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side={"bottom"}>
+                      Click to change icon
+                    </TooltipContent>
+                  </Tooltip>
+                  {
+                    editingName ?
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Your Company Name"
+                          className="h-8 w-40"
+                          ref={nameRef}
+                          defaultValue={profile.name}
+                          onKeyDown={e => {
+                            if (e.key === "Enter") {
+                              handleSetName()
+                            }
+                          }}
+                        />
+                        <YesNo onYes={handleSetName} onNo={() => setEditingName(false)} />
+                      </div>
+                      :
+                      <div>
+                        <Tooltip>
+                          <TooltipTrigger onClick={() => setEditingName(true)}>
+                            {/* <button> */}
+                            <span className='ms-0.5 font-bold'>{profile.name || "Your Company Name"}</span>
+                            {/* </button> */}
+                          </TooltipTrigger>
+                          <TooltipContent side={"bottom"}>
+                            Click to change company name
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                  }
+                </span>
+              </div>
+            </div>
+            <div className="sm:col-span-2">
+              <h2 className="text-lg font-semibold text-gray-900 ">Background Image</h2>
+              <p className="mt-1 text-gray-600 text-sm/6">The background image will be displayed on your download/upload pages.</p>
+              <div className="mt-4 w-full">
+                <button onClick={handleChooseBackground} className="relative w-96 h-60 block">
+                  {backgroundImageUrl ?
+                    (
+                      <Image
+                        fill
+                        alt="Branding Background Image"
+                        className="rounded-md object-cover"
+                        src={backgroundImageUrl}
+                      />
+                    )
+                    : (
+                      <div className="w-full flex flex-col gap-2 items-center justify-center bg-gray-50 text-gray-600 h-60 transition-colors hover:bg-gray-100">
+                        <ImageIcon />
+                        <span>Pick image</span>
+                      </div>
+                    )}
+                </button>
+              </div>
+            </div>
           </div>
-          <div
+          {/* <div
             className="px-4 pt-2 flex items-center justify-center h-[560px] relative"
           >
-            {backgroundImageUrl ?
-              (
-                <Image
-                  fill
-                  alt="Branding Background Image"
-                  className="object-center object-cover pointer-events-none rounded-md"
-                  src={backgroundImageUrl}
-                />
-              )
-              : (
-                <svg
-                  aria-hidden="true"
-                  className="absolute inset-0 h-full w-full stroke-gray-200 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
-                >
-                  <defs>
-                    <pattern
-                      x="50%"
-                      y={-1}
-                      id="83fd4e5a-9d52-42fc-97b6-718e5d7ee527"
-                      width={200}
-                      height={200}
-                      patternUnits="userSpaceOnUse"
-                    >
-                      <path d="M100 200V.5M.5 .5H200" fill="none" />
-                    </pattern>
-                  </defs>
-                  <svg x="50%" y={-1} className="overflow-visible fill-gray-50">
-                    <path
-                      d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z"
-                      strokeWidth={0}
-                    />
-                  </svg>
-                  <rect fill="url(#83fd4e5a-9d52-42fc-97b6-718e5d7ee527)" width="100%" height="100%" strokeWidth={0} />
-                </svg>
-              )}
-            <div className="relative z-10 bg-white rounded-2xl border p-6 shadow-xl w-full max-w-80 min-h-96 flex flex-col justify-between">
-              <div>
-                <h2 className="font-bold text-xl/8 text-gray-800">Transfer Title</h2>
-                <p className="text-gray-600">Transfer description</p>
-                <hr className="my-2" />
-                <span><i className="bi bi-file-earmark me-1"></i>42 Files</span>
-                <p className="text-gray-600">123MB</p>
-              </div>
-              <div>
-                <div className="mt-auto text-center">
-                  <p className="text-gray-600 mb-1 text-sm">Expires in 6mo</p>
-                </div>
-                <div className="flex gap-2">
-                  <button disabled type="button" className="text-gray-400 bg-white border shadow rounded-lg px-3 py-1 grow-0"><BIcon name={"search"} /> Preview</button>
-                  <button disabled={true} className="text-white bg-primary shadow rounded-lg px-3 py-1 grow hover:bg-primary-light disabled:bg-primary-light">Download</button>
-                </div>
-              </div>
-            </div>
             <div className="absolute w-full top-0 left-0 p-4 flex justify-center gap-2">
               <Button onClick={handleChooseBackground} variant={"outline"}>Choose Background</Button>
               {backgroundImageUrl != null && <Button className={"w-10"} variant={"outline"} onClick={() => setBackgroundImageUrl(null)}><BIcon name={"x-lg"} /></Button>}
             </div>
-          </div>
+          </div> */}
         </div>
         <div className="mt-4 flex flex-row-reverse">
           <Dialog>
