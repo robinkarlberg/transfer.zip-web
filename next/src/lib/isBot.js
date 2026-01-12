@@ -1,0 +1,40 @@
+const botPatterns = [
+  /bot/i,
+  /spider/i,
+  /crawl/i,
+  /slurp/i,
+  /mediapartners/i,
+  /googlebot/i,
+  /bingbot/i,
+  /yandex/i,
+  /baidu/i,
+  /duckduckbot/i,
+  /facebookexternalhit/i,
+  /twitterbot/i,
+  /linkedinbot/i,
+  /whatsapp/i,
+  /telegrambot/i,
+  /discordbot/i,
+  /slackbot/i,
+  /applebot/i,
+  /petalbot/i,
+  /semrushbot/i,
+  /ahrefsbot/i,
+  /mj12bot/i,
+  /dotbot/i,
+  /rogerbot/i,
+  /seznambot/i,
+  /ia_archiver/i,
+  /archive\.org_bot/i,
+  /headlesschrome/i,
+  /phantomjs/i,
+  /prerender/i,
+  /lighthouse/i,
+  /pagespeed/i,
+  /gtmetrix/i,
+]
+
+export function isBot(userAgent) {
+  if (!userAgent) return false
+  return botPatterns.some((pattern) => pattern.test(userAgent))
+}

@@ -11,6 +11,9 @@ import Features1 from "@/components/Features1";
 import TestimonialCloud from "@/components/TestimonialCloud";
 import FAQ from "@/components/FAQ";
 import Image from "next/image";
+import { headers } from "next/headers";
+import { isBot } from "@/lib/isBot";
+import { useServerAuth } from "@/lib/server/wrappers/auth";
 
 export async function generateMetadata({ params }) {
   const { secretCode } = await params
@@ -47,10 +50,21 @@ export default async function ({ params }) {
 
   await dbConnect()
 
-  const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } }).populate("brandProfile")
+  const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } }).populate("author").populate("brandProfile")
 
   if (!transfer) {
     notFound()
+  }
+
+  const auth = await useServerAuth()
+
+  if (!transfer?.author || !auth || auth.user._id.toString() !== transfer.author._id.toString()) {
+    const headersList = await headers()
+    const userAgent = headersList.get("user-agent") || ""
+    if (!isBot(userAgent)) {
+      transfer.logView()
+      await transfer.save()
+    }
   }
 
   const expiryDate = parseTransferExpiryDate(transfer.expiresAt)

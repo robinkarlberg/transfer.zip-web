@@ -8,13 +8,14 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/server/mongoose/db";
 import SentEmail from "@/lib/server/mongoose/models/SentEmail";
 import { EMAILS_PER_DAY_LIMIT } from "@/lib/getMaxRecipientsForPlan";
+import { useServerAuth } from "@/lib/server/wrappers/auth";
 
 export async function POST(req, { params }) {
   const { secretCode } = await params
 
   await dbConnect()
 
-  const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } }).populate('brandProfile')
+  const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } }).populate("author").populate('brandProfile')
   if (!transfer) {
     return NextResponse.json(resp("transfer not found"), { status: 404 })
   }

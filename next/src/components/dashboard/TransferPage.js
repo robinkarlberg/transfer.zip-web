@@ -308,13 +308,13 @@ export default function ({ user, transfer }) {
                 <input
                   onKeyDown={handleLinkKeyDown}
                   type="url"
-                  className="block w-full rounded-lg border-0 py-2.5 ps-4 pr-19 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-lg border-0 py-2.5 ps-4 pr-18 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
                   value={transferLink}
                   readOnly
                 />
                 <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-                  <button type="button" onClick={handleCopy} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
-                    <LinkIcon size={12} className={"mr-1 ms-1"} />Copy
+                  <button type="button" onClick={handleCopy} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-semibold bg-white hover:bg-gray-50">
+                    <LinkIcon size={14} className={"mr-1 ms-1"} />Copy
                   </button>
                 </div>
               </div>
