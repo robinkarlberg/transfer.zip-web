@@ -191,7 +191,7 @@ export default function ({ user, storage }) {
       </Dialog>
       <div className="p-5 sm:p-6 bg-white rounded-xl">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-          <div className="sm:col-span-1">
+          <div className="sm:col-span-full">
             <div className="flex items-center gap-4">
               <UserIcon size={48} className="text-white bg-primary p-3 rounded-full" />
               <span className="text-gray-800 text-lg font-semibold">{user.email}</span>
@@ -203,20 +203,6 @@ export default function ({ user, storage }) {
             )}
           </div>
           <div className="sm:col-span-1">
-            <h2 className="text-lg font-semibold text-gray-900 ">Storage</h2>
-            {storage && (
-              <div className="mt-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-gray-600">{storage.storagePercent}% used</span>
-                  <span className="text-sm text-gray-600">
-                    {humanFileSize(storage.usedStorageBytes, true)} / {humanFileSize(storage.maxStorageBytes, true)}
-                  </span>
-                </div>
-                <Progress className="h-2" value={storage.storagePercent} />
-              </div>
-            )}
-          </div>
-          <div className="sm:col-span-2">
             <h2 className="text-lg font-semibold text-gray-900 ">Notifications</h2>
             <div className="space-y-4 mt-4">
               <div className="flex items-center space-x-3">
@@ -238,6 +224,20 @@ export default function ({ user, storage }) {
               </Label>
             </div> */}
             </div>
+          </div>
+          <div className="sm:col-span-1">
+            <h2 className="text-lg font-semibold text-gray-900 ">Storage</h2>
+            {storage && (
+              <div className="mt-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-gray-600">{storage.storagePercent}% used</span>
+                  <span className="text-sm text-gray-600">
+                    {humanFileSize(storage.usedStorageBytes, true)} / {humanFileSize(storage.maxStorageBytes, true)}
+                  </span>
+                </div>
+                <Progress className="h-2" value={storage.storagePercent} />
+              </div>
+            )}
           </div>
           {!IS_SELFHOST && (
             <div className="sm:col-span-full">

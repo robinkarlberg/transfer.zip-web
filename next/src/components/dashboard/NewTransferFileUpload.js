@@ -71,7 +71,8 @@ export default function ({ user, storage, brandProfiles }) {
     }
   }, [])
 
-  const tooLittleStorage = useMemo(() => storage ? totalBytesToSend > storage.maxStorageBytes - storage.usedStorageBytes : false, [totalBytesToSend, storage])
+  const tooLittleStorage = storage ?
+    totalBytesToSend > storage.maxStorageBytes - storage.usedStorageBytes : false
 
   const handleFiles = async files => {
     const form = formRef.current;

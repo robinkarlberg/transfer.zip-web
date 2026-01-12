@@ -61,8 +61,6 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     return 0;
   }, [filesToUpload]);
 
-  const tooLittleStorage = useMemo(() => storage ? totalBytesToSend > storage.maxStorageBytes - storage.usedStorageBytes : false, [totalBytesToSend, storage])
-
   const bytesTransferred = useMemo(() => {
     if (!uploadProgressMap) return 0
     return uploadProgressMap.reduce((sum, item) => sum + item[1], 0)
@@ -85,6 +83,11 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
   // track what exiry time is selected, to change to quick transfer
   const [selectedExpiryTime, setSelectedExpiryTime] = useState(payingUser ? EXPIRATION_TIMES[1].days : EXPIRATION_TIMES[0].days)
   const quickTransferEnabled = selectedExpiryTime == "0"
+
+  const tooLittleStorage =
+    !quickTransferEnabled &&
+    (storage ? totalBytesToSend > storage.maxStorageBytes - storage.usedStorageBytes : false)
+
 
   const [failed, setFailed] = useState(false)
   const [tab, setTab] = useState(initialTab || (payingUser ? "email" : "link"))
@@ -444,6 +447,16 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
           </div>
           <BrandingToggle brandProfiles={brandProfiles} brandProfileId={brandProfileId} setBrandProfileId={setBrandProfileId} />
         </>}
+        {tooLittleStorage && (
+          <div className="w-full">
+            <button type="button" onClick={() => router.push("/app/settings?upgrade")} className="w-full shadow-sm text-start rounded-lg text-white bg-red-500 px-4 py-3 group transition-colors hover:bg-red-600">
+              <h5 className="font-bold text-sm mb-1"><span className="group-hover:underline">Hey big sender...</span></h5>
+              <p className="font-medium text-sm">
+                Your storage is full. Upgrade your subscription now to send bigger files. <span className="group-hover:ms-1 transition-all">&rarr;</span>
+              </p>
+            </button>
+          </div>
+        )}
         {quickTransferEnabled && <>
           {/* "w-0 min-w-full" prevents the box from stretching the parent */}
           <div className="p-4 ring-1 ring-inset text-gray-800 ring-gray-200 rounded-lg w-0 min-w-full">
