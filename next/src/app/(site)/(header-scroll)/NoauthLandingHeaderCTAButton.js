@@ -16,8 +16,8 @@ export default function () {
   }
 
   return (
-    <Link onNavigate={handleCtaLinkNavigate} href={"/signin"} className="text-sm/6 font-semibold text-white rounded-full bg-primary ps-2 pe-5 py-1.5 hover:bg-primary-light flex items-center">
-      <ZapIcon className="h-4 me-0.5"/> <span className="hidden sm:inline">Upgrade</span><span className="sm:hidden">Upgrade</span>
+    <Link onNavigate={handleCtaLinkNavigate} href={"/signin"} className="text-sm/6 font-semibold text-white rounded-full bg-linear-to-b from-primary-600 to-primary-700 hover:bg-linear-to-t ring-1 ring-primary-400 shadow ps-2 pe-5 py-1.5 hover:bg-primary-light flex items-center">
+      <ZapIcon className="h-4 me-0.5"/> Upgrade
     </Link>
   )
 }

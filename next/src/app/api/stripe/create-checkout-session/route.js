@@ -63,7 +63,7 @@ export async function POST(req) {
       ],
       mode: "subscription",
       allow_promotion_codes: true,
-      success_url: `${process.env.SITE_URL}/app`,
+      success_url: `${process.env.SITE_URL}/poll-subscription`,
       cancel_url: `${process.env.SITE_URL}/app`,
       customer: existingCustomerId,
       expires_at: Math.floor(Date.now() / 1000) + (3600 * 22), // Configured to expire after 22 hours

@@ -1,12 +1,10 @@
 import ContentArticle from "@/components/content/ContentArticle"
 import ContentLanding from "@/components/content/ContentLanding"
-import { getAllSlugs } from "@/lib/server/content"
+import { getAllSlugs, getContentMeta, getContentBySlug } from "@/lib/server/content"
 import Image from "next/image"
-import Link from "next/link"
 import { notFound } from "next/navigation"
 
-// By marking dynamicParams as false, accessing a route not defined in generateStaticParams will 404.
-export const dynamicParams = false
+export const dynamicParams = true
 
 export async function generateStaticParams() {
   const slugs = await getAllSlugs()
@@ -15,13 +13,10 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const slugPath = (await params).slug.join('/')
-  let mod
-  try {
-    mod = await import(`@/content/${slugPath}.mdx`)
-  } catch {
+  const meta = await getContentMeta(slugPath)
+  if (!meta) {
     return {}
   }
-  const meta = mod.frontmatter || mod.meta || {}
   return {
     title: meta.title || null,
     description: meta.description || null
@@ -30,15 +25,14 @@ export async function generateMetadata({ params }) {
 
 export default async function Page({ params }) {
   const slugPath = (await params).slug.join('/')
-  let mod
-  try {
-    mod = await import(`@/content/${slugPath}.mdx`)
-  }
-  catch {
+  const result = await getContentBySlug(slugPath)
+
+  if (!result) {
     notFound()
   }
-  const Post = mod.default
-  const meta = mod.frontmatter || mod.meta || {}
+
+  const { meta, content } = result
+
   return (
     <>
       <ContentLanding
@@ -51,7 +45,7 @@ export default async function Page({ params }) {
         <Image width={1024} height={1024} alt={meta.imgAlt} src={meta.imgSrc} />
       </ContentLanding>
       <ContentArticle>
-        <Post />
+        {content}
       </ContentArticle>
     </>
   )

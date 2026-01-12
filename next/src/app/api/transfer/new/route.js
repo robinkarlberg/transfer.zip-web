@@ -86,7 +86,8 @@ const validateAndAuthorize = async (body, auth) => {
     }
 
     // Check expiration time is allowed for user's plan
-    const expirationTimeEntry = EXPIRATION_TIMES.find(t => t.days === data.expiresInDays)
+    // The user sends it as a string so we need to compare with ints
+    const expirationTimeEntry = EXPIRATION_TIMES.find(t => parseInt(t.days) === parseInt(data.expiresInDays))
     if (!expirationTimeEntry) {
       return { error: "Invalid expiration time", status: 400 }
     }

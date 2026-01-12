@@ -57,6 +57,8 @@
     "react-dom": "^19.2.3",
     "react-qr-code": "^2.0.16",
     "recharts": "^2.15.3",
+    "gray-matter": "^4.0.3",
+    "next-mdx-remote": "^5.0.0",
     "remark-frontmatter": "^5.0.0",
     "remark-gfm": "^4.0.1",
     "remark-mdx-frontmatter": "^5.2.0",

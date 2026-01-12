@@ -127,7 +127,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
       const formData = new FormData(form)
       const name = formData.get("name")
       const description = formData.get("description")
-      const expiresInDays = formData.get("expiresInDays")
+      const expiresInDays = parseInt(formData.get("expiresInDays"))
 
       const transferFiles = prepareTransferFiles(files)
       // response: { idMap: [{ tmpId, id }, ...] } - what your API returned
