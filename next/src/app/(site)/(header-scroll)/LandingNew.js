@@ -10,7 +10,7 @@ import NoauthLandingCTAButton from "./NoauthLandingCTAButton"
 import NoauthLandingHeaderCTAButton from "./NoauthLandingHeaderCTAButton"
 import NewTransferFileUploadNew from "@/components/newtransfer/NewTransferFileUploadNew"
 import FreeConditional from "./FreeConditional"
-import { ZapIcon } from "lucide-react"
+import { GithubIcon, StarIcon, ZapIcon } from "lucide-react"
 import NewTransferFileRequest from "@/components/newtransfer/NewTransferFileRequest"
 import ConditionalLandingFileRequest from "./ConditionalLandingFileRequest"
 import { Button } from "@/components/ui/button"
@@ -29,46 +29,27 @@ export default async function ({ mode }) {
     <div>
       <div className="w-full h-screen overflow-hidden absolute grain bg-linear-to-b from-primary-600 to-primary-300" />
       <div className="relative isolate flex min-h-screen flex-col">
-        {/* <svg
-          aria-hidden="true"
-          className="absolute inset-0 -z-10 h-full w-full stroke-gray-200 opacity-50 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]"
-        >
-          <defs>
-            <pattern
-              x="50%"
-              y={-1}
-              id="83fd4e5a-9d52-42fc-97b6-718e5d7ee527"
-              width={200}
-              height={200}
-              patternUnits="userSpaceOnUse"
-            >
-              <path d="M100 200V.5M.5 .5H200" fill="none" />
-            </pattern>
-          </defs>
-          <svg x="50%" y={-1} className="overflow-visible fill-gray-50">
-            <path
-              d="M-100.5 0h201v201h-201Z M699.5 0h201v201h-201Z M499.5 400h201v201h-201Z M-300.5 600h201v201h-201Z"
-              strokeWidth={0}
-            />
-          </svg>
-          <rect fill="url(#83fd4e5a-9d52-42fc-97b6-718e5d7ee527)" width="100%" height="100%" strokeWidth={0} />
-        </svg> */}
         <div className="mx-auto max-w-7xl w-full px-6 lg:px-8 mt-6 flex justify-between items-center">
-          <div className="flex items-center bg-white px-2 py-1 rounded-xl fade-in-up-fast">
-            <div className="ms-2 flex items-center text-xl gap-x-2">
-              <Image src={icon} width={40} alt='logo'></Image>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center bg-white px-2 py-1 rounded-xl fade-in-up-fast">
+              <div className="ms-2 flex items-center text-xl gap-x-2">
+                <Image src={icon} width={40} alt='logo'></Image>
+              </div>
+              <div className="ms-2 hidden sm:flex">
+                <Button asChild size={"sm"} variant={"ghost"}>
+                  <Link href={"/#message-from-founder"}>About us</Link>
+                </Button>
+                <Button asChild size={"sm"} variant={"ghost"}>
+                  <Link href={"/#pricing"}>Pricing</Link>
+                </Button>
+                <Button asChild size={"sm"} variant={"ghost"}>
+                  <Link href={"/legal/privacy-policy"}>Privacy</Link>
+                </Button>
+              </div>
             </div>
-            <div className="ms-2 hidden sm:flex">
-              <Button asChild size={"sm"} variant={"ghost"}>
-                <Link href={"/#message-from-founder"}>About us</Link>
-              </Button>
-              <Button asChild size={"sm"} variant={"ghost"}>
-                <Link href={"/#pricing"}>Pricing</Link>
-              </Button>
-              <Button asChild size={"sm"} variant={"ghost"}>
-                <Link href={"/legal/privacy-policy"}>Privacy</Link>
-              </Button>
-            </div>
+            <Link href={"https://github.com/robinkarlberg/transfer.zip-web"} className={"hidden [&_svg:not([class*='size-'])]:size-4 text-white md:inline-flex items-center justify-center gap-2 fade-in-up-fast text-shadow-sm text-sm hover:underline font-semibold"}>
+              <StarIcon /> Star on GitHub ({stars})
+            </Link>
           </div>
           <div className="fade-in-up-fast">
             <AuthConditional
@@ -124,7 +105,6 @@ export default async function ({ mode }) {
                 </Suspense>
             }
           </div>
-
         </div>
         <div className="mx-auto px-6 flex flex-col md:flex-row items-center justify-center gap-8 mt-4 mb-16 fade-in-up-slow">
           {[
