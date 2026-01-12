@@ -83,6 +83,12 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
       const name = formData.get("name")
       const description = formData.get("description")
 
+      if (tab == "email" && emailRecipients.length === 0)
+        return displayErrorMessage({
+          title: "Oops.",
+          body: "You did not add any recipient email!"
+        })
+
       try {
         const { transferRequest } = await newTransferRequest({ name, description, emails: emailRecipients, brandProfileId })
         setFinished(true)
