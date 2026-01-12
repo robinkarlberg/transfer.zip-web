@@ -444,25 +444,23 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
           </div>
           <BrandingToggle brandProfiles={brandProfiles} brandProfileId={brandProfileId} setBrandProfileId={setBrandProfileId} />
         </>}
-        {tab == "link" && <>
-
-        </>}
         {quickTransferEnabled && <>
           {/* "w-0 min-w-full" prevents the box from stretching the parent */}
           <div className="p-4 ring-1 ring-inset text-gray-800 ring-gray-200 rounded-lg w-0 min-w-full">
-            <p className="font-semibold">Link expires when tab is closed.</p>
+            <p className="font-semibold">Temporary file-sharing link.</p>
             <p className="mt-1 text-sm text-gray-600">
-              This will create a temporary link for transfers. It uses end-to-end encryption and files are not stored on our servers.
+              This will create a temporary download link with end-to-end encryption. The link will expire when your browser tab is closed.
             </p>
           </div>
           {!payingUser && (
-            <button onClick={() => openSignupDialog(files)} type="button" className="w-full bg-purple-50 text-purple-600 rounded-lg p-3 px-4 hover:bg-purple-100">
+            <button onClick={() => openSignupDialog(files)} type="button" className="text-start w-full bg-purple-50 text-purple-600 rounded-lg p-3 px-4 hover:bg-purple-100">
               <div className="flex justify-between">
-                <div className="flex items-center gap-2">Keep download links for a year. </div>
+                <div className="flex items-center gap-2">Keep download links for a year.</div>
                 <span>&rarr;</span>
               </div>
               <div className="mt-1 text-start text-sm text text-purple-500">
                 <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Unlimited transfers</p>
+                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Custom logo & branding</p>
                 <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Send files by email</p>
                 <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Starts at $6/mo</p>
               </div>

@@ -1,7 +1,7 @@
 "use client"
 
 import BIcon from "@/components/BIcon";
-import { ArrowRightIcon, LinkIcon, PlusIcon, RotateCcwIcon } from "lucide-react";
+import { ArrowRightIcon, LinkIcon, PlusIcon, RotateCcwIcon, ZapIcon } from "lucide-react";
 import { useContext, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -55,6 +55,10 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     setErrorMessage(message)
     setShowErrorMessage(true)
   }
+
+  const payingUser = user && user.plan != "free"
+  const quickTransferEnabled = !user || user.plan == "free"
+
   const [finished, setFinished] = useState(false)
 
   const [failed, setFailed] = useState(false)
@@ -64,30 +68,34 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   const handleSubmit = async e => {
     e.preventDefault()
-    const form = e.target
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
 
-    const formData = new FormData(form)
-    const name = formData.get("name")
-    const description = formData.get("description")
-
-    try {
-      const { transferRequest } = await newTransferRequest({ name, description, emails: emailRecipients, brandProfileId })
-      setFinished(true)
-      // router.replace(`/app/requests`)
+    if (quickTransferEnabled) {
+      router.push("/quick/progress#R", { scroll: false })
     }
-    catch (err) {
-      displayErrorModal(err.message)
-      setFailed(true)
-    }
-    // if (emailRecipients.length > 0) {
-    //   await sendTransferRequestByEmail(transferRequest.id, emailRecipients)
-    // }
+    else {
+      const form = e.target
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
 
-    // router.replace(`/app/requests`)
+      const formData = new FormData(form)
+      const name = formData.get("name")
+      const description = formData.get("description")
+
+      try {
+        const { transferRequest } = await newTransferRequest({ name, description, emails: emailRecipients, brandProfileId })
+        setFinished(true)
+        // router.replace(`/app/requests`)
+      }
+      catch (err) {
+        displayErrorMessage({
+          title: "Oops",
+          body: err?.message || "Unknown error, try again."
+        })
+        setFailed(true)
+      }
+    }
   }
 
   const handleEmailAdd = () => {
@@ -186,19 +194,21 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   const rightSection = (
     <form onSubmit={handleSubmit} className={`border-l flex flex-col overflow-hidden bg-white`}>
-      <div className="flex-none grid grid-cols-2 border-b">
-        {["email", "link"].map(key => (
-          <button
-            type="button"
-            onClick={() => setTab(key)}
-            key={key}
-            className={`py-2 ${key == tab ? "font-medium text-primary bg-primary-50" : "text-gray-500 hover:bg-gray-50"}`}>
-            {capitalizeFirstLetter(key)}
-          </button>
-        ))}
-      </div>
+      {!quickTransferEnabled && (
+        <div className="flex-none grid grid-cols-2 border-b">
+          {["email", "link"].map(key => (
+            <button
+              type="button"
+              onClick={() => setTab(key)}
+              key={key}
+              className={`py-2 ${key == tab ? "font-medium text-primary bg-primary-50" : "text-gray-500 hover:bg-gray-50"}`}>
+              {capitalizeFirstLetter(key)}
+            </button>
+          ))}
+        </div>
+      )}
       <div className={`flex-1 overflow-y-auto p-4 space-y-2 ${loaded ? "animate-fade-in" : "opacity-0 pointer-events-none"}`}>
-        {tab == "email" && <>
+        {!quickTransferEnabled && tab == "email" && <>
           <div>
             {/* <Label htmlFor="email">Recipients <span className="text-gray-400 font-normal text-xs leading-0">{emailRecipients.length > 0 ? (emailRecipients.length + " / " + getMaxRecipientsForPlan(user?.plan)) : ""}</span></Label> */}
             <div className="relative flex items-center">
@@ -224,7 +234,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
             )}
           </div>
         </>}
-        {tab != "quick" && <>
+        {!quickTransferEnabled && <>
           <div>
             <Input
               placeholder="Title"
@@ -253,23 +263,32 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
           </div>
           <BrandingToggle brandProfiles={brandProfiles} brandProfileId={brandProfileId} setBrandProfileId={setBrandProfileId} />
         </>}
-        {tab == "link" && <>
-
-        </>}
-        {tab == "quick" && <>
-          <Alert>
-            {/* <InfoIcon /> */}
-            <AlertTitle>
-              Quick Transfer
-            </AlertTitle>
-            <AlertDescription>
-              Uses end-to-end encryption and files are not stored on our servers. The link expires instantly when the tab is closed.
-            </AlertDescription>
-          </Alert>
+        {quickTransferEnabled && <>
+          {/* "w-0 min-w-full" prevents the box from stretching the parent */}
+          <div className="p-4 ring-1 ring-inset text-gray-800 ring-gray-200 rounded-lg w-0 min-w-full">
+            <p className="font-semibold">Temporary file-sharing link.</p>
+            <p className="mt-1 text-sm text-gray-600">
+              This will create a temporary link for downloading files, of any size, from other people. The link will expire when your browser tab is closed.
+            </p>
+          </div>
+          {!payingUser && (
+            <button onClick={() => openSignupDialog()} type="button" className="text-start w-full bg-purple-50 text-purple-600 rounded-lg p-3 px-4 hover:bg-purple-100">
+              <div className="flex justify-between">
+                <div className="flex items-center gap-2">Unlock links that never expire!</div>
+                <span>&rarr;</span>
+              </div>
+              <div className="mt-1 text-start text-sm text text-purple-500">
+                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Receive files by email</p>
+                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Custom logo & branding</p>
+                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Receive up to 1TB</p>
+                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Starts at $6/mo</p>
+              </div>
+            </button>
+          )}
         </>}
       </div>
       <div className="flex-none p-2 flex flex-row-reverse items-center gap-2 --border-t">
-        <Button size={"sm"}>{tab == "email" ? <>Request Files <ArrowRightIcon /></> : <>Get Link <LinkIcon /></>} </Button>
+        <Button size={"sm"}>{!quickTransferEnabled && tab == "email" ? <>Request Files <ArrowRightIcon /></> : <>Get a Request Link <LinkIcon /></>} </Button>
       </div>
     </form>
   )
