@@ -15,6 +15,7 @@ import { useRef, useState } from "react"
 import { deleteBrandProfile, newBrandProfile, updateBrandProfile } from "@/lib/client/Api"
 import { useRouter } from "next/navigation"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { SaveIcon } from "lucide-react"
 
 export default function ({ initialProfile, isNew }) {
   const [profile, setProfile] = useState(initialProfile)
@@ -85,8 +86,9 @@ export default function ({ initialProfile, isNew }) {
     window.location.replace("/app/branding")
   }
 
-  const side = <div className="flex gap-2">
-    <Button onClick={handleSave} disabled={loading}>
+  const side = <div className="flex gap-2 text-gray-800">
+    <Button variant={"outline"} onClick={handleSave} disabled={loading}>
+      <SaveIcon/>
       {saving && <Spinner />} Save
     </Button>
   </div>
