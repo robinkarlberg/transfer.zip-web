@@ -2,16 +2,16 @@ import BIcon from "./BIcon"
 import Image from "next/image"
 import Link from "next/link";
 
-import robin from "@/img/robin.jpg"
+import robin from "@/img/robin.png"
 
 export default function IndieStatement({ compact }) {
   return (
-    <section className="bg-white py-12 sm:py-12" id="message-from-founder">
+    <section className="py-12 sm:py-12 scroll-m-12 md:scroll-m-52" id="message-from-founder">
       <div className="mx-auto max-w-7xl">
         {/* Who we are */}
         {/* <h2 className="text-base/7 font-semibold text-primary text-center">Message from the founder:</h2> */}
-        <div className="mx-auto mt-8 max-w-3xl">
-          <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 shadow-sm">
+        <div className="mx-auto max-w-3xl">
+          <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 sm:p-8 sm:py-10 shadow-sm">
             <div className="flex items-start gap-4 flex-col sm:flex-row">
               <div className="flex h-12 w-12 select-none items-center justify-center rounded-full text-xl overflow-clip">
                 <Image alt="Portrait photo of Robin, the creator of Transfer.zip" src={robin}></Image>
@@ -20,14 +20,14 @@ export default function IndieStatement({ compact }) {
                 <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">
                   Hey 👋
                 </h2>
-                <p className="mt-2 sm:text-lg text-gray-700">
+                <p className="mt-2 sm:text-lg text-gray-800">
                   I'm Robin, the founder.
                 </p>
-                <p className="mt-2 sm:text-lg text-gray-700">
-                  {/* Transfer.zip is a small, independent service. There are no big profit targets. 
-                  We focus on building something fast, reliable, and user-friendly.
-                  We keep costs down by running an efficient service without the overhead of a large corporation. */}
-                  Transfer.zip is an independent service without big profit targets to chase. We put our energy into making file transfers fast, reliable, and simple, and we keep costs low by not carrying the overhead of a large corporation.
+                <p className="mt-2 sm:text-lg text-gray-800 text-justify">
+                  Transfer.zip is an independent service without shareholders to appease to. We put our energy into making file transfers <span className="underline decoration-wavy decoration-primary-500">fast</span>, <span className="underline decoration-wavy decoration-primary-500">reliable</span>, and <span className="underline decoration-wavy decoration-primary-500">simple</span>, and we keep prices low by not carrying the overhead of a large corporation.
+                </p>
+                <p className="mt-2 sm:text-lg text-gray-800 text-justify">
+                  In a world where your data has become the product, where companies now train AI on your content and sell your information to advertisers, we believe your files should stay yours.
                 </p>
                 <ul className="mt-4 space-y-4 sm:space-y-2 sm:text-lg text-gray-700">
                   <li className="flex gap-2">

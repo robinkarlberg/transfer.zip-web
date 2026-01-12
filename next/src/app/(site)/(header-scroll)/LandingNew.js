@@ -37,7 +37,10 @@ export default async function ({ mode }) {
               </div>
               <div className="ms-2 hidden sm:flex">
                 <Button asChild size={"sm"} variant={"ghost"}>
-                  <Link href={"/#message-from-founder"}>About us</Link>
+                  <Link href={"/#why-choose-us"}>Features</Link>
+                </Button>
+                <Button asChild size={"sm"} variant={"ghost"}>
+                  <Link href={"/#message-from-founder"}>About</Link>
                 </Button>
                 <Button asChild size={"sm"} variant={"ghost"}>
                   <Link href={"/#pricing"}>Pricing</Link>
