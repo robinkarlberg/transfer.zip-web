@@ -93,7 +93,7 @@ const validateAndAuthorize = async (body, auth) => {
       return { error: "Invalid expiration time", status: 400 }
     }
 
-    if (expirationTimeEntry.pro && plan !== "pro") {
+    if (!expirationTimeEntry.starter && expirationTimeEntry.pro && plan !== "pro") {
       return { error: "Pro plan required for this expiration time", status: 401 }
     }
 
