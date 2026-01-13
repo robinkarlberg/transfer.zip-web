@@ -1,5 +1,6 @@
 import GenericPage from "@/components/dashboard/GenericPage"
 import TransferList from "@/components/dashboard/TransferList"
+import EmptySpace from "@/components/elements/EmptySpace"
 import { listTransfersForUser } from "@/lib/server/serverUtils"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
 
@@ -11,7 +12,9 @@ export default async function () {
 
   return (
     <GenericPage title={"Received"}>
-      <TransferList transfers={receivedTransfers.map(transfer => transfer.friendlyObj())} />
+      <TransferList transfers={receivedTransfers.map(transfer => transfer.friendlyObj())} emptyFallback={(
+        <EmptySpace title={"Your Received Transfers"} subtitle={"Received files from transfer requests will appear here."} />
+      )} />
     </GenericPage>
   )
 }

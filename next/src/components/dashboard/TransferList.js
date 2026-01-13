@@ -70,7 +70,7 @@ const Entry = ({ transfer }) => {
     }
   }
 
-  const expiresSoon = expiryDate && (expiryDate - new Date() <= 3 * 24 * 60 * 60 * 1000)
+  const expiresSoon = expiryDate && (expiryDate - new Date() <= 2 * 24 * 60 * 60 * 1000)
 
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState(undefined)
@@ -114,7 +114,7 @@ const Entry = ({ transfer }) => {
       )}
       <div className="flex gap-4">
         <div className="w-12 aspect-square flex items-center justify-center text-center bg-primary-500 text-white rounded-lg">
-          {hasTransferRequest ? <ArrowDownIcon/> : <ArrowUpIcon />}
+          {hasTransferRequest ? <ArrowDownIcon /> : <ArrowUpIcon />}
         </div>
         <div>
           <div className="flex">
@@ -180,14 +180,16 @@ const Entry = ({ transfer }) => {
   )
 }
 
-export default function TransferList({ transfers }) {
+export default function TransferList({ transfers, emptyFallback }) {
   return (
     <div className="">
       <div className={`grid grid-cols-1 gap-3`}>
         {transfers.map((transfer, index) => <Entry key={transfer.id} transfer={transfer} />)}
       </div>
       {transfers.length == 0 && (
-        <EmptySpace title={"Empty"} subtitle={"Nothing to display here! *Crickets*"} />
+        emptyFallback || (
+          <EmptySpace title={"Empty"} subtitle={"Nothing to display here! *Crickets*"} />
+        )
         // <EmptySpace title={"Your transfers will appear here"} subtitle={"You can see views and download statistics, edit, send or delete them."} buttonText={"Create My First Transfer"} onClick={() => router.push("/app/new")} />
         // <div className="text-center py-16 rounded-xl border-dashed border-2">
         //   <h3 className="font-semibold text-2xl mb-1">Your transfers will appear here</h3>

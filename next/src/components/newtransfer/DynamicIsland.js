@@ -17,7 +17,11 @@ export default function ({ expand, quickLinkHref, quickLinkContent, showQuickLin
           </Link>
         </div>
       </Transition>
-      <div className={`w-full h-96 bg-white border shadow-xs relative overflow-clip rounded-xl ${!expand ? "max-w-xs" : "max-w-2xl"} transition-all duration-700 relative`}>
+      <div className={cn(
+        `w-full bg-white border shadow-xs relative overflow-clip rounded-xl ${!expand ? "max-w-xs" : "max-w-2xl"} transition-all duration-700 relative`,
+        expand ? "h-128" : "h-96", 
+        "sm:h-96"
+      )}>
         <Transition show={showEndOverlay}>
           <div className="z-20 bg-white absolute left-0 top-0 w-full h-full flex flex-col items-center justify-center group transition data-[closed]:opacity-0">
             {endOverlay}
