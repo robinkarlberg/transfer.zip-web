@@ -24,6 +24,7 @@ import { logError, logWarn } from "@/lib/server/errors"
 const fileSchema = z.object({
   tmpId: z.string(),
   name: z.string(),
+  relativePath: z.string().optional(),
   size: z.number(),
   type: z.string().optional(),
 })
