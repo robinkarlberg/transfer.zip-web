@@ -31,8 +31,8 @@ export async function workerGeoSlow(ip) {
   return await post("/geo-slow", { ip })
 }
 
-export async function workerTransferDelete(nodeUrl, transferId) {
-  return await controlPost("/transfer/delete", { nodeUrl, transferId })
+export async function workerTransferDelete(nodeUrl, transferId, backendVersion) {
+  return await controlPost("/transfer/delete", { nodeUrl, transferId, backendVersion })
 }
 
 export async function workerUploadComplete(nodeUrl, transferId, filesList) {
