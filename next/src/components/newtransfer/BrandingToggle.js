@@ -1,11 +1,9 @@
 "use client"
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectTriggerFix, SelectValue } from "@/components/ui/select";
-import { Label } from "../ui/label";
-import { Switch } from "../ui/switch";
-import { useState } from "react";
-import { PaintbrushIcon } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTriggerFix } from "@/components/ui/select";
+import { HexagonIcon, PaintbrushIcon } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function ({ brandProfiles, brandProfileId, setBrandProfileId }) {
 

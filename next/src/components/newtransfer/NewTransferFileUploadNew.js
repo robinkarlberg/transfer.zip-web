@@ -15,7 +15,6 @@ import { EXPIRATION_TIMES } from "@/lib/constants";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Progress from "../elements/Progress";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 import {
   Dialog,
@@ -25,11 +24,11 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
+import { FileContext } from "@/context/FileProvider";
 import { GlobalContext } from "@/context/GlobalContext";
 import Link from "next/link";
 import BrandingToggle from "./BrandingToggle";
 import DynamicIsland from "./DynamicIsland";
-import { FileContext } from "@/context/FileProvider";
 
 function AddedEmailField({ email, onAction }) {
   return (

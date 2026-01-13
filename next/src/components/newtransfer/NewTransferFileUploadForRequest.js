@@ -2,20 +2,14 @@
 
 import BIcon from "@/components/BIcon";
 import { humanFileSize, humanFileType } from "@/lib/transferUtils";
-import { ArrowRightIcon, FileIcon, FolderPlusIcon, LinkIcon, PlusIcon, RotateCcwIcon, XIcon, ZapIcon } from "lucide-react";
+import { ArrowRightIcon, FileIcon, FolderPlusIcon, PlusIcon, RotateCcwIcon, XIcon } from "lucide-react";
 import { useContext, useMemo, useRef, useState } from "react";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { newTransfer } from "@/lib/client/Api";
 import { prepareTransferFiles, uploadFiles } from "@/lib/client/uploader";
-import { EXPIRATION_TIMES } from "@/lib/constants";
-import { capitalizeFirstLetter } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Progress from "../elements/Progress";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 import {
   Dialog,
@@ -25,11 +19,9 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
-import { GlobalContext } from "@/context/GlobalContext";
-import Link from "next/link";
-import BrandingToggle from "./BrandingToggle";
-import DynamicIsland from "./DynamicIsland";
 import { FileContext } from "@/context/FileProvider";
+import { GlobalContext } from "@/context/GlobalContext";
+import DynamicIsland from "./DynamicIsland";
 
 function AddedEmailField({ email, onAction }) {
   return (

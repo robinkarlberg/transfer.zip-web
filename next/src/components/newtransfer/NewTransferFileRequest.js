@@ -7,12 +7,9 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { EXPIRATION_TIMES } from "@/lib/constants";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Progress from "../elements/Progress";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 import {
   Dialog,
@@ -23,10 +20,10 @@ import {
   DialogTitle
 } from "@/components/ui/dialog";
 import { GlobalContext } from "@/context/GlobalContext";
+import { newTransferRequest } from "@/lib/client/Api";
 import Link from "next/link";
 import BrandingToggle from "./BrandingToggle";
 import DynamicIsland from "./DynamicIsland";
-import { newTransferRequest } from "@/lib/client/Api";
 
 function AddedEmailField({ email, onAction }) {
   return (
