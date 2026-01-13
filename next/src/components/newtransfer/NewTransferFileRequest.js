@@ -178,7 +178,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
   const endOverlay = (
     <>
       <div className="relative w-full h-full max-w-44 max-h-44">
-        <Progress max={1} now={1} showUnits={false} finished={true} finishedText={`Your request was sent!`} failed={failed} />
+        <Progress max={1} now={1} showUnits={false} finished={true} finishedText={(emailRecipients && emailRecipients.length > 0) ? `Your request was sent!` : `Your request link was created!`} failed={failed} />
       </div>
       <div className="flex flex-col gap-2">
         {

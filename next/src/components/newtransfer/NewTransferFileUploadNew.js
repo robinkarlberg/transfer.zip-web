@@ -440,6 +440,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
                 placeholder="Message..."
                 type="text"
                 name="description"
+                maxLength={400}
               />
             </div>
           </>}
