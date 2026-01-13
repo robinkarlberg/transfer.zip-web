@@ -1,12 +1,13 @@
+import CTA from "@/components/CTA";
+import FAQ from "@/components/FAQ";
 import Features1 from "@/components/Features1";
-import LandingNew from "../LandingNew";
-import TestimonialCloud from "@/components/TestimonialCloud";
 import Features2 from "@/components/Features2";
 import Features3 from "@/components/Features3";
 import IndieStatement from "@/components/IndieStatement";
 import Pricing from "@/components/Pricing";
-import FAQ from "@/components/FAQ";
-import CTA from "@/components/CTA";
+import TestimonialCloud from "@/components/TestimonialCloud";
+import DashboardProvider from "@/context/DashboardContext";
+import LandingNew from "../LandingNew";
 
 export const metadata = {
   title: "Transfer.zip | Receive Files - Quick & Easy",
@@ -42,7 +43,9 @@ export default function () {
   return (
     <div>
       {/* <HashInterceptor /> */}
-      <LandingNew mode={"receive"} />
+      <DashboardProvider>
+        <LandingNew mode={"receive"} />
+      </DashboardProvider>
       <Features1 />
       <TestimonialCloud />
       <Features2 />

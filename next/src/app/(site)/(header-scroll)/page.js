@@ -3,13 +3,10 @@ import FAQ from "@/components/FAQ";
 import Features1 from "@/components/Features1";
 import Features2 from "@/components/Features2";
 import Features3 from "@/components/Features3";
-import FeaturesNew from "@/components/FeaturesNew";
 import HashInterceptor from "@/components/HashInterceptor";
+import IndieStatement from "@/components/IndieStatement";
 import Pricing from "@/components/Pricing";
 import TestimonialCloud from "@/components/TestimonialCloud";
-import { FileProvider } from "@/context/FileProvider";
-import Landing from "./Landing";
-import IndieStatement from "@/components/IndieStatement";
 import LandingNew from "./LandingNew";
 
 export default function () {

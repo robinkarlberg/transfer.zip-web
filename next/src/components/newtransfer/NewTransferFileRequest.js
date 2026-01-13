@@ -1,13 +1,13 @@
 "use client"
 
 import BIcon from "@/components/BIcon";
-import { ArrowRightIcon, LinkIcon, PlusIcon, RotateCcwIcon, ZapIcon } from "lucide-react";
+import { ArrowRightIcon, CopyIcon, LinkIcon, PlusIcon, RotateCcwIcon, ZapIcon } from "lucide-react";
 import { useContext, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
-import { capitalizeFirstLetter } from "@/lib/utils";
+import { capitalizeFirstLetter, tryCopyToClipboard } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Progress from "../elements/Progress";
 
@@ -20,10 +20,12 @@ import {
   DialogTitle
 } from "@/components/ui/dialog";
 import { GlobalContext } from "@/context/GlobalContext";
-import { newTransferRequest } from "@/lib/client/Api";
+import { getTransferRequestUploadLink, newTransferRequest } from "@/lib/client/Api";
 import Link from "next/link";
 import BrandingToggle from "./BrandingToggle";
 import DynamicIsland from "./DynamicIsland";
+import { DashboardContext } from "@/context/DashboardContext";
+import { ApplicationContext } from "@/context/ApplicationContext";
 
 function AddedEmailField({ email, onAction }) {
   return (
@@ -39,6 +41,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
   const router = useRouter()
 
   const { openSignupDialog } = useContext(GlobalContext)
+  const { displayNotification } = useContext(DashboardContext)
 
   const emailRef = useRef(null)
   const [emailRecipients, setEmailRecipients] = useState([])
@@ -57,6 +60,8 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
   const quickTransferEnabled = !user || user.plan == "free"
 
   const [finished, setFinished] = useState(false)
+
+  const [transferRequest, setTransferRequest] = useState(null)
 
   const [failed, setFailed] = useState(false)
   const [tab, setTab] = useState(initialTab || "email")
@@ -88,6 +93,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
       try {
         const { transferRequest } = await newTransferRequest({ name, description, emails: emailRecipients, brandProfileId })
+        setTransferRequest(transferRequest)
         setFinished(true)
         // router.replace(`/app/requests`)
       }
@@ -162,12 +168,9 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     }
   }
 
-  const handleViewTransferClick = e => {
-    if (user) {
-      router.push(`/app/requests/`)
-    }
-    else {
-      openSignupDialog()
+  const handleCopyClick = async e => {
+    if (await tryCopyToClipboard(getTransferRequestUploadLink(transferRequest))) {
+      displayNotification("success", "Copied Link", "The request link was successfully copied to the clipboard!")
     }
   }
 
@@ -187,8 +190,8 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
               {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Reload Page <RotateCcwIcon size={12} /></Button>}
               {/* {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Send more files</Button>} */}
             </> : <>
-              {finished && <Button size={"sm"} onClick={handleViewTransferClick}>View Request <ArrowRightIcon size={12} /></Button>}
-              {finished && <Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Send more files</Button>}
+              {finished && <Button size={"sm"} onClick={handleCopyClick}><CopyIcon/> Copy Request Link</Button>}
+              {finished && <Button size={"sm"} variant={"outline"} onClick={() => router.push("/app/requests")}>View in Dashboard</Button>}
             </>
         }
       </div>
