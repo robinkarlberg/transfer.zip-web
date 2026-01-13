@@ -481,8 +481,8 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
           )}
         </>}
       </div>
-      <div className="flex-none p-2 flex items-center gap-2">
-        <span className="ms-auto text-sm text-gray-500">Expires after</span>
+      <div className="flex-none p-2 flex items-center gap-2 --border-t">
+        <span className="ms-auto text-sm text-gray-500">Expires <span className="hidden sm:inline">after</span></span>
         <Select value={selectedExpiryTime} onValueChange={e => {
           if (e == "0") {
             setTab("link")

@@ -14,6 +14,7 @@ import { GithubIcon, StarIcon, ZapIcon } from "lucide-react"
 import NewTransferFileRequest from "@/components/newtransfer/NewTransferFileRequest"
 import ConditionalLandingFileRequest from "./ConditionalLandingFileRequest"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 export default async function ({ mode }) {
 
@@ -109,12 +110,16 @@ export default async function ({ mode }) {
             }
           </div>
         </div>
-        <div className="mx-auto px-6 flex flex-col md:flex-row items-center justify-center gap-8 mt-4 mb-16 fade-in-up-slow">
+        <div className="mx-auto px-6 flex flex-col sm:flex-row items-center justify-center gap-8 mt-4 mb-16 fade-in-up-slow">
           {[
-            { icon: <ZapIcon size={16} />, text: "Data is encrypted" },
-            { icon: <ZapIcon size={16} />, text: "No size limit" },
-            { icon: <ZapIcon size={16} />, text: "Send 100GB+ for free" },
-          ].map(({ icon, text }) => <div key={text} className="text-shadow-sm flex items-center gap-2 rounded-xl font-semibold text-white"><span className="ms-0.5">{icon}</span> {text}</div>)}
+            { icon: <ZapIcon size={16} />, text: "Data is encrypted", mobile: false },
+            { icon: <ZapIcon size={16} />, text: "No size limit", mobile: false },
+            { icon: <ZapIcon size={16} />, text: "Send 100GB+ for free", mobile: false },
+            { icon: <ZapIcon size={16} />, text: "No size limit, data is encrypted", mobile: true },
+          ].map(({ icon, text, mobile }) => <div key={text} className={cn(
+            "text-shadow-sm items-center gap-2 rounded-xl font-semibold text-white",
+            mobile ? "flex sm:hidden" : "hidden sm:flex"
+          )}><span className="ms-0.5">{icon}</span> {text}</div>)}
         </div>
       </div>
     </div>
