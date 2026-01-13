@@ -28,7 +28,7 @@ export async function generateMetadata({ params }) {
   const { brandProfile } = transfer
   const brandName = brandProfile?.name || "Transfer.zip"
   const title = "Download " + transfer.files.length + " files" + " | " + brandName
-  const description = "Someone sent you files."
+  const description = "You've got files waiting for you."
   const ogImage = brandProfile?.backgroundUrl || "https://cdn.transfer.zip/og.png"
 
   return {

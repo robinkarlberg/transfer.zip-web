@@ -24,7 +24,7 @@ export async function generateMetadata({ params }) {
   const { brandProfile } = transferRequest
   const brandName = brandProfile?.name || "Transfer.zip"
   const title = "Upload files | " + brandName
-  const description = "Someone requested files from you."
+  const description = "You have a file request waiting."
   const ogImage = brandProfile?.backgroundUrl || "https://cdn.transfer.zip/og.png"
 
   return {
