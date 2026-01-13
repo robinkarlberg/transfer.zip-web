@@ -190,7 +190,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
               {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Reload Page <RotateCcwIcon size={12} /></Button>}
               {/* {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Send more files</Button>} */}
             </> : <>
-              {finished && <Button size={"sm"} onClick={handleCopyClick}><CopyIcon/> Copy Request Link</Button>}
+              {finished && <Button size={"sm"} onClick={handleCopyClick}><CopyIcon size={12}/> Copy Request Link</Button>}
               {finished && <Button size={"sm"} variant={"outline"} onClick={() => router.push("/app/requests")}>View in Dashboard</Button>}
             </>
         }
