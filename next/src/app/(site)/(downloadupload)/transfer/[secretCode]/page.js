@@ -20,13 +20,16 @@ export async function generateMetadata({ params }) {
 
   await dbConnect()
 
-  const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } })
+  const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } }).populate("brandProfile")
   if (!transfer) {
     return undefined
   }
 
-  const title = "Download " + transfer.files.length + " files" + " | Transfer.zip"
+  const { brandProfile } = transfer
+  const brandName = brandProfile?.name || "Transfer.zip"
+  const title = "Download " + transfer.files.length + " files" + " | " + brandName
   const description = "Someone sent you files."
+  const ogImage = brandProfile?.backgroundUrl || "https://cdn.transfer.zip/og.png"
 
   return {
     title: title,
@@ -34,7 +37,7 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: title,
       description,
-      images: ["https://cdn.transfer.zip/og.png"],
+      images: [ogImage],
     },
     // twitter: {
     //   title: post.title,

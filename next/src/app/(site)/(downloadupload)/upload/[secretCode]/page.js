@@ -11,6 +11,33 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import BrandHeader from "../../BrandHeader";
 
+export async function generateMetadata({ params }) {
+  const { secretCode } = await params
+
+  await dbConnect()
+
+  const transferRequest = await TransferRequest.findOne({ secretCode: { $eq: secretCode } }).populate("brandProfile")
+  if (!transferRequest) {
+    return undefined
+  }
+
+  const { brandProfile } = transferRequest
+  const brandName = brandProfile?.name || "Transfer.zip"
+  const title = "Upload files | " + brandName
+  const description = "Someone requested files from you."
+  const ogImage = brandProfile?.backgroundUrl || "https://cdn.transfer.zip/og.png"
+
+  return {
+    title: title,
+    description,
+    openGraph: {
+      title: title,
+      description,
+      images: [ogImage],
+    },
+  };
+}
+
 export default async function ({ params }) {
   const { secretCode } = await params
 
