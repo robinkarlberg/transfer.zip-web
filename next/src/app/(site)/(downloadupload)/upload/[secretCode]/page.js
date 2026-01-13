@@ -42,7 +42,7 @@ export default async function ({ params }) {
         <>
           <Features1 />
           <TestimonialCloud />
-          <div className="relative">
+          {/* <div className="relative">
             <div className="w-full h-screen overflow-hidden absolute grain bg-linear-to-b from-primary-600 to-primary-300" />
             <div className="py-24 px-2 sm:px-8 relative">
               <p className="text-center mt-2 text-pretty text-3xl font-bold tracking-tight text-white sm:text-3xl lg:text-balance text-shadow-md">
@@ -50,7 +50,7 @@ export default async function ({ params }) {
               </p>
               <IndieStatement compact />
             </div>
-          </div>
+          </div> */}
           <FAQ />
         </>
       )}
