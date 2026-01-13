@@ -177,6 +177,9 @@ export async function deleteTransfer(transferId) {
 }
 
 export const getTransferDownloadLink = (transfer) => {
+    if (process.env.NEXT_PUBLIC_DL_DOMAIN) {
+        return `https://${process.env.NEXT_PUBLIC_DL_DOMAIN}/${transfer.secretCode}`
+    }
     return typeof window === "undefined" ? `${process.env.SITE_URL}/transfer/${transfer.secretCode}` : `${window.location.origin}/transfer/${transfer.secretCode}`
 }
 

@@ -175,6 +175,9 @@ TransferSchema.methods.downloadObj = function () {
 }
 
 TransferSchema.methods.getDownloadLink = function () {
+    if (process.env.NEXT_PUBLIC_DL_DOMAIN) {
+        return `https://${process.env.NEXT_PUBLIC_DL_DOMAIN}/${this.secretCode}`
+    }
     return `${process.env.SITE_URL}/transfer/${this.secretCode}`
 }
 
