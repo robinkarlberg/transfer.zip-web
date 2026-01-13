@@ -132,7 +132,7 @@ export default function TransferRequestList({ transferRequests }) {
   return (
     <div className="">
       {transferRequests.length == 0 && (
-        <EmptySpace onClick={() => router.push("/app/new?dir=receive")} buttonText={"Create Request Link"} title={"Your request links will appear here"} subtitle={"You can view or revoke invdividual links."} />
+        <EmptySpace onClick={() => router.push("/app/receive")} buttonText={"Create Request Link"} title={"Your request links will appear here"} subtitle={"You can view or revoke invdividual links."} />
       )}
       <div className={`grid grid-cols-1 gap-3 mb-2`}>
         {activeRequests.map((transferRequest, index) => <Entry key={transferRequest.id} transferRequest={transferRequest} />)}
