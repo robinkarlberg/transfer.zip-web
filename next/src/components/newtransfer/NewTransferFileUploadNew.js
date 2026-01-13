@@ -44,10 +44,16 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   const router = useRouter()
 
-  const { files, setFiles } = useContext(FileContext)
+  const { files: globalFiles, setFiles: setGlobalFiles } = useContext(FileContext)
   const { openSignupDialog } = useContext(GlobalContext)
 
   const payingUser = user && user.plan != "free"
+
+  const [files, setFiles] = useState([
+    // { name: "test.zip", size: 123152134523, type: "application/zip" },
+    // { name: "file.png", size: 123152134523, type: "image/png" },
+    // { name: "loandasodnasdaosdasd asdasd 12-12-12.zip", size: 94737 },
+  ])
 
   const [uploadProgressMap, setUploadProgressMap] = useState(null)
   const [finished, setFinished] = useState(false)
@@ -103,6 +109,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     e.preventDefault()
 
     if (quickTransferEnabled) {
+      setGlobalFiles(files)
       router.push("/quick/progress#S", { scroll: false })
     }
     else {
@@ -462,7 +469,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
           <div className="p-4 ring-1 ring-inset text-gray-800 ring-gray-200 rounded-lg w-0 min-w-full">
             <p className="font-semibold">Temporary file-sharing link.</p>
             <p className="mt-1 text-sm text-gray-600">
-              This will create a temporary download link with end-to-end encryption. The link will expire when your browser tab is closed.
+              This will create a temporary download link with end-to-end encryption. The link will expire when your browser tab is closed. May not be compatible with some browsers.
             </p>
           </div>
           {!payingUser && (
