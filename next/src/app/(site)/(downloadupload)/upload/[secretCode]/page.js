@@ -1,16 +1,15 @@
-import TransferRequest from "@/lib/server/mongoose/models/TransferRequest";
-import UploadArea from "./UploadArea";
-import { notFound } from "next/navigation";
-import dbConnect from "@/lib/server/mongoose/db";
-import BrandHeader from "../../BrandHeader";
-import Header from "@/components/Header";
-import { IS_SELFHOST } from "@/lib/isSelfHosted";
-import Features1 from "@/components/Features1";
-import TestimonialCloud from "@/components/TestimonialCloud";
 import FAQ from "@/components/FAQ";
-import Image from "next/image";
-import NewTransferFileUploadForRequest from "@/components/newtransfer/NewTransferFileUploadForRequest";
+import Features1 from "@/components/Features1";
+import Header from "@/components/Header";
 import IndieStatement from "@/components/IndieStatement";
+import NewTransferFileUploadForRequest from "@/components/newtransfer/NewTransferFileUploadForRequest";
+import TestimonialCloud from "@/components/TestimonialCloud";
+import { IS_SELFHOST } from "@/lib/isSelfHosted";
+import dbConnect from "@/lib/server/mongoose/db";
+import TransferRequest from "@/lib/server/mongoose/models/TransferRequest";
+import Image from "next/image";
+import { notFound } from "next/navigation";
+import BrandHeader from "../../BrandHeader";
 
 export default async function ({ params }) {
   const { secretCode } = await params
