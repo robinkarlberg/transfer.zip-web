@@ -4,6 +4,9 @@ import * as jose from "jose"
 
 export async function GET() {
   const auth = await useServerAuth()
+  if (!auth) {
+    return NextResponse.json({ error: "Not logged in." }, { status: 401 })
+  }
 
   const payload = {
     userDetail: {
