@@ -274,7 +274,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
           <div className="p-4 ring-1 ring-inset text-gray-800 ring-gray-200 rounded-lg w-0 min-w-full">
             <p className="font-semibold">Temporary file-sharing link.</p>
             <p className="mt-1 text-sm text-gray-600">
-              This will create a temporary link for downloading files, of any size, from other people. The link will expire when your browser tab is closed. May not be compatible with some browsers.
+              This will create a temporary link for downloading files, of any size, from other people. The link will expire when your browser tab is closed.
             </p>
           </div>
           {!payingUser && (
