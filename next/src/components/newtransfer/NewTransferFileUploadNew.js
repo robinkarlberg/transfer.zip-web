@@ -466,26 +466,30 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
         )}
         {quickTransferEnabled && <>
           {/* "w-0 min-w-full" prevents the box from stretching the parent */}
-          <div className="p-4 ring-1 ring-inset text-gray-800 ring-gray-200 rounded-lg w-0 min-w-full">
-            <p className="font-semibold">Temporary file-sharing link.</p>
-            <p className="mt-1 text-sm text-gray-600">
-              This will create a temporary download link with end-to-end encryption. The link will expire when your browser tab is closed.
-            </p>
-          </div>
-          {!payingUser && (
-            <button onClick={() => openSignupDialog(files)} type="button" className="text-start w-full bg-purple-50 text-purple-600 rounded-lg p-3 px-4 hover:bg-purple-100">
-              <div className="flex justify-between">
-                <div className="flex items-center gap-2">Keep download links for a year.</div>
-                <span>&rarr;</span>
+
+          {payingUser ?
+            (
+              <div className="p-4 ring-1 ring-inset text-gray-800 ring-gray-200 rounded-lg w-0 min-w-full">
+                <p className="font-semibold">Temporary file-sharing link.</p>
+                <p className="mt-1 text-sm text-gray-600">
+                  This will create a temporary download link with end-to-end encryption. The link will expire when your browser tab is closed.
+                </p>
               </div>
-              <div className="mt-1 text-start text-sm text text-purple-500">
-                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Unlimited transfers</p>
-                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Custom logo & branding</p>
-                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Send files by email</p>
-                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Starts at $6/mo</p>
-              </div>
-            </button>
-          )}
+            )
+            : (
+              <button onClick={() => openSignupDialog(files)} type="button" className="text-start w-full bg-purple-50 text-purple-600 rounded-lg p-3 px-4 hover:bg-purple-100">
+                <div className="flex justify-between">
+                  <div className="flex items-center gap-2">Keep download links for a year.</div>
+                  <span>&rarr;</span>
+                </div>
+                <div className="mt-1 text-start text-sm text text-purple-500">
+                  <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Unlimited transfers</p>
+                  <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Custom logo & branding</p>
+                  <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Send files by email</p>
+                  <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Starts at $6/mo</p>
+                </div>
+              </button>
+            )}
         </>}
       </div>
       <div className="flex-none p-2 flex items-center gap-2 --border-t">
@@ -506,7 +510,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
                 value={item.days}
                 disabled={!item[user?.plan || "free"]}>
                 {/* remove the badge when its selected */}
-                {item.period}{!payingUser && item.free && <span className="font-bold px-1 text-xs bg-primary-100 text-primary-500 rounded">FREE</span>}
+                {item.period}{!payingUser && (item.free ? <span className="font-bold px-1 text-xs bg-primary-100 text-primary-500 rounded">FREE</span> : <ZapIcon className="text-purple-500" size={8}/>)}
               </SelectItem>)
             )}
           </SelectContent>
