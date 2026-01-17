@@ -1,6 +1,6 @@
 import ContentArticle from "@/components/content/ContentArticle"
 import ContentLanding from "@/components/content/ContentLanding"
-import { getAllSlugs, getContentMeta, getContentBySlug } from "@/lib/server/content"
+import { getAllSlugs, getContentMeta, getContentBySlug, getChildrenBySlug } from "@/lib/server/content"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 
@@ -25,13 +25,16 @@ export async function generateMetadata({ params }) {
 
 export default async function Page({ params }) {
   const slugPath = (await params).slug.join('/')
-  const result = await getContentBySlug(slugPath)
+  const [result, childContent] = await Promise.all([
+    getContentBySlug(slugPath),
+    getChildrenBySlug(slugPath)
+  ])
 
   if (!result) {
     notFound()
   }
 
-  const { meta, content } = result
+  const { meta, content, toc } = result
 
   return (
     <>
@@ -44,7 +47,7 @@ export default async function Page({ params }) {
       >
         <Image width={1024} height={1024} alt={meta.imgAlt} src={meta.imgSrc} />
       </ContentLanding>
-      <ContentArticle>
+      <ContentArticle toc={toc} childContent={childContent}>
         {content}
       </ContentArticle>
     </>

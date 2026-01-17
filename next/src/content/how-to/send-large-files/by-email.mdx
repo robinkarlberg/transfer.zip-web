@@ -1,38 +1,254 @@
 ---
-title: How to Send Large Files by Email (2025 Guide)
+title: How to Send Large Files by Email (2026 Guide)
 description: Email attachment too big? Here's how to send large files over 25 MB by email on Gmail, Outlook, Yahoo, and more - step-by-step solutions.
 imgSrc: /img/content/email-send.png
 imgAlt: Envelope with a large file icon
+linkText: Send large files instantly with Transfer.zip
 ---
 
-### Option 1: Upload and Share a Link
+<TLDR>
+Email caps attachments at 20-25 MB. For larger files, share a link instead: use **Google Drive** (if you have one), **WeTransfer** (up to 3 GB free), or **Transfer.zip** (unlimited P2P, no upload wait, end-to-end encrypted). Compression rarely helps with already-compressed files like videos, JPEGs, and PDFs.
+</TLDR>
 
-- Use [Google Drive](https://drive.google.com), [Dropbox](https://dropbox.com), or [OneDrive](https://onedrive.com).
-- Upload your file, then click "Share" to get a link.
-- Paste the link into your email.
+## The Email Attachment Problem
 
----
-
-### Option 2: Use a File Transfer Service
-
-- Start a transfer at [Transfer.zip](https://transfer.zip) or [WeTransfer](https://wetransfer.com).
-- Enter your recipient's email, upload the file, and send.
-- They'll receive a secure download link.
+Most email providers limit attachment sizes to 20-25 MB to prevent server overload. But in 2026, a single high-resolution photo can be 10 MB, a short 4K video exceeds 100 MB, and project files routinely reach gigabytes. Here's how to work around these limits.
 
 ---
 
-### Option 3: Compress or Split the File
+## Email Provider Limits
 
-- Zip the file; if it's still too large, split it into parts with free tools like 7-Zip or Keka.
-- Attach each part to a separate email if needed.
+| Email Provider | Maximum Size | Built-in Cloud Integration |
+|----------------|--------------|---------------------------|
+| **Gmail** | 25 MB | Google Drive (auto-upload) |
+| **Outlook/Hotmail** | 20 MB | OneDrive integration |
+| **Yahoo Mail** | 25 MB | No automatic integration |
+| **Apple Mail (iCloud)** | 20 MB | Mail Drop (up to 5 GB) |
+
+<Info>
+**Note:** Attachments are encoded when sent, increasing their size by 30-37%. A 20 MB file might become 27 MB when attached, exceeding Gmail's limit.
+</Info>
 
 ---
 
-### Quick Tips
+## Method 1: Cloud Storage Links (Best for Existing Users)
 
-- Warn your recipient to check spam for download links.
-- For sensitive files, set file passwords and share passwords via SMS or a messaging app, not in the same email.
+If you already use Google Drive, Dropbox, or OneDrive, this is the simplest solution.
+
+### Google Drive (15 GB Free)
+
+**Quick steps:**
+1. Go to [Google Drive](https://drive.google.com) and upload your file
+2. Right-click → **Share** → **Change to anyone with the link**
+3. **Copy link** and paste in your email
+
+**Pros:** Files stay accessible indefinitely, 15 GB free storage, recipients can preview without downloading.
+**Cons:** Requires Google account to upload, uses your storage quota.
+
+**Gmail auto-integration:** When you attach a file over 25 MB in Gmail, it automatically uploads to Drive and inserts a link.
 
 ---
 
-Still having trouble? [See our main guide to sending large files](/how-to/send-large-files)
+### Dropbox (2 GB Free)
+
+1. Visit [Dropbox](https://dropbox.com) → **Upload files**
+2. Click **Share** → **Create link** → **Copy link**
+3. Paste in your email
+
+<Tip>
+Add `?dl=1` to the end of the Dropbox link for direct download instead of preview page.
+</Tip>
+
+---
+
+### Microsoft OneDrive (5 GB Free)
+
+1. Go to [OneDrive](https://onedrive.com) → **Upload**
+2. Right-click file → **Share** → **Copy link**
+3. Paste in email
+
+**Outlook integration:** Outlook automatically suggests uploading large files to OneDrive.
+
+---
+
+## Method 2: File Transfer Services (Best for Large Files)
+
+Purpose-built for sending large files temporarily. No storage quota used, often no account required.
+
+### Transfer.zip (Unlimited with P2P)
+
+**Why it's great:**
+- **Quick Transfer mode**: Unlimited file size, peer-to-peer streaming (no upload wait)
+- No account required for basic use
+- End-to-end encrypted
+- 7-day free trial includes cloud storage up to 1 TB
+
+**Quick steps:**
+1. Go to [Transfer.zip](https://transfer.zip)
+2. Select **Quick Transfer** (for P2P) or **Upload** (for cloud)
+3. Copy the generated link (appears instantly)
+4. Paste link in your email
+
+**When to use:** Files over 50 GB, instant sharing needed, privacy important, time-sensitive files.
+
+---
+
+### SwissTransfer (Up to 50 GB, Free)
+
+1. Visit [SwissTransfer](https://swisstransfer.com)
+2. Drag and drop files
+3. Generate link or enter recipient email
+4. Copy the link
+
+**Pros:** 50 GB limit, 30-day retention, Swiss privacy laws, no ads, no account needed.
+
+---
+
+### WeTransfer (Up to 3 GB Free)
+
+1. Go to [WeTransfer](https://wetransfer.com)
+2. **Add your files** → Enter email or **Get transfer link**
+3. Click **Transfer**
+
+**Pros:** Super simple interface, reliable and fast.
+**Cons:** Only 3 GB free, 3-day retention, 10 transfers/month limit.
+
+---
+
+## Method 3: Compress Files
+
+Compression can sometimes squeeze files under the email limit, especially for documents and uncompressed images.
+
+**Windows:** Right-click → **Send to** → **Compressed (zipped) folder**
+**Mac:** Right-click → **Compress "[filename]"**
+
+**For better compression:**
+- Download [7-Zip](https://www.7-zip.org/) (Windows) or [Keka](https://www.keka.io/) (Mac)
+- Choose **.7z** format with **Ultra** compression
+
+<Warning>
+**Reality check:** Compression works great on text files and documents (70-90% reduction), but doesn't help much with videos, JPEGs, PNGs, PDFs, or MP3s that are already compressed.
+</Warning>
+
+---
+
+## Method 4: Split Large Files
+
+If your file is too large even after compression, split it into smaller chunks.
+
+**Using 7-Zip:**
+1. Right-click file → **7-Zip** → **Add to archive**
+2. Under **Split to volumes**, select **15M** or **20M**
+3. Send each part as separate attachments
+4. Include instructions: "Download all parts before extracting"
+
+**Recipient needs:** 7-Zip or compatible software, all parts in same folder.
+
+---
+
+## Method 5: Email Provider's Built-in Features
+
+### Gmail: Automatic Google Drive Upload
+When you attach a file over 25 MB, Gmail automatically uploads it to Google Drive and inserts a link. No special steps needed.
+
+### Apple Mail: Mail Drop
+Allows sending files up to 5 GB through iCloud. Activates automatically when you attach files over 20 MB in Apple Mail app. Links expire after 30 days.
+
+### Outlook: OneDrive Integration
+Outlook prompts OneDrive upload for large files. Click **Upload to OneDrive and share as a link** when prompted.
+
+---
+
+## Security Best Practices
+
+<Alert>
+**For sensitive files:**
+
+1. **Use password protection** - Most transfer services offer this. Share password via separate channel (SMS, phone).
+2. **Encrypt before uploading** - Use 7-Zip with AES-256 encryption.
+3. **Choose privacy-focused services** - Transfer.zip (E2E encrypted), SwissTransfer (Swiss privacy laws).
+4. **Set expiration dates** - Don't leave sensitive files accessible indefinitely.
+5. **Avoid public Wi-Fi** - Use VPN when uploading sensitive files.
+</Alert>
+
+---
+
+## Which Method to Choose?
+
+| Situation | Best Method | Why |
+|-----------|-------------|-----|
+| File under 20 MB | **Compress then email** | Simplest, direct delivery |
+| 20-50 MB | **Cloud storage link** | If you already use it |
+| 50 MB - 3 GB | **WeTransfer or SwissTransfer** | Quick, no account needed |
+| 3 GB - 50 GB | **SwissTransfer or Transfer.zip** | Generous free limits |
+| Over 50 GB | **Transfer.zip (P2P mode)** | Unlimited free tier |
+| Sensitive files | **Transfer.zip** or **Encrypt + any service** | E2E encryption |
+
+---
+
+## Troubleshooting Common Issues
+
+**"Email keeps bouncing back"**
+- File is too large (encoding adds 30%+). Try compressing or use a file transfer link.
+
+**"Recipient can't access the file"**
+- Check sharing permissions and verify link hasn't expired. Ask recipient to check spam folder.
+
+**"Upload is taking forever"**
+- Check your upload speed (often slower than download). Use wired connection. For instant sharing, use Transfer.zip P2P mode.
+
+**"File transfer link expired"**
+- Re-upload and send new link. Use services with longer retention (SwissTransfer: 30 days) or cloud storage.
+
+---
+
+## Email Etiquette for Large Files
+
+1. **Give recipients a heads-up** - Warn about file size, especially for mobile users.
+2. **Use descriptive filenames** - `ProjectProposal_ClientName_Jan2026.pdf` not `document_final.pdf`
+3. **Include context** - What the file is, why you're sending it, what action you expect.
+4. **Set expectations** - "This link expires in 7 days" or "Please download by Friday"
+
+---
+
+## FAQ
+
+**What's the largest file I can email?**
+Most providers limit to 20-25 MB. With encoding overhead, aim for 15-18 MB maximum to be safe.
+
+**Can I send large files without a cloud account?**
+Yes, use Transfer.zip, SwissTransfer, or WeTransfer - all work without creating an account.
+
+**How long do file transfer links last?**
+- WeTransfer: 7 days (free)
+- SwissTransfer: 30 days
+- Transfer.zip: Until browser tab closes (Quick Transfer) or up to 1 year (paid)
+- Cloud storage: Until you delete them
+
+**Why does my 20 MB file fail to attach?**
+Email encoding increases file size by 30-37%. A 20 MB file becomes ~27 MB when attached, exceeding Gmail's 25 MB limit.
+
+**What's the fastest way to send large files?**
+Transfer.zip's P2P mode streams files directly with no upload wait. Both sender and recipient must be online simultaneously.
+
+---
+
+## Quick Reference for Beginners
+
+**File under 20 MB:**
+1. Compress it (right-click → Compress)
+2. Attach to email normally
+
+**File 20-50 MB:**
+1. Upload to Google Drive / Dropbox / OneDrive
+2. Copy the shareable link
+3. Paste link in your email
+
+**File over 50 MB:**
+1. Go to [Transfer.zip](https://transfer.zip) or [SwissTransfer](https://swisstransfer.com)
+2. Upload your file (or use Quick Transfer for P2P)
+3. Copy the link and paste in email
+
+---
+
+**Bottom line:** Email wasn't designed for large files, but you have plenty of workarounds. For occasional sharing, use Transfer.zip or SwissTransfer. For regular use, cloud storage makes sense. And for the largest files, nothing beats Transfer.zip's unlimited P2P mode.

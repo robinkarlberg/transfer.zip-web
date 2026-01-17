@@ -51,9 +51,6 @@ export default async function ({ mode }) {
                 </Button>
               </div>
             </div>
-            <Link href={"https://github.com/robinkarlberg/transfer.zip-web"} className={"hidden [&_svg:not([class*='size-'])]:size-4 text-white md:inline-flex items-center justify-center gap-2 fade-in-up-fast text-shadow-sm text-sm hover:underline font-semibold"}>
-              <StarIcon /> Star on GitHub ({stars})
-            </Link>
           </div>
           <div className="fade-in-up-fast">
             <AuthConditional
@@ -68,8 +65,8 @@ export default async function ({ mode }) {
             />
           </div>
         </div>
-        <div className="grow mx-auto w-full max-w-7xl px-6 flex flex-col items-center justify-center mt-12 sm:mt-0">
-          <h1 className="mx-auto text-center max-w-2xl text-4xl font-bold tracking-tight text-white mb-24 2xl:mb-32 fade-in-up">
+        <div className="grow mx-auto w-full max-w-7xl px-6 flex flex-col items-center justify-center mt-8 sm:mt-0">
+          <h1 className="mx-auto text-center max-w-2xl text-4xl font-bold tracking-tight text-white fade-in-up">
             Try the{" "}
             <span className="relative">
               <span className="relative z-10">easiest</span>
@@ -94,6 +91,9 @@ export default async function ({ mode }) {
             {" "}way to{" "}
             {mode === "receive" ? "receive files." : "send files."}
           </h1>
+          <Link href={"https://github.com/robinkarlberg/transfer.zip-web"} className={"mt-4 [&_svg:not([class*='size-'])]:size-4 text-white inline-flex items-center justify-center gap-2 text-shadow-sm text-sm hover:underline font-semibold fade-in-up-slow mb-24 2xl:mb-32"}>
+            <StarIcon /> Star on GitHub ({stars})
+          </Link>
           {/* <p className="mx-auto text-center text-lg leading-8 text-gray-700 max-w-md mb-12">
             No queue. No size limits.
           </p> */}
@@ -113,7 +113,7 @@ export default async function ({ mode }) {
         <div className="mx-auto px-6 flex flex-col sm:flex-row items-center justify-center gap-8 mt-4 mb-16 fade-in-up-slow">
           {[
             { icon: <ZapIcon size={16} />, text: "Data is encrypted", mobile: false },
-            { icon: <ZapIcon size={16} />, text: "No size limit", mobile: false },
+            { icon: <ZapIcon size={16} />, text: <Link className="hover:underline" href={"https://github.com/robinkarlberg/transfer.zip-web"}>Open source</Link>, mobile: false },
             { icon: <ZapIcon size={16} />, text: "Send 100GB+ for free", mobile: false },
             { icon: <ZapIcon size={16} />, text: "No size limit, data is encrypted", mobile: true },
           ].map(({ icon, text, mobile }) => <div key={text} className={cn(

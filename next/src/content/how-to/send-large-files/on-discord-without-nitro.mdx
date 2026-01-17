@@ -1,0 +1,299 @@
+---
+title: How to Send Large Files on Discord without Nitro (2026 Guide)
+description: Discord's 25 MB limit too small? Learn how to send files over 25 MB on Discord without Nitro using free workarounds like compression, file splitting, and external services.
+imgSrc: /img/content/discord.png
+imgAlt: Discord logo with a large file icon
+linkText: Send large files instantly with Transfer.zip
+---
+
+<TLDR>
+Discord free tier limits uploads to **10 MB**. To send larger files: use **Transfer.zip** (unlimited P2P, instant link), **SwissTransfer** (50 GB, 30 days), or **WeTransfer** (3 GB). Just upload, copy the link, and paste it in Discord. For videos/images, compress first if quality loss is acceptable. Avoid splitting files—it's tedious for recipients.
+</TLDR>
+
+## Discord File Size Limits Explained
+
+Discord's upload limits depend on your subscription level:
+
+- **Free accounts**: 10 MB per file (recently decreased from 25 MB)
+- **Nitro Basic**: 50 MB per file
+- **Nitro**: 500 MB per file
+
+<Info>
+If you're on the free tier and need to send files larger than 10 MB, you have several effective workarounds that don't require paying for Nitro.
+</Info>
+
+---
+
+## Method 1: Use a File Transfer Service (Recommended)
+
+The easiest solution is to upload your file to a transfer service, then share the download link in Discord. This works for files of any size and keeps Discord chat clean.
+
+### Best Services for Discord File Sharing:
+
+**[Transfer.zip](https://transfer.zip)** - Unlimited file size (P2P mode)
+- No sign-up required for Quick Transfer
+- Files stream directly from your device (no upload wait)
+- End-to-end encrypted for privacy
+- Link expires when you close the tab (or up to 1 year with paid plans)
+
+**Steps:**
+1. Visit [Transfer.zip](https://transfer.zip)
+2. Select "Quick Transfer" and choose your file
+3. Copy the generated link
+4. Paste the link in your Discord chat
+5. Recipients click the link to download instantly
+
+**[SwissTransfer](https://swisstransfer.com)** - Up to 50 GB
+- No account needed
+- Files stored for 30 days
+- Optional password protection
+- Swiss privacy laws apply
+
+**[WeTransfer](https://wetransfer.com)** - Up to 3 GB (free tier)
+- Simple interface
+- Files stored for 3 days
+- 10 transfers per month limit
+
+---
+
+## Method 2: Compress Your Files
+
+Compression can significantly reduce file size, especially for documents, images, and certain video formats.
+
+### For Any File Type:
+
+**Windows:**
+1. Right-click the file → **Send to** → **Compressed (zipped) folder**
+2. Upload the .zip file to Discord
+
+**Mac:**
+1. Right-click the file → **Compress "[filename]"**
+2. Upload the .zip file to Discord
+
+**For Better Compression:**
+- Download [7-Zip](https://www.7-zip.org/) (Windows) or [Keka](https://www.keka.io/) (Mac)
+- Right-click → 7-Zip/Keka → **Add to archive**
+- Choose **.7z** format and set compression to **Ultra** or **Maximum**
+- This can reduce file size by 30-70% depending on file type
+
+### For Videos Specifically:
+
+Videos can often be compressed dramatically without visible quality loss:
+
+1. Use [Vert.sh](https://vert.sh/), [Clideo](https://clideo.com/compress-video), or [HandBrake](https://handbrake.fr/)
+2. Reduce resolution to 720p or 1080p
+3. Lower bitrate to 2-6 Mbps
+4. Use H.264 or H.265 (HEVC) codec
+5. Export and upload to Discord
+
+**Example:** A 100 MB 4K video can often compress to under 25 MB at 1080p.
+
+<Tip>
+See our detailed guide: [How to compress a video](/how-to/compress-a-video)
+</Tip>
+
+---
+
+## Method 3: Split Large Files into Parts
+
+If compression isn't enough, split your file into smaller chunks that fit Discord's limit.
+
+### Using 7-Zip (Windows/Mac/Linux):
+
+1. Download [7-Zip](https://www.7-zip.org/)
+2. Right-click your file → **7-Zip** → **Add to archive**
+3. Under **Split to volumes**, enter: `20M` (for 20 MB parts, staying under 25 MB limit)
+4. Click **OK**
+5. Upload each part (file.7z.001, file.7z.002, etc.) to Discord
+6. Recipients download all parts, then extract using 7-Zip
+
+<Warning>
+**Important:** Recipients need ALL parts in the same folder to extract. Make sure they download every part before trying to extract.
+</Warning>
+
+### Using WinRAR:
+
+1. Right-click file → **Add to archive**
+2. Set **Split to volumes** to `20M`
+3. Create archive and upload each part
+
+---
+
+## Method 4: Use Cloud Storage Links
+
+Upload to your existing cloud storage and share the link in Discord.
+
+### Google Drive:
+1. Upload file to [Google Drive](https://drive.google.com)
+2. Right-click file → **Share** → **Copy link**
+3. Set permissions to "Anyone with the link"
+4. Paste link in Discord
+
+### Dropbox:
+1. Upload to [Dropbox](https://dropbox.com)
+2. Click **Share** → **Create link**
+3. Share the link in Discord
+
+### OneDrive:
+1. Upload to [OneDrive](https://onedrive.com)
+2. Right-click → **Share**
+3. Copy and share the link
+
+**Pros:** Files stay available long-term, easy to manage
+**Cons:** Uses your cloud storage quota, may require sign-in for recipients
+
+---
+
+## Method 5: Host Files on GitHub (For Code/Projects)
+
+If you're sharing code, projects, or text files with your Discord community:
+
+1. Create a [GitHub](https://github.com) repository
+2. Upload your files
+3. Share the repository link or direct file links
+4. Recipients can clone/download the entire project
+
+**Best for:** Open-source projects, code sharing, documentation, large text-based files
+
+---
+
+## Method 6: Use Discord Bots (Server Owners)
+
+Some Discord bots can help with file management:
+
+**File.io Bot** - Uploads files to temporary hosting
+**Dropbox Bot** - Integrates Dropbox with Discord
+**Google Drive Bot** - Links Google Drive files directly
+
+*Note: Requires server admin permissions to add bots*
+
+---
+
+## Special Case: Sending Videos and Images
+
+### For Images:
+- Convert PNG to JPG (much smaller)
+- Reduce image dimensions if high resolution isn't needed
+- Use image compression tools like [TinyPNG](https://tinypng.com)
+
+### For Videos:
+- Reduce resolution (4K → 1080p or 720p)
+- Lower frame rate (60fps → 30fps)
+- Use efficient codecs (H.265/HEVC)
+- Trim unnecessary footage
+- See: [How to compress a video for Discord](#)
+
+### For GIFs:
+- GIFs are notoriously large. Convert to MP4 instead using [ezgif.com](https://ezgif.com/gif-to-mp4)
+- MP4 videos are typically 10x smaller than GIFs with better quality
+
+---
+
+## Quick Comparison: Which Method to Use?
+
+| Method | Best For | File Size Limit | Ease of Use |
+|--------|----------|-----------------|-------------|
+| **Transfer.zip** | Any large file, quick sharing | Unlimited (P2P) | ⭐⭐⭐⭐⭐ Very Easy |
+| **SwissTransfer** | Very large files (up to 50 GB) | 50 GB | ⭐⭐⭐⭐⭐ Very Easy |
+| **Compression** | Videos, images, documents | Varies (30-70% reduction) | ⭐⭐⭐⭐ Easy |
+| **File Splitting** | Any file when compression fails | No limit | ⭐⭐⭐ Moderate |
+| **Cloud Storage** | Long-term sharing, collaboration | Varies by service | ⭐⭐⭐⭐ Easy |
+| **GitHub** | Code, text files, projects | 100 MB per file | ⭐⭐⭐ Moderate |
+
+---
+
+## Tips and Best Practices
+
+<Alert>
+**Security:**
+- Use password protection on sensitive files (most transfer services offer this)
+- Share passwords via Discord DMs, not in the same message as the link
+- Use end-to-end encrypted services like Transfer.zip for private files
+- Be cautious with files from unknown sources
+</Alert>
+
+<Tip>
+**For Better Experience:**
+- **Warn recipients** about large downloads (especially on mobile data)
+- **Include file details** in your message: name, size, what it contains
+- **Use descriptive filenames** - "ProjectReport_Jan2026.pdf" not "document.pdf"
+- **Check file integrity** after splitting/compressing
+- **Test the link** before sharing to ensure it works
+</Tip>
+
+**Discord Etiquette:**
+- Don't spam multiple large file links in quick succession
+- Use spoiler tags for NSFW content: `||link||`
+- Pin important file links for easy access later
+- Delete old/expired links to keep chat clean
+
+---
+
+## Troubleshooting Common Issues
+
+**"This file is too large to upload"**
+- Try compressing first, then splitting if needed
+- Use a file transfer service instead
+
+**"Recipients can't open the file"**
+- Ensure all split parts were downloaded (for split archives)
+- Check that the file format is supported on their device
+- Verify the download link hasn't expired
+
+**"Transfer speed is too slow"**
+- Large files take time - be patient
+- For instant transfers, use Transfer.zip's P2P mode (streams directly)
+- Check your internet connection speed
+
+**"Link expired"**
+- Most free services expire links after a few days
+- Re-upload and send a new link
+- Use services with longer retention (SwissTransfer: 30 days)
+
+---
+
+## Frequently Asked Questions
+
+**Can I get banned for sharing large files on Discord?**
+No, using external links is completely allowed and encouraged by Discord for files over the limit.
+
+**Is it safe to use file transfer services?**
+Yes, reputable services like Transfer.zip, SwissTransfer, and WeTransfer are safe. Always use encryption for sensitive files.
+
+**Why doesn't Discord allow larger files for free?**
+Server storage and bandwidth are expensive. The 25 MB limit helps Discord manage costs while staying free.
+
+**Can I send large files in Discord DMs?**
+Yes, the same 25 MB limit applies. Use the same workarounds mentioned above.
+
+**What's the fastest method?**
+Transfer.zip's Quick Transfer (P2P mode) streams files directly without upload waiting time.
+
+---
+
+## Is Nitro Worth It Just for File Uploads?
+
+Discord Nitro ($9.99/month) raises the limit to **500 MB** and includes:
+- Higher quality video streaming
+- Custom emojis everywhere
+- Profile decorations
+- Server boosts
+
+**Worth it if:**
+- You frequently share 25-500 MB files
+- You want the other Nitro perks
+- You use Discord professionally
+
+**Not worth it if:**
+- You only occasionally send large files (use free transfer services)
+- Your files are usually over 500 MB anyway (you'd still need external services)
+- You're on a tight budget
+
+---
+
+**Bottom line:** You don't need Nitro to share large files on Discord. Services like [Transfer.zip](https://transfer.zip) offer unlimited file sizes for free, with the added benefit of keeping Discord servers lean and fast.
+
+**Related guides:**
+- [How to send large files for free](/how-to/send-large-files/for-free)
+- [How to compress a video](/how-to/compress-a-video)
+- [Share files anonymously](/how-to/share-files/anonymously)
