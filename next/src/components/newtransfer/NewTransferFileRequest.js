@@ -287,7 +287,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
                 <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Receive files by email</p>
                 <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Custom logo & branding</p>
                 <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Receive up to 1TB</p>
-                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Starts at $6/mo</p>
+                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Start for free</p>
               </div>
             </button>
           )}
