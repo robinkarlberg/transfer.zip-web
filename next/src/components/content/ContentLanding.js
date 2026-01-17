@@ -62,10 +62,10 @@ export default async function ({ title, description, href, linkText, slugPath })
                   )
                 })}
             </nav>
-            <h1 className="mx-auto max-w-xl text-4xl font-bold tracking-tight text-white sm:text-5xl">
+            <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-white sm:text-5xl">
               {title}
             </h1>
-            <p className="mx-auto mt-6 text-lg leading-8 text-white max-w-xl [&_a]:text-white [&_a]:hover:text-primary-200 [&_a]:font-semibold">
+            <p className="mx-auto mt-6 text-lg leading-8 text-white max-w-4xl [&_a]:text-white [&_a]:hover:text-primary-200 [&_a]:font-semibold">
               {description}
             </p>
             <div className="flex mt-10 items-center gap-6 justify-center">

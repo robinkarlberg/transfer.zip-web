@@ -1,4 +1,4 @@
-import ToolLayout from "@/components/ToolLayout";
+import ToolLanding from "@/components/tools/ToolLanding";
 import HeicConvertTool from "@/components/tools/HeicConvertTool";
 import RelatedLinks from "@/components/RelatedLinks";
 import MultiStepAction from "@/components/MultiStepAction";
@@ -17,10 +17,16 @@ export const metadata = {
 export default function Page() {
   return (
     <div>
-      <ToolLayout heroTitle={<span><span className="text-primary">Convert HEIC</span> to JPG online</span>} heroSubtitle={<><b>Instantly convert HEIC photos to JPG format</b> with our free online converter. No uploads required - your images stay private and secure on your device.</>}>
+      <ToolLanding
+        title="to JPG online."
+        highlightedWord="Convert HEIC"
+        subtitle="Instantly convert HEIC photos to JPG format with our free online converter. No uploads required - your images stay private and secure on your device."
+      >
         <HeicConvertTool />
-      </ToolLayout>
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 mb-16">
+      </ToolLanding>
+
+      <div className="bg-white">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16">
 
         {/* What is HEIC Section */}
         <div className="mt-16">
@@ -162,6 +168,7 @@ export default function Page() {
           <h2 className="text-2xl mb-4 font-bold">Additional Tools for File Management</h2>
           <p className="text-lg mb-4">Need more than just image conversion? Check out our other free online tools:</p>
           <RelatedLinks currentSlug="convert-heic-to-jpg" />
+        </div>
         </div>
       </div>
     </div>
