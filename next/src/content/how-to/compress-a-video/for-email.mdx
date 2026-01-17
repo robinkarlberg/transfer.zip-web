@@ -55,29 +55,10 @@ For most email attachments, aim for:
 
 Before compressing, remove unnecessary footage. This drastically reduces file size.
 
-**Windows 11 (Photos App):**
-1. Right-click video → **Open with** → **Photos**
-2. Click **Edit video** → **Trim**
-3. Drag sliders to keep essential parts
-4. Click **Save a copy**
-
-**Mac (QuickTime):**
-1. Open video in **QuickTime Player**
-2. **Edit** → **Trim**
-3. Drag handles to select portion to keep
-4. **File** → **Export As** → choose quality
-
-**iPhone:**
-1. Open video in **Photos**
-2. Tap **Edit** → **Crop icon**
-3. Drag timeline edges to trim
-4. Tap **Done** → **Save as New Clip**
-
-**Android:**
-1. Open **Google Photos**
-2. Select video → **Edit** → **Crop**
-3. Adjust start/end points
-4. **Save copy**
+- **Windows:** Photos app → Edit video → Trim
+- **Mac:** QuickTime → Edit → Trim
+- **iPhone:** Photos → Edit → drag timeline edges
+- **Android:** Google Photos → Edit → Crop
 
 <Tip>
 Trimming a 5-minute video to 1 minute is far more effective than any compression technique. Always trim first before compressing.
@@ -91,22 +72,18 @@ Online compressors are simple and require no software installation.
 
 **Recommended Tools:**
 
-**[Vert.sh](https://vert.sh/)** (Free, no watermark)
-1. Visit Vert.sh → **Choose File**
-2. Select **Email** preset or custom:
-   - Resolution: **480p** or **720p**
-   - Quality: **Low to Medium**
-3. Click **Compress Video**
-4. Download and attach to email
+- **[Vert.sh](https://vert.sh/)** — Free, no watermark. Use the "Email" preset or set resolution to 480p/720p manually.
+- **[FreeConvert](https://www.freeconvert.com/video-compressor)** — Upload up to 1 GB, set target size to 15-20 MB.
 
-**[FreeConvert](https://www.freeconvert.com/video-compressor)** (Free)
-1. Upload video (up to 1 GB)
-2. Choose **Target Size:** enter 15-20 MB
-3. Click **Compress Now**
-4. Download compressed file
-
-**Pros:** No installation, works on any device, beginner-friendly
-**Cons:** Requires internet, privacy concerns for sensitive videos
+<GoodFor label="Pros:">
+<Pro>No installation</Pro>
+<Pro>Works on any device</Pro>
+<Pro>Beginner-friendly</Pro>
+</GoodFor>
+<BadFor label="Cons:">
+<Con>Requires internet</Con>
+<Con>Privacy concerns for sensitive videos</Con>
+</BadFor>
 
 ---
 
@@ -116,29 +93,11 @@ For frequent compression or offline work, desktop software gives better results.
 
 ### HandBrake (Free, Windows/Mac/Linux)
 
-HandBrake is the gold standard for video compression:
-
-1. Download [HandBrake](https://handbrake.fr/)
-2. **Open Source** → select your video
-3. **Presets** → select **Fast 480p30** or **Fast 720p30**
-4. Click **Video** tab:
-   - Codec: **H.264 (x264)**
-   - Quality: **RF 24-28** (higher = smaller file)
-   - Or set **Avg Bitrate** to **1500 kbps**
-5. Click **Start Encode**
-
-**Target settings:** 480p, RF 26, 1-1.5 Mbps = ~10-15 MB per minute
+Download [HandBrake](https://handbrake.fr/), open your video, and use the **Fast 480p30** or **Fast 720p30** preset. For email, aim for RF 24-28 or 1500 kbps bitrate. Target: ~10-15 MB per minute.
 
 ### VLC Media Player (Free)
 
-1. Open [VLC](https://www.videolan.org/)
-2. **Media** → **Convert/Save**
-3. **Add** your video → **Convert/Save**
-4. Profile: **Video - H.264 + MP3 (MP4)**
-5. Click **Settings** icon:
-   - Bitrate: **1500 kb/s**
-   - Frame rate: **30**
-6. **Save** → Choose location → **Start**
+Use [VLC's](https://www.videolan.org/) **Media → Convert/Save**, select the H.264 profile, and set bitrate to 1500 kbps.
 
 ---
 
@@ -146,21 +105,11 @@ HandBrake is the gold standard for video compression:
 
 If compression isn't getting you below the limit, send a download link to preserve quality.
 
-**[Transfer.zip](https://transfer.zip)** (Unlimited, Free)
-- Select "Quick Transfer" → Choose video
-- Copy link → Paste in email body
-- No file size limits, end-to-end encrypted
+- **[Transfer.zip](https://transfer.zip)** — Unlimited size, end-to-end encrypted. Copy link and paste in email.
+- **[SwissTransfer](https://swisstransfer.com)** — Up to 50 GB, files stored 30 days.
+- **Cloud Storage** — Google Drive (15 GB), Dropbox (2 GB), OneDrive (5 GB). Upload, share, copy link.
 
-**[SwissTransfer](https://swisstransfer.com)** (Up to 50 GB)
-- Upload video → Get shareable link
-- Files stored for 30 days
-
-**Cloud Storage:**
-- **Google Drive** (15 GB free): Upload → Share → Copy link
-- **Dropbox** (2 GB free): Upload → Share → Copy link
-- **OneDrive** (5 GB free): Upload → Share → Copy link
-
-**Gmail tip:** Gmail automatically uploads files over 25 MB to Google Drive and inserts a link.
+**Gmail tip:** Files over 25 MB automatically upload to Google Drive and insert a link.
 
 ---
 
@@ -228,20 +177,9 @@ H.264 is most compatible. Avoid H.265/HEVC unless recipients have modern devices
 
 ## Summary
 
-**For casual sharing:**
-1. Trim video to essentials
-2. Use Vert.sh or FreeConvert to compress to 480p
-3. Attach to email if under 20 MB
-
-**For best quality:**
-1. Install HandBrake
-2. Use 720p, RF 24, 2 Mbps settings
-3. Test file size and adjust
-
-**For videos that won't fit:**
-1. Upload to [Transfer.zip](https://transfer.zip) (unlimited size)
-2. Copy link and paste in email body
-3. Note: "Video too large for attachment - click to download"
+- **Casual sharing:** Trim first, compress to 480p with Vert.sh, attach if under 20 MB.
+- **Best quality:** Use HandBrake at 720p, RF 24, 2 Mbps.
+- **Videos that won't fit:** Upload to [Transfer.zip](https://transfer.zip) and paste the link in your email.
 
 **Bottom line:** Email wasn't designed for large video files. For videos over 2 minutes or high quality, skip compression and use a file transfer service. Your recipients will appreciate better quality.
 

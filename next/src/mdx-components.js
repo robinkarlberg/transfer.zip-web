@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cn } from "./lib/utils";
 import { Button } from "./components/ui/button";
-import { Info as InfoIcon, AlertTriangle, AlertCircle, Lightbulb, Sparkles, NewspaperIcon, ArrowRight, ArrowRightIcon } from "lucide-react";
+import { Info as InfoIcon, AlertTriangle, AlertCircle, Lightbulb, Sparkles, NewspaperIcon, ArrowRight, ArrowRightIcon, Check, X } from "lucide-react";
 
 function HowToCard({ href, title, description, image, imageAlt, children }) {
   return (
@@ -78,6 +78,46 @@ function Tip({ children }) {
         {children}
       </div>
     </div>
+  );
+}
+
+function GoodFor({ label = "Good for:", children }) {
+  return (
+    <div className="my-4">
+      <div className="font-semibold text-blue-600 mb-2">{label}</div>
+      <ul className="space-y-1.5 list-none pl-0 m-0">
+        {children}
+      </ul>
+    </div>
+  );
+}
+
+function BadFor({ label = "Not great for:", children }) {
+  return (
+    <div className="my-4">
+      <div className="font-semibold text-red-600 mb-2">{label}</div>
+      <ul className="space-y-1.5 list-none pl-0 m-0">
+        {children}
+      </ul>
+    </div>
+  );
+}
+
+function Pro({ children }) {
+  return (
+    <li className="flex gap-2 items-start m-0 p-0">
+      <Check className="h-5 w-5 shrink-0 mt-0.5 text-blue-600" />
+      <span>{children}</span>
+    </li>
+  );
+}
+
+function Con({ children }) {
+  return (
+    <li className="flex gap-2 items-start m-0 p-0">
+      <X className="h-5 w-5 shrink-0 mt-0.5 text-red-600" />
+      <span>{children}</span>
+    </li>
   );
 }
 
@@ -233,6 +273,7 @@ export function mdxComponents(basePath) {
     ),
     a: ({ className, ...props }) => (
       <Link
+        target="_blank"
         className={cn(
           "font-medium text-primary underline underline-offset-4 hover:text-primary-500",
           className
@@ -275,7 +316,7 @@ export function mdxComponents(basePath) {
         target="_blank"
         rel="noopener noreferrer"
         className={cn(
-          "inline-flex items-center gap-2 px-4 py-2 font-medium bg-primary text-white hover:bg-primary-light text-lg rounded-lg transition-colors no-underline",
+          "mt-4 inline-flex items-center gap-2 px-4 py-2 font-medium bg-primary text-white hover:bg-primary-light text-lg rounded-lg transition-colors no-underline",
           className
         )}
         {...props}
@@ -308,6 +349,10 @@ export function mdxComponents(basePath) {
     "Alert": Alert,
     "Tip": Tip,
     "TLDR": TLDR,
+    "GoodFor": GoodFor,
+    "BadFor": BadFor,
+    "Pro": Pro,
+    "Con": Con,
   };
 }
 

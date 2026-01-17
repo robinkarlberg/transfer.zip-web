@@ -91,7 +91,7 @@ export default async function ({ mode }) {
             {" "}way to{" "}
             {mode === "receive" ? "receive files." : "send files."}
           </h1>
-          <Link href={"https://github.com/robinkarlberg/transfer.zip-web"} className={"mt-4 [&_svg:not([class*='size-'])]:size-4 text-white inline-flex items-center justify-center gap-2 text-shadow-sm text-sm hover:underline font-semibold fade-in-up-slow mb-24 2xl:mb-32"}>
+          <Link href={"https://github.com/robinkarlberg/transfer.zip-web"} target="_blank" className={"mt-4 [&_svg:not([class*='size-'])]:size-4 text-white inline-flex items-center justify-center gap-2 text-shadow-sm text-sm hover:underline font-semibold fade-in-up-slow mb-24 2xl:mb-32"}>
             <StarIcon /> Star on GitHub ({stars})
           </Link>
           {/* <p className="mx-auto text-center text-lg leading-8 text-gray-700 max-w-md mb-12">
