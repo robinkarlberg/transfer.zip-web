@@ -64,7 +64,7 @@ export default function ({ open, setOpen, files, transfer }) {
       pollAuth()
         .then(() => {
           if (files) {
-            router.push("/app/new")
+            router.push("/app")
           }
           else {
             router.push("/app/sent")

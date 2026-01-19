@@ -6,7 +6,7 @@ import Spinner from "@/components/elements/Spinner"
 import { ApplicationContext } from "@/context/ApplicationContext"
 import { FileContext } from "@/context/FileProvider"
 import streamSaver from "@/lib/client/StreamSaver"
-import { tryCopyToClipboard } from "@/lib/utils"
+import { cn, tryCopyToClipboard } from "@/lib/utils"
 import { Transition } from "@headlessui/react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -21,6 +21,8 @@ import { DashboardContext } from "@/context/DashboardContext"
 import { IS_SELFHOST } from "@/lib/isSelfHosted"
 import { sendEvent } from "@/lib/client/umami"
 import { GlobalContext } from "@/context/GlobalContext"
+import Cross from "@/components/Cross"
+import { CheckIcon, ZapIcon } from "lucide-react"
 
 const TRANSFER_STATE_WAIT_FOR_USER = "wait_for_user"
 const TRANSFER_STATE_IDLE = "idle"
@@ -29,7 +31,7 @@ const TRANSFER_STATE_TRANSFERRING = "transferring"
 const TRANSFER_STATE_FINISHED = "finished"
 const TRANSFER_STATE_FAILED = "failed"
 
-export default function QuickShareProgress({ isLoggedIn }) {
+export default function QuickShareProgress({ isLoggedIn, isPayingUser }) {
 
   const router = useRouter()
 
@@ -50,6 +52,7 @@ export default function QuickShareProgress({ isLoggedIn }) {
   const [quickShareLink, setQuickShareLink] = useState(null)
 
   const [errorMessage, setErrorMessage] = useState(null)
+  const [isQuickShareNotFoundError, setIsQuickShareNotFoundError] = useState(false)
 
   const hasConnected = useMemo(() => transferState == TRANSFER_STATE_TRANSFERRING || transferState == TRANSFER_STATE_FINISHED, [transferState])
 
@@ -222,6 +225,9 @@ export default function QuickShareProgress({ isLoggedIn }) {
         // setErrorMessage("Peer connection failed.")
         console.error("Peer connection failed.")
       }
+      else if (err instanceof WebRtc.PeerNotFoundError) {
+        setIsQuickShareNotFoundError(true)
+      }
       else {
         setErrorMessage(err.message || "Sorry an unknown error has occured! Check back later and we should hopefully have fixed it.")
       }
@@ -303,80 +309,144 @@ export default function QuickShareProgress({ isLoggedIn }) {
   return (
     <>
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="w-full max-w-64">
-          <h1 className="text-3xl font-bold mb-4 block md:hidden">{title}</h1>
-          <div className="relative">
-            <QRCode style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-              className={"bg-white p-5 border rounded-lg shadow-sm"}
-              size={128}
-              fgColor="#212529"
-              value={quickShareLink ? quickShareLink : "https://transfer.zip/?542388234752394243924377293849asdasd"} />
-            <Transition show={hasConnected || hasBeenSentLink}>
-              <div className="absolute bg-gray-50 left-0 top-0 w-full max-w-full h-full rounded-lg p-16 border transition data-[closed]:opacity-0">
-                <Progress autoFinish now={bytesTransferred} max={totalBytes} unit={"%"} />
-              </div>
-            </Transition>
-          </div>
-          {!hasBeenSentLink && (
-            <div>
-              <div className="relative mt-2 flex items-center">
-                <input
-                  type="url"
-                  className="block w-full rounded-md border-0 py-1.5 pr-20 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-                  defaultValue={quickShareLink}
-                  contentEditable="false"
-                />
-                <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-                  <button onClick={handleCopy} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
-                    <BIcon name={"copy"} className={"mr-1 ms-1"} />Copy
-                  </button>
+        {
+          isQuickShareNotFoundError
+            ?
+            <div className="text-center">
+              <p className="text-base font-semibold text-primary">Expired</p>
+              <h1 className="mt-4 text-balance text-4xl font-semibold tracking-tight text-gray-900">Link no longer available</h1>
+              <p className="mt-4 text-pretty text-base text-gray-500 max-w-xl">The sender used a temporary link. Quick transfer links expire when the sender closes their browser.</p>
+              {!IS_SELFHOST && (
+                <div className="mt-8 flex flex-col items-center gap-4">
+                  <Link
+                    href="/app"
+                    onNavigate={e => {
+                      sendEvent("expired_link_upsell_click", { is_logged_in: isLoggedIn })
+                      if (!isLoggedIn) {
+                        e.preventDefault()
+                        openSignupDialog()
+                      }
+                    }}
+                    className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  >
+                    Send files that last longer &rarr;
+                  </Link>
                 </div>
-              </div>
+              )}
             </div>
-          )}
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold mb-1 hidden md:block">{title}</h1>
-          {!errorMessage ?
-            (<ol className="list-decimal list-inside mb-4 md:mb-2">
-              {/* <li>Choose if you want to send or receive files.</li> */}
-              <li className={transferState == TRANSFER_STATE_IDLE ? "" : "text-gray-400"}>{(hasBeenSentLink && !IS_SELFHOST) ? "Connecting to server..." : "Scan the QR code or send the link to the recipient."} {transferState == TRANSFER_STATE_IDLE && spinner}</li>
-              <li className={transferState == TRANSFER_STATE_CONNECTING ? "" : "text-gray-400"}>Wait for your devices to establish a connection. {transferState == TRANSFER_STATE_CONNECTING && spinner}</li>
-              <li className={transferState == TRANSFER_STATE_TRANSFERRING ? "" : "text-gray-400"}>Stand by while the files are being transfered. {transferState == TRANSFER_STATE_TRANSFERRING && spinner}</li>
-              <li className={transferState == TRANSFER_STATE_FINISHED ? "" : "text-gray-400"}>Done!</li>
-            </ol>)
             :
-            <p className="text-danger"><b className="text-danger">Error: </b>{errorMessage}</p>
-          }
-          {!IS_SELFHOST && transferState != TRANSFER_STATE_FINISHED && (
-            <Link
-              href={"/app"}
-              onNavigate={e => {
-                sendEvent("quick_transfer_upsell_click", { is_logged_in: isLoggedIn })
-                if (!isLoggedIn) {
-                  e.preventDefault()
-                  openSignupDialog(files)
-                }
-              }}
-              className="text-start flex md:inline-flex gap-2 border rounded-lg shadow-sm py-2 ps-3 pe-4 bg-primary-50 group">
-              <div className="flex items-center h-6">
-                <BIcon center className={"text-primary-500 text-sm animate-pulse group-hover:animate-none mt-1"} name={"lightning-fill"} />{" "}
+            <>
+              <div className="w-full max-w-64">
+                <h1 className="text-3xl font-bold mb-4 block md:hidden">{title}</h1>
+                <div className="relative">
+                  <QRCode style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                    className={"bg-white p-5 border rounded-lg shadow-sm"}
+                    size={128}
+                    fgColor="#212529"
+                    value={quickShareLink ? quickShareLink : "https://transfer.zip/?542388234752394243924377293849asdasd"} />
+                  {
+                    transferState == TRANSFER_STATE_FAILED ?
+                      <div className="bg-gray-50 rounded-lg absolute left-0 top-0 w-full max-w-full h-full flex flex-col items-center justify-center text-red-500">
+                        <Cross />
+                        {/* Error */}
+                      </div>
+                      :
+                      <Transition show={hasConnected || hasBeenSentLink}>
+                        <div className="absolute bg-gray-50 left-0 top-0 w-full max-w-full h-full rounded-lg p-16 border transition data-[closed]:opacity-0">
+                          <Progress autoFinish now={bytesTransferred} max={totalBytes} unit={"%"} />
+                        </div>
+                      </Transition>
+
+                  }
+                </div>
+                {!hasBeenSentLink && (
+                  <div>
+                    <div className="relative mt-2 flex items-center">
+                      <input
+                        type="url"
+                        className="block w-full rounded-md border-0 py-1.5 pr-20 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+                        defaultValue={quickShareLink}
+                        contentEditable="false"
+                      />
+                      <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
+                        <button onClick={handleCopy} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
+                          <BIcon name={"copy"} className={"mr-1 ms-1"} />Copy
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
               <div>
-                <p className="sm:text-lg font-semibold text-primary-500">
-                  {hasBeenSentLink ? "Keep your browser window open" : "Link expires when tab is closed."}
-                </p>
-                {!hasBeenSentLink &&
-                  <span className="text-primary-500">
-                    Make the link available {isLoggedIn ? <span className="">for longer</span> : <span className="font-medium">up to a year</span>}
-                    {" "}
-                    <span className="relative transition-all left-0 group-hover:left-1">&rarr;</span>
-                  </span>
-                }
+                <h1 className="text-3xl font-bold mb-1 hidden md:block">{title}</h1>
+                {errorMessage ?
+                  (
+                    <p className="text-red-600 max-w-lg"><b>Error: </b>{errorMessage}</p>
+                  )
+                  :
+                  (
+                    <ol className="list-decimal list-inside mb-4 md:mb-2">
+                      <li className={transferState == TRANSFER_STATE_IDLE ? "" : "text-gray-400"}>{(hasBeenSentLink && !IS_SELFHOST) ? "Connecting to server..." : "Scan the QR code or send the link to the recipient."} {transferState == TRANSFER_STATE_IDLE && spinner}</li>
+                      <li className={transferState == TRANSFER_STATE_CONNECTING ? "" : "text-gray-400"}>Wait for your devices to establish a connection. {transferState == TRANSFER_STATE_CONNECTING && spinner}</li>
+                      <li className={transferState == TRANSFER_STATE_TRANSFERRING ? "" : "text-gray-400"}>Stand by while the files are being transfered. {transferState == TRANSFER_STATE_TRANSFERRING && spinner}</li>
+                      <li className={transferState == TRANSFER_STATE_FINISHED ? "" : "text-gray-400"}>Done!</li>
+                    </ol>
+                  )}
+                {!IS_SELFHOST && transferState != TRANSFER_STATE_FINISHED && !errorMessage && (
+                  <Link
+                    href={"/app"}
+                    onNavigate={e => {
+                      sendEvent("quick_transfer_upsell_click", { is_logged_in: isLoggedIn })
+                      if (!isLoggedIn) {
+                        e.preventDefault()
+                        openSignupDialog(files)
+                      }
+                    }}
+                    className={cn(
+                      "text-start flex md:inline-flex gap-2 rounded-lg py-3 px-5 group transition-shadow",
+                      isPayingUser || hasBeenSentLink ? "bg-primary-50 shadow-sm" : "bg-purple-50 shadow-[0_0_10px_rgba(147,51,234,0.25)] hover:shadow-[0_0_15px_rgba(147,51,234,0.3)]"
+                    )}>
+                    <div>
+                      <p className={cn(
+                        "font-semibold",
+                        isPayingUser || hasBeenSentLink ? "text-primary-500 sm:text-base" : "text-purple-500 sm:text-lg"
+                      )}>
+                        {hasBeenSentLink ? "Keep your browser window open" : "This link expires when your tab is closed."}
+                      </p>
+                      {!hasBeenSentLink && (
+                        isPayingUser ?
+                          <span className="text-primary-500">
+                            Make the files available for longer
+                            {" "}
+                            <span className="relative transition-all left-0 group-hover:left-1">&rarr;</span>
+                          </span>
+                          :
+                          <div className="text-purple-500 mt-1 text-sm">
+                            <p className="flex items-center gap-2">
+                              <ZapIcon fill="currentColor" size={14} />
+                              Use your logo on download pages
+                            </p>
+                            <p className="flex items-center gap-2">
+                              <ZapIcon fill="currentColor" size={14} />
+                              Keep links active for up to a year
+                            </p>
+                            <p className="flex items-center gap-2">
+                              <ZapIcon fill="currentColor" size={14} />
+                              Send files by email
+                            </p>
+                            <span className="inline-block font-medium mt-2 p-1 px-3 bg-purple-500 group-hover:bg-purple-600 transition-colors text-white rounded-md">
+                              Sign up for more features
+                              {" "}
+                              <span className="relative transition-all left-0 group-hover:left-1">&rarr;</span>
+                            </span>
+                          </div>
+                      )}
+                    </div>
+                  </Link>
+                )}
               </div>
-            </Link>
-          )}
-        </div>
+            </>
+        }
       </div>
     </>
   )

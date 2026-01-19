@@ -20,7 +20,7 @@ const SPKT_SWITCH_TO_FALLBACK_ACK = 16
 const SPKT_P2P_FAILED = 17
 const SPKT_RELAY_BUDGET = 99
 
-const DEFAULT_PACKET_BUDGET = 256
+const DEFAULT_PACKET_BUDGET = 128
 
 const textEnc = new TextEncoder()
 const textDec = new TextDecoder()
@@ -216,6 +216,7 @@ function handleTextMessage(conn, message) {
             console.log("[CPKT_OFFER] recipient did not exist:", data.recipientId)
             return conn.send(JSON.stringify({
                 targetId: data.callerId, success: false, type: data.type,
+                quickShareNotFound: true,
                 msg: "Quick Share could not be found. Do not close the browser window before the transfer is complete.",
             }));
         }

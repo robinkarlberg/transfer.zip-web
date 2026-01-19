@@ -17,6 +17,13 @@ export class PeerConnectionError extends Error {
 	}
 }
 
+export class PeerNotFoundError extends Error {
+	constructor() {
+		super("Peer not found.");
+		this.name = "PeerNotFoundError";
+	}
+}
+
 const RTC_CONF = {
 	iceServers: [
 		{ urls: "stun:stun.l.google.com:19302" },
@@ -623,7 +630,12 @@ export class RtcSession {
 				else {
 					if (!data.success) {
 						clearTimeout(peerConnectionFailedTimeoutId)
-						reject(new Error(data.msg))
+						if (data.quickShareNotFound) {
+							reject(new PeerNotFoundError())
+						}
+						else {
+							reject(new Error(data.msg))
+						}
 					}
 				}
 			}
