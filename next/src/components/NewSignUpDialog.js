@@ -10,6 +10,8 @@ import { getUser } from "@/lib/client/Api"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 import NewSignUpArea from "./NewSignUpArea"
+import { Button } from "./ui/button"
+import Link from "next/link"
 
 const STATE_START = "start"
 const STATE_GMAIL_TAB = "gmail_tab"
@@ -84,7 +86,7 @@ export default function ({ open, setOpen, files, transfer }) {
     <>
       {files && (
         <p className="text-gray-600 mb-1 text-center">
-          Your <span className="font-mono bg-gray-50 px-0.5 text-gray-800">{filename}</span> {files?.length == 1 ? "is" : "are"} ready to upload.
+          <span className="font-mono bg-gray-50 px-0.5 text-gray-800">{filename}</span> {files?.length == 1 ? "is" : "are"} ready to upload.
         </p>
       )}
     </>
@@ -144,8 +146,9 @@ export default function ({ open, setOpen, files, transfer }) {
             <div>
               {waitingElems}
               <p className="text-gray-600 mb-4 text-center">
-                Pick the perfect plan for you. Starting sharing files in seconds.
+                Pick a plan for your free trial to begin sharing files.
               </p>
+              <Button asChild className={"w-full"}><Link href="/onboarding" target="_blank">Pick a plan &rarr;</Link></Button>
             </div>
           )}
         </div>

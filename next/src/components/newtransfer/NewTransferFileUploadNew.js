@@ -79,6 +79,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   const [errorMessage, setErrorMessage] = useState(null)
   const [showErrorMessage, setShowErrorMessage] = useState(false)
+  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false)
 
   const displayErrorMessage = (message) => {
     setErrorMessage(message)
@@ -495,6 +496,10 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
       <div className="flex-none p-2 flex items-center gap-2 --border-t">
         <span className="ms-auto text-sm text-gray-500">Expires <span className="hidden sm:inline">after</span></span>
         <Select value={selectedExpiryTime} onValueChange={e => {
+          if(!payingUser && e != "0") {
+            setShowUpgradeDialog(true)
+            return
+          }
           if (e == "0") {
             setTab("link")
           }
@@ -508,9 +513,10 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
               <SelectItem
                 key={item.days}
                 value={item.days}
-                disabled={!item[user?.plan || "free"]}>
+                disabled={payingUser ? !item[user?.plan || "free"] : false}
+              >
                 {/* remove the badge when its selected */}
-                {item.period}{!payingUser && (item.free ? <span className="font-bold px-1 text-xs bg-primary-100 text-primary-500 rounded">FREE</span> : <ZapIcon className="text-purple-500" size={8}/>)}
+                {item.period}{!payingUser && (item.free ? <span className="font-bold px-1 text-xs bg-primary-100 text-primary-500 rounded">FREE</span> : <ZapIcon className="text-purple-500" size={8} />)}
               </SelectItem>)
             )}
           </SelectContent>
@@ -537,6 +543,50 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Ok</Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Keep your files available longer</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-gray-600">
+              Free transfers expire when you close your browser tab. Upgrade to keep your download links active for up to a year.
+            </p>
+            <div className="bg-purple-50 rounded-lg p-4 space-y-2">
+              <p className="flex items-center gap-2 text-purple-700">
+                <ZapIcon fill="currentColor" size={14} />
+                Links that last up to 1 year
+              </p>
+              <p className="flex items-center gap-2 text-purple-700">
+                <ZapIcon fill="currentColor" size={14} />
+                Send files directly by email
+              </p>
+              <p className="flex items-center gap-2 text-purple-700">
+                <ZapIcon fill="currentColor" size={14} />
+                Custom branding & logo
+              </p>
+              <p className="flex items-center gap-2 text-purple-700">
+                <ZapIcon fill="currentColor" size={14} />
+                Unlimited file transfers
+              </p>
+            </div>
+          </div>
+          <DialogFooter className="flex-col sm:flex-col gap-2">
+            <Button
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium"
+              onClick={() => {
+                setShowUpgradeDialog(false)
+                openSignupDialog(files)
+              }}
+            >
+              Start for free &rarr;
+            </Button>
+            <DialogClose asChild>
+              <Button variant="ghost" className="w-full text-gray-500">Maybe later</Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>
