@@ -1,13 +1,16 @@
-<img src="https://transfer.zip/img/icon-small.png"></img>
-
 # Transfer.zip
 
-**Transfer.zip:** An open source and self-hostable complete file-sharing solution.
+<a href="https://transfer.zip"><img width="40%" alt="image" align="right" src="https://github.com/user-attachments/assets/a8f49d7a-d71d-4b64-88e1-0c5825559bc2" /></a>
 
-<img src="https://cdn.transfer.zip/img/screenshot-dashboard.png" width="80%"></img>
+This is the GitHub repository for [Transfer.zip](https://transfer.zip/) - a beautiful and open-source file transfer alternative to popular services like *WeTransfer*, *WeTransfer* and more.
 
-> [!NOTE]
-> If you do not want to self-host or just want to try it out, it is available at [Transfer.zip](https://transfer.zip/).
+This repository contains the source code for the website and database. The other repo, [transfer.zip-node](https://github.com/robinkarlberg/transfer.zip-node) controls all file operations.
+
+A LOT of work has gone into making this tool, we are so grateful for all the support we have gotten along the way.
+
+**Support us by signing up for a free trial: [Transfer.zip Pricing](https://transfer.zip/#pricing)**
+
+---
 
 ## Features
 A quick overview of the main features, more info further down.
@@ -20,6 +23,9 @@ A quick overview of the main features, more info further down.
 - **Self-hostable** - Easy to **self-host** on your own hardware.
 
 <img src="https://cdn.transfer.zip/img/high-level-architecture.png?" width="650"></img>
+
+> [!NOTE]
+> The "main" branch is inteded for self-hosting. The "production" branch is the code that runs in production. They can differ when we have not ported all functionality yet to the self-hosted version.
 
 ### Quick Transfers - End-to-end encrypted WebRTC file transfers in the browser
 Quick Transfers use [WebRTC](http://www.webrtc.org/) for peer-to-peer data transfer, meaning the files are streamed directly between peers and not stored anywhere in the process, not even on Transfer.zip servers. To let peers initially discover each other, a signaling server is implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through. In addition, the file data is end-to-end encrypted using [AES-GCM](https://en.wikipedia.org/wiki/Galois/Counter_Mode) with a client-side 256 bit generated key, meaning if someone could impersonate a peer or capture the traffic, they would not be able to decrypt the file without knowing the key. Because the file is streamed directly between peers, there are **no file size or bandwidth limitations**. The easiest way to Quick Transfer a file is to scan the QR code containing the file link and encryption key. It is also possible to copy the link and share it to the recipient over what medium you prefer the most. 
