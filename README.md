@@ -1,6 +1,6 @@
 # Transfer.zip
 
-<a href="https://transfer.zip"><img width="40%" alt="image" align="right" src="https://github.com/user-attachments/assets/a8f49d7a-d71d-4b64-88e1-0c5825559bc2" /></a>
+<a href="https://transfer.zip"><img width="40%" alt="image" align="right" src="https://github.com/user-attachments/assets/eebc557d-f244-4116-8a6c-f07eeb8aee23" /></a>
 
 This is the GitHub repository for [Transfer.zip](https://transfer.zip/) - a beautiful and open-source file transfer alternative to popular services like *WeTransfer*, *WeTransfer* and more.
 
