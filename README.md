@@ -2,7 +2,7 @@
 
 <a href="https://transfer.zip"><img width="40%" alt="image" align="right" src="https://github.com/user-attachments/assets/eebc557d-f244-4116-8a6c-f07eeb8aee23" /></a>
 
-This is the GitHub repository for [Transfer.zip](https://transfer.zip/) - a beautiful and open-source file transfer alternative to popular services like *WeTransfer*, *WeTransfer* and more.
+This is the GitHub repository for [Transfer.zip](https://transfer.zip/) - a beautiful and open-source file transfer alternative to popular services like *WeTransfer*, *Smash* and more.
 
 This repository contains the source code for the website and database. The other repo, [transfer.zip-node](https://github.com/robinkarlberg/transfer.zip-node) controls all file operations.
 
