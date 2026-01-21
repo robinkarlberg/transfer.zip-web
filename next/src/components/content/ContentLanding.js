@@ -37,7 +37,7 @@ export default async function ({ title, description, href, linkText, slugPath })
           </div>
         </div>
         <div className="mx-auto max-w-7xl px-6 py-16 sm:py-24 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
+          <div className="mx-auto max-w-3xl text-center">
             <nav className="flex items-center justify-center gap-2 text-sm text-white/70 mb-6">
               <Link href="/" className="hover:underline hover:text-white">
                 Home
@@ -62,10 +62,10 @@ export default async function ({ title, description, href, linkText, slugPath })
                   )
                 })}
             </nav>
-            <h1 className="mx-auto max-w-4xl text-4xl font-bold tracking-tight text-white sm:text-5xl">
+            <h1 className="mx-auto max-w-3xl text-4xl font-bold tracking-tight text-white sm:text-5xl">
               {title}
             </h1>
-            <p className="mx-auto mt-6 text-lg leading-8 text-white max-w-4xl [&_a]:text-white [&_a]:hover:text-primary-200 [&_a]:font-semibold">
+            <p className="mx-auto mt-6 text-lg leading-8 text-white max-w-2xl [&_a]:text-white [&_a]:hover:text-primary-200 [&_a]:font-semibold">
               {description}
             </p>
             <div className="flex mt-10 items-center gap-6 justify-center">
