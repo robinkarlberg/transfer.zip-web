@@ -6,6 +6,7 @@ import TransferShareEmail from './templates/TransferShareEmail.jsx';
 import TransferRequestShareEmail from './templates/TransferRequestShareEmail.jsx';
 import PasswordResetEmail from './templates/PasswordResetEmail.jsx';
 import MagicLinkEmail from './templates/MagicLinkEmail.jsx';
+import TeamInviteEmail from './templates/TeamInviteEmail.jsx';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -62,5 +63,12 @@ export async function sendMagicLink(email, { link }) {
   await sendMail(MagicLinkEmail({ link }), {
     to: email,
     subject: `Log In - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
+  });
+}
+
+export async function sendTeamInvite(email, { teamName, inviterEmail, link }) {
+  await sendMail(TeamInviteEmail({ teamName, inviterEmail, link }), {
+    to: email,
+    subject: `You've been invited to join ${teamName} - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
   });
 }
