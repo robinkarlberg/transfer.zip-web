@@ -2,14 +2,12 @@
 
 import BIcon from "@/components/BIcon"
 import PricingCards from "@/components/PricingCards"
+import TeamPricingCard from "@/components/TeamPricingCard"
 import pricing from "@/lib/pricing"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useMemo, useState } from "react"
-import logo from "@/img/icon.png"
-import Image from "next/image"
+import { useState } from "react"
 import { API_URL, createCheckoutSession, logout } from "@/lib/client/Api"
-import { ExternalLink, ExternalLinkIcon } from "lucide-react"
 import PricingToggle from "@/components/PricingToggle"
 import IndieStatement from "@/components/IndieStatement"
 
@@ -45,15 +43,15 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
     window.location.href = "/"
   }
 
-  const { tiers } = pricing
+  const { tiers, teamTier } = pricing
 
-  const handleTierSelected = async (tier) => {
+  const handleTierSelected = async (tier, seats = null) => {
     if (isRequesting) return; // If a request is already in progress, exit the function.
 
     setIsRequesting(true); // Set the state to indicate a request is in progress.
 
     try {
-      const res = await createCheckoutSession(tier, frequency);
+      const res = await createCheckoutSession(tier, frequency, seats);
       window.location.href = res.url;
     } catch (error) {
       console.error('Error creating checkout session:', error);
@@ -91,8 +89,9 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
         <div className="mt-8">
           <PricingToggle frequency={frequency} setFrequency={setFrequency} />
         </div>
-        <div className="mx-auto mt-4 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-8 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
+        <div className="mx-auto mt-4 grid max-w-sm grid-cols-1 gap-6 sm:mt-8 lg:max-w-5xl lg:grid-cols-3">
           <PricingCards frequency={frequency} tiers={tiers} compact={false} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_onboarding_click"} />
+          <TeamPricingCard frequency={frequency} tier={teamTier} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_teams_onboarding_click"} />
         </div>
         <div className="mt-8">
           <IndieStatement compact />

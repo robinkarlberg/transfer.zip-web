@@ -43,7 +43,7 @@ export default {
         <span>Up to <b>1TB</b> per transfer</span>,
         <span>Files stay up for <b>365 days</b></span>,
         <span>Send files to <b>30 emails</b></span>,
-        "Priority support",
+        // "Priority support",
         "Track views and downloads",
         // <span><b>Custom</b> branding<span className="ms-1.5 px-1.5 py-0.5 text-xs font-semibold text-white bg-primary rounded-full whitespace-nowrap">Coming Soon</span></span>,
         <span><b>Custom</b> branding <QuestionCircle text={"Add your own logo, customize backgrounds, and include your branding directly in emails and download pages for a seamless, professional look."} /></span>,
@@ -54,5 +54,27 @@ export default {
       ],
       featured: true,
     }
-  ]
+  ],
+  teamTier: {
+    id: "teams",
+    name: "Teams",
+    pricePerSeat: {
+      monthly: 15,
+      yearly: 12
+    },
+    minSeats: 2,
+    maxSeats: 25,
+    description: "For teams and companies sharing files together.",
+    features: [
+      <span><b>Unlimited transfers</b></span>,
+      <span>Up to <b>1TB</b> per transfer</span>,
+      // <span>Shared storage pool (200GB/seat)</span>,
+      <span>Files stay up for <b>365 days</b></span>,
+      <span>Send files by email</span>,
+      "Priority support",
+      <span><b>Custom</b> branding <QuestionCircle text={"Add your own logo, customize backgrounds, and include your branding directly in emails and download pages for a seamless, professional look."} /></span>,
+      "Centralized billing",
+      "Member management"
+    ],
+  }
 }

@@ -10,26 +10,30 @@ function classNames(...classes) {
 }
 
 export default function PricingCards({ frequency, tiers, compact, onTierSelected, hasFreeTrial, eventName }) {
-  const _buttonText = hasFreeTrial ? "Start Sending for Free" : "Subscribe"
+  const _buttonText = hasFreeTrial ? "Start a 7-day Free Trial" : "Subscribe"
   return tiers.map((tier, tierIdx) => (
     <div
       key={tier.name}
       className={classNames(
-        tier.featured ? 'relative bg-gray-900 shadow-2xl' : 'bg-white/60 sm:mx-8 lg:mx-0',
         tier.featured
-          ? ''
-          : tierIdx === 0
-            ? 'rounded-t-3xl sm:rounded-b-none lg:rounded-bl-3xl lg:rounded-tr-none'
-            : 'sm:rounded-t-none lg:rounded-bl-none lg:rounded-tr-3xl',
-        'rounded-3xl p-8 ring-1 ring-gray-900/10 sm:p-10 sm:min-w-96',
+          ? 'bg-gray-900 ring-2 ring-primary shadow-lg'
+          : 'bg-white ring-1 ring-gray-200',
+        'rounded-3xl p-8 flex flex-col h-fit',
       )}
     >
-      <p
-        id={tier.id}
-        className={classNames(tier.featured ? 'text-primary-lighter' : 'text-primary', 'text-base/7 font-semibold')}
-      >
-        {tier.name}
-      </p>
+      <div className="flex items-center justify-between">
+        <p
+          id={tier.id}
+          className={classNames(tier.featured ? 'text-primary-lighter' : 'text-primary', 'text-base/7 font-semibold')}
+        >
+          {tier.name}
+        </p>
+        {tier.featured && (
+          <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary-lighter ring-1 ring-inset ring-primary/20">
+            Popular
+          </span>
+        )}
+      </div>
       <div className="mt-4 flex items-baseline gap-x-2">
         <div
           className={classNames(
@@ -46,27 +50,27 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
           </div>
         </div>
         <span className={classNames(tier.featured ? 'text-gray-400' : 'text-gray-500', 'text-base')}>{tier.lifetime ? "once" : "/month"}</span>
-        {frequency == "yearly" && <span className={`text-sm ${tier.featured ? 'text-gray-500' : 'text-gray-400'}`}>${Math.round(tier.priceInt[frequency] * 12 * 100) / 100}/year</span>}
       </div>
       {frequency === "yearly" && (
-        <span
-          className={`badge-bling relative overflow-hidden inline-block px-2.5 mt-4 border rounded-full
-      ${tier.featured
-              ? 'text-amber-300 border-amber-300 bg-amber-900'
-              : 'text-amber-500 border-amber-500 bg-amber-50'
-            }`}
-        >
-          Get 4 months for free
-        </span>
+        <div className="mt-3">
+          <span
+            className={`badge-bling relative overflow-hidden inline-block px-2.5 py-0.5 border rounded-full text-xs ${tier.featured
+                ? 'text-amber-300 border-amber-300 bg-amber-900'
+                : 'text-amber-500 border-amber-500 bg-amber-50'
+              }`}
+          >
+            Save ${Math.round((tier.priceInt.monthly - tier.priceInt.yearly) * 12)}/year
+          </span>
+        </div>
       )}
-      {!compact && (<p className={classNames(tier.featured ? 'text-gray-300' : 'text-gray-600', 'mt-6 text-base/7')}>
+      {!compact && (<p className={classNames(tier.featured ? 'text-gray-300' : 'text-gray-600', 'mt-4 text-sm/6')}>
         {tier.description}
       </p>)}
       <ul
         role="list"
         className={classNames(
           tier.featured ? 'text-gray-300' : 'text-gray-600',
-          'mt-8 space-y-3 text-sm/6 sm:mt-10',
+          'mt-6 space-y-3 text-sm/6 flex-1',
         )}
       >
         {tier.features.map((feature, index) => (
@@ -96,7 +100,7 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
           tier.featured
             ? 'bg-primary text-white shadow-sm hover:bg-primary-lighter focus-visible:outline-primary-light'
             : 'text-primary ring-1 ring-inset ring-primary-200 hover:ring-primary-300 focus-visible:outline-primary',
-          'mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10',
+          'mt-6 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
         )}
       >
         {_buttonText}
@@ -105,7 +109,6 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
         <p className={`mt-2 text-center text-xs ${tier.featured
           ? 'text-gray-300'
           : 'text-gray-500'}`}>
-          {/* <BIcon name={"check-lg"} />{" "} */}
           $0 due today. Cancel anytime.
         </p>
       )}

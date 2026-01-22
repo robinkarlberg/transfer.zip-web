@@ -5,6 +5,7 @@ import { useState } from "react"
 import BIcon from "./BIcon"
 import PricingCards from "./PricingCards"
 import PricingToggle from "./PricingToggle"
+import TeamPricingCard from "./TeamPricingCard"
 
 const features = [
   { name: "Full access to Quick Transfers", good: true },
@@ -16,15 +17,11 @@ const features = [
 
 export default function Pricing() {
 
-  const { tiers } = pricing
+  const { tiers, teamTier } = pricing
 
   const [frequency, setFrequency] = useState("monthly")
 
   const [hasFreeTrial, setHasFreeTrial] = useState(true)
-
-  // useEffect(() => {
-  //   setHasFreeTrial(getAbTestClient(AB_TEST_IS_FREE_TRIAL_AVAILABLE) != "false")
-  // }, [])
 
   return (
     <div className="relative isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
@@ -46,53 +43,54 @@ export default function Pricing() {
       <p className="mx-auto mt-6 max-w-2xl text-pretty text-center text-lg font-medium text-gray-600 sm:text-xl/8">
         Get all the speed and reliability you need, at a fraction of the cost. We charge less than other services, it's as simple as that.
       </p>
+
       <div className="mt-12 sm:mt-16">
         <PricingToggle frequency={frequency} setFrequency={setFrequency} />
       </div>
-      <div className="mx-auto mt-4 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-8 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
+
+      {/* 3-column pricing grid */}
+      <div className="mx-auto mt-8 grid max-w-sm grid-cols-1 gap-6 lg:max-w-5xl lg:grid-cols-3">
         <PricingCards frequency={frequency} tiers={tiers} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_landing_click"} />
-        <div className="col-span-full mt-16">
-          <div className="border shadow rounded-3xl p-10 w-full flex flex-col lg:flex-row justify-between">
-            <div>
-              <p className="text-base/7 font-semibold text-primary">Free</p>
-              <p className="mt-4 flex items-baseline gap-x-2">
-                <span
-                  className={'text-gray-900 text-5xl font-semibold tracking-tight'}
-                >
-                  $0
-                </span>
-              </p>
-              <p className={`text-gray-600 mt-6 text-base/7 max-w-md`}>
-                <span className="hidden md:inline"> Send files without size limits, with end-to-end encryption.</span> Transfer.zip can be used without an account, but without storing files for very long.
-              </p>
-            </div>
-            <div>
-              <ul
-                role="list"
-                className={'text-gray-600 mt-2 space-y-3 text-sm/6 sm:mt-3'}
-              >
-                {features.map((feature) => (
-                  <li key={feature.name} className="flex gap-x-3">
-                    <BIcon
-                      name={feature.good ? "check-lg" : "x-lg"}
-                      aria-hidden="true"
-                      className={`h-5 w-5 flex-none ${feature.good ? "text-primary" : "text-red-600"}`}
-                    />
-                    {feature.name}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            {/* <Link
-              href={"/"}
-              className={'text-primary ring-1 ring-inset ring-primary-200 hover:ring-primary-300 focus-visible:outline-primary mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10'}
+        <TeamPricingCard
+          frequency={frequency}
+          tier={teamTier}
+          hasFreeTrial={hasFreeTrial}
+          eventName={"pricing_card_teams_landing_click"}
+        />
+      </div>
+
+      {/* Free tier */}
+      <div className="mx-auto max-w-5xl mt-12">
+        <div className="border shadow rounded-3xl p-10 w-full flex flex-col lg:flex-row justify-between">
+          <div>
+            <p className="text-base/7 font-semibold text-primary">Free</p>
+            <p className="mt-4 flex items-baseline gap-x-2">
+              <span className="text-gray-900 text-5xl font-semibold tracking-tight">
+                $0
+              </span>
+            </p>
+            <p className="text-gray-600 mt-6 text-base/7 max-w-md">
+              <span className="hidden md:inline">Send files without size limits, with end-to-end encryption.</span> Transfer.zip can be used without an account, but without storing files for very long.
+            </p>
+          </div>
+          <div>
+            <ul
+              role="list"
+              className="text-gray-600 mt-2 space-y-3 text-sm/6 sm:mt-3"
             >
-              Try it out!
-            </Link> */}
+              {features.map((feature) => (
+                <li key={feature.name} className="flex gap-x-3">
+                  <BIcon
+                    name={feature.good ? "check-lg" : "x-lg"}
+                    aria-hidden="true"
+                    className={`h-5 w-5 flex-none ${feature.good ? "text-primary" : "text-red-600"}`}
+                  />
+                  {feature.name}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
-      </div>
-      <div>
       </div>
     </div>
   )
