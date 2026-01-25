@@ -9,13 +9,13 @@ import { sendEvent } from "@/lib/client/umami"
 export default function TeamPricingCard({ frequency, tier, onTierSelected, eventName, compact }) {
   const [seats, setSeats] = useState(tier.minSeats || 2)
 
-  const pricePerSeat = tier.pricePerSeat[frequency]
+  const pricePerSeat = tier.price[frequency]
   const totalPrice = pricePerSeat * seats
 
   const _buttonText = "Get Started with Teams"
 
   return (
-    <div className="bg-white ring-1 ring-gray-200 rounded-3xl p-8 flex flex-col">
+    <div className="bg-white ring-1 ring-gray-200 rounded-3xl p-8 flex flex-col shadow-lg">
       <div className="flex items-center justify-between">
         <p className="text-primary text-base/7 font-semibold">
           {tier.name}
@@ -45,8 +45,8 @@ export default function TeamPricingCard({ frequency, tier, onTierSelected, event
 
       {frequency === "yearly" && (
         <div className="mt-3">
-          <span className="badge-bling relative overflow-hidden inline-block px-2.5 py-0.5 border rounded-full text-xs text-amber-500 border-amber-500 bg-amber-50">
-            Save ${(tier.pricePerSeat.monthly - tier.pricePerSeat.yearly) * seats * 12}/year
+          <span className="badge-bling relative overflow-hidden inline-block px-2.5 py-0.5 border rounded-full text-xs text-amber-600 border-amber-500 bg-amber-50">
+            Save ${(tier.price.monthly - tier.price.yearly) * seats * 12}/year
           </span>
         </div>
       )}
@@ -74,7 +74,7 @@ export default function TeamPricingCard({ frequency, tier, onTierSelected, event
       )}
 
       <ul role="list" className="text-gray-600 mt-6 space-y-3 text-sm/6 flex-1">
-        {tier.features.map((feature, index) => (
+        {tier.displayFeatures.map((feature, index) => (
           <li key={index} className="flex gap-x-3">
             <BIcon
               name="check-lg"

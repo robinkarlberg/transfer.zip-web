@@ -121,6 +121,24 @@ export async function useMagicLink(token) {
     return await post(`/auth/magic-link/${token}`)
 }
 
+// team invite
+
+export async function sendTeamInvite(email, role) {
+    return await post("/team/invite", { email, role })
+}
+
+export async function deleteTeamInvite(_id) {
+    return await withBody("delete", "/team/invite", { _id })
+}
+
+export async function getInvite(token) {
+    return await get(`/invite/${token}`)
+}
+
+export async function redeemInvite(token, password) {
+    return await post(`/invite/${token}`, { password })
+}
+
 // export async function requestVerification() {
 //     return await post("/auth/verification/request", {})
 // }
@@ -131,8 +149,8 @@ export async function doVerification(email, token) {
 
 // stripe
 
-export async function createCheckoutSession(tier, frequency) {
-    return await post(`/stripe/create-checkout-session`, { tier, frequency })
+export async function createCheckoutSession(tier, frequency, teamInfo) {
+    return await post(`/stripe/create-checkout-session`, { tier, frequency, teamInfo })
 }
 
 export async function changeSubscription(tier) {

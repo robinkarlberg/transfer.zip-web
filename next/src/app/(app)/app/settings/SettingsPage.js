@@ -24,17 +24,18 @@ const parseDollar = cents => {
 }
 
 function TierCard({ isCurrent, isTrial, planCancelling, planValidUntil, planInterval, tier, isUpgrade, onAction }) {
-  const { id, name, priceInt, features } = tier
+  const { id, name, price, displayFeatures } = tier
+
   return (
     <div className={`relative border-2 rounded-lg py-3 px-4 col-span-1 flex flex-col ${isCurrent ? "border-primary bg-primary-50" : "border-gray-200"}`}>
       {isCurrent && <p className="text-xs bg-primary-50 absolute -top-2 text-primary px-1 rounded-full font-bold uppercase">{isTrial || planCancelling ? <>{planCancelling ? "CANCELLING" : "FREE TRIAL"} - {humanTimeUntil(planValidUntil)} LEFT</> : "CURRENT PLAN"}</p>}
       <div>
         <div className="flex justify-between">
           <p className="font-bold">{name}</p>
-          <p><span className="font-bold">${priceInt[planInterval == "month" ? "monthly" : "yearly"] * (planInterval == "month" ? 1 : 12)}</span><span className="font-medium text-gray-600">{planInterval == "month" ? "/mo" : "/year"}</span></p>
+          <p><span className="font-bold">${price[planInterval == "month" ? "monthly" : "yearly"] * (planInterval == "month" ? 1 : 12)}</span><span className="font-medium text-gray-600">{planInterval == "month" ? "/mo" : "/year"}</span></p>
         </div>
         <ul className="text-sm mt-2 text-gray-700">
-          {features.map((feature, i) => <li key={i}>{id == "pro" && <BIcon className={"text-primary me-2"} name={"check-lg"} />}{feature}</li>)}
+          {displayFeatures.map((feature, i) => <li key={i}>{id == "pro" && <BIcon className={"text-primary me-2"} name={"check-lg"} />}{feature}</li>)}
         </ul>
       </div>
       <div className="mt-auto pt-8">
@@ -239,7 +240,7 @@ export default function ({ user, storage }) {
               </div>
             )}
           </div>
-          {!IS_SELFHOST && (
+          {!IS_SELFHOST && !user.hasTeam && (
             <div className="sm:col-span-full">
               <h2 className="text-lg font-semibold text-gray-900 ">Subscription</h2>
               <p className="mt-1 text-gray-600 text-sm/6">View and change your subscription details.</p>

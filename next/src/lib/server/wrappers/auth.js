@@ -12,7 +12,10 @@ export async function useServerAuth() {
 
   await dbConnect();
 
-  const session = await Session.findOne({ token }).populate("user").exec();
+  const session = await Session.findOne({ token }).populate({
+    path: "user",
+    populate: { path: "team" }
+  }).exec();
 
   if (!session || !session.user) {
     // cookieStore.delete("token")

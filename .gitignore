@@ -6,3 +6,4 @@ _local_dev_worker_data/
 
 /data/
 .DS_Store
+.claude

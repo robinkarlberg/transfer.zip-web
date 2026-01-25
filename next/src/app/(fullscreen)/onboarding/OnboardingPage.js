@@ -51,7 +51,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
     setIsRequesting(true); // Set the state to indicate a request is in progress.
 
     try {
-      const res = await createCheckoutSession(tier, frequency, seats);
+      const res = await createCheckoutSession(tier, frequency, { seats });
       window.location.href = res.url;
     } catch (error) {
       console.error('Error creating checkout session:', error);
@@ -62,22 +62,23 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
 
   return (
     <>
+      <div className="w-full h-screen overflow-hidden absolute grain bg-linear-to-b from-primary-700 to-primary-300 -z-10" />
       <div className="flex min-h-[100vh] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <Link href={"/"} className="absolute top-8 text-xl me-1 text-primary hover:text-primary-light">&larr; Back</Link>
+        <Link href={"/"} className="absolute top-8 text-xl me-1 text-white hover:underline fade-in-up-1000">&larr; Back</Link>
         <div className="sm:mx-auto sm:w-full sm:max-w-xl text-center">
           {/* <Image
             alt="Transfer.zip logo"
             src={logo}
             className="mx-auto h-10 w-auto"
           /> */}
-          <h1 className={`text-4xl ${hasStripeAccount ? "sm:text-6xl" : "sm:text-7xl"} font-bold mt-8 sm:mt-12 tracking-tight text-gray-900`}>
-            {hasStripeAccount ? "Welcome back 👋" : "Welcome 👋"}
+          <h1 className={`text-4xl ${hasStripeAccount ? "sm:text-6xl" : "sm:text-7xl"} font-bold mt-8 sm:mt-12 tracking-tight text-white fade-in-up-600`}>
+            {hasStripeAccount ? "Welcome back :)" : "Welcome :)"}
           </h1>
-          <p className="text-gray-700 mt-4 text-base sm:text-xl">
+          <p className="text-white mt-4 text-base sm:text-xl animate-delay-100 fade-in-up-600">
             {
               hasFreeTrial ?
                 <>
-                  We offer a <b>7-day free trial</b> on any plan. You can cancel anytime during your trial, and you won't be charged a penny.
+                  We offer a <b>7-day free trial</b> on the Pro and Starter plans. You can cancel anytime during your trial, and you won't be charged a penny.
                 </>
                 :
                 <>
@@ -86,10 +87,10 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
             }
           </p>
         </div>
-        <div className="mt-8">
+        <div className="mt-8 animate-delay-200 fade-in-up-600">
           <PricingToggle frequency={frequency} setFrequency={setFrequency} />
         </div>
-        <div className="mx-auto mt-4 grid max-w-sm grid-cols-1 gap-6 sm:mt-8 lg:max-w-5xl lg:grid-cols-3">
+        <div className="mx-auto mt-4 grid max-w-sm grid-cols-1 gap-6 sm:mt-8 lg:max-w-5xl lg:grid-cols-3 animate-delay-200 fade-in-up-1000">
           <PricingCards frequency={frequency} tiers={tiers} compact={false} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_onboarding_click"} />
           <TeamPricingCard frequency={frequency} tier={teamTier} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_teams_onboarding_click"} />
         </div>

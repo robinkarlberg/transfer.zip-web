@@ -1,20 +1,21 @@
 import User from "@/lib/server/mongoose/models/User";
+import Team from "@/lib/server/mongoose/models/Team";
 import { listTransfersForUser, resp } from "@/lib/server/serverUtils";
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/server/mongoose/db";
 import { getStripe } from "@/lib/server/stripe";
 import { headers } from "next/headers";
+import { getPlanByStripeProductId } from "@/lib/pricing";
 
-// export const config = {
-//   api: {
-//     bodyParser: false
-//   }
-// }
+// Find subscriber (User or Team) by Stripe customer ID
+const findSubscriber = async (customerId) => {
+  const user = await User.findOne({ stripe_customer_id: customerId })
+  if (user) return { type: 'user', subscriber: user }
 
-const getPlanNameByProductId = (id) => {
-  if (id === process.env.STRIPE_SUB_STARTER_ID) return "starter"
-  else if (id === process.env.STRIPE_SUB_PRO_ID) return "pro"
-  else return null
+  const team = await Team.findOne({ stripe_customer_id: customerId })
+  if (team) return { type: 'team', subscriber: team }
+
+  return null
 }
 
 export async function POST(req) {
@@ -61,26 +62,28 @@ export async function POST(req) {
 }
 
 const handleSubscription = async object => {
-  const user = await User.findOne({ stripe_customer_id: object.customer })
+  const result = await findSubscriber(object.customer)
 
-  if (user) {
+  if (result) {
+    const { type, subscriber } = result
     const { plan } = object
 
     const item = object.items?.data?.[0];
     const price = item?.price || item?.plan;
 
-    user.updateSubscription({
-      plan: getPlanNameByProductId(plan.product),
+    subscriber.updateSubscription({
+      plan: getPlanByStripeProductId(plan.product)?.id,
       status: object.status,
-      validUntil: new Date(object.current_period_end + 3600),
+      validUntil: object.current_period_end,
       cancelling: !!object.cancel_at,
       interval: price?.recurring?.interval || item?.plan?.interval
     });
 
-    await user.save()
+    await subscriber.save()
+    console.log(`[handleSubscription] Updated ${type} subscription for customer: ${object.customer}`)
   }
   else {
-    console.error(`[handleSubscription] User does not exist for customer: ${object.customer}`);
+    console.error(`[handleSubscription] No user or team found for customer: ${object.customer}`);
   }
 }
 
@@ -112,45 +115,64 @@ const handleSubscriptionUpdated = async object => {
 }
 
 const handleSubscriptionDeleted = async object => {
-  const user = await User.findOne({ stripe_customer_id: object.customer });
+  const result = await findSubscriber(object.customer)
 
-  if (user) {
-    user.updateSubscription({
+  if (result) {
+    const { type, subscriber } = result
+
+    subscriber.updateSubscription({
       plan: "free",
       status: "inactive",
       validUntil: 0,
       cancelling: false
     });
 
-    await user.save();
+    await subscriber.save();
 
-    const transfers = await listTransfersForUser(user)
-
-    // Delete the user's transfers. Worker will take care of it.
-    await Promise.all(
-      transfers.map(async transfer => {
-        await transfer.updateOne({
-          expiresAt: new Date(Date.now())
+    if (type === 'user') {
+      // Expire the user's transfers
+      const transfers = await listTransfersForUser(subscriber)
+      await Promise.all(
+        transfers.map(async transfer => {
+          await transfer.updateOne({
+            expiresAt: new Date(Date.now())
+          })
         })
-      })
-    )
+      )
+    } else if (type === 'team') {
+      // Expire transfers for all team members
+      const teamUsers = await User.find({ team: subscriber._id })
+      for (const user of teamUsers) {
+        const transfers = await listTransfersForUser(user)
+        await Promise.all(
+          transfers.map(async transfer => {
+            await transfer.updateOne({
+              expiresAt: new Date(Date.now())
+            })
+          })
+        )
+      }
+    }
+
+    console.log(`[handleSubscriptionDeleted] Deleted ${type} subscription for customer: ${object.customer}`)
   }
   else {
-    console.error(`[handleSubscriptionDeleted] User does not exist for customer: ${object.customer}`);
+    console.error(`[handleSubscriptionDeleted] No user or team found for customer: ${object.customer}`);
   }
 }
 
 const handleCheckoutSessionExpired = async object => {
-  const user = await User.findOne({ stripe_customer_id: object.customer });
+  const result = await findSubscriber(object.customer)
 
-  if (user) {
-    if (user.getPlan() != "free") {
-      console.log(`[handleCheckoutSessionExpired] User already has plan, not sending abandonment email ${user}`);
+  if (result) {
+    const { type, subscriber } = result
+    if (subscriber.getPlan() != "free") {
+      console.log(`[handleCheckoutSessionExpired] ${type} already has plan, not sending abandonment email`);
       return
     }
     // Handle promo emails
   }
   else {
-    console.error(`[handleCheckoutSessionExpired] User does not exist for customer: ${object.customer}`);
+    console.error(`[handleCheckoutSessionExpired] No user or team found for customer: ${object.customer}`);
   }
 }

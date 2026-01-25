@@ -6,3 +6,4 @@ Disallow: /onboarding
 Disallow: /transfer/
 Disallow: /upload/
 Disallow: /change-password
+Disallow: /invite

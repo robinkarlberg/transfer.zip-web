@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers';
-import dbConnect from '../mongoose/db';
+import dbConnectServerAction from '../mongoose/dbServerAction';
 import Session from '../mongoose/models/Session';
 
 /**
@@ -13,9 +13,12 @@ export async function useServerAuthServerAction() {
     return null;
   }
 
-  await dbConnect();
+  await dbConnectServerAction();
 
-  const session = await Session.findOne({ token }).populate("user").exec();
+  const session = await Session.findOne({ token }).populate({
+    path: "user",
+    populate: { path: "team" }
+  }).exec();
 
   if (!session || !session.user) {
     // cookieStore.delete("token")

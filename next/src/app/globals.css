@@ -294,3 +294,50 @@
     cursor: pointer;
   }
 }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+@utility fade-in-up-* {
+  animation-name: fadeInUp;
+  animation-duration: calc(--value(integer) * 1ms);
+  animation-duration: --value([time]);
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0);
+  }
+}
+
+@utility fade-in-right-* {
+  animation-name: fadeInRight;
+  animation-duration: calc(--value(integer) * 1ms);
+  animation-duration: --value([time]);
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
+}
+
+@utility animate-delay-* {
+  animation-delay: calc(--value(integer) * 1ms);
+  animation-delay: --value([time]);
+}

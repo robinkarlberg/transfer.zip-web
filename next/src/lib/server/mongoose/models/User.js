@@ -7,6 +7,10 @@ import { getMaxStorageForPlan } from "../../serverUtils";
 import TransferRequest from './TransferRequest';
 import { listTransfersForUser } from '../../serverUtils';
 import { IS_SELFHOST } from '@/lib/isSelfHosted';
+import { ROLES } from '@/lib/roles';
+import { isValidPlanId, hasFeature as planHasFeature, getLimit as planGetLimit, FEATURE, LIMIT } from '@/lib/pricing';
+
+import Team from './Team';
 
 const NotificationSettingsSchema = new mongoose.Schema({
     transferDownloaded: { type: Boolean, default: true },
@@ -57,7 +61,21 @@ const UserSchema = new mongoose.Schema({
 
     customMaxStorageBytes: { type: Number },
 
+    // Custom overrides for features and limits (for enterprise/special accounts)
+    customFeatures: {
+        [FEATURE.CUSTOM_BRANDING]: { type: Boolean },
+        [FEATURE.CUSTOM_DOMAIN]: { type: Boolean },
+    },
+    customLimits: {
+        [LIMIT.MAX_EXPIRY_DAYS]: { type: Number },
+        [LIMIT.STORAGE]: { type: Number },
+    },
+
     notificationSettings: { type: NotificationSettingsSchema, default: {} },
+
+    role: { type: String, enum: Object.values(ROLES), default: ROLES.OWNER },
+
+    team: { type: mongoose.Schema.Types.ObjectId, ref: "Team" },
 
 }, { timestamps: true })
 
@@ -93,15 +111,42 @@ UserSchema.methods.setPassword = function (pass) {
 }
 
 UserSchema.methods.getPlan = function () {
+    if(this.team) {
+        return this.team.getPlan()
+    }
     if (this.planStatus == "active" || this.planStatus == "trialing") {
         return this.plan
     }
     else return "free"
 }
 
+UserSchema.methods.hasFeature = function (feature) {
+    // Delegate to team if user is part of one
+    if (this.team && typeof this.team.hasFeature === 'function') {
+        return this.team.hasFeature(feature)
+    }
+    // Check custom override first
+    if (this.customFeatures && this.customFeatures[feature] !== undefined) {
+        return this.customFeatures[feature]
+    }
+    return planHasFeature(this.getPlan(), feature)
+}
+
+UserSchema.methods.getLimit = function (limitKey) {
+    // Delegate to team if user is part of one
+    if (this.team && typeof this.team.getLimit === 'function') {
+        return this.team.getLimit(limitKey)
+    }
+    // Check custom override first
+    if (this.customLimits && this.customLimits[limitKey] !== undefined) {
+        return this.customLimits[limitKey]
+    }
+    return planGetLimit(this.getPlan(), limitKey)
+}
+
 UserSchema.methods.updateSubscription = function ({ plan, status, validUntil, cancelling, interval }) {
     if (plan !== undefined) {
-        if (!(plan == "free" || plan == "starter" || plan == "pro")) {
+        if (!isValidPlanId(plan)) {
             throw new Error("plan " + plan + " is invalid!");
         }
         this.plan = plan;
@@ -171,6 +216,10 @@ UserSchema.methods.getStorage = async function () {
         availableStorageBytes: maxStorageBytes - usedStorageBytes
     }
 }
+
+UserSchema.virtual("hasTeam").get(function () {
+    return !!this.team;
+});
 
 UserSchema.virtual("verified").get(function () {
     return true;

@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import crypto from "crypto"
 
 import User from './User';
+import Team from './Team';
 
 const SessionSchema = new mongoose.Schema({
     token: { type: String, default: () => crypto.randomUUID(), required: true, index: true },

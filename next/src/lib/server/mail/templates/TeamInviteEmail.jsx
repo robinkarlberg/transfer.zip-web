@@ -4,9 +4,9 @@ import EmailLayout from './EmailLayout.jsx';
 export default function TeamInviteEmail({ teamName, inviterEmail, link }) {
   return (
     <EmailLayout>
-      <Heading style={h1}>You've been invited to join a team</Heading>
+      <Heading style={h1}>You've been invited to join a team on Transfer.zip</Heading>
       <Text style={text}>
-        {inviterEmail} has invited you to join "{teamName}" on {process.env.NEXT_PUBLIC_SITE_NAME}.
+        {inviterEmail} has invited you to join "{teamName}".
       </Text>
       <Text style={text}>
         Click the button below to accept the invitation and join the team.

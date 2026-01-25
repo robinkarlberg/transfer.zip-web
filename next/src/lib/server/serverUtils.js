@@ -1,6 +1,7 @@
 import "server-only"
 import Transfer from "./mongoose/models/Transfer"
 import { getStripe } from "./stripe"
+import { getLimit, LIMIT } from "@/lib/pricing"
 
 export const IS_DEV = process.env.NODE_ENV == "development"
 
@@ -51,14 +52,8 @@ export const getTransferRequestUploadLink = (transferRequest) => {
   return `${process.env.SITE_URL}/upload/${transferRequest.secretCode}`
 }
 export const getMaxStorageForPlan = (plan) => {
-  if (plan === "starter") {
-    return 200e9;
-  }
-  else if (plan === "pro") {
-    return 1e12;
-  }
-  else return 0;
-};
+  return getLimit(plan, LIMIT.STORAGE) ?? 0
+}
 
 async function customerHasPaid(customerId) {
   const { data: [sub] } = await getStripe().subscriptions.list({

@@ -1,1 +1,5 @@
-export const ROLE_ADMIN = "admin"
+export const ROLES = {
+  OWNER: "owner",
+  ADMIN: "admin",
+  MEMBER: "member"
+}

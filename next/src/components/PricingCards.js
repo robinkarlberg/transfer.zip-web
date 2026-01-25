@@ -43,7 +43,7 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
         >
           <div className="-my-3">
             <NumberFlow
-              value={tier.priceInt[frequency]}
+              value={tier.price[frequency]}
               prefix="$"
               continous={false}
             />
@@ -56,10 +56,10 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
           <span
             className={`badge-bling relative overflow-hidden inline-block px-2.5 py-0.5 border rounded-full text-xs ${tier.featured
                 ? 'text-amber-300 border-amber-300 bg-amber-900'
-                : 'text-amber-500 border-amber-500 bg-amber-50'
+                : 'text-amber-600 border-amber-500 bg-amber-50'
               }`}
           >
-            Save ${Math.round((tier.priceInt.monthly - tier.priceInt.yearly) * 12)}/year
+            Save ${Math.round((tier.price.monthly - tier.price.yearly) * 12)}/year
           </span>
         </div>
       )}
@@ -73,7 +73,7 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
           'mt-6 space-y-3 text-sm/6 flex-1',
         )}
       >
-        {tier.features.map((feature, index) => (
+        {tier.displayFeatures.map((feature, index) => (
           <li key={index} className="flex gap-x-3">
             <BIcon
               name={"check-lg"}
@@ -91,7 +91,7 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
           }
           if (!!onTierSelected) {
             e.preventDefault()
-            onTierSelected(tier.name)
+            onTierSelected(tier.id)
           }
         }}
         href={"/app"}

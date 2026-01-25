@@ -1,7 +1,6 @@
 import dbConnect from '@/lib/server/mongoose/db';
 import Session from '@/lib/server/mongoose/models/Session';
 import User from '@/lib/server/mongoose/models/User';
-import { ROLE_ADMIN } from '@/lib/roles';
 import { createCookieParams, resp } from '@/lib/server/serverUtils';
 import { NextResponse } from 'next/server';
 import { IS_SELFHOST } from '@/lib/isSelfHosted';
@@ -31,7 +30,6 @@ export async function POST(req, res) {
   }
 
   const user = new User({ email })
-  // user.addRole(ROLE_ADMIN)
   user.setPassword(pass)
 
   if (IS_SELFHOST) {
