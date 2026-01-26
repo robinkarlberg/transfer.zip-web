@@ -12,7 +12,7 @@ const findSubscriber = async (customerId) => {
   const user = await User.findOne({ stripe_customer_id: customerId })
   if (user) return { type: 'user', subscriber: user }
 
-  const team = await Team.findOne({ stripe_customer_id: customerId })
+  const team = await Team.findOne({ stripe_customer_id: customerId }).populate("pendingOwner")
   if (team) return { type: 'team', subscriber: team }
 
   return null
@@ -79,6 +79,17 @@ const handleSubscription = async object => {
       interval: price?.recurring?.interval || item?.plan?.interval
     });
 
+    if(type == "team") {
+      // TODO: come up with better and more reliable solution than this
+      // maybe to check if there is an owner in users already
+      if(subscriber.users.length == 0) {
+        subscriber.users.push(subscriber.pendingOwner._id)
+        subscriber.pendingOwner.team = subscriber._id
+        await subscriber.pendingOwner.save()
+        subscriber.pendingOwner = undefined
+      }
+    }
+
     await subscriber.save()
     console.log(`[handleSubscription] Updated ${type} subscription for customer: ${object.customer}`)
   }
@@ -96,7 +107,7 @@ const handleSubscriptionCreated = async object => {
   if (paymentMethodId) {
     const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId)
 
-    console.log(paymentMethod)
+    // console.log(paymentMethod)
     // Check if issuer is SUTTON BANK
     if (paymentMethod?.card?.issuer?.toUpperCase().includes('SUTTON BANK')) {
       console.log(`Blocking SUTTON BANK payment for trial subscription: ${object.id}`)
