@@ -6,13 +6,14 @@ import BrandProfileCard from "./BrandProfileCard";
 import BrandProfile from "@/lib/server/mongoose/models/BrandProfile";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 import Link from "next/link";
+import { FEATURE } from "@/lib/pricing";
 
 export default async function () {
   const { user } = await useServerAuth()
 
   const profiles = await BrandProfile.find({ author: user._id })
 
-  const hasFeature = user.getPlan() == "pro"
+  const hasFeature = user.hasFeature(FEATURE.CUSTOM_BRANDING)
 
   const side = hasFeature ?
     <Button variant={"white"} asChild><Link href={"/app/branding/new"}><BIcon name={"plus-lg"} />New Brand Profile</Link></Button>

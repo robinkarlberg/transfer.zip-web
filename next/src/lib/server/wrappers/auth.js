@@ -26,5 +26,6 @@ export async function useServerAuth() {
     token,
     id: session.user._id,
     user: session.user,
+    team: session.user.team
   };
 }

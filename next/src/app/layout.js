@@ -7,6 +7,7 @@ import Head from "next/head";
 import Script from "next/script";
 import "./globals.css";
 import { IS_DEV } from "@/lib/server/serverUtils";
+import { Toaster } from "sonner";
 
 const roboto = Bricolage_Grotesque({
   weight: ['400', '500', '600', '700', '800'],
@@ -53,13 +54,14 @@ export default function RootLayout({ children }) {
       {!IS_SELFHOST && process.env.UMAMI_ANALYTICS_WEBSITE_ID && process.env.UMAMI_ANALYTICS_WEBSITE_ID.length == "36" ? <Script defer src="https://umami.w0bb.com/script.js" data-website-id={process.env.UMAMI_ANALYTICS_WEBSITE_ID} data-exclude-hash="true"></Script> : <></>}
       {!IS_SELFHOST && !IS_DEV && process.env.SIGMA_SEO_SITE_ID && <Script defer src="https://sigma-seo.rkt.dev/seo.js" data-website-id={process.env.SIGMA_SEO_SITE_ID}></Script>}
       <body
-        className={`${roboto.className} antialiased`} // ${roboto.className} ${playfairDisplay.className} 
+        className={`${roboto.className} antialiased`} // ${roboto.className} ${playfairDisplay.className}
       >
         <GlobalProvider>
           <FileProvider>
             {children}
           </FileProvider>
         </GlobalProvider>
+        <Toaster richColors position="bottom-right" />
       </body>
     </html>
   );

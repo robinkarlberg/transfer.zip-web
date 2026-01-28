@@ -1,4 +1,3 @@
-import DashboardProvider, { DashboardContext } from "@/context/DashboardContext";
 import QuickShareProgress from "./QuickShareProgress";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 

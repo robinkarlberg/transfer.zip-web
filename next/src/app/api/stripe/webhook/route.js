@@ -71,6 +71,8 @@ const handleSubscription = async object => {
     const item = object.items?.data?.[0];
     const price = item?.price || item?.plan;
 
+    const seats = item.quantity
+
     subscriber.updateSubscription({
       plan: getPlanByStripeProductId(plan.product)?.id,
       status: object.status,

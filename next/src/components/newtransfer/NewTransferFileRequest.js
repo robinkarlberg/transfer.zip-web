@@ -24,7 +24,7 @@ import { getTransferRequestUploadLink, newTransferRequest } from "@/lib/client/A
 import Link from "next/link";
 import BrandingToggle from "./BrandingToggle";
 import DynamicIsland from "./DynamicIsland";
-import { DashboardContext } from "@/context/DashboardContext";
+import { toast } from "sonner";
 import { ApplicationContext } from "@/context/ApplicationContext";
 
 function AddedEmailField({ email, onAction }) {
@@ -41,7 +41,6 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
   const router = useRouter()
 
   const { openSignupDialog } = useContext(GlobalContext)
-  const { displayNotification } = useContext(DashboardContext)
 
   const emailRef = useRef(null)
   const [emailRecipients, setEmailRecipients] = useState([])
@@ -170,7 +169,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   const handleCopyClick = async e => {
     if (await tryCopyToClipboard(getTransferRequestUploadLink(transferRequest))) {
-      displayNotification("success", "Copied Link", "The request link was successfully copied to the clipboard!")
+      toast.success("Copied Link", { description: "The request link was successfully copied to the clipboard!" })
     }
   }
 

@@ -4,7 +4,6 @@ import BIcon from "@/components/BIcon";
 import FileUpload from "@/components/elements/FileUpload";
 import Progress from "@/components/elements/Progress";
 import { ApplicationContext } from "@/context/ApplicationContext";
-import { DashboardContext } from "@/context/DashboardContext";
 import { FileContext } from "@/context/FileProvider";
 import { markTransferComplete, newTransfer, newTransferRequest } from "@/lib/client/Api";
 import { EXPIRATION_TIMES } from "@/lib/constants";
@@ -37,7 +36,6 @@ export default function ({ user, storage, brandProfiles }) {
   const directionSlug = searchParams.get("dir")
 
   const { displayErrorModal } = useContext(ApplicationContext)
-  const { setSelectedTransferId, hideSidebar } = useContext(DashboardContext)
 
   const [uploadProgressMap, setUploadProgressMap] = useState(null)
 

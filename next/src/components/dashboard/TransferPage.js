@@ -1,6 +1,6 @@
 "use client"
 
-import { DashboardContext } from "@/context/DashboardContext"
+import { toast } from "sonner"
 import { deleteTransfer, getTransferDownloadLink, putTransfer, sendTransferByEmail } from "@/lib/client/Api"
 import { EXPIRATION_TIMES } from "@/lib/constants"
 import { humanFileSize } from "@/lib/transferUtils"
@@ -29,15 +29,14 @@ import BIcon from "../BIcon"
 
 export default function ({ user, transfer }) {
 
-  const { displayNotification, displayErrorModal } = useContext(DashboardContext)
-
+  
   const router = useRouter()
 
   const transferLink = getTransferDownloadLink(transfer)
 
   const handleCopy = async e => {
     if (await tryCopyToClipboard(transferLink)) {
-      displayNotification("success", "Copied Link", "The Transfer link was successfully copied to the clipboard!")
+      toast.success("Copied Link", { description: "The Transfer link was successfully copied to the clipboard!" })
     }
   }
 
@@ -73,7 +72,7 @@ export default function ({ user, transfer }) {
 
     await putTransfer(transfer.id, { expiresAt })
 
-    displayNotification("success", "Expiration Changed", `The expiration date was successfully changed to ${expiresAt.toLocaleDateString()}`)
+    toast.success("Expiration Changed", { description: `The expiration date was successfully changed to ${expiresAt.toLocaleDateString()}` })
     router.refresh()
   }
 
@@ -127,7 +126,7 @@ export default function ({ user, transfer }) {
 
     await sendTransferByEmail(transfer.id, [email])
 
-    displayNotification("success", "Email sent", `The Transfer link was successfully sent to ${email}!`)
+    toast.success("Email sent", { description: `The Transfer link was successfully sent to ${email}!` })
     setShowForwardTransfer(false)
     router.refresh()
   }

@@ -4,7 +4,7 @@ import { useParams, useRouter, useSelectedLayoutSegment, useSelectedLayoutSegmen
 import EmptySpace from "../elements/EmptySpace"
 import { ApplicationContext } from "@/context/ApplicationContext"
 import { useContext, useEffect, useMemo, useRef, useState } from "react"
-import { DashboardContext } from "@/context/DashboardContext"
+import { toast } from "sonner"
 import { deleteTransfer, getDownloadToken, getTransferDownloadLink, registerTransferDownloaded, sendTransferByEmail } from "@/lib/client/Api"
 import { humanTimeUntil, parseTransferExpiryDate, sleep, tryCopyToClipboard } from "@/lib/utils"
 import BIcon from "../BIcon"
@@ -18,8 +18,7 @@ const Entry = ({ transfer }) => {
 
   const { selectedTransferId } = useContext(SelectedTransferContext)
 
-  const { displayNotification, hideSidebar, showSidebar } = useContext(DashboardContext)
-
+  
   const transferLink = useMemo(() => getTransferDownloadLink(transfer), [transfer])
 
   const { id, name, files, expiresAt, hasTransferRequest, finishedUploading, secretCode } = transfer
@@ -30,7 +29,7 @@ const Entry = ({ transfer }) => {
 
   const handleCopy = async e => {
     if (await tryCopyToClipboard(transferLink)) {
-      displayNotification("success", "Copied Link", "The Transfer link was successfully copied to the clipboard!")
+      toast.success("Copied Link", { description: "The Transfer link was successfully copied to the clipboard!" })
     }
   }
 
@@ -91,7 +90,7 @@ const Entry = ({ transfer }) => {
     }
     catch (err) {
       console.error(err)
-      displayNotification("error", "Error", err.message)
+      toast.error("Error", { description: err.message })
     }
     finally {
       await sleep(6000)

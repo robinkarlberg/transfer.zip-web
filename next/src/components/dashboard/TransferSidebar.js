@@ -3,7 +3,7 @@
 import BIcon from "@/components/BIcon"
 import Modal from "@/components/elements/Modal"
 import { Skeleton } from "@/components/ui/skeleton"
-import { DashboardContext } from "@/context/DashboardContext"
+import { toast } from "sonner"
 import { SelectedTransferContext } from "@/context/SelectedTransferProvider"
 import { deleteTransfer, getTransferDownloadLink, putTransfer, sendTransferByEmail } from "@/lib/client/Api"
 import { EXPIRATION_TIMES } from "@/lib/constants"
@@ -18,8 +18,7 @@ export default function ({ user, selectedTransfer }) {
 
   const router = useRouter()
 
-  const { displayNotification, displayErrorModal } = useContext(DashboardContext)
-  const { refreshTransfer } = useContext(SelectedTransferContext)
+    const { refreshTransfer } = useContext(SelectedTransferContext)
 
   const [showEmailList, setShowEmailList] = useState(false)
   const [showForwardTransfer, setShowForwardTransfer] = useState(false)
@@ -57,7 +56,7 @@ export default function ({ user, selectedTransfer }) {
 
     await putTransfer(selectedTransfer.id, { expiresAt })
 
-    displayNotification("success", "Expiration Changed", `The expiration date was successfully changed to ${expiresAt.toLocaleDateString()}`)
+    toast.success("Expiration Changed", { description: `The expiration date was successfully changed to ${expiresAt.toLocaleDateString()}` })
     router.refresh()
     refreshTransfer()
   }
@@ -108,7 +107,7 @@ export default function ({ user, selectedTransfer }) {
 
   const handleCopy = async e => {
     if (await tryCopyToClipboard(transferLink)) {
-      displayNotification("success", "Copied Link", "The Transfer link was successfully copied to the clipboard!")
+      toast.success("Copied Link", { description: "The Transfer link was successfully copied to the clipboard!" })
     }
   }
 
@@ -171,7 +170,7 @@ export default function ({ user, selectedTransfer }) {
 
     await sendTransferByEmail(selectedTransfer.id, [email])
 
-    displayNotification("success", "Email sent", `The Transfer link was successfully sent to ${email}!`)
+    toast.success("Email sent", { description: `The Transfer link was successfully sent to ${email}!` })
     refreshTransfer()
     setShowForwardTransfer(false)
   }
@@ -180,7 +179,7 @@ export default function ({ user, selectedTransfer }) {
   //   setBrandProfileId(profileId)
   //   await putTransfer(selectedTransfer.id, { brandProfileId: profileId })
   //   refreshTransfer()
-  //   displayNotification("success", "Brand profile updated", `The brand profile for this transfer was changed!`)
+  //   toast.success("Brand profile updated", { description: `The brand profile for this transfer was changed!` })
   // }
 
   // const [brandProfileId, setBrandProfileId] = useState(selectedTransfer?.brandProfileId || "none")

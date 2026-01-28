@@ -65,6 +65,7 @@
     "remark-mdx-frontmatter": "^5.2.0",
     "resend": "^4.6.0",
     "sharp": "^0.34.3",
+    "sonner": "^2.0.7",
     "stripe": "^18.3.0",
     "tailwind-merge": "^3.3.1",
     "tooltip": "^1.6.1",

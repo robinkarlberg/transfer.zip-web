@@ -10,6 +10,7 @@ import {
   PaintbrushIcon,
   SendIcon,
   UserIcon,
+  UsersIcon,
 } from "lucide-react";
 import Image from "next/image";
 import logo from "@/img/icon.png";
@@ -24,6 +25,7 @@ export default function FloatingBar({ user }) {
     { name: "Requests", href: "/requests" },
     { name: "Branding", href: "/branding" },
     { name: "Account", href: "/settings" },
+    { name: "Team", href: "/team" },
     { name: "Transfer", href: "" },
   ].map((item) => ({ ...item, href: prepend + item.href }));
 
@@ -34,6 +36,7 @@ export default function FloatingBar({ user }) {
     Received: ArrowDownIcon,
     Requests: MailIcon,
     Branding: PaintbrushIcon,
+    Team: UsersIcon
   };
 
   const linkIsActive = (href) =>

@@ -101,7 +101,9 @@ UserSchema.methods.friendlyObj = function () {
         isTrial: this.planStatus == "trialing",
         onboarded: this.onboarded,
         notificationSettings: this.notificationSettings.friendlyObj(),
-        hasPassword: this.hasPassword
+        hasPassword: this.hasPassword,
+        role: this.role,
+        hasTeam: this.hasTeam
     }
 }
 

@@ -17,7 +17,7 @@ import { call, fileTransferGetFileList, fileTransferServeFiles, listen } from "@
 import * as WebRtc from "@/lib/client/webrtc"
 import * as zip from "@zip.js/zip.js"
 import { useQuickShare } from "@/hooks/client/useQuickShare"
-import { DashboardContext } from "@/context/DashboardContext"
+import { toast } from "sonner"
 import { IS_SELFHOST } from "@/lib/isSelfHosted"
 import { sendEvent } from "@/lib/client/umami"
 import { GlobalContext } from "@/context/GlobalContext"
@@ -37,7 +37,6 @@ export default function QuickShareProgress({ isLoggedIn, isPayingUser }) {
 
   const { openSignupDialog } = useContext(GlobalContext)
   const { files } = useContext(FileContext)
-  const { displayNotification } = useContext(DashboardContext)
   const { hasBeenSentLink, k, remoteSessionId, transferDirection } = useQuickShare()
 
   const [transferState, _setTransferState] = useState(hasBeenSentLink ? TRANSFER_STATE_IDLE : TRANSFER_STATE_WAIT_FOR_USER)
@@ -302,7 +301,7 @@ export default function QuickShareProgress({ isLoggedIn, isPayingUser }) {
 
   const handleCopy = async e => {
     if (await tryCopyToClipboard(quickShareLink)) {
-      displayNotification("success", "Copied Link", "The Quick Transfer link was successfully copied to the clipboard!")
+      toast.success("Copied Link", { description: "The Quick Transfer link was successfully copied to the clipboard!" })
     }
   }
 

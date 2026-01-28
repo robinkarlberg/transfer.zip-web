@@ -139,6 +139,14 @@ export async function redeemInvite(token, password) {
     return await post(`/invite/${token}`, { password })
 }
 
+export async function deleteUser(userId) {
+    return await del(`/team/users/${userId}`)
+}
+
+export async function updateUserRole(userId, role) {
+    return await put(`/team/users/${userId}`, { role })
+}
+
 // export async function requestVerification() {
 //     return await post("/auth/verification/request", {})
 // }

@@ -10,13 +10,15 @@ export async function POST() {
   }
   const { user } = auth
 
-  if (!user.stripe_customer_id) {
+  const stripe_customer_id = user.hasTeam ? user.team.stripe_customer_id : user.stripe_customer_id
+
+  if (!stripe_customer_id) {
     return NextResponse.redirect(`${process.env.SITE_URL}/`)
   }
 
   try {
     const session = await getStripe().billingPortal.sessions.create({
-      customer: user.stripe_customer_id,
+      customer: stripe_customer_id,
       return_url: `${process.env.SITE_URL}/app/settings`
     })
 
