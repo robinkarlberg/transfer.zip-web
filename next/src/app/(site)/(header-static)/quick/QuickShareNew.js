@@ -1,9 +1,11 @@
 "use client"
 
 import BIcon from "@/components/BIcon"
+import FileDropOverlay from "@/components/elements/FileDropOverlay"
 import FileUpload from "@/components/elements/FileUpload"
 import QuestionCircle from "@/components/elements/QuestionCircle"
 import { FileContext } from "@/context/FileProvider"
+import { useFileDropZone } from "@/hooks/client/useFileDropZone"
 import { useQuickShare } from "@/hooks/client/useQuickShare"
 import { getComputedNewLocation } from "@/lib/client/hash"
 import { useRouter } from "next/navigation"
@@ -37,6 +39,8 @@ export default function ({ stars }) {
     }
   }, [transferDirection])
 
+  const { isDragging } = useFileDropZone(handleFiles)
+
   return (
     <div className="w-full max-w-96 text-center">
       <div className={hasBeenSentLink ? "mb-2" : "mb-28"}>
@@ -57,6 +61,7 @@ export default function ({ stars }) {
       <p className="text-gray-500 text-xs mt-2">
         We do not use cookies. Your files are protected with end-to-end encryption, meaning they remain unreadable by anyone but you.<br /><a href="https://github.com/robinkarlberg/transfer.zip-web" className="text-primary hover:underline">GitHub {stars && <span>({stars} <BIcon name={"star"} />)</span>} </a>
       </p>
+      <FileDropOverlay show={isDragging} />
     </div>
   )
 }
