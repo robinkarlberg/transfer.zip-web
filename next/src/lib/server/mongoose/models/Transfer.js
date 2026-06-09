@@ -3,6 +3,8 @@ import crypto from "crypto"
 
 import BrandProfile from './BrandProfile';
 import { getDownloadDomainFor } from '../helpers/customDomains';
+import { isPreviewableFileType, MAX_PREVIEWABLE_IMAGE_BYTES } from '@/lib/transferUtils';
+import { IS_SELFHOST } from '@/lib/isSelfHosted';
 
 // These keys are not protecting anything critical. It is just so that the Transfer password is
 // not in plain-text in the database. We also do not want to hash it, as we need to let the user
@@ -195,23 +197,36 @@ TransferSchema.methods.toJsonAsTeamAdmin = async function () {
     }
 }
 
-// TransferSchema.methods.toJsonAsDownloader = function () {
-//     const { _id, name, description, expiresAt, secretCode, files, size } = this
-//     return {
-//         id: _id.toString(),
-//         name: name || "Untitled Transfer",
-//         description,
-//         expiresAt,
-//         secretCode,
-//         hasPassword: this.hasPassword(),
-//         files: this.files.map(file => file.toJsonAsClient()),
-//         size,
-//         hasName: !!name,
-//         finishedUploading: this.finishedUploading,
-//         nodeUrl: this.nodeUrl,
-//         brandProfileId: this.brandProfile ? this.brandProfile.toString() : undefined
-//     }
-// }
+// Whether the download page can offer image previews: the node generates
+// thumbnails only for v2 transfers, and self-host nodes (local storage,
+// no presigned URLs) don't support them at all.
+TransferSchema.methods.isPreviewable = function () {
+    return !IS_SELFHOST
+        && this.backendVersion === 2
+        && this.finishedUploading
+        && this.files.some(file => isPreviewableFileType(file.type) && (file.size || 0) <= MAX_PREVIEWABLE_IMAGE_BYTES)
+}
+
+// Public download page audience: no password plaintext, no statistics,
+// no recipient emails, no author identity.
+TransferSchema.methods.toJsonAsDownloader = function () {
+    const { _id, name, description, expiresAt, createdAt, secretCode, files, size } = this
+    return {
+        id: _id.toString(),
+        name: name || "Untitled Transfer",
+        description,
+        expiresAt,
+        createdAt,
+        secretCode,
+        hasPassword: this.hasPassword(),
+        files: files.map(file => file.toJsonAsClient()),
+        size,
+        hasName: !!name,
+        finishedUploading: this.finishedUploading,
+        previewable: this.isPreviewable(),
+        brandProfile: (this.brandProfile && typeof this.brandProfile.toJsonAsClient === 'function') ? this.brandProfile.toJsonAsClient() : undefined
+    }
+}
 
 TransferSchema.methods.getDownloadLink = async function () {
     const customDomain = await getDownloadDomainFor({ team: this.team, user: this.author?._id || this.author })

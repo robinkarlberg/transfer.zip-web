@@ -75,6 +75,8 @@ export default async function ({ params }) {
 
   const expiryDate = parseTransferExpiryDate(transfer.expiresAt)
 
+  const transferJson = transfer.toJsonAsDownloader()
+
   let { brandProfile } = transfer
 
   return (
@@ -104,7 +106,7 @@ export default async function ({ params }) {
             <div className="mt-auto text-center">
               {expiryDate && <p className="text-gray-600 mb-1 text-sm">Expires in {humanTimeUntil(expiryDate)}</p>}
             </div>
-            <DownloadArea secretCode={secretCode} />
+            <DownloadArea secretCode={secretCode} transfer={transferJson} />
           </div>
         </div>
       </div>

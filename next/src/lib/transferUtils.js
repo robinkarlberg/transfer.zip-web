@@ -57,6 +57,28 @@ export const humanFileType = (type) => {
   return split.length <= 1 ? split : split[1].replace(/^x-/, "")
 }
 
+// Image types the node server can generate thumbnails for (sharp-decodable).
+// Keep in sync with the matching list in transfer.zip-node.
+export const PREVIEWABLE_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/avif",
+  "image/svg+xml",
+  "image/tiff",
+]
+
+// Sources above this size are skipped by the node thumbnailer.
+// Keep in sync with transfer.zip-node.
+export const MAX_PREVIEWABLE_IMAGE_BYTES = 20 * 1024 * 1024
+
+export function isPreviewableFileType(type) {
+  if (!type) return false
+  return PREVIEWABLE_IMAGE_TYPES.includes(type.toLowerCase())
+}
+
 const textEnc = new TextEncoder()
 const textDec = new TextDecoder()
 

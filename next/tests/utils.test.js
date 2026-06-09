@@ -15,6 +15,7 @@ import {
   humanFileSizeWithUnit,
   humanFileSizePair,
   humanFileType,
+  isPreviewableFileType,
 } from "@/lib/transferUtils";
 
 describe("capitalizeFirstLetter", () => {
@@ -243,5 +244,34 @@ describe("getFileNameFromPath", () => {
   it("returns the trailing path segment", () => {
     expect(getFileNameFromPath("a/b/c.txt")).toBe("c.txt");
     expect(getFileNameFromPath("just-a-file.txt")).toBe("just-a-file.txt");
+  });
+});
+
+describe("isPreviewableFileType", () => {
+  it("accepts the supported image types", () => {
+    expect(isPreviewableFileType("image/jpeg")).toBe(true);
+    expect(isPreviewableFileType("image/png")).toBe(true);
+    expect(isPreviewableFileType("image/webp")).toBe(true);
+    expect(isPreviewableFileType("image/gif")).toBe(true);
+    expect(isPreviewableFileType("image/avif")).toBe(true);
+    expect(isPreviewableFileType("image/svg+xml")).toBe(true);
+    expect(isPreviewableFileType("image/tiff")).toBe(true);
+  });
+
+  it("is case-insensitive", () => {
+    expect(isPreviewableFileType("IMAGE/JPEG")).toBe(true);
+  });
+
+  it("rejects non-image and unsupported image types", () => {
+    expect(isPreviewableFileType("application/pdf")).toBe(false);
+    expect(isPreviewableFileType("video/mp4")).toBe(false);
+    // sharp can't decode HEIC without a libheif build
+    expect(isPreviewableFileType("image/heic")).toBe(false);
+  });
+
+  it("rejects missing types (file.type is optional)", () => {
+    expect(isPreviewableFileType(undefined)).toBe(false);
+    expect(isPreviewableFileType(null)).toBe(false);
+    expect(isPreviewableFileType("")).toBe(false);
   });
 });

@@ -374,3 +374,16 @@ const nodePost = async (nodeUrl, token, endpoint, payload) => {
 export async function signTransferDownload(nodeUrl, token) {
     return await nodePost(nodeUrl, token, "/download", {})
 }
+
+/**
+ * Presigned URLs for individual files of a stored transfer: `original` for
+ * any file, plus `thumb`/`preview` (webp) for images once the node has
+ * generated them. Requires the transfer to have finished uploading.
+ * @param {{ id: string, name?: string }[]} files max 100 per call; `name` sets the download filename of `original`
+ * @returns {Promise<{ [fileId: string]: { original: string, thumb?: string, preview?: string } }>}
+ */
+export async function signFileDownloads(secretCode, files) {
+    const { nodeUrl, token } = await getDownloadToken(secretCode)
+    const res = await nodePost(nodeUrl, token, "/files/sign", { files })
+    return res.files
+}
