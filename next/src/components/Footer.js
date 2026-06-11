@@ -55,16 +55,19 @@ export default function Footer({ }) {
               <p className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white">Resources</p>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 <li className="mb-4">
-                  <a href={`/contact`} className="hover:underline">Contact</a>
+                  <a href={`/contact`} className="hover:underline">Support / Contact</a>
                 </li>
                 <li className="mb-4">
-                  <a href={`/contact`} className="hover:underline">Support</a>
+                  <h3><a href="/receive" className="hover:underline">Receive Files</a></h3>
                 </li>
                 <li className="mb-4">
-                  <a href="https://github.com/robinkarlberg/transfer.zip-web?tab=readme-ov-file#self-hosting" className="hover:underline">Self Hosting</a>
+                  <h3><a href="/" className="hover:underline">Send Files</a></h3>
+                </li>
+                <li className="mb-4">
+                  <h3><a href="/how-to" className="hover:underline">How-Tos</a></h3>
                 </li>
                 <li>
-                  <h3><a href="/how-to" className="hover:underline">How-Tos</a></h3>
+                  <a href="https://github.com/robinkarlberg/transfer.zip-web?tab=readme-ov-file#self-hosting" className="hover:underline">Self Hosting</a>
                 </li>
               </ul>
             </div>
