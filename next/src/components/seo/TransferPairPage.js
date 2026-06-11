@@ -26,13 +26,13 @@ const headingId = (text) => text.toLowerCase().replace(/[^a-z0-9\s-]/g, "").repl
 export function transferPairMetadata(slug) {
   const pair = getTransferPair(slug)
   return {
-    title: `${pair.title} | Transfer.zip`,
+    title: pair.title,
     description: pair.description,
     alternates: { canonical: `https://transfer.zip/how-to/${pair.slug}` },
     openGraph: {
       title: pair.title,
       description: pair.description,
-      images: ["https://cdn.transfer.zip/og.png"],
+      images: [pair.image ? `https://transfer.zip${pair.image}` : "https://cdn.transfer.zip/og.png"],
     },
   }
 }
@@ -79,6 +79,7 @@ export default function TransferPairPage({ slug }) {
     href: `/how-to/${p.slug}`,
     title: p.heading,
     description: p.description,
+    imgSrc: p.image,
   }))
 
   return (

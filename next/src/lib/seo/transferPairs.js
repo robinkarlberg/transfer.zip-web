@@ -14,6 +14,7 @@ export const DEVICES = {
 export const TRANSFER_PAIRS = [
   {
     slug: "transfer-files-from-iphone-to-pc",
+    image: "/img/content/seo/iphone-to-pc.png",
     from: "iphone",
     to: "pc",
     title: "How to Transfer Files from iPhone to PC (Free, No App or Cable)",
@@ -65,6 +66,7 @@ export const TRANSFER_PAIRS = [
   },
   {
     slug: "transfer-files-from-pc-to-iphone",
+    image: "/img/content/seo/pc-to-iphone.png",
     from: "pc",
     to: "iphone",
     title: "How to Transfer Files from PC to iPhone Without iTunes",
@@ -115,6 +117,7 @@ export const TRANSFER_PAIRS = [
   },
   {
     slug: "transfer-files-from-pc-to-pc",
+    image: "/img/content/seo/pc-to-pc.png",
     from: "pc",
     to: "pc",
     title: "How to Transfer Files from PC to PC (No USB Drive Needed)",
@@ -166,6 +169,7 @@ export const TRANSFER_PAIRS = [
   },
   {
     slug: "transfer-files-from-android-to-pc",
+    image: "/img/content/seo/android-to-pc.png",
     from: "android",
     to: "pc",
     title: "How to Transfer Files from Android to PC Without a USB Cable",
@@ -216,6 +220,7 @@ export const TRANSFER_PAIRS = [
   },
   {
     slug: "transfer-files-from-pc-to-android",
+    image: "/img/content/seo/pc-to-android.png",
     from: "pc",
     to: "android",
     title: "How to Send Files from PC to Android Wirelessly (No Cable)",
@@ -265,6 +270,7 @@ export const TRANSFER_PAIRS = [
   },
   {
     slug: "transfer-files-from-iphone-to-android",
+    image: "/img/content/seo/iphone-to-android.png",
     from: "iphone",
     to: "android",
     title: "How to Transfer Files from iPhone to Android (No App Needed)",
@@ -311,6 +317,58 @@ export const TRANSFER_PAIRS = [
       { q: "Will my photos and videos keep their quality?", a: "Yes. Files transfer in their original quality with no recompression, unlike messaging apps, which heavily compress photos and especially videos." },
       { q: "Do both phones need to be on the same Wi-Fi?", a: "No. The phones connect over the internet, so any mix of Wi-Fi and mobile data works. They just both need to be online at the same time." },
       { q: "What about Live Photos?", a: "The picker sends what iOS hands over. For Live Photos that is the still image (and the video part where iOS includes it). For guaranteed motion, record a short video instead." },
+    ],
+  },
+  {
+    slug: "transfer-files-from-android-to-iphone",
+    image: "/img/content/seo/android-to-iphone.png",
+    from: "android",
+    to: "iphone",
+    title: "How to Transfer Files from Android to iPhone Without Move to iOS",
+    description: "Quick Share can't reach an iPhone, and Move to iOS only runs during setup. Send photos, videos and files from any Android phone to an iPhone through the browser instead.",
+    heading: "How to Transfer Files from Android to iPhone",
+    headline: { highlightedWord: "Directly", title: "send files from Android to iPhone." },
+    subtitle: "Quick Share won't talk to iPhones, and messaging apps wreck your video quality. Pick the files on the Android phone, type a 6-digit code on the iPhone, and they stream straight across.",
+    howItWorks: [
+      "Android and iPhone each have a perfectly good sharing feature that refuses to talk to the other side: Quick Share stays on Android, AirDrop stays on Apple. The browser is the neutral ground both phones already have, so that's where this transfer runs.",
+      <>Open <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link> on the Android phone and pick your files; a 6-digit code appears. Type that code into transfer.zip/quick in Safari on the iPhone and the files stream across encrypted, directly from phone to phone.</>,
+      "Nothing is installed on either device and nothing is uploaded to a cloud account. The phones don't even need to share a Wi-Fi network, one on mobile data works fine.",
+    ],
+    steps: [
+      { text: "Open this page on the Android phone, tap the button above and pick the photos, videos or files you want to send." },
+      { text: "On the iPhone, open transfer.zip/quick in Safari and type the 6-digit code shown on the Android phone." },
+      { text: "Safari downloads the files to the iPhone's Files app. Keep both phones online and unlocked until the transfer finishes." },
+    ],
+    tips: [
+      {
+        heading: "Getting photos into the Photos app",
+        body: [
+          "Safari saves what it receives to the Files app, under Downloads, and iOS doesn't add pictures to the photo library on its own. Open the image in Files, tap the share icon and choose \"Save Image\".",
+          "Several photos sent together arrive as one zip. Long-press it in Files and pick Uncompress, then select all the images and save them to Photos from the share sheet in one go.",
+        ],
+      },
+      {
+        heading: "Switching phones? Move to iOS has a catch",
+        body: [
+          "Apple's Move to iOS app only works while the iPhone is still in initial setup. Once you've started using the iPhone, the app is no help, and a factory reset just to copy files over is a steep price.",
+          "A browser transfer works at any point. Send the camera roll in batches from the Android phone whenever you get around to it, weeks after the switch included. Contacts and calendars are still easiest to bring over through your Google account.",
+        ],
+      },
+      {
+        heading: "Will the iPhone open Android files?",
+        body: [
+          "Photos from Android phones are regular JPGs, and Android video is H.264 or HEVC, all of which the iPhone plays natively. The common stuff just works.",
+          "Everything else still transfers, because the browser doesn't filter by type. A file iOS can't preview simply sits in the Files app, where you can forward it or hand it to a compatible app.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Can I use Quick Share to send to an iPhone?", a: "No. Quick Share (formerly Nearby Share) only works between Android devices and Windows PCs. An iPhone can't receive from it, which is why the browser is the practical cross-platform route." },
+      { q: "Do I need to install anything on either phone?", a: "No. Chrome (or any browser) on the Android phone and Safari on the iPhone are enough. There is no app and no account on either side." },
+      { q: "Where do the files end up on the iPhone?", a: "In the Files app under Downloads. Images can be saved to the photo library from the share sheet, and zip archives unpack with a long-press. iOS handles that natively." },
+      { q: "Will photo and video quality survive the transfer?", a: "Yes. Files move bit for bit with no recompression, unlike messaging apps. A 4K clip from the Android phone arrives on the iPhone at its exact original size and quality." },
+      { q: "Do both phones need to be on the same Wi-Fi?", a: "No. The transfer runs over the internet, so Android on mobile data and iPhone on home Wi-Fi works. Both phones just need to stay online until it finishes." },
+      { q: "Is there a file size limit?", a: "No. The files stream directly between the phones without being stored on a server, so multi-gigabyte videos are fine. Bigger transfers simply take longer." },
     ],
   },
 ]

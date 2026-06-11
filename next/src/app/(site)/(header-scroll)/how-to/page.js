@@ -24,6 +24,7 @@ export default async function Page() {
       href: `/how-to/${pair.slug}`,
       title: pair.heading,
       description: pair.description,
+      imgSrc: pair.image,
     })),
   }
 
