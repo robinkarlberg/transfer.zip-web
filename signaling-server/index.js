@@ -163,7 +163,7 @@ wss.on("connection", (conn, req) => {
     console.log("Connection established");
     conn._sessionIds = new Set();
     conn._isAlive = true;
-    // Behind nginx the remote address is the proxy; XFF is set by it (trusted).
+    // Behind Caddy the remote address is the proxy; XFF is set by it (trusted).
     const xff = req.headers["x-forwarded-for"];
     conn._ip = (xff ? xff.split(",")[0].trim() : "") || req.socket.remoteAddress;
 
