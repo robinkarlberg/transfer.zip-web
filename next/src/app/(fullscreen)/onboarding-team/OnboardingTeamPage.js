@@ -206,7 +206,7 @@ function InviteStep({ availableSeats, onNext, onBack }) {
       subtitle={
         availableSeats > 0
           ? `You have ${availableSeats} seat${availableSeats === 1 ? "" : "s"} available. Skip if you'd rather invite people later.`
-          : "No seats left — you can add more later from billing."
+          : "No seats left, you can add more later from billing."
       }
     >
       <div className="space-y-3">
@@ -345,7 +345,7 @@ function BrandStep({ defaultName, onBack, onFinish }) {
     <StepShell
       step={3}
       title="Brand your transfers"
-      subtitle="Optional — show your logo and a background on share pages."
+      subtitle="Optional. Show your logo and a background on share pages."
     >
       <form className="hidden">
         <input ref={iconInputRef} type="file" accept="image/*" onChange={handleImageFile(setIconUrl)} />

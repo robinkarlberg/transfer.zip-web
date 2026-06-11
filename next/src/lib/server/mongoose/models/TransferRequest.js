@@ -14,7 +14,7 @@ const TransferRequestSchema = new mongoose.Schema({
     active: { type: Boolean, default: true },
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true, required: true },
     // Set once at creation from author.team if the author is on a team.
-    // Never updated — mirrors Transfer.team so that a request stays
+    // Never updated - mirrors Transfer.team so that a request stays
     // attributed to the team it was created under even if the author
     // later leaves.
     team: { type: mongoose.Schema.Types.ObjectId, ref: "Team", index: true },

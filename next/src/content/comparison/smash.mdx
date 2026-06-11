@@ -18,23 +18,23 @@ Smash markets itself as "no size limit, free, forever." Technically true. The as
 
 Smash is a solid product for paying users, but a few trade-offs vs Transfer.zip stand out:
 
-- **Closed source** — you can't audit it or self-host
-- **No real-time mode** — every file is uploaded to and stored on Smash's servers
-- **Entry plan retention is short** — typically capped at 30 days unless you go up tiers
+- **Closed source** - you can't audit it or self-host
+- **No real-time mode** - every file is uploaded to and stored on Smash's servers
+- **Entry plan retention is short** - typically capped at 30 days unless you go up tiers
 
 ---
 
 ## A look at both interfaces
 
-Smash and Transfer.zip both stick to a single upload card and nothing else — no notification bell, no dropdown maze. The "no fluff" pitch holds on the surface for both products. The difference is what happens after you drop the file.
+Smash and Transfer.zip both stick to a single upload card and nothing else, with no notification bell or dropdown maze. The "no fluff" pitch holds on the surface for both products. The difference is what happens after you drop the file.
 
-![Transfer.zip homepage — one card, the same speed for everyone.](/img/content/services/transfer-zip.png "Transfer.zip homepage — one card, the same speed for everyone")
+![Transfer.zip homepage: one card, the same speed for everyone.](/img/content/services/transfer-zip.png "Transfer.zip homepage: one card, the same speed for everyone")
 
 Transfer.zip uses a calm primary gradient, one upload card, and a "Star on GitHub" link as the only social proof. No upgrade banner sitting in your peripheral vision while you work.
 
-![Smash's homepage — clean upload card, but a "Get Smash Pro" button sits in the corner and anything over 2 GB falls into a queue lane.](/img/content/services/smash.png "Smash's homepage — clean upload card, but a Get Smash Pro button sits in the corner and anything over 2 GB falls into a queue lane")
+![Smash's homepage: clean upload card, but a "Get Smash Pro" button sits in the corner and anything over 2 GB falls into a queue lane.](/img/content/services/smash.png "Smash's homepage: clean upload card, but a Get Smash Pro button sits in the corner and anything over 2 GB falls into a queue lane")
 
-Smash nails the surface too: clean card, simple flow. The "no fluff" promise starts unravelling once your file exceeds 2 GB and you find out about the queue lane — or once you check the source and find there isn't one to check.
+Smash nails the surface too: clean card, simple flow. The "no fluff" promise starts unravelling once your file exceeds 2 GB and you find out about the queue lane, or once you check the source and find there isn't one to check.
 
 Simplicity in the UI is half the story. Simplicity in what's happening behind the file is the other half.
 
@@ -69,15 +69,15 @@ Smash files over 2 GB drop into a "regular lane" that throttles during peak hour
 
 ### Open source
 
-Every line of Transfer.zip is on GitHub — the website, the server, the encryption. You can read it, audit it, or run it on your own domain. Smash is closed-source, so you have to take their word for how things work.
+Every line of Transfer.zip is on GitHub: the website, the server, the encryption. You can read it, audit it, or run it on your own domain. Smash is closed-source, so you have to take their word for how things work.
 
 ### No third-party trackers
 
-Smash markets itself on privacy, but the homepage loads `googletagmanager.com` — Google's tracking system. That means Google gets to see who's visiting Smash and what they do on the site, before Smash even gets a chance to.
+Smash markets itself on privacy, but the homepage loads `googletagmanager.com`, Google's tracking system. That means Google gets to see who's visiting Smash and what they do on the site, before Smash even gets a chance to.
 
 For a service that pitches data privacy, the silent Google handoff is a strange first impression.
 
-Transfer.zip's homepage doesn't load Google Tag Manager. It doesn't load Google Analytics. It doesn't load any third-party tracker. The only analytics we use is a self-hosted Umami instance running on our own server — your visit goes to us, not to anyone else.
+Transfer.zip's homepage doesn't load Google Tag Manager, Google Analytics, or any other third-party tracker. The only analytics we use is a self-hosted Umami instance running on our own server. Your visit goes to us, not to anyone else.
 
 ### Longer retention out of the box
 
@@ -104,4 +104,4 @@ Both services are competitively priced on entry plans (Transfer.zip $6/mo, Smash
 - **You have auditing or self-hosting requirements** → Transfer.zip is the only one with public code.
 - **You're already paying for Smash and happy with it** → No urgent reason to switch, but worth testing Quick Transfer for one project to see the difference.
 
-Ready to try? [Send your first file with Transfer.zip](/) — no queue.
+Ready to try? [Send your first file with Transfer.zip](/), no queue.

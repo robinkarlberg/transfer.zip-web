@@ -20,7 +20,7 @@ const faqs = [
   },
   {
     question: "Do you offer refunds?",
-    answer: "Contact support and we'll sort it out. You can also cancel anytime — your plan stays active until the end of the current billing period."
+    answer: "Contact support and we'll sort it out. You can also cancel anytime, and your plan stays active until the end of the current billing period."
   },
   {
     question: "Do you train AI models with my data?",
@@ -29,7 +29,7 @@ const faqs = [
   },
   {
     question: "How do Quick Transfers work?",
-    answer: "Files are streamed in real time from the sender's browser to the receiver's browser through our relay servers, and are not stored anywhere in the process, not even on transfer.zip servers. The file data is end-to-end encrypted using AES-GCM with a 256 bit key generated in your browser. The key is part of the link itself (in the URL fragment, which is never sent to any server), so the relay only ever sees encrypted bytes it cannot read — anyone capturing the traffic would not be able to decrypt the files without the link. Because nothing is stored, there are no file size limits; the transfer simply lasts as long as both browser tabs stay open."
+    answer: "Files are streamed in real time from the sender's browser to the receiver's browser through our relay servers, and are not stored anywhere in the process, not even on transfer.zip servers. The file data is end-to-end encrypted using AES-GCM with a 256 bit key generated in your browser. The key is part of the link itself (in the URL fragment, which is never sent to any server), so the relay only ever sees encrypted bytes it cannot read. Anyone capturing the traffic would not be able to decrypt the files without the link. Because nothing is stored, there are no file size limits; the transfer simply lasts as long as both browser tabs stay open."
   },
   {
     question: "Is Transfer.zip safe to use?",
@@ -37,11 +37,11 @@ const faqs = [
   },
   {
     question: "What happens to my files when they expire?",
-    answer: "Expired transfers are permanently deleted by an automated cleanup job — we don't keep backups or soft-deleted copies. Quick Transfers are never stored on our servers to begin with."
+    answer: "Expired transfers are permanently deleted by an automated cleanup job. We don't keep backups or soft-deleted copies. Quick Transfers are never stored on our servers to begin with."
   },
   {
     question: "Do recipients need an account to download?",
-    answer: "No. Anyone with the link can download — no signup, no email gate. The same goes for file request links: anyone can upload to you without an account."
+    answer: "No. Anyone with the link can download without signing up or entering an email. The same goes for file request links: anyone can upload to you without an account."
   },
   {
     question: "Can I use my own domain?",
@@ -54,7 +54,7 @@ const faqs = [
   {
     question: "Can I self-host Transfer.zip?",
     answer:
-      <>Yes — the entire codebase is open source. See the <a className="text-primary underline" target="_blank" href="https://github.com/robinkarlberg/transfer.zip-web?tab=readme-ov-file#self-hosting">self-hosting instructions on GitHub</a>.</>
+      <>Yes, the entire codebase is open source. See the <a className="text-primary underline" target="_blank" href="https://github.com/robinkarlberg/transfer.zip-web?tab=readme-ov-file#self-hosting">self-hosting instructions on GitHub</a>.</>
   },
   {
     question: "What payment methods are accepted?",
@@ -66,7 +66,7 @@ const faqs = [
   },
   {
     question: "Are you GDPR compliant?",
-    answer: "Yes. We're based in Sweden and fully GDPR compliant — you can delete your account and all associated data at any time from the dashboard, no email required."
+    answer: "Yes. We're based in Sweden and fully GDPR compliant. You can delete your account and all associated data at any time from the dashboard, no email required."
   },
 ]
 

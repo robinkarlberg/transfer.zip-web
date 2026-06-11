@@ -44,7 +44,7 @@ const TransferSchema = new mongoose.Schema({
     transferRequest: { type: mongoose.Schema.Types.ObjectId, ref: "TransferRequest" },
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true },
     // Set once at creation from author.team if the author is on a team.
-    // Never updated — if a user later leaves the team, their existing
+    // Never updated - if a user later leaves the team, their existing
     // transfers stay tagged to the team they were created under.
     team: { type: mongoose.Schema.Types.ObjectId, ref: "Team", index: true },
     name: String,

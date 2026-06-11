@@ -53,7 +53,7 @@ export async function DELETE() {
   }
 
   // Cancel any live Stripe subscriptions and delete the customer record
-  // before any destructive deletes — if Stripe fails, the account stays
+  // before any destructive deletes - if Stripe fails, the account stays
   // intact and the user can retry. Immediate cancellation does not refund
   // unused time.
   if (user.stripe_customer_id) {
@@ -92,7 +92,7 @@ export async function DELETE() {
   await Transfer.deleteMany({ _id: { $in: transfersToDelete.map(t => t._id) } })
   await TransferRequest.deleteMany({ author: user._id })
   // Personal brand profiles only. Team-scoped profiles belong to the team
-  // and stay if (somehow) a non-team user owns one — defensive, shouldn't
+  // and stay if (somehow) a non-team user owns one - defensive, shouldn't
   // happen with the team-guard above but cheap to be precise.
   await BrandProfile.deleteMany({ author: user._id, team: { $exists: false } })
   await Session.deleteMany({ user: user._id })

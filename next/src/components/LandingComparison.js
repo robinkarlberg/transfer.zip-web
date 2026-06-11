@@ -29,7 +29,7 @@ const services = [
         label: "trackers",
         good: true,
         tooltip:
-          "We use a self-hosted analytics instance on our own server. Your visit is recorded by us and nobody else - not Google, not Microsoft, not anyone.",
+          "We use a self-hosted analytics instance on our own server. Your visit is recorded by us and nobody else.",
       },
       { label: "Open source", good: true },
       { label: "No AI training on your files", good: true },

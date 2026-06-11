@@ -11,7 +11,7 @@ export default async function () {
     return redirect("/signin")
   }
 
-  // Members and owners of a team can't pick a solo plan — route them to
+  // Members and owners of a team can't pick a solo plan - route them to
   // the team-specific page (active teams → /app via the layout, paused
   // teams → /team-paused, mid-onboarding teams → /onboarding-team).
   if (auth.user.hasTeam) {

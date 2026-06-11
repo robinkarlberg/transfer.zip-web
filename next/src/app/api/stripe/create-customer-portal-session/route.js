@@ -12,7 +12,7 @@ export async function POST() {
   const { user } = auth
 
   // Only the Owner can manage team billing. Admins manage members and
-  // branding but never get a portal session for the team's customer —
+  // branding but never get a portal session for the team's customer -
   // canceling the subscription dissolves the team entirely.
   if (user.hasTeam && user.role !== ROLES.OWNER) {
     return NextResponse.json(resp("Forbidden"), { status: 403 })

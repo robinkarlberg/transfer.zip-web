@@ -59,7 +59,7 @@ const SECTIONS = [
     rows: [
       {
         label: "Quick Transfers (real-time)",
-        tooltip: "Stream files between browsers in real time — nothing is stored on our servers.",
+        tooltip: "Stream files between browsers in real time. Nothing is stored on our servers.",
         values: { starter: true, pro: true, teams: true },
       },
       {
@@ -159,7 +159,7 @@ const TAGLINES = {
 }
 
 // "free" stays in the tier ladder because users currently on the free
-// plan still view this page — they need the free→paid upgrade path
+// plan still view this page - they need the free→paid upgrade path
 // even though Free is no longer rendered as a column.
 const PLAN_TIER = { free: 0, starter: 1, pro: 2 }
 
@@ -388,7 +388,7 @@ export default function PricingComparisonTable({ authCta, user }) {
 
   return (
     <div className="relative">
-      {/* Gradient backdrop — h-screen, sits behind everything */}
+      {/* Gradient backdrop - h-screen, sits behind everything */}
       <div className="w-full h-screen overflow-hidden absolute grain bg-linear-to-b from-primary-700 to-primary-300 -z-10 rounded-b-4xl" />
 
       <div className="relative isolate flex flex-col min-h-screen">
@@ -409,7 +409,7 @@ export default function PricingComparisonTable({ authCta, user }) {
             <PricingToggle frequency={frequency} setFrequency={setFrequency} />
           </div>
 
-          {/* Desktop table — white card floating over the gradient */}
+          {/* Desktop table - white card floating over the gradient */}
           <div className="mt-10 hidden lg:block fade-in-up-slow">
             <div ref={sentinelRef} className="h-px" aria-hidden="true" />
             <div className="rounded-2xl ring-1 ring-gray-200 overflow-clip bg-white shadow-xl">
@@ -481,7 +481,7 @@ export default function PricingComparisonTable({ authCta, user }) {
             </div>
           </div>
 
-          {/* Mobile / tablet cards — each is its own white card on the gradient */}
+          {/* Mobile / tablet cards - each is its own white card on the gradient */}
           <div className="mt-10 space-y-6 lg:hidden fade-in-up-slow">
             {PLAN_ORDER.map((planId) => {
               const featured = planId === FEATURED_PLAN

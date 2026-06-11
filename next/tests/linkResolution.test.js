@@ -63,7 +63,7 @@ describe("TransferRequest.getUploadLink resolution ladder", () => {
     expect(await r.getUploadLink()).toBe("https://files.acme.com/upload/req-1");
   });
 
-  it("falls back to SITE_URL — DL domain is intentionally skipped for upload links", async () => {
+  it("falls back to SITE_URL - DL domain is intentionally skipped for upload links", async () => {
     getDownloadDomainFor.mockResolvedValue(null);
     process.env.NEXT_PUBLIC_DL_DOMAIN = "trnsf.to";
     const r = new TransferRequest({ secretCode: "req-1", author: "user-id" });

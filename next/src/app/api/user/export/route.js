@@ -8,7 +8,7 @@ import Transfer from "@/lib/server/mongoose/models/Transfer"
 import TransferRequest from "@/lib/server/mongoose/models/TransferRequest"
 import BrandProfile from "@/lib/server/mongoose/models/BrandProfile"
 
-// GDPR Art. 15/20 — returns a JSON download of everything we hold that's
+// GDPR Art. 15/20 - returns a JSON download of everything we hold that's
 // tied to this user. Team data is intentionally excluded; the team is a
 // separate data subject and the team owner can export it elsewhere.
 export async function GET() {

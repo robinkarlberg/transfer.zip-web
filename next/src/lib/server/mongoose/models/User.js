@@ -59,7 +59,7 @@ const UserSchema = new mongoose.Schema({
 
     // verified: { type: Boolean, default: false },
 
-    // No default — undefined means "predates the onboarding flow" and is
+    // No default - undefined means "predates the onboarding flow" and is
     // treated as already onboarded. New users get explicit `false` from
     // their creation site so they go through /onboarding-pro after paying.
     onboarded: { type: Boolean },

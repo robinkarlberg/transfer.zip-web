@@ -8,7 +8,7 @@ import dbConnect from "@/lib/server/mongoose/db"
 
 // Owner-only: delete any transfer that belongs to the team (regardless
 // of which member created it). Admins enter the panel but don't get to
-// nuke other members' work — keeps the principal-of-least-privilege call.
+// nuke other members' work - keeps the principal-of-least-privilege call.
 export async function POST(req, { params }) {
   await dbConnect()
   const admin = await useTeamAdminAuth()

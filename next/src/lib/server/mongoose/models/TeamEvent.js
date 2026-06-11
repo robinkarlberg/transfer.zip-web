@@ -22,12 +22,12 @@ const TeamEventSchema = new mongoose.Schema({
     // Who triggered the event. Optional because some events (Stripe webhook
     // promoting the pending owner, etc.) aren't initiated by a user action.
     actor: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    // Free-form payload — what's interesting differs per event type
+    // Free-form payload - what's interesting differs per event type
     // (e.g. invited email, target user id, transfer id, role values).
     data: { type: mongoose.Schema.Types.Mixed, default: {} },
 }, { timestamps: true })
 
-// 90-day TTL — this is an in-app activity feed, not an audit log.
+// 90-day TTL - this is an in-app activity feed, not an audit log.
 TeamEventSchema.index({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 90 })
 
 TeamEventSchema.methods.toJsonAsClient = function () {

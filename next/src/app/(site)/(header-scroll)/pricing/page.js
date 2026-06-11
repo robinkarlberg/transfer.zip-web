@@ -9,11 +9,11 @@ import { useServerAuth } from "@/lib/server/wrappers/auth"
 export const metadata = {
   title: "Pricing | Transfer.zip",
   description:
-    "Compare Transfer.zip plans side-by-side. Starter, Pro, and Teams — no hidden fees, cancel anytime.",
+    "Compare Transfer.zip plans side-by-side. Starter, Pro, and Teams. No hidden fees, cancel anytime.",
   openGraph: {
     title: "Pricing | Transfer.zip",
     description:
-      "Compare Transfer.zip plans side-by-side. Starter, Pro, and Teams — no hidden fees, cancel anytime.",
+      "Compare Transfer.zip plans side-by-side. Starter, Pro, and Teams. No hidden fees, cancel anytime.",
     url: "https://transfer.zip/pricing",
     siteName: "Transfer.zip",
     images: [

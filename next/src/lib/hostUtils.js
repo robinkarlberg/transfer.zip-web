@@ -1,8 +1,8 @@
 // This file needs to not import/use non-edge NodeJS stuff, because 
 // it will be used in the minimal node environment in middleware.
 
-// The main marketing/app host. Anything else — the DL domain
-// (trnsf.to) or a customer's verified custom domain — is "external"
+// The main marketing/app host. Anything else - the DL domain
+// (trnsf.to) or a customer's verified custom domain - is "external"
 // and only serves transfer/upload routes. We trust Caddy to gate which
 // hosts reach us, but match strictly so a lookalike like
 // `eviltransfer.zip` can't impersonate our zone.

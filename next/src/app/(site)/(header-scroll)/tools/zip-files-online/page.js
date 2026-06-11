@@ -20,7 +20,7 @@ export default function Page() {
       <ToolLanding
         title="create zip files online."
         highlightedWord="Easily"
-        subtitle="Effortlessly compress even the biggest files with this online file and folder zip tool. You can also choose to share the zip file for free afterwards, if you need to."
+        subtitle="Compress even the biggest files with this online file and folder zip tool. You can also choose to share the zip file for free afterwards, if you need to."
       >
         <ZipFilesTool />
       </ToolLanding>

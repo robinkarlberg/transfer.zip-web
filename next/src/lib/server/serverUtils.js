@@ -33,7 +33,7 @@ export const createCookieParams = () => {
 // A user's dashboard holds two kinds of transfer: ones they SENT (authored,
 // not tied to a request) and ones RECEIVED into a request they OWN. An
 // authenticated upload into someone else's request link is authored by the
-// uploader but belongs to the request owner — so we match received transfers
+// uploader but belongs to the request owner - so we match received transfers
 // by request ownership, never by author, and exclude authored transfers that
 // carry a transferRequest. That keeps an upload into a foreign request out of
 // the uploader's dashboard entirely (it shows only in the owner's Received).
@@ -51,7 +51,7 @@ export const listTransfersForUser = async (user) => {
 
 // Team-wide list for the Owner/Admin dashboard.
 // Includes only transfers where author belongs (or belonged) to the team
-// at creation time — i.e. Transfer.team matches. Does NOT include guest
+// at creation time - i.e. Transfer.team matches. Does NOT include guest
 // uploads to a team member's transfer request (those are surfaced to the
 // requesting member's per-user view via listTransfersForUser).
 export const listTransfersForTeam = async (team) => {
@@ -61,7 +61,7 @@ export const listTransfersForTeam = async (team) => {
 }
 
 // Team-wide list of transfer-request links. Tenant boundary is the
-// TransferRequest.team field, set at creation time and never updated —
+// TransferRequest.team field, set at creation time and never updated -
 // so requests created before the team field shipped are intentionally
 // invisible to admins (we don't backfill via author membership because
 // the author's team may have changed since).

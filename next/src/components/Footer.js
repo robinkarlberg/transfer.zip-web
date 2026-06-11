@@ -32,22 +32,16 @@ export default function Footer({ }) {
               </ul>
             </div>
             <div>
-              <p className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><a className="hover:underline" href="/alternative">Alternatives</a></p>
+              <p className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><Link className="hover:underline" href={"/how-to"}>Transfer Guides</Link></p>
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 <li className="mb-4">
-                  <h3><Link href="/alternative/wetransfer" className="hover:underline ">WeTransfer Alternative</Link></h3>
+                  <Link href="/how-to/transfer-files-from-iphone-to-pc" className="hover:underline">iPhone to PC</Link>
                 </li>
-                <li>
-                  <h3><Link href="/alternative/smash" className="hover:underline ">Smash Alternative</Link></h3>
-                </li>
-              </ul>
-              <p className="mt-6 mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><a className="hover:underline" href="/comparison">Comparisons</a></p>
-              <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 <li className="mb-4">
-                  <h3><Link href="/comparison/wetransfer" className="hover:underline ">Transfer.zip vs WeTransfer</Link></h3>
+                  <Link href="/how-to/transfer-files-from-pc-to-pc" className="hover:underline">PC to PC</Link>
                 </li>
                 <li>
-                  <h3><Link href="/comparison/smash" className="hover:underline ">Transfer.zip vs Smash</Link></h3>
+                  <Link href="/how-to/transfer-files-from-android-to-pc" className="hover:underline">Android to PC</Link>
                 </li>
               </ul>
             </div>
@@ -63,9 +57,9 @@ export default function Footer({ }) {
                 <li className="mb-4">
                   <h3><a href="/" className="hover:underline">Send Files</a></h3>
                 </li>
-                <li className="mb-4">
+                {/* <li className="mb-4">
                   <h3><a href="/how-to" className="hover:underline">How-Tos</a></h3>
-                </li>
+                </li> */}
                 <li>
                   <a href="https://github.com/robinkarlberg/transfer.zip-web?tab=readme-ov-file#self-hosting" className="hover:underline">Self Hosting</a>
                 </li>
@@ -82,6 +76,28 @@ export default function Footer({ }) {
                 </li>
                 <li>
                   <Link href="/legal/impressum" className="hover:underline">Impressum</Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <p className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><a className="hover:underline" href="/alternative">Alternatives</a></p>
+              <ul className="text-gray-500 --dark:text-gray-400 font-medium">
+                <li className="mb-4">
+                  <h3><Link href="/alternative/wetransfer" className="hover:underline ">WeTransfer Alternative</Link></h3>
+                </li>
+                <li>
+                  <h3><Link href="/alternative/smash" className="hover:underline ">Smash Alternative</Link></h3>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <p className="mb-6 text-sm font-semibold text-gray-900 uppercase --dark:text-white"><a className="hover:underline" href="/comparison">Comparisons</a></p>
+              <ul className="text-gray-500 --dark:text-gray-400 font-medium">
+                <li className="mb-4">
+                  <h3><Link href="/comparison/wetransfer" className="hover:underline ">Transfer.zip vs WeTransfer</Link></h3>
+                </li>
+                <li>
+                  <h3><Link href="/comparison/smash" className="hover:underline ">Transfer.zip vs Smash</Link></h3>
                 </li>
               </ul>
             </div>

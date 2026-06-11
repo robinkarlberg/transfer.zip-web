@@ -31,7 +31,7 @@ function Entry({ user, currentUser, onDeleteUser, onUpdateRole }) {
   const isOwner = user.role === ROLES.OWNER
   const isTargetAdmin = user.role === ROLES.ADMIN
   const currIsOwner = currentUser.role === ROLES.OWNER
-  // Owner can manage any non-Owner. Admin can manage Members only —
+  // Owner can manage any non-Owner. Admin can manage Members only -
   // they can't promote into / demote out of ADMIN (peer-role changes
   // are Owner-only). Mirrored on the server in
   // api/team/users/[userId]/route.js PUT.

@@ -42,8 +42,8 @@ export default async function BrandingPage() {
           </div>
         ) : (
           <EmptySpace
-            title="Showcase Your Unique Brand Identity"
-            subtitle="Add your own logo, customize backgrounds, and include your branding directly in emails and download pages for a seamless, professional look."
+            title="Brand your transfers"
+            subtitle="Add your own logo, customize backgrounds, and show your branding in emails and on download pages."
           >
             {!isTeam && (
               <Button asChild>

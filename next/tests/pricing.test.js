@@ -13,7 +13,7 @@ import {
   isValidPlanId,
 } from "@/lib/pricing";
 
-describe("pricing — plan lookup", () => {
+describe("pricing - plan lookup", () => {
   it("getPlanById returns each known plan", () => {
     expect(getPlanById("free")).toBe(FREE_PLAN);
     expect(getPlanById("starter")).toBe(PLANS.starter);
@@ -55,7 +55,7 @@ describe("pricing — plan lookup", () => {
   });
 });
 
-describe("pricing — hasFeature", () => {
+describe("pricing - hasFeature", () => {
   it("free plan has no paid features", () => {
     expect(hasFeature("free", FEATURE.CUSTOM_BRANDING)).toBe(false);
   });
@@ -79,7 +79,7 @@ describe("pricing — hasFeature", () => {
   });
 });
 
-describe("pricing — getLimit", () => {
+describe("pricing - getLimit", () => {
   it("returns the published numbers", () => {
     expect(getLimit("free", LIMIT.MAX_EXPIRY_DAYS)).toBe(0);
     expect(getLimit("free", LIMIT.STORAGE)).toBe(0);

@@ -45,7 +45,7 @@ export default function SeatManager({
   const ceiling = maxSeats || 999
   const delta = target - currentSeats
 
-  // Stripe preview only matters for increases — decreases just credit on the
+  // Stripe preview only matters for increases - decreases just credit on the
   // next invoice, no immediate charge to show.
   useEffect(() => {
     if (!open) return

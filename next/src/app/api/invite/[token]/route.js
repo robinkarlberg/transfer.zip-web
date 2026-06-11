@@ -59,7 +59,7 @@ export async function POST(req, { params }) {
   let mintNewSession = true
 
   if (auth && auth.user.email === invite.email) {
-    // Already signed in as the invitee — keep their existing session.
+    // Already signed in as the invitee - keep their existing session.
     user = auth.user
     mintNewSession = false
   } else {

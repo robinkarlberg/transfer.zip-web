@@ -21,7 +21,7 @@ export class InviteRedemptionError extends Error {
 // Atomically attach the given user to the team for the given invite. Used by
 // both the explicit "Accept invite" button (already-signed-in invitee) and
 // the magic-link consume path. The caller must have verified that `user` is
-// the correct identity for `invite.email` — we don't re-check that here.
+// the correct identity for `invite.email` - we don't re-check that here.
 export async function redeemTeamInviteForUser(invite, user) {
   const team = await Team.findById(invite.team)
   if (!team) {

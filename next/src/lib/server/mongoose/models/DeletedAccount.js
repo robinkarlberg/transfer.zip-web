@@ -5,7 +5,7 @@ import { normalizeEmail } from "@/lib/utils"
 
 // Write-only tombstone for accounts that the user (or an admin acting for the
 // user) has hard-deleted. We store a SHA-256 of the normalized email rather
-// than the email itself so the tombstone cannot be re-identified — the point
+// than the email itself so the tombstone cannot be re-identified - the point
 // is to recognize a re-used mailbox for fraud/abuse signals, not to keep PII
 // around. Normalization happens first so that +aliases and gmail dot tricks
 // don't let a banned user slip past.

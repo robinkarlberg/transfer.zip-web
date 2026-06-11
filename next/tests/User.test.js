@@ -3,12 +3,12 @@ import User from "@/lib/server/mongoose/models/User";
 import Team from "@/lib/server/mongoose/models/Team";
 import { FEATURE, LIMIT } from "@/lib/pricing";
 
-// User instances aren't saved to a DB — we only call the synchronous
+// User instances aren't saved to a DB - we only call the synchronous
 // methods (getPlan/hasFeature/getLimit) that don't touch the network.
 // `user.team` is set to a real Team document, mirroring what
 // useServerAuth() yields via populate.
 
-describe("User.getPlan — solo (no team)", () => {
+describe("User.getPlan - solo (no team)", () => {
   it("returns the user plan when their subscription is active", () => {
     const user = new User({ email: "a@b.c", plan: "pro", planStatus: "active" });
     expect(user.getPlan()).toBe("pro");
@@ -30,7 +30,7 @@ describe("User.getPlan — solo (no team)", () => {
   });
 });
 
-describe("User.getPlan — team delegation", () => {
+describe("User.getPlan - team delegation", () => {
   it("returns the team plan, ignoring the user's own plan fields", () => {
     const team = new Team({ plan: "teams", planStatus: "active" });
     const user = new User({
@@ -50,13 +50,13 @@ describe("User.getPlan — team delegation", () => {
       planStatus: "active",
     });
     user.team = team;
-    // The user is on a team — the team is authoritative even when its
+    // The user is on a team - the team is authoritative even when its
     // sub is dead. Joining a team forfeits the personal plan.
     expect(user.getPlan()).toBe("free");
   });
 });
 
-describe("User.hasFeature — fallback ladder (team → customFeatures → plan default)", () => {
+describe("User.hasFeature - fallback ladder (team → customFeatures → plan default)", () => {
   it("team takes precedence over the user's customFeatures", () => {
     const team = new Team({
       plan: "teams",
@@ -100,7 +100,7 @@ describe("User.hasFeature — fallback ladder (team → customFeatures → plan 
   });
 });
 
-describe("User.getLimit — fallback ladder", () => {
+describe("User.getLimit - fallback ladder", () => {
   it("team takes precedence over the user's customLimits", () => {
     const team = new Team({
       plan: "teams",

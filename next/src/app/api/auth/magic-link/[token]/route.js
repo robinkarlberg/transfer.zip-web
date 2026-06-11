@@ -54,7 +54,7 @@ export async function POST(req, { params }) {
 
   const response = NextResponse.json(resp({ consumed: true }), { status: 200 })
   response.cookies.set("token", session.token, createCookieParams())
-  // Don't proactively delete the mlReq cookie here — the originating tab is
+  // Don't proactively delete the mlReq cookie here - the originating tab is
   // still polling for status, and since cookies are shared across tabs in the
   // same browser, clearing it now would make that tab's next poll fail with
   // a 401 and surface a spurious "session expired" error. The cookie auto-

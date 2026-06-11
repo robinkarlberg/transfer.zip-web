@@ -9,7 +9,7 @@ import TeamNameEditor from "./TeamNameEditor";
 export const metadata = { title: "Overview" };
 
 export default async function TeamOverviewPage() {
-  // Layout already gated this — auth + admin role guaranteed.
+  // Layout already gated this - auth + admin role guaranteed.
   const { user, team } = await useServerAuth();
 
   await team.populate({ path: "users", populate: { path: "team" } });

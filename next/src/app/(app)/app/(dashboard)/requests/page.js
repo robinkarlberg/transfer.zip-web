@@ -7,7 +7,7 @@ import { useServerAuth } from "@/lib/server/wrappers/auth"
 export default async function () {
   const { user } = await useServerAuth()
 
-  // Active links are always rendered in full — there shouldn't be many.
+  // Active links are always rendered in full - there shouldn't be many.
   // Inactive links can be huge over time, so we paginate them.
   const [activeDocs, inactiveFirstPageDocs] = await Promise.all([
     TransferRequest.find({ author: user._id, active: true }).sort({ createdAt: -1 }),

@@ -4,7 +4,7 @@ import { logError } from "../../errors"
 
 export { TEAM_EVENT }
 
-// Fire-and-forget — a failure to record an activity event must never
+// Fire-and-forget - a failure to record an activity event must never
 // break the request that triggered it. Errors go to the logger.
 export function logTeamEvent({ team, type, actor, data }) {
     if (!team) return

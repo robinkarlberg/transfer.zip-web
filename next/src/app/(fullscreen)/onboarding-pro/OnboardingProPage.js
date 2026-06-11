@@ -179,7 +179,7 @@ function BrandStep({ defaultName, total, onBack, onFinish }) {
       step={2}
       total={total}
       title="Brand your transfers"
-      subtitle="Optional — show your logo and a background on share pages."
+      subtitle="Optional. Show your logo and a background on share pages."
     >
       <form className="hidden">
         <input ref={iconInputRef} type="file" accept="image/*" onChange={handleImageFile(setIconUrl)} />

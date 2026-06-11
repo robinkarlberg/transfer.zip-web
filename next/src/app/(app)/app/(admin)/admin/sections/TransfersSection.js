@@ -115,7 +115,7 @@ function Row({ transfer, canManage, onDelete, onExtend, maxExpiryDays }) {
         ) : expiresAt ? (
           `${humanTimeUntil(expiresAt)} left`
         ) : (
-          "—"
+          "-"
         )}
       </div>
 

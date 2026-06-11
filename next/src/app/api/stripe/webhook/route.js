@@ -119,7 +119,7 @@ const handleSubscription = async object => {
       if (overCapacity) {
         console.warn(`[handleSubscription] Team ${subscriber._id} is over capacity: ${memberCount} members on ${seatDownChange.to} seats`)
         // Notify the team owner so they can either add seats back or remove
-        // members. We don't auto-remove anyone — that's a destructive action
+        // members. We don't auto-remove anyone - that's a destructive action
         // the human needs to choose.
         const owner = await User.findOne({ team: subscriber._id, role: ROLES.OWNER })
         if (owner?.email) {
@@ -194,7 +194,7 @@ const handleSubscriptionDeleted = async object => {
     // owner keep their `user.team` link and role; the dashboard layout
     // redirects them to /team-paused on next request. The owner can
     // reactivate from there. Expire transfers so we're not silently
-    // serving paid-tier storage to an unpaid team — they come back blank
+    // serving paid-tier storage to an unpaid team - they come back blank
     // on resubscribe.
     const teamId = subscriber._id
 

@@ -2,7 +2,7 @@
 
 # Stop if the root .env already exists
 if [ -f .env ]; then
-  echo ".env already exists — please remove or rename it before running this script."
+  echo ".env already exists - please remove or rename it before running this script."
   exit 1
 fi
 

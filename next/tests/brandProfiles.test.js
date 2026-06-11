@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 
 // `findUsableBrandProfile` and `findManageableBrandProfile` call into
-// Mongoose — stub the model so we can assert what query they emit.
+// Mongoose - stub the model so we can assert what query they emit.
 vi.mock("@/lib/server/mongoose/models/BrandProfile", () => ({
   default: {
     findOne: vi.fn(),

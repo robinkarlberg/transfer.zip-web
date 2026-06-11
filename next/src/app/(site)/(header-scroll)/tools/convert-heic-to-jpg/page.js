@@ -89,7 +89,7 @@ export default function Page() {
             <div>
               <h3 className="text-xl font-semibold mb-2">Works on Any Device</h3>
               <p className="text-lg">
-                Use our converter on your computer, tablet, or phone. Whether you're using Windows, Mac, Linux, Android, or iOS, our browser-based tool works everywhere.
+                Use our converter on your computer, tablet, or phone. It runs in the browser, so it works on Windows, Mac, Linux, Android, and iOS.
               </p>
             </div>
           </div>

@@ -12,8 +12,8 @@ const features = [
     href: "/signin"
   },
   {
-    name: 'Blazing Fast Speeds',
-    description: "All files are downloaded from the same high-speed servers, ensuring your ideas get shared as quickly as possible.",
+    name: 'Fast Downloads',
+    description: "All files are downloaded from the same high-speed servers, so your work gets shared as quickly as possible.",
     icon: FastForwardIcon,
     cta: "Send Files Fast",
     href: "/signin"

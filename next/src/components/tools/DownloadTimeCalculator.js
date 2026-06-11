@@ -14,7 +14,7 @@ const presets = [
 ];
 
 function format(seconds) {
-  if (!seconds || !isFinite(seconds)) return "—";
+  if (!seconds || !isFinite(seconds)) return "-";
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = Math.round(seconds % 60);
@@ -100,7 +100,7 @@ export default function DownloadCalculator() {
       </div>
 
       <p className="mt-2 text-center text-lg text-gray-800 font-medium">
-        {seconds ? format(seconds) : "—"}
+        {seconds ? format(seconds) : "-"}
       </p>
     </div>
   );

@@ -1,6 +1,6 @@
 # Cleanup TODO
 
-Data that the app currently *orphans* — i.e. removes the database row but leaves
+Data that the app currently *orphans* - i.e. removes the database row but leaves
 external state behind. Each item should eventually be swept by a tidy script
 (probably a `node-cron` job on the worker, alongside the expired-transfer
 cleanup that already runs there).
@@ -13,7 +13,7 @@ storage costs or stale state.
 ### Transfer files on the node server / R2
 
 When a Transfer document is deleted, we fire `workerTransferDelete` but do
-**not** await it — see [`api/transfer/[transferId]/delete/route.js`](next/src/app/api/transfer/[transferId]/delete/route.js)
+**not** await it - see [`api/transfer/[transferId]/delete/route.js`](next/src/app/api/transfer/[transferId]/delete/route.js)
 ("we assume the deletion succeeds. We can always delete left over files with a
 tidy script later"). Account deletion (`DELETE /api/user`) does the same.
 
@@ -45,6 +45,6 @@ privacy cost. Tidy: a TTL index (e.g. 90 days) or a scheduled purge.
 
 ### `Error` log retention
 
-Same shape as `SentEmail` — useful for debugging, accumulates forever. May
+Same shape as `SentEmail` - useful for debugging, accumulates forever. May
 contain request context that's effectively PII (email addresses surfaced in
 error messages, etc.). Same fix: TTL index or scheduled purge.

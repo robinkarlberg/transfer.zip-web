@@ -3,7 +3,7 @@
 //
 // Every packet is [12B IV][AES-GCM ciphertext]; the plaintext is [1B frame type][body].
 // The receiver drives everything: it requests the file list, then downloads files
-// one at a time. Flow control is end-to-end — the receiver acks bytes only after
+// one at a time. Flow control is end-to-end - the receiver acks bytes only after
 // they are written to its output stream, and the sender keeps at most SEND_WINDOW
 // unacked bytes in flight. Acks double as transfer progress for the sender's UI.
 
@@ -36,7 +36,7 @@ export class TransferCanceledError extends Error {
 
 export class ProtocolError extends Error {
 	constructor(msg) {
-		super(msg || "Could not decrypt transfer data. The link may be corrupted — copy it again and retry.");
+		super(msg || "Could not decrypt transfer data. The link may be corrupted, copy it again and retry.");
 		this.name = "ProtocolError";
 	}
 }
@@ -103,16 +103,16 @@ const pumpMessages = (channel, handler, onerror) => {
 };
 
 /**
- * Serves files to one peer. Stateless between downloads — the receiver can
+ * Serves files to one peer. Stateless between downloads - the receiver can
  * request the same or another file again (e.g. after canceling).
  */
 export class FileSender {
-	onpeerready = undefined;     // () — first decrypted request proves the peer has the key
+	onpeerready = undefined;     // () - first decrypted request proves the peer has the key
 	ondownloadstart = undefined; // (fileIndex, fileInfo)
 	onprogress = undefined;      // ({ fileIndex, sentBytes, ackedBytes, totalBytes })
-	onfilecomplete = undefined;  // (fileIndex) — receiver confirmed all bytes written
-	oncanceled = undefined;      // () — receiver canceled the active download
-	onerror = undefined;         // (err) — fatal, sender is dead
+	onfilecomplete = undefined;  // (fileIndex) - receiver confirmed all bytes written
+	oncanceled = undefined;      // () - receiver canceled the active download
+	onerror = undefined;         // (err) - fatal, sender is dead
 
 	#channel;
 	#key;
@@ -135,6 +135,11 @@ export class FileSender {
 		this.#opts = { chunkSize: CHUNK_SIZE, window: SEND_WINDOW, ...opts };
 		pumpMessages(channel, data => this.#handlePacket(data), err => this.#fail(err));
 		channel.onclosed = err => this.#fail(err);
+		if (this.#opts.announce) {
+			// Code flows construct the sender after pairing (the connector picks
+			// files post-handshake) - tell the waiting receiver we exist now.
+			this.#send(FRAME_CONTROL, encodeJson({ action: "hello" })).catch(err => this.#fail(err));
+		}
 	}
 
 	get busy() {
@@ -182,7 +187,7 @@ export class FileSender {
 		this.#transferId += 1;
 		this.#sentBytes = 0;
 		this.#ackedBytes = 0;
-		// Runs detached — the pump must keep draining acks while we send.
+		// Runs detached - the pump must keep draining acks while we send.
 		this.#sendFile(fileIndex, file, this.#transferId).catch(err => this.#fail(err));
 	}
 
@@ -265,12 +270,14 @@ export class FileSender {
  */
 export class FileReceiver {
 	onprogress = undefined; // ({ fileIndex, receivedBytes, totalBytes })
-	onerror = undefined;    // (err) — fatal, also rejects in-flight calls
+	onerror = undefined;    // (err) - fatal, also rejects in-flight calls
 
 	#channel;
 	#key;
-	#pendingList = null; // { resolve, reject }
-	#download = null;    // { fileIndex, write, resolve, reject, fileInfo, receivedBytes }
+	#pendingList = null;  // { resolve, reject }
+	#pendingReady = null; // { resolve, reject }
+	#senderReady = false;
+	#download = null;     // { fileIndex, write, resolve, reject, fileInfo, receivedBytes }
 	#failed = false;
 
 	constructor(channel, key) {
@@ -284,6 +291,18 @@ export class FileReceiver {
 		this.#failed = true;
 		this.#channel.onmessage = undefined;
 		this.#channel.onclosed = undefined;
+	}
+
+	/**
+	 * Resolves once the peer announces its sender ("hello"). Only for code
+	 * flows, where the peer may pick files after pairing - link-flow senders
+	 * never announce, so callers there must not wait.
+	 */
+	waitForSender() {
+		if (this.#senderReady) return Promise.resolve();
+		return new Promise((resolve, reject) => {
+			this.#pendingReady = { resolve, reject };
+		});
 	}
 
 	listFiles() {
@@ -322,7 +341,7 @@ export class FileReceiver {
 		try {
 			await this.#sendControl({ action: "cancel" });
 		} catch {
-			// channel already dead — nothing to tell the peer
+			// channel already dead - nothing to tell the peer
 		}
 	}
 
@@ -369,6 +388,12 @@ export class FileReceiver {
 			const msg = decodeJson(body);
 			if (msg.action === "busy") {
 				this.#rejectInFlight(new PeerBusyError());
+			} else if (msg.action === "hello") {
+				this.#senderReady = true;
+				if (this.#pendingReady) {
+					this.#pendingReady.resolve();
+					this.#pendingReady = null;
+				}
 			} else {
 				console.warn("[FileReceiver] Unknown control message:", msg);
 			}
@@ -396,6 +421,10 @@ export class FileReceiver {
 		if (this.#pendingList) {
 			this.#pendingList.reject(err);
 			this.#pendingList = null;
+		}
+		if (this.#pendingReady) {
+			this.#pendingReady.reject(err);
+			this.#pendingReady = null;
 		}
 		if (this.#download) {
 			this.#download.reject(err);

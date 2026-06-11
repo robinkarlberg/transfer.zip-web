@@ -53,7 +53,7 @@ export async function DELETE(req, { params }) {
   // can't reach back in to edit/delete via the per-author endpoints
   // (/api/transfer/:id and /api/transferrequest/:id, which authorize by author),
   // and (c) the data doesn't end up siloed on a free-tier personal account.
-  // We only touch docs tagged with this team — anything the user created
+  // We only touch docs tagged with this team - anything the user created
   // outside the team context stays theirs.
   const reassignResult = await Transfer.updateMany(
     { author: userId, team: team._id },
@@ -140,7 +140,7 @@ export async function PUT(req, { params }) {
     return NextResponse.json(resp("Owner role cannot be changed"), { status: 403 })
   }
 
-  // Admins can manage Members but not each other — only the Owner gets
+  // Admins can manage Members but not each other - only the Owner gets
   // to promote into / demote out of ADMIN. Without this guard one Admin
   // could demote a peer Admin to Member (or promote a Member to Admin)
   // without the Owner's consent.

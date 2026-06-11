@@ -14,7 +14,7 @@
   h4,
   h5,
   h6 {
-    /* 6 rem ≈ 96 px – tweak to match your header */
+    /* 6 rem ≈ 96 px - tweak to match your header */
     scroll-margin-top: 6rem;
   }
 }

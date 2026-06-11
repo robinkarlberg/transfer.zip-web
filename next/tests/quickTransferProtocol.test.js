@@ -119,7 +119,7 @@ describe("quick transfer protocol", () => {
       await gate;
     });
 
-    // No acks can come back while writes are blocked — sender must stall at the window.
+    // No acks can come back while writes are blocked - sender must stall at the window.
     await sleep(150);
     expect(maxSent).toBeGreaterThan(0);
     expect(maxSent).toBeLessThanOrEqual(opts.window);
@@ -184,5 +184,30 @@ describe("quick transfer protocol", () => {
     channel.onclosed(new Error("The other device disconnected."));
 
     await expect(listPromise).rejects.toThrow("The other device disconnected.");
+  });
+
+  it("announce resolves waitForSender, before and after the hello arrives", async () => {
+    const { key, k } = await generateTransferKey();
+    const receiverKey = await importTransferKey(k);
+    const [senderChannel, receiverChannel] = createChannelPair();
+    const receiver = new FileReceiver(receiverChannel, receiverKey);
+
+    const readyBefore = receiver.waitForSender();
+    new FileSender(senderChannel, key, [], { announce: true });
+    await readyBefore;
+
+    // hello already received - must resolve immediately, not wait for another
+    await receiver.waitForSender();
+  });
+
+  it("waitForSender rejects when the channel dies first", async () => {
+    const { key } = await generateTransferKey();
+    const [, channel] = createChannelPair();
+    const receiver = new FileReceiver(channel, key);
+
+    const ready = receiver.waitForSender();
+    channel.onclosed(new Error("The other device disconnected."));
+
+    await expect(ready).rejects.toThrow("The other device disconnected.");
   });
 });

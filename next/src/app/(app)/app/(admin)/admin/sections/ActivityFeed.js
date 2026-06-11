@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 // Each entry returns the verb-phrase form ("invited foo@example.com"). The
-// renderer prepends the actor name — or "You" when the viewer is the actor —
+// renderer prepends the actor name (or "You" when the viewer is the actor),
 // giving "Bob Smith invited foo@example.com". Events with no actor (Stripe
 // webhook for seat downgrades, etc.) fall back to a capitalized impersonal
 // form: "Reduced seats from 5 to 3".

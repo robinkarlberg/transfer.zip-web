@@ -7,7 +7,7 @@ import { LIMIT } from "@/lib/pricing"
 
 // Owner-only: update fields on any transfer that belongs to the team.
 // Today we only honour `expiresAt` (the "extend" call from the admin UI);
-// other transfer fields are intentionally not exposed at the team level —
+// other transfer fields are intentionally not exposed at the team level -
 // renames or description edits stay with the original author.
 export async function PUT(req, { params }) {
   await dbConnect()

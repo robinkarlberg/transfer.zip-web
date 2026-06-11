@@ -2,7 +2,7 @@ import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
 
-// Vitest config — kept narrow on purpose. We only run pure-logic tests
+// Vitest config - kept narrow on purpose. We only run pure-logic tests
 // (no Mongo, no Next request context), so no JSDOM, no setup files.
 // JSX shows up inside plain .js files in this repo (e.g. pricing.js's
 // displayFeatures), so we tell esbuild to use the JSX loader for .js

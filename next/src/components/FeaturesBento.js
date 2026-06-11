@@ -272,7 +272,7 @@ function SpeedWidget() {
   )
 }
 
-const PLAINTEXT_MESSAGE = "Hi! Here are the Q4 deliverables — let me know what you think."
+const PLAINTEXT_MESSAGE = "Hi! Here are the Q4 deliverables, let me know what you think."
 const HEX = "0123456789abcdef"
 
 function SecurityWidget() {
@@ -367,7 +367,7 @@ const bentoCards = [
     className: "md:col-span-5 md:row-span-2",
   },
   {
-    info: "Blazing Speeds",
+    info: "Speed",
     title: "Send files at full speed.",
     description:
       "Every file streams from high-speed servers worldwide, so your work gets shared without waiting.",

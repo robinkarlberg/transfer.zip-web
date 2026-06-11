@@ -47,6 +47,13 @@ export class RelayConnectionError extends Error {
 	}
 }
 
+export class SessionTakenError extends Error {
+	constructor() {
+		super("Session ID already taken");
+		this.name = "SessionTakenError";
+	}
+}
+
 /**
  * A paired byte pipe to one peer session. Obtained from RelayClient.connect()
  * (caller side) or RelayClient.onpeerconnect (listener side).
@@ -83,8 +90,9 @@ export class RelayChannel {
 }
 
 export class RelayClient {
-	onpeerconnect = undefined;  // (channel: RelayChannel) — listener side
+	onpeerconnect = undefined;  // (channel: RelayChannel) - listener side
 	onstatechange = undefined;  // ("connecting" | "connected" | "reconnecting" | "closed")
+	onsessionlost = undefined;  // (sessionId) - a session could not survive a reconnect
 
 	#ws = null;
 	#closed = false;
@@ -107,8 +115,16 @@ export class RelayClient {
 	 */
 	async login(sessionId) {
 		const resp = await this.#request({ type: "login", id: sessionId }, "login:" + sessionId);
-		if (!resp.success) throw new RelayConnectionError(resp.msg);
+		if (!resp.success) throw resp.taken ? new SessionTakenError() : new RelayConnectionError(resp.msg);
 		this.#sessionIds.add(sessionId);
+	}
+
+	/** Unregisters a session id (e.g. rotating a pairing code). Fire-and-forget. */
+	logout(sessionId) {
+		this.#sessionIds.delete(sessionId);
+		if (this.#ws && this.#ws.readyState === WebSocket.OPEN) {
+			this.#ws.send(JSON.stringify({ type: "logout", id: sessionId }));
+		}
 	}
 
 	/** Pairs one of our sessions with a peer session and returns the channel. */
@@ -186,11 +202,22 @@ export class RelayClient {
 				await this.#dial();
 				// Re-register sessions so an idle listener link stays reachable.
 				for (const id of [...this.#sessionIds]) {
-					await this.login(id);
+					try {
+						await this.login(id);
+					} catch (err) {
+						// A code session is disposable: if someone re-registered it
+						// while we were gone, drop it instead of wedging the reconnect.
+						if (err instanceof SessionTakenError && id.startsWith("c.")) {
+							this.#sessionIds.delete(id);
+							this.onsessionlost && this.onsessionlost(id);
+							continue;
+						}
+						throw err;
+					}
 				}
 			} catch {
 				// Login can fail while the server hasn't reaped our old connection
-				// yet ("id taken") — drop the socket and retry with backoff.
+				// yet ("id taken") - drop the socket and retry with backoff.
 				if (this.#ws && this.#ws.readyState === WebSocket.OPEN) {
 					this.#ws.close();
 				} else {

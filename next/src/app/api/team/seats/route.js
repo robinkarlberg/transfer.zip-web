@@ -15,7 +15,7 @@ export async function PUT(req) {
     return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 })
   }
 
-  // Only the Owner can change seat count — Admins manage members within
+  // Only the Owner can change seat count - Admins manage members within
   // existing capacity but don't get to move money.
   if (auth.user.role !== ROLES.OWNER) {
     return NextResponse.json({ success: false, message: "Only the team owner can change seats" }, { status: 403 })

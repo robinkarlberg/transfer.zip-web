@@ -63,7 +63,7 @@ export async function POST(req) {
     await runVerification(created)
     return NextResponse.json(resp({ customDomain: created.toJsonAsClient() }))
   } catch (e) {
-    // unique index on `domain` — another account already claimed it.
+    // unique index on `domain` - another account already claimed it.
     // Don't echo back who; that's an enumeration leak.
     if (e?.code === 11000) {
       return NextResponse.json(

@@ -16,7 +16,7 @@ const features = [
   <span>Make your files available for <b>a year</b></span>,
   <span>Send <b>unlimited</b> amount of transfers</span>,
   <span>Send up to <b>1TB</b> per transfer</span>,
-  <span>Use custom branding <QuestionCircle text={"Add your own logo, customize backgrounds, and include your branding directly in emails and download pages for a seamless, professional look."} /></span>,
+  <span>Use custom branding <QuestionCircle text={"Add your own logo, customize backgrounds, and show your branding in emails and on download pages."} /></span>,
   <span>Easily send files by email</span>,
 ]
 
@@ -64,7 +64,7 @@ export default function SignUpModal({ show, onShowChange }) {
         <div className="hidden sm:block grow">
           <h2 className="text-3xl font-bold mb-2">Extend your link's life! 👋</h2>
           <p className="text-md text-gray-800 mb-4 max-w-xs">
-            Unlock seamless file sharing - no need to keep your browser tab open.
+            Share files without keeping your browser tab open.
           </p>
           <ul
             role="list"

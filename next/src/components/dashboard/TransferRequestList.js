@@ -236,7 +236,7 @@ export default function TransferRequestList({ activeRequests, initialInactiveReq
     setLoadingMore(true)
     try {
       // Skip past every inactive we already have. Boundary can drift if an
-      // active was deactivated since the last fetch — dedupe on append.
+      // active was deactivated since the last fetch - dedupe on append.
       const skip = requests.filter(r => !r.active).length
       const { requests: more, hasMore: nextHasMore } = await getTransferRequestList({
         active: false,

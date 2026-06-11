@@ -6,7 +6,7 @@ import { logTeamEvent, TEAM_EVENT } from "@/lib/server/mongoose/helpers/teamEven
 import dbConnect from "@/lib/server/mongoose/db"
 
 // Owner-only: deactivate any request link that belongs to the team.
-// Same authority gate as the destructive routes — admins enter the
+// Same authority gate as the destructive routes - admins enter the
 // panel but only the Owner can flip switches on other members' links.
 export async function POST(req, { params }) {
   await dbConnect()

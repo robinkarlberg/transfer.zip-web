@@ -80,7 +80,7 @@ export async function purchaseSeats(team, additionalSeats = 1) {
   return targetQuantity
 }
 
-// Generic seat-count setter — handles both increases and decreases. Used by
+// Generic seat-count setter - handles both increases and decreases. Used by
 // the inline manage-seats UI. Increases route through purchaseSeats so the
 // monotonic-increase persistence guard in that path keeps working.
 export async function setSeatCount(team, targetQuantity) {

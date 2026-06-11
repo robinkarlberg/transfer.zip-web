@@ -83,7 +83,7 @@ export const PLANS = {
       <span>Files stay up for <b>365 days</b></span>,
       <span>Send files to <b>30 emails</b></span>,
       "Track views and downloads",
-      <span><b>Custom</b> branding <QuestionCircle text={"Add your own logo, customize backgrounds, and include your branding directly in emails and download pages for a seamless, professional look."} /></span>,
+      <span><b>Custom</b> branding <QuestionCircle text={"Add your own logo, customize backgrounds, and show your branding in emails and on download pages."} /></span>,
       <span><b>Custom</b> domain <QuestionCircle text={"Look more professional by connecting your domain, for example: files.mycompany.com"} /></span>,
     ],
   },
@@ -109,7 +109,7 @@ export const PLANS = {
     },
     limits: {
       [LIMIT.MAX_EXPIRY_DAYS]: 365,
-      [LIMIT.STORAGE]: 1e12, // 1TB per seat — each team member independently gets this. No realistic user will exceed it, so no pooling/aggregation needed.
+      [LIMIT.STORAGE]: 1e12, // 1TB per seat - each team member independently gets this. No realistic user will exceed it, so no pooling/aggregation needed.
     },
     displayFeatures: [
       <span><b>Unlimited transfers</b></span>,
@@ -117,7 +117,7 @@ export const PLANS = {
       <span>Files stay up for <b>365 days</b></span>,
       <span>Send files by email</span>,
       "Priority support",
-      <span><b>Custom</b> branding <QuestionCircle text={"Add your own logo, customize backgrounds, and include your branding directly in emails and download pages for a seamless, professional look."} /></span>,
+      <span><b>Custom</b> branding <QuestionCircle text={"Add your own logo, customize backgrounds, and show your branding in emails and on download pages."} /></span>,
       <span><b>Custom</b> domain <QuestionCircle text={"Look more professional by connecting your domain, for example: files.mycompany.com"} /></span>,
       "Centralized billing",
       "Member management"

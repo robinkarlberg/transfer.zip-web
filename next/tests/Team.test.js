@@ -3,7 +3,7 @@ import Team from "@/lib/server/mongoose/models/Team";
 import { FEATURE, LIMIT } from "@/lib/pricing";
 
 // All tests instantiate Team via `new Team({...})` with no DB. Mongoose
-// schemas compile in-process, and the methods we exercise are pure —
+// schemas compile in-process, and the methods we exercise are pure -
 // no .save(), .find(), or other ops that would need a connection.
 
 describe("Team.getPlan", () => {

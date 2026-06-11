@@ -20,7 +20,7 @@ export async function POST(req, { params }) {
     .populate('transferRequest');              // full populate; we'll check it ourselves
 
   // Authorisation check in one place. `author` is unset for guest uploads
-  // into a transfer request, so guard it before calling .equals — those
+  // into a transfer request, so guard it before calling .equals - those
   // transfers are deletable by the request owner via the second branch.
   const authorized =
     transfer &&

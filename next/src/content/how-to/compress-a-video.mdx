@@ -16,7 +16,7 @@ For large videos **without quality loss**, share via Transfer.zip instead &rarr;
 
 ## Why Compress Video Files?
 
-Modern cameras and smartphones record videos in stunning quality—4K, 60fps, HDR—but this comes at a cost: massive file sizes. A single minute of 4K video can exceed **375 MB**, making it impractical to email, upload, or share quickly. Video compression reduces file size while preserving acceptable quality, making videos easier to:
+Modern cameras and smartphones record in 4K, 60fps and HDR, but that comes at a cost: massive file sizes. A single minute of 4K video can exceed **375 MB**, making it impractical to email, upload, or share quickly. Video compression reduces file size while preserving acceptable quality, making videos easier to:
 
 - Email (most providers limit to 20-25 MB)
 - Upload to websites and social media
@@ -30,14 +30,14 @@ Modern cameras and smartphones record videos in stunning quality—4K, 60fps, HD
 
 ## Method 1: Online Video Compressors (Easiest)
 
-Browser tools — nothing to install. Best for one-off jobs.
+Browser tools, nothing to install. Best for one-off jobs.
 
-- **[Vert.sh](https://vert.sh/)** — Open source, no watermark, free. Has Email / Web / Social Media presets.
-- **[Clideo](https://clideo.com/compress-video)** — Low/Medium/High presets. Free version adds a small watermark.
-- **[FreeConvert](https://www.freeconvert.com/video-compressor)** — Upload up to 1 GB; set a target file size like "20 MB" exactly.
+- **[Vert.sh](https://vert.sh/)** - Open source, no watermark, free. Has Email / Web / Social Media presets.
+- **[Clideo](https://clideo.com/compress-video)** - Low/Medium/High presets. Free version adds a small watermark.
+- **[FreeConvert](https://www.freeconvert.com/video-compressor)** - Upload up to 1 GB; set a target file size like "20 MB" exactly.
 
 <Warning>
-Don't upload private or sensitive videos to online compressors — they sit on third-party servers.
+Don't upload private or sensitive videos to online compressors, they sit on third-party servers.
 </Warning>
 
 ---
@@ -46,15 +46,15 @@ Don't upload private or sensitive videos to online compressors — they sit on t
 
 Desktop applications give you precise control over compression settings and work offline. Recommended for frequent video compression.
 
-### HandBrake (Free, Open Source — Recommended)
+### HandBrake (Free, Open Source, Recommended)
 
 Download from [handbrake.fr](https://handbrake.fr/), open your video, pick a preset:
 
-- **Fast 480p30** — for email attachments
-- **Fast 720p30** — for web/messaging
-- **Fast 1080p30** — for YouTube/social
+- **Fast 480p30** - for email attachments
+- **Fast 720p30** - for web/messaging
+- **Fast 1080p30** - for YouTube/social
 
-For more control, the **Video tab** lets you set RF quality (23-28 — lower means higher quality) or a specific bitrate. That's all most people ever need.
+For more control, the **Video tab** lets you set RF quality (23-28, lower means higher quality) or a specific bitrate. That's all most people ever need.
 
 ---
 
@@ -72,14 +72,14 @@ CRF 18-28 is the useful range (lower = better quality). Drop `-vf scale=1280:720
 
 ## Method 3: Compress Videos on Mobile
 
-- **iPhone:** Use the built-in **Shortcuts** app — search "Reduce Video Size" in the Gallery, add it, and run on any video. Full guide: [How to compress a video on iPhone](/how-to/compress-a-video/iphone).
+- **iPhone:** Use the built-in **Shortcuts** app. Search "Reduce Video Size" in the Gallery, add it, and run on any video. Full guide: [How to compress a video on iPhone](/how-to/compress-a-video/iphone).
 - **Android:** **Video Compressor - Fast Compress** or **VidCompact** from the Play Store. Pick a quality preset, save back to your gallery.
 
 ---
 
 ## Method 4: Trim First (Most Effective)
 
-A 5-minute video trimmed to 1 minute is 80% smaller — no codec can match that. Always trim before reaching for compression.
+A 5-minute video trimmed to 1 minute is 80% smaller, no codec can match that. Always trim before reaching for compression.
 
 - **Windows:** Photos app → Edit video → Trim
 - **Mac:** QuickTime → Edit → Trim (Cmd+T)
@@ -90,7 +90,7 @@ A 5-minute video trimmed to 1 minute is 80% smaller — no codec can match that.
 
 ## Alternative: Send the Original Instead
 
-If you're only compressing because the file is too big to share, skip it and send the original via [Transfer.zip](https://transfer.zip) — Quick Transfer streams files of any size in real time, no compression needed, no upload wait. Recipients get the full-quality video.
+If you're only compressing because the file is too big to share, skip it and send the original via [Transfer.zip](https://transfer.zip). Quick Transfer streams files of any size in real time, so there's nothing to compress and no upload to wait for. Recipients get the full-quality video.
 
 ![Transfer.zip homepage with the Quick Transfer file picker.](/img/content/services/transfer-zip.png)
 
@@ -103,14 +103,14 @@ If you're only compressing because the file is too big to share, skip it and sen
 **Will zipping a video reduce its size?**
 No. Videos are already compressed; zipping saves 0-5% at most. You need to re-encode.
 
-**Which codec — H.264 or H.265?**
+**Which codec, H.264 or H.265?**
 H.264 plays everywhere. H.265 (HEVC) makes files 30-50% smaller but older devices may not play it. Pick H.264 unless you know the recipient supports HEVC.
 
 **Lower resolution or lower bitrate?**
 Lower resolution looks better than starved bitrate. 720p at 3 Mbps beats 1080p at 1.5 Mbps.
 
 **How much can I compress without losing quality?**
-You always lose some — the goal is making the loss invisible. 720p at 3-5 Mbps hits the sweet spot for most viewers.
+You always lose some. The goal is making the loss invisible. 720p at 3-5 Mbps hits the sweet spot for most viewers.
 
 **My compressed video is larger than the original. Why?**
 You raised the bitrate or quality setting above the source's. Compression only shrinks files when you reduce something.

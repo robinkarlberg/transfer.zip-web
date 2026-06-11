@@ -9,15 +9,15 @@ export default function TermsAndConditionsPage({ }) {
       </p>
       <div className="mt-10 max-w-2xl">
         <p>
-          We provide a platform to facilitate seamless transfers for your files. By using our services, you warrant that all information provided is accurate and complies with applicable laws.
+          We provide a platform for transferring your files. By using our services, you warrant that all information provided is accurate and complies with applicable laws.
         </p>
         <ul role="list" className="mt-8 max-w-xl space-y-8 text-gray-600">
           <li className="flex gap-x-3">
             <BIcon name={"file-earmark-text"} aria-hidden="true" className="mt-1 h-5 w-5 flex-none text-primary" />
             <span>
               <strong className="font-semibold text-gray-900">Services Provided.</strong> Subscribing to a paid plan grants a pool of <em>simultaneous</em> storage capacity. The current plans are&nbsp;
-              <nobr><em>Starter</em> – 200&nbsp;GB</nobr> total active storage and&nbsp;
-              <nobr><em>Pro</em> – 1&nbsp;TB</nobr> total active storage. The <i>Quick Transfer</i> feature (also referred to as “Quick Transfers” or “Quick Share”) has no file‑size limit and is provided free of charge while both parties keep their browser tab open.
+              <nobr><em>Starter</em> - 200&nbsp;GB</nobr> total active storage and&nbsp;
+              <nobr><em>Pro</em> - 1&nbsp;TB</nobr> total active storage. The <i>Quick Transfer</i> feature (also referred to as “Quick Transfers” or “Quick Share”) has no file‑size limit and is provided free of charge while both parties keep their browser tab open.
             </span>
           </li>
           <li className="flex gap-x-3">

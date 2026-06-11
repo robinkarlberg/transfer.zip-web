@@ -158,7 +158,7 @@ services:
       - "traefik.http.services.transferzip-ws.loadbalancer.server.scheme=http"
 ```
 
-Important: scheme=http is required for the signaling server even though the client uses wss:// — because Traefik handles the TLS termination.
+Important: scheme=http is required for the signaling server even though the client uses wss:// - because Traefik handles the TLS termination.
 
 **Please note:** If WebSocket fails, the transfer QR/link is generated but never progresses beyond Step 1, reload the page, re-upload the file - I lost some time debugging this
 

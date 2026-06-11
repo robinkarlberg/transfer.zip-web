@@ -41,7 +41,7 @@ const ipOfNs = async (nsHost) => {
 
 // Ask the zone's authoritative NS directly so a user who just added a
 // CNAME doesn't have to wait out a recursive resolver's negative-cache
-// TTL (often 5–15 min) before verification succeeds. Falls back to
+// TTL (often 5-15 min) before verification succeeds. Falls back to
 // returning [] when the authoritative path fails entirely; the periodic
 // re-check will retry.
 const cnamesOf = async (host) => {
@@ -55,7 +55,7 @@ const cnamesOf = async (host) => {
       return await resolver.resolveCname(host)
     } catch (err) {
       // ENODATA/ENOTFOUND from an authoritative server is the final answer.
-      // Other errors (timeout, refused) — try the next NS.
+      // Other errors (timeout, refused) - try the next NS.
       if (err.code === "ENODATA" || err.code === "ENOTFOUND") return []
     }
   }
