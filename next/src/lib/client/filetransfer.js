@@ -1,471 +1,427 @@
-/* global BigInt */
+// End-to-end encrypted file protocol for Quick Transfers. Transport-agnostic:
+// only needs a channel with send(Uint8Array) / onmessage / onclosed (RelayChannel).
+//
+// Every packet is [12B IV][AES-GCM ciphertext]; the plaintext is [1B frame type][body].
+// The receiver drives everything: it requests the file list, then downloads files
+// one at a time. Flow control is end-to-end — the receiver acks bytes only after
+// they are written to its output stream, and the sender keeps at most SEND_WINDOW
+// unacked bytes in flight. Acks double as transfer progress for the sender's UI.
 
-import { RelayChannel } from "./webrtc"
+export const CHUNK_SIZE = 512 * 1024;
+export const SEND_WINDOW = 16 * 1024 * 1024;
 
-export const FILE_CHUNK_SIZE = 16384
+const FRAME_FILE_LIST = 0;
+const FRAME_NEW_FILE = 1;
+const FRAME_FILE_DATA = 2;
+const FRAME_CONTROL = 3;
 
-const PACKET_ID = {
-    newFile: 0,
-    fileData: 1,
-    fileList: 2,
-    error: 9
+const IV_LENGTH = 12;
+
+const textEnc = new TextEncoder();
+const textDec = new TextDecoder();
+
+export class PeerBusyError extends Error {
+	constructor() {
+		super("Another transfer is already in progress on this link. Try again once it has finished.");
+		this.name = "PeerBusyError";
+	}
 }
 
-const textEnc = new TextEncoder()
-const textDec = new TextDecoder()
-
-export const encodeString = (str) => {
-    return textEnc.encode(str)
-}
-export const decodeString = (arr) => {
-    return textDec.decode(arr)
+export class TransferCanceledError extends Error {
+	constructor() {
+		super("The transfer was canceled.");
+		this.name = "TransferCanceledError";
+	}
 }
 
-const genIV = () => {
-    const iv = new Uint8Array(12)
-    crypto.getRandomValues(iv)
-    // const dataview = new DataView(iv.buffer)
-    // dataview.setBigUint64(0, BigInt(i))
-    return iv
+export class ProtocolError extends Error {
+	constructor(msg) {
+		super(msg || "Could not decrypt transfer data. The link may be corrupted — copy it again and retry.");
+		this.name = "ProtocolError";
+	}
 }
 
-const getJwkFromK = async (k) => {
-    const key = await crypto.subtle.importKey("jwk", {
-        alg: "A256GCM",
-        ext: true,
-        k,
-        kty: "oct",
-        key_ops: ["encrypt", "decrypt"]
-    }, { name: "AES-GCM" }, false, ["encrypt", "decrypt"])
-    return key
+export const generateTransferKey = async () => {
+	const key = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt", "decrypt"]);
+	const jwk = await crypto.subtle.exportKey("jwk", key);
+	return { key, k: jwk.k };
+};
+
+export const importTransferKey = (k) => {
+	return crypto.subtle.importKey("jwk", {
+		alg: "A256GCM",
+		ext: true,
+		k,
+		kty: "oct",
+		key_ops: ["encrypt", "decrypt"],
+	}, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]);
+};
+
+async function encryptFrame(key, frameType, body) {
+	const plain = new Uint8Array(1 + body.byteLength);
+	plain[0] = frameType;
+	plain.set(body, 1);
+	const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
+	const ciphertext = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, plain));
+	const packet = new Uint8Array(IV_LENGTH + ciphertext.byteLength);
+	packet.set(iv);
+	packet.set(ciphertext, IV_LENGTH);
+	return packet;
 }
 
-// /**
-//  * List containing all FileTransfer instances
-//  */
-// let activeFileTransfers = []
-
-// export const newFileTransfer = (channel, key) => {
-//     const fileTransfer = new FileTransfer(channel, key)
-//     activeFileTransfers.push(fileTransfer)
-//     return fileTransfer
-// }
-
-// export const removeFileTransfer = (fileTransfer) => {
-//     activeFileTransfers = activeFileTransfers.filter(o => o !== fileTransfer)
-// }
-
-class FileTransferFile {
-    onfiledata = undefined
-    onprogress = undefined
-    onfilefinished = undefined
-
-    chunkMap = new Map()
-    chunkIndex = -1
-    // writer = undefined
-    bytesRecieved = 0
-    fileInfo = undefined
-
-    constructor(onfiledata, onprogress, onfilefinished) {
-        this.onfiledata = onfiledata
-        this.onprogress = onprogress
-        this.onfilefinished = onfilefinished
-    }
-
-    setFileInfo(fileInfo) {
-        console.log("Set file info", fileInfo)
-        // const fileStream = streamSaver.createWriteStream(fileInfo.name, {
-        //     size: fileInfo.size
-        // })
-        this.fileInfo = fileInfo
-        // this.writer = fileStream.getWriter()
-    }
-
-    isFileInfoSet() {
-        return this.fileInfo != undefined
-    }
-
-    isFileTransferDone() {
-        return this.isFileInfoSet() && this.bytesRecieved == this.fileInfo.size && this.chunkMap.size == 0
-    }
-
-    checkProgress = () => {
-        let isFileTransferDone = this.isFileTransferDone()
-        
-        this.onprogress({ now: this.bytesRecieved, max: this.fileInfo.size, done: isFileTransferDone }, this.fileInfo)
-
-        if (isFileTransferDone) {
-            console.log("[FileTransferFile] File has been received!")
-            this.onfilefinished(this.fileInfo)
-        }
-    }
-
-    handleChunkMap = () => {
-        if (!this.onfiledata) {
-            console.error("onfiledata undefined")
-            return
-        }
-        // if (this.writer.desiredSize == null) {
-        //     console.error("user canceled download")
-        //     this.fileTransfer.sendData(JSON.stringify({ type: "error", message: "cancel" }))
-        //     this.channel.close()
-        //     throw new Error("user cancelled the download")
-        // }
-        if (!this.fileInfo) {
-            console.error("fileInfo undefined")
-            return
-        }
-        while (true) {
-            const data = this.chunkMap.get(this.chunkIndex + 1)
-            if (!data) break
-            // console.log(data)
-            this.chunkMap.delete(this.chunkIndex + 1)
-            this.chunkIndex++
-            this.onfiledata(data, this.fileInfo)
-            // this.writer.write(data)
-        }
-        if (this.bytesRecieved == this.fileInfo.size && this.chunkMap.size == 0) {
-            // console.log("Close writer")
-            // this.writer.close()
-            // this.checkProgress()
-        }
-    }
-
-    setChunkMap(index, data) {
-        this.chunkMap.set(index, data)
-
-        this.bytesRecieved += data.byteLength
-        this.handleChunkMap()
-        this.checkProgress()
-    }
+async function decryptFrame(key, packet) {
+	let plain;
+	try {
+		plain = new Uint8Array(await crypto.subtle.decrypt(
+			{ name: "AES-GCM", iv: packet.subarray(0, IV_LENGTH) },
+			key,
+			packet.subarray(IV_LENGTH),
+		));
+	} catch {
+		throw new ProtocolError();
+	}
+	return { frameType: plain[0], body: plain.subarray(1) };
 }
 
-export class FileTransfer {
-    onprogress = undefined
-    onfilefinished = undefined
-    onfilebegin = undefined
-    onfiledata = undefined
+const encodeJson = (obj) => textEnc.encode(JSON.stringify(obj));
+const decodeJson = (body) => JSON.parse(textDec.decode(body));
 
-    currentFile = undefined
+const toFileInfo = (file) => ({
+	name: file.name,
+	size: file.size,
+	type: file.type,
+	relativePath: file.webkitRelativePath || file.name,
+});
 
-    ///////
+// Incoming packets are handled strictly in order; decrypt + handler async-ness
+// must not interleave, and receiver write backpressure must stall the pump.
+const pumpMessages = (channel, handler, onerror) => {
+	let queue = Promise.resolve();
+	channel.onmessage = (data) => {
+		queue = queue.then(() => handler(data)).catch(onerror);
+	};
+};
 
-	INTERNAL_BUFFER_MAX_SIZE = FILE_CHUNK_SIZE * 32 // Roughly 500Kb
+/**
+ * Serves files to one peer. Stateless between downloads — the receiver can
+ * request the same or another file again (e.g. after canceling).
+ */
+export class FileSender {
+	onpeerready = undefined;     // () — first decrypted request proves the peer has the key
+	ondownloadstart = undefined; // (fileIndex, fileInfo)
+	onprogress = undefined;      // ({ fileIndex, sentBytes, ackedBytes, totalBytes })
+	onfilecomplete = undefined;  // (fileIndex) — receiver confirmed all bytes written
+	oncanceled = undefined;      // () — receiver canceled the active download
+	onerror = undefined;         // (err) — fatal, sender is dead
 
-    chunkMapIndex = 0
-	internalBuffer = new Uint8Array(this.INTERNAL_BUFFER_MAX_SIZE)
-	internalBufferedAmount = 0
+	#channel;
+	#key;
+	#files;
+	#opts;
 
-    ///////
+	#fileIndex = -1;   // active download, -1 when idle
+	// Bumped on every download start AND cancel: a send loop or ack belonging
+	// to a stale transferId is dead no matter how it interleaves.
+	#transferId = 0;
+	#sentBytes = 0;
+	#ackedBytes = 0;
+	#failed = false;
+	#windowWaiters = [];
 
-    constructor(channel, key) {
-        console.log("[FileTransfer] created with key ", key)
-        this.channel = channel
-        this.key = key
-    }
+	constructor(channel, key, files, opts = {}) {
+		this.#channel = channel;
+		this.#key = key;
+		this.#files = files;
+		this.#opts = { chunkSize: CHUNK_SIZE, window: SEND_WINDOW, ...opts };
+		pumpMessages(channel, data => this.#handlePacket(data), err => this.#fail(err));
+		channel.onclosed = err => this.#fail(err);
+	}
 
-    async encryptData(data) {
-        const iv = genIV()
+	get busy() {
+		return this.#fileIndex !== -1;
+	}
 
-        const encryptedPacket = await crypto.subtle.encrypt({
-            "name": "AES-GCM", "iv": iv
-        }, this.key, data);
+	dispose() {
+		this.#failed = true;
+		this.#wakeWindowWaiters();
+		this.#channel.onmessage = undefined;
+		this.#channel.onclosed = undefined;
+	}
 
-        const encryptedPacketAndIV = new Uint8Array(encryptedPacket.byteLength + 12)
-        encryptedPacketAndIV.set(iv)
-        encryptedPacketAndIV.set(new Uint8Array(encryptedPacket), 12)
-        return encryptedPacketAndIV
-    }
+	async #handlePacket(data) {
+		if (this.#failed) return;
+		const { frameType, body } = await decryptFrame(this.#key, data);
+		if (frameType !== FRAME_CONTROL) {
+			return console.warn("[FileSender] Unexpected frame type:", frameType);
+		}
+		const msg = decodeJson(body);
 
-    async decryptData(__data) {
-        const iv = new Uint8Array(__data.slice(0, 12))
-        const encryptedPacket = __data.slice(12)
+		if (msg.action === "list") {
+			this.onpeerready && this.onpeerready();
+			await this.#send(FRAME_FILE_LIST, encodeJson(this.#files.map(toFileInfo)));
+		} else if (msg.action === "download") {
+			this.#startDownload(msg.fileIndex);
+		} else if (msg.action === "ack") {
+			this.#handleAck(msg);
+		} else if (msg.action === "cancel") {
+			this.#cancelActive();
+		} else {
+			console.warn("[FileSender] Unknown control message:", msg);
+		}
+	}
 
-        const packet = new Uint8Array(await crypto.subtle.decrypt({
-            "name": "AES-GCM", "iv": iv
-        }, this.key, encryptedPacket));
+	async #send(frameType, body) {
+		this.#channel.send(await encryptFrame(this.#key, frameType, body));
+	}
 
-        return packet
-    }
+	#startDownload(fileIndex) {
+		const file = this.#files[fileIndex];
+		if (!file) return console.warn("[FileSender] Requested unknown file:", fileIndex);
+		if (this.busy) return console.warn("[FileSender] Download requested while busy");
+		this.#fileIndex = fileIndex;
+		this.#transferId += 1;
+		this.#sentBytes = 0;
+		this.#ackedBytes = 0;
+		// Runs detached — the pump must keep draining acks while we send.
+		this.#sendFile(fileIndex, file, this.#transferId).catch(err => this.#fail(err));
+	}
 
-    async _constructFileDataPacketAndEncrypt(data, index) {
-        const packet = new Uint8Array(1 + 8 + data.byteLength)
-        const packetDataView = new DataView(packet.buffer)
-        packetDataView.setInt8(0, PACKET_ID.fileData)
-        packetDataView.setBigUint64(1, BigInt(index))
-        packet.set(new Uint8Array(data), 1 + 8)
-        // console.log("unencrypted packet: ", packet)
-        const encryptedPacket = await this.encryptData(packet)
-        return encryptedPacket
-    }
+	async #sendFile(fileIndex, file, transferId) {
+		const fileInfo = { fileIndex, transferId, ...toFileInfo(file) };
+		this.ondownloadstart && this.ondownloadstart(fileIndex, fileInfo);
+		await this.#send(FRAME_NEW_FILE, encodeJson(fileInfo));
 
-    /**
-     * Actually sends data
-     * @param {Uint8Array} data 
-     */
-    sendData(data) {
-        if(this.channel instanceof RelayChannel) {
-            this.channel.dataPacketBudget -= 1
-        }
-        this.channel.send(data)
-    }
+		let offset = 0;
+		while (offset < file.size && this.#isCurrent(transferId)) {
+			await this.#waitForWindow(transferId);
+			if (!this.#isCurrent(transferId)) return;
+			const chunk = new Uint8Array(await file.slice(offset, offset + this.#opts.chunkSize).arrayBuffer());
+			if (!this.#isCurrent(transferId)) return;
+			await this.#send(FRAME_FILE_DATA, chunk);
+			offset += chunk.byteLength;
+			this.#sentBytes = offset;
+			this.#emitProgress(fileIndex, file);
+		}
+		// All bytes handed to the relay; completion comes from the receiver's final ack.
+	}
 
-	/**
-	 * Send queued data
-	 */
-	async _sendQueuedData() {
-        if(!(this.channel instanceof RelayChannel)) {
-            return
-        }
-        if(this.internalBufferedAmount == 0) return
-        // console.log("internalbuffer:", this.internalBuffer)
-		this.sendData(await this._constructFileDataPacketAndEncrypt(this.internalBuffer.subarray(0, this.internalBufferedAmount), this.chunkMapIndex))
-        // console.log("_sendQueuedData, chunkMapIndex:", this.chunkMapIndex, "internalBufferedAmount:", this.internalBufferedAmount)
-        
-        this.chunkMapIndex++
-		this.internalBufferedAmount = 0
+	#handleAck({ transferId, bytesWritten, done }) {
+		if (transferId !== this.#transferId || this.#fileIndex === -1) return;
+		const fileIndex = this.#fileIndex;
+		this.#ackedBytes = bytesWritten;
+		this.#wakeWindowWaiters();
+		this.#emitProgress(fileIndex, this.#files[fileIndex]);
+		if (done) {
+			this.#fileIndex = -1;
+			this.onfilecomplete && this.onfilecomplete(fileIndex);
+		}
+	}
+
+	#cancelActive() {
+		if (this.#fileIndex === -1) return;
+		this.#fileIndex = -1;
+		this.#transferId += 1;
+		this.#wakeWindowWaiters();
+		this.oncanceled && this.oncanceled();
+	}
+
+	#emitProgress(fileIndex, file) {
+		this.onprogress && this.onprogress({
+			fileIndex,
+			sentBytes: this.#sentBytes,
+			ackedBytes: this.#ackedBytes,
+			totalBytes: file.size,
+		});
+	}
+
+	#isCurrent(transferId) {
+		return this.#transferId === transferId && !this.#failed;
+	}
+
+	async #waitForWindow(transferId) {
+		while (this.#sentBytes - this.#ackedBytes >= this.#opts.window && this.#isCurrent(transferId)) {
+			await new Promise(resolve => this.#windowWaiters.push(resolve));
+		}
+	}
+
+	#wakeWindowWaiters() {
+		const waiters = this.#windowWaiters;
+		this.#windowWaiters = [];
+		for (const resolve of waiters) resolve();
+	}
+
+	#fail(err) {
+		if (this.#failed) return;
+		this.#failed = true;
+		this.#wakeWindowWaiters();
+		this.onerror && this.onerror(err);
+	}
+}
+
+/**
+ * Downloads files from a FileSender. One download at a time; chunks are passed
+ * to the caller's write function and acked only after it resolves, so output
+ * backpressure (disk, zip stream) propagates all the way to the sender.
+ */
+export class FileReceiver {
+	onprogress = undefined; // ({ fileIndex, receivedBytes, totalBytes })
+	onerror = undefined;    // (err) — fatal, also rejects in-flight calls
+
+	#channel;
+	#key;
+	#pendingList = null; // { resolve, reject }
+	#download = null;    // { fileIndex, write, resolve, reject, fileInfo, receivedBytes }
+	#failed = false;
+
+	constructor(channel, key) {
+		this.#channel = channel;
+		this.#key = key;
+		pumpMessages(channel, data => this.#handlePacket(data), err => this.#fail(err));
+		channel.onclosed = err => this.#fail(err);
+	}
+
+	dispose() {
+		this.#failed = true;
+		this.#channel.onmessage = undefined;
+		this.#channel.onclosed = undefined;
+	}
+
+	listFiles() {
+		if (this.#pendingList) throw new Error("A file list request is already in progress");
+		// The promise must be returned synchronously so callers attach handlers
+		// before a dying channel can reject it.
+		return new Promise((resolve, reject) => {
+			this.#pendingList = { resolve, reject };
+			this.#sendControl({ action: "list" }).catch(err => {
+				this.#fail(err);
+				reject(err);
+			});
+		});
 	}
 
 	/**
-	 * 
-	 * @param {Uint8Array} data
+	 * Requests file `fileIndex` and feeds chunks to `write` (async). Resolves
+	 * with the file's info once every byte has been written.
 	 */
-	_queueData(data) {
-		if(this.internalBufferedAmount + data.byteLength > this.INTERNAL_BUFFER_MAX_SIZE) {
-			throw new Error("[FileTransfer] _queueData: BUFFER OVERFLOW")
-		}
-        // console.log("set internalBuffer @ " + this.internalBufferedAmount + ":", data)
-		this.internalBuffer.set(data, this.internalBufferedAmount)
-		this.internalBufferedAmount += data.byteLength
+	downloadFile(fileIndex, write) {
+		if (this.#download) throw new Error("A download is already in progress");
+		return new Promise((resolve, reject) => {
+			this.#download = { fileIndex, write, resolve, reject, fileInfo: null, receivedBytes: 0 };
+			this.#sendControl({ action: "download", fileIndex }).catch(err => {
+				this.#fail(err);
+				reject(err);
+			});
+		});
 	}
 
-	/**
-	 * Queue data for sending, or just send if the channel doesn't support it
-	 * @param {Uint8Array} fileData 
-	 * @returns 
-	 */
-    async queueData(fileData) {
-		if (!(fileData instanceof Uint8Array)) {
-			return console.error("[WebRtc] [RelayChannel] send: data is not of type Uint8Array!! Got", typeof (fileData), "instead:", fileData)
+	/** Cancels the active download (e.g. the user aborted the save stream). */
+	async cancel() {
+		const download = this.#download;
+		this.#download = null;
+		download && download.reject(new TransferCanceledError());
+		try {
+			await this.#sendControl({ action: "cancel" });
+		} catch {
+			// channel already dead — nothing to tell the peer
 		}
+	}
 
-        if(!(this.channel instanceof RelayChannel)) {
-            return this.sendData(await this._constructFileDataPacketAndEncrypt(fileData, this.chunkMapIndex++))
-        }
+	async #sendControl(msg) {
+		this.#channel.send(await encryptFrame(this.#key, FRAME_CONTROL, encodeJson(msg)));
+	}
 
-		if(fileData.byteLength > this.INTERNAL_BUFFER_MAX_SIZE) {       // will never happen though lmao
-            throw new Error("Asserting that this should not happen")
-			// this._sendQueuedData()
-            // this.channel.send(fileData)
-			// return ws.send(this._constructPacket(fileData))
+	async #handlePacket(data) {
+		if (this.#failed) return;
+		const { frameType, body } = await decryptFrame(this.#key, data);
+
+		if (frameType === FRAME_FILE_LIST) {
+			const pending = this.#pendingList;
+			this.#pendingList = null;
+			if (!pending) return console.warn("[FileReceiver] Unsolicited file list");
+			pending.resolve(decodeJson(body));
+		} else if (frameType === FRAME_NEW_FILE) {
+			const fileInfo = decodeJson(body);
+			const download = this.#download;
+			if (!download || download.fileIndex !== fileInfo.fileIndex) {
+				return console.warn("[FileReceiver] Unexpected file announcement:", fileInfo);
+			}
+			download.fileInfo = fileInfo;
+			if (fileInfo.size === 0) await this.#finishDownload(download);
+		} else if (frameType === FRAME_FILE_DATA) {
+			const download = this.#download;
+			// Data without an announced file = leftovers from a canceled download.
+			if (!download || !download.fileInfo) return;
+			await download.write(body);
+			// The download may have been canceled while the write was pending.
+			if (this.#download !== download) return;
+			download.receivedBytes += body.byteLength;
+			this.onprogress && this.onprogress({
+				fileIndex: download.fileIndex,
+				receivedBytes: download.receivedBytes,
+				totalBytes: download.fileInfo.size,
+			});
+			if (download.receivedBytes >= download.fileInfo.size) {
+				await this.#finishDownload(download);
+			} else {
+				await this.#sendAck(download, false);
+			}
+		} else if (frameType === FRAME_CONTROL) {
+			const msg = decodeJson(body);
+			if (msg.action === "busy") {
+				this.#rejectInFlight(new PeerBusyError());
+			} else {
+				console.warn("[FileReceiver] Unknown control message:", msg);
+			}
+		} else {
+			console.warn("[FileReceiver] Unknown frame type:", frameType);
 		}
+	}
 
-        while(this.channel.dataPacketBudget <= 0) {
-            console.log("PACKET BUDGET == 0:", this.channel.dataPacketBudget, " - Waiting...")
-            await new Promise(resolve => setTimeout(resolve, 500))   // ugly af
-        }
+	async #sendAck(download, done) {
+		await this.#sendControl({
+			action: "ack",
+			transferId: download.fileInfo.transferId,
+			bytesWritten: download.receivedBytes,
+			done,
+		});
+	}
 
-		if(this.internalBufferedAmount + fileData.byteLength >= this.INTERNAL_BUFFER_MAX_SIZE) {
-			await this._sendQueuedData()
+	async #finishDownload(download) {
+		this.#download = null;
+		await this.#sendAck(download, true);
+		download.resolve(download.fileInfo);
+	}
+
+	#rejectInFlight(err) {
+		if (this.#pendingList) {
+			this.#pendingList.reject(err);
+			this.#pendingList = null;
 		}
-		this._queueData(fileData)
-    }
+		if (this.#download) {
+			this.#download.reject(err);
+			this.#download = null;
+		}
+	}
 
-    sendFile(file) {
-        this.chunkMapIndex = 0
-        let offset = 0
-        
-        const onData = async (__data) => {
-            await this.queueData(new Uint8Array(__data))
-            offset += __data.byteLength;
-
-            if (offset < file.size) {
-                readSlice(offset);
-            }
-            else {
-                // flush out the last data when finished
-                await this._sendQueuedData()
-            }
-        }
-        
-        const readSlice = async o => {
-            this.channel.calculateBufferedAmount && this.channel.calculateBufferedAmount()
-            if (this.channel.bufferedAmount > 5000000) {        // 5MB
-                return setTimeout(() => { readSlice(o) }, 1)
-            }
-            const fileSliceBuffer = await file.slice(offset, o + FILE_CHUNK_SIZE).arrayBuffer()
-            // console.log(fileSliceBuffer)
-            onData(fileSliceBuffer)
-        };
-
-        const fileInfo = {
-            relativePath: file.webkitRelativePath || file.name,
-            name: file.name,
-            size: file.size,
-            type: file.type
-        }
-        this.onfilebegin(fileInfo)
-        const fileInfoStr = JSON.stringify(fileInfo)
-        const fileInfoBytes = encodeString(fileInfoStr)
-        console.log("[FileTransfer] Sending file info:", fileInfoStr, fileInfoBytes)
-
-        const packet = new Uint8Array(1 + fileInfoBytes.byteLength)
-        const packetDataView = new DataView(packet.buffer)
-        packetDataView.setInt8(0, PACKET_ID.newFile)
-        packet.set(fileInfoBytes, 1)
-
-        this.encryptData(packet).then(encryptedPacket => {
-            this.channel.__currentFileInfo = fileInfo
-            this.sendData(encryptedPacket)
-            readSlice(0)
-        })
-    }
-
-    serveFiles(files) {
-        console.debug("[FileTransfer] Serving Files...", files)
-        this.channel.addEventListener("message", async e => {
-            const textDec = new TextDecoder()
-            const dataStr = textDec.decode(await this.decryptData(e.data))
-            const data = JSON.parse(dataStr)
-
-            if (data.type == "progress") {
-                // console.log("[FileTransfer] Got progress:", data)
-                this.onprogress({ now: data.now, max: data.max, done: data.done }, this.channel.__currentFileInfo)
-                if (data.done) {
-                    this.onfilefinished(this.channel.__currentFileInfo)
-                }
-            }
-            else if (data.type == "error") {
-                if (data.message == "cancel") {
-                    throw new Error("User canceled the download")
-                }
-                else {
-                    console.error("Unknown error message:", data)
-                }
-            }
-            else if (data.type == "list") {
-                console.log("[FileTransfer] Got list file request:", data)
-                const fileList = files.map(x => {
-                    return { relativePath: x.webkitRelativePath || x.name, name: x.name, size: x.size, type: x.type }
-                })
-
-                const fileListBytes = encodeString(JSON.stringify(fileList))
-                console.log("[FileTransfer] Sending file list:", fileList, fileListBytes)
-
-                const packet = new Uint8Array(1 + fileListBytes.byteLength)
-                const packetDataView = new DataView(packet.buffer)
-                packetDataView.setInt8(0, PACKET_ID.fileList)
-                packet.set(fileListBytes, 1)
-
-                this.encryptData(packet).then(encryptedPacket => {
-                    this.sendData(encryptedPacket)
-                })
-            }
-            else if (data.type == "download") {
-                console.log("[FileTransfer] Got download file request:", data)
-                const fileIndexToDownload = data.index
-                this.sendFile(files[fileIndexToDownload])
-            }
-            else {
-                console.warn("FileTransfer] Unknown packet:", data)
-            }
-        })
-    }
-
-    isUsingRelayChannel() {
-        return this.channel instanceof RelayChannel
-    }
-
-    requestFile(fileListIndex) {
-        console.log("[FileTransfer] [requestFile]", fileListIndex)
-        this.encryptData(encodeString(JSON.stringify({ type: "download", index: fileListIndex }))).then(encryptedData => {
-            this.sendData(encryptedData)
-        })
-    }
-
-    queryForFiles(cbFileList) {
-        console.log("[FileTransfer] queryForFiles")
-
-        const onfiledata = (data, fileInfo) => {
-            if(!this.onfiledata) {
-                console.warn("filedata udefined")
-                return
-            }
-            this.onfiledata(data, fileInfo)
-        }
-
-        const onprogress = async (progress, fileInfo) => {
-            // console.log("[FileTransfer] onprogress", progress, fileInfo, Math.round(progress.now / FILE_CHUNK_SIZE) % 30 == 15)
-            this.onprogress(progress, fileInfo)
-
-            // Important: this.onprogress needs to be called before this if statement, 
-            // otherwise the file will be finished before the last progress has been reported
-            if (Math.round(progress.now / FILE_CHUNK_SIZE) % 30 == 15 || progress.done) {
-                // console.log("[FileTransfer] send progress:", progress)
-                this.sendData(await this.encryptData(encodeString(JSON.stringify({ type: "progress", ...progress }))))
-            }
-        }
-
-        const onfilefinished = (fileInfo) => {
-            console.log("[FileTransfer] onfilefinished", fileInfo)
-            this.onfilefinished(fileInfo)
-            this.currentFile = new FileTransferFile(onfiledata, onprogress, onfilefinished)
-        }
-
-        this.currentFile = new FileTransferFile(onfiledata, onprogress, onfilefinished)
-
-        this.channel.addEventListener("message", async e => {
-            const packet = await this.decryptData(e.data)
-            const packetDataView = new DataView(packet.buffer)
-            const packetId = packetDataView.getInt8(0)
-
-            if (packetId == PACKET_ID.newFile) {   // new file
-                const data = packet.slice(1)
-                const fileInfo = JSON.parse(decodeString(data))
-
-                if (this.currentFile.isFileInfoSet()) {
-                    console.error("fileInfo received twice !!!!!!!!!!!", fileInfo)
-                    throw new Error("fileInfo received twice !!!!!!!!!!!")
-                }
-
-                // if (!this.currentFile.isFileTransferDone()) {
-                //     console.error("file transfer is not finished yet !!!!!!!!!!!", fileInfo)
-                //     throw new Error("file transfer is not finished yet !!!!!!!!!!!")
-                // }
-
-                if (this.currentFile.isFileTransferDone()) {     // actually new file
-                    console.error("New file transfer :)")
-                    this.currentFile = new FileTransferFile(onfiledata, onprogress, onfilefinished)
-                }
-                
-                console.log("Got file info:", fileInfo)
-
-                this.currentFile.setFileInfo(fileInfo)
-
-                this.currentFile.handleChunkMap()	// if packet is received after all file data for some reason
-            }
-            else if (packetId == PACKET_ID.fileData) {
-                const offset = Number(packetDataView.getBigUint64(1))
-                const data = packet.slice(1 + 8)
-
-                this.currentFile.setChunkMap(offset, data)
-
-                // Commented out as this is done in queryForFiles instead
-                // if (index % 50 == 49 || this.currentFile.isFileTransferDone()) {
-                //     this.encryptData(encodeString(JSON.stringify({ type: "progress", now: this.currentFile.bytesRecieved }))).then(encryptedData => {
-                //         this.sendData(encryptedData)
-                //     })
-                // }
-            }
-            else if (packetId == PACKET_ID.fileList) {
-                const data = packet.slice(1)
-                const fileList = JSON.parse(decodeString(data))
-                cbFileList(fileList)
-            }
-        })
-
-        this.encryptData(encodeString(JSON.stringify({ type: "list" }))).then(encryptedData => {
-            this.sendData(encryptedData)
-        })
-    }
+	#fail(err) {
+		if (this.#failed) return;
+		this.#failed = true;
+		this.#rejectInFlight(err);
+		this.onerror && this.onerror(err);
+	}
 }
+
+/**
+ * Minimal responder for extra peers connecting while a transfer is running:
+ * answers any request with "busy" so their UI can say so instead of hanging.
+ */
+export const attachBusyResponder = (channel, key) => {
+	pumpMessages(channel, async (data) => {
+		const { frameType, body } = await decryptFrame(key, data);
+		if (frameType !== FRAME_CONTROL) return;
+		const msg = decodeJson(body);
+		if (msg.action === "list" || msg.action === "download") {
+			channel.send(await encryptFrame(key, FRAME_CONTROL, encodeJson({ action: "busy" })));
+		}
+	}, err => console.warn("[BusyResponder]", err.message));
+};

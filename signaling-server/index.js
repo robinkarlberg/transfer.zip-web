@@ -1,61 +1,150 @@
 import { WebSocketServer } from "ws";
-import { v4 as uuidv4 } from 'uuid';
 
-const CPKT_LOGOUT = -1
-const CPKT_LOGIN = 0
-const CPKT_OFFER = 1
-const CPKT_ANSWER = 2
-const CPKT_CANDIDATE = 3
-const CPKT_RELAY = 4
-const CPKT_SWITCH_TO_FALLBACK = 5
-const CPKT_SWITCH_TO_FALLBACK_ACK = 6
-const CPKT_P2P_FAILED = 7
+// Relay server for Quick Transfers. Knows nothing about file contents —
+// payloads are AES-GCM encrypted client-side. It pairs sessions and forwards
+// opaque binary packets between them.
 
-const SPKT_OFFER = 11
-const SPKT_ANSWER = 12
-const SPKT_CANDIDATE = 13
-const SPKT_RELAY = 14
-const SPKT_SWITCH_TO_FALLBACK = 15
-const SPKT_SWITCH_TO_FALLBACK_ACK = 16
-const SPKT_P2P_FAILED = 17
-const SPKT_RELAY_BUDGET = 99
+const PORT = 9002;
 
-const DEFAULT_PACKET_BUDGET = 128
+const PKT_RELAY = 1;
 
-const textEnc = new TextEncoder()
-const textDec = new TextDecoder()
+const SESSION_ID_LENGTH = 8;
+const HEADER_LENGTH = 1 + SESSION_ID_LENGTH * 2;
+const MAX_SESSIONS_PER_CONN = 16;
+const MAX_PAYLOAD = 4 * 1024 * 1024;
+// An honest sender's ack window keeps a recipient's buffer far below this;
+// only a client ignoring flow control can reach it.
+const MAX_TARGET_BUFFERED = 256 * 1024 * 1024;
+const PING_INTERVAL = 30_000;
 
-const encodeString = (str) => {
-    return textEnc.encode(str)
+const textDec = new TextDecoder();
+
+/** sessionId -> { conn, peers: Set<sessionId> } */
+const sessions = new Map();
+
+const send = (conn, obj) => conn.send(JSON.stringify(obj));
+
+const closeWithReason = (conn, reason) => {
+    console.log("Closing conn:", reason);
+    conn.close();
+};
+
+const removeSession = (sessionId, notifyPeers) => {
+    const session = sessions.get(sessionId);
+    if (!session) return;
+    console.log("Removing session:", sessionId);
+    sessions.delete(sessionId);
+    session.conn._sessionIds.delete(sessionId);
+    for (const peerId of session.peers) {
+        const peer = sessions.get(peerId);
+        if (!peer) continue;
+        peer.peers.delete(sessionId);
+        if (notifyPeers) send(peer.conn, { type: "peer-disconnect", targetId: peerId, peerId: sessionId });
+    }
+};
+
+function handleRelayPacket(conn, data) {
+    if (data.length < HEADER_LENGTH || data[0] !== PKT_RELAY) {
+        return closeWithReason(conn, "[relay] Malformed packet");
+    }
+    const targetId = textDec.decode(data.subarray(1, 1 + SESSION_ID_LENGTH));
+    const senderId = textDec.decode(data.subarray(1 + SESSION_ID_LENGTH, HEADER_LENGTH));
+
+    const sender = sessions.get(senderId);
+    if (!sender || sender.conn !== conn) {
+        return closeWithReason(conn, "[relay] Sender does not own session " + senderId);
+    }
+    // Packets can legitimately still be in flight right after a peer vanished — drop them.
+    if (!sender.peers.has(targetId)) return;
+    const target = sessions.get(targetId);
+    if (!target) return;
+
+    if (target.conn.bufferedAmount > MAX_TARGET_BUFFERED) {
+        return closeWithReason(conn, "[relay] Flow control violation, target buffer full");
+    }
+    target.conn.send(data, { binary: true });
 }
 
-const decodeString = (arr) => {
-    return textDec.decode(arr)
+function handleControlMessage(conn, message) {
+    if (message.toString() === ".") return; // keepalive
+
+    let data;
+    try {
+        data = JSON.parse(message);
+    } catch {
+        return closeWithReason(conn, "Invalid JSON");
+    }
+
+    if (data.type === "login") {
+        const { id } = data;
+        if (typeof id !== "string" || id.length !== SESSION_ID_LENGTH) {
+            return closeWithReason(conn, "[login] Invalid session id");
+        }
+        if (conn._sessionIds.size >= MAX_SESSIONS_PER_CONN) {
+            return closeWithReason(conn, "[login] Too many sessions");
+        }
+        if (sessions.has(id)) {
+            // Not a close: the previous owner may just not be reaped yet, the client retries.
+            return send(conn, { type: "login", targetId: id, success: false, msg: "Session ID already taken" });
+        }
+        sessions.set(id, { conn, peers: new Set() });
+        conn._sessionIds.add(id);
+        console.log("[login]", id);
+        return send(conn, { type: "login", targetId: id, success: true });
+    }
+
+    if (data.type === "logout") {
+        if (!conn._sessionIds.has(data.id)) {
+            return closeWithReason(conn, "[logout] Session not owned");
+        }
+        console.log("[logout]", data.id);
+        return removeSession(data.id, true);
+    }
+
+    if (data.type === "connect") {
+        const { id, peerId } = data;
+        if (!conn._sessionIds.has(id)) {
+            return closeWithReason(conn, "[connect] Session not owned");
+        }
+        const target = typeof peerId === "string" && peerId !== id ? sessions.get(peerId) : undefined;
+        if (!target) {
+            console.log("[connect] Peer not found:", peerId);
+            return send(conn, { type: "connect", targetId: id, success: false, notFound: true });
+        }
+        sessions.get(id).peers.add(peerId);
+        target.peers.add(id);
+        console.log("[connect]", id, "->", peerId);
+        send(target.conn, { type: "peer-connect", targetId: peerId, peerId: id });
+        return send(conn, { type: "connect", targetId: id, success: true });
+    }
+
+    // Unknown types are ignored (not fatal) so stale clients degrade gracefully.
+    console.warn("[handleControlMessage] Unknown message type:", data.type);
 }
 
 const wss = new WebSocketServer({
     host: "0.0.0.0",
-    port: 9002,
+    port: PORT,
+    maxPayload: MAX_PAYLOAD,
 }, () => {
-    console.log("WebSocket server is listening on ws://0.0.0.0:9002");
+    console.log(`Relay server is listening on ws://0.0.0.0:${PORT}`);
 });
-
-const sessions = new Map();
-
-const deleteSession = sessionId => {
-    console.log("Deleting session:", sessionId);
-    sessions.delete(sessionId);
-}
 
 wss.on("connection", conn => {
     console.log("Connection established");
+    conn._sessionIds = new Set();
+    conn._isAlive = true;
+
+    conn.on("pong", () => {
+        conn._isAlive = true;
+    });
 
     conn.on("message", (data, isBinary) => {
         try {
-            if (!isBinary) {
-                handleTextMessage(conn, data);
+            if (isBinary) {
+                handleRelayPacket(conn, data);
             } else {
-                handleBinaryData(conn, data);
+                handleControlMessage(conn, data);
             }
         } catch (err) {
             console.error(err);
@@ -65,296 +154,31 @@ wss.on("connection", conn => {
 
     conn.on("close", () => {
         console.log("Connection closed");
-        if (conn._session?.ids) {
-            for (let id of conn._session.ids) {
-                deleteSession(id);
-            }
-        } else {
-            console.log("Connection closed, but no session ids were found to delete");
+        for (const sessionId of [...conn._sessionIds]) {
+            removeSession(sessionId, true);
         }
     });
+
+    conn.on("error", err => {
+        console.error("Connection error:", err);
+    });
 });
+
+// Reap dead connections so their session ids free up and peers get notified.
+const pingSweep = setInterval(() => {
+    for (const conn of wss.clients) {
+        if (!conn._isAlive) {
+            console.log("Terminating unresponsive connection");
+            conn.terminate();
+            continue;
+        }
+        conn._isAlive = false;
+        conn.ping();
+    }
+}, PING_INTERVAL);
+
+wss.on("close", () => clearInterval(pingSweep));
 
 wss.on("error", e => {
     console.error(e);
 });
-
-const closeConnWithReason = (conn, reason) => {
-    console.log("Closing conn: " + reason)
-    conn.close()
-}
-
-const constructPacketBudgetPacket = (targetId, sessionId, packetBudget) => {
-    const packet = new Uint8Array(1 + 8 + 8 + 4)
-    const packetDataView = new DataView(packet.buffer)
-    packetDataView.setInt8(0, SPKT_RELAY_BUDGET)
-
-    packet.set(encodeString(targetId), 1)
-    packet.set(encodeString(sessionId), 1 + 8)
-    packetDataView.setInt32(1 + 8 + 8, packetBudget)
-    return packet
-}
-
-function handleBinaryData(conn, _data) {
-    const packet = new Uint8Array(_data)
-    const packetDataView = new DataView(packet.buffer)
-    const packetId = packetDataView.getInt8(0)
-
-    if (packetId == CPKT_RELAY) {
-        const targetId = decodeString(packet.subarray(1, 1 + 8))
-        const callerId = decodeString(packet.subarray(1 + 8, 1 + 8 + 8))
-
-        if (!conn._relay_packets) {
-            conn._relay_packets = 1
-        }
-        else {
-            conn._relay_packets += 1
-        }
-
-        let recipientConn;
-        if ((recipientConn = sessions.get(targetId))) {
-            // if(recipientConn.bufferedAmount > 100_000_000) {    // 100MB
-            //     console.log("High bufferedAmount:", recipientConn.bufferedAmount)
-            // }
-            if (conn._relay_packets % (DEFAULT_PACKET_BUDGET / 4) == 0) {
-                const sendPacketBudget = () => {
-                    console.log("Finally sending packet budget:", DEFAULT_PACKET_BUDGET)
-                    conn.send(constructPacketBudgetPacket(callerId, targetId, DEFAULT_PACKET_BUDGET))
-                }
-
-                const waitingFunction = async () => {
-                    if (recipientConn.bufferedAmount > 500_000_000) {
-                        console.log("recipientConn bufferedAmount > 500_000_000:", recipientConn.bufferedAmount, " - Terminating connection!")
-                        closeConnWithReason(recipientConn, "The sender is ignoring packet budget, they are sending packets too fast!")
-                        closeConnWithReason(conn, "Ignoring packet budget, you are sending packets too fast!")
-                        return
-                    }
-                    console.log("recipientConn bufferedAmount > 100_000_000:", recipientConn.bufferedAmount, " - Waiting for better conditions before sending packet budget.")
-                    while (recipientConn.bufferedAmount > 100_000_000) {
-                        await new Promise(resolve => setTimeout(resolve, 500))
-                    }
-                    sendPacketBudget()
-                }
-
-                if (recipientConn.bufferedAmount > 100_000_000) {
-                    waitingFunction()
-                }
-                else {
-                    sendPacketBudget()
-                }
-            }
-
-            packetDataView.setInt8(0, SPKT_RELAY)   // Change to server packet type before sending back
-            recipientConn.send(packet)
-        }
-        else {
-            return closeConnWithReason(conn, "[CPKT_RELAY] Specified targetId does not exist", targetId)
-        }
-    }
-    else {
-        console.warn("[handleBinaryData] Unknown packetId:", packetId)
-    }
-}
-
-/**
- * @param {WebSocket} conn
- */
-function handleTextMessage(conn, message) {
-    if (message == ".") return   // Keepalive
-
-    let data;
-    try {
-        data = JSON.parse(message);
-    } catch (e) {
-        console.error("Invalid json: ", message);
-        return conn.close();
-    }
-    //console.log(data);
-
-    if (data.type == CPKT_LOGIN) { // login
-
-        console.log("Login requested with session ", data.id)
-        if (!data.id) return closeConnWithReason(conn, "[login] Didn't specify id");
-        if (typeof data.id !== "string" && data.id.length != 8) return closeConnWithReason(conn, "[login] Invalid ID " + data.id);
-        if (sessions.has(data.id)) return closeConnWithReason(conn, "[login] Session ID already taken " + data.id)
-
-        if (conn._session === undefined) {
-            conn._session = {}
-            console.log("_session doesn't exist yet, adding first session ", data.id)
-            conn._session.ids = [data.id]
-        }
-        else {
-            console.log("_session list exists, adding session ", data.id)
-            conn._session.ids.push(data.id)
-        }
-
-        sessions.set(data.id, conn);
-
-        return conn.send(JSON.stringify({ targetId: data.id, success: true, type: data.type }));
-    }
-
-    if (!conn._session) return conn.close(); // client has to send type 0 first >:(
-
-    if (data.type == CPKT_OFFER) { // offer
-        // console.log("offer", conn._session.id + " -> " + data.recipientId, data);
-        if (!data.offer) return closeConnWithReason(conn, "[offer] Didn't specify offer");
-        if (!data.callerId) return closeConnWithReason(conn, "[offer] Didn't specify callerId");
-        if (!sessions.get(data.callerId)) return closeConnWithReason(conn, "[offer] Specified callerId does not exist")
-
-        let recipientConn;
-        if ((recipientConn = sessions.get(data.recipientId))) {
-            recipientConn.send(JSON.stringify({
-                type: SPKT_OFFER, // offer type
-                targetId: data.recipientId,
-                callerId: data.callerId,
-                offer: data.offer,
-            }));
-            return conn.send(JSON.stringify({
-                targetId: data.callerId, success: true, type: data.type,
-            }));
-        } else {
-            console.log("[CPKT_OFFER] recipient did not exist:", data.recipientId)
-            return conn.send(JSON.stringify({
-                targetId: data.callerId, success: false, type: data.type,
-                quickShareNotFound: true,
-                msg: "Quick Share could not be found. Do not close the browser window before the transfer is complete.",
-            }));
-        }
-    } else if (data.type == CPKT_ANSWER) { // answer
-        // console.log("answer", conn._session.id + " -> " + data.recipientId, data);
-        if (!data.answer) return closeConnWithReason(conn, "[answer] Didn't specify answer");
-
-        let recipientConn;
-        if ((recipientConn = sessions.get(data.recipientId))) {
-            recipientConn.send(JSON.stringify({
-                type: SPKT_ANSWER, // answer type
-                targetId: data.recipientId,
-                answer: data.answer,
-                currentUserCanFallback: data.currentUserCanFallback
-            }));
-            return conn.send(JSON.stringify({
-                targetId: data.sessionId, success: true, type: data.type,
-            }));
-        } else {
-            console.log("[CPKT_ANSWER] recipient does not exist:", data.recipientId)
-            return conn.send(JSON.stringify({
-                targetId: data.sessionId, success: false, type: data.type,
-                msg: "recipient does not exist",
-            }));
-        }
-    } else if (data.type == CPKT_CANDIDATE) { // candidate
-        // console.log("candidate", conn._session.id + " -> " + data.recipientId, data);
-        if (!data.candidate) return closeConnWithReason(conn, "[candidate] Didn't specify candidate");
-        if (!data.callerId) return closeConnWithReason(conn, "[candidate] Didn't specify callerId");
-        if (!sessions.get(data.callerId)) return closeConnWithReason(conn, "[candidate] Specified callerId does not exist")
-
-        let recipientConn;
-        if ((recipientConn = sessions.get(data.recipientId))) {
-            recipientConn.send(JSON.stringify({
-                type: SPKT_CANDIDATE, // answer type
-                targetId: data.recipientId,
-                candidate: data.candidate,
-                callerId: data.callerId
-            }));
-
-            // TODO: Track who the connections can start a binary relay session with
-            // to prevent anyone from creating infinite sessions
-
-            // conn._session.hasTriedP2PWith = recipientConn
-            // recipientConn._session.hasTriedP2PWith = conn
-
-            return conn.send(JSON.stringify({
-                targetId: data.callerId, success: true, type: data.type,
-            }));
-        } else {
-            console.log("[CPKT_CANDIDATE] recipient does not exist!")
-            return conn.send(JSON.stringify({
-                targetId: data.callerId, success: false, type: data.type,
-                msg: "recipient does not exist",
-            }));
-        }
-    } else if (data.type == CPKT_LOGOUT) { // logout
-        if (!data.sessionId) return closeConnWithReason(conn, "[CPKT_LOGOUT] Didn't specify sessionId")
-        if (!conn._session.ids.find(o => o === data.sessionId))
-            return closeConnWithReason(conn, "[CPKT_LOGOUT] Tried to logout id not owned by them");
-
-        console.log("[CPKT_LOGOUT]", data.sessionId);
-        deleteSession(data.sessionId)
-    } else if (data.type == CPKT_SWITCH_TO_FALLBACK) {
-        if (!data.callerId) return closeConnWithReason(conn, "[CPKT_SWITCH_TO_FALLBACK] Didn't specify callerId")
-        if (!data.recipientId) return closeConnWithReason(conn, "[CPKT_SWITCH_TO_FALLBACK] Didn't specify recipientId")
-        if (!sessions.get(data.callerId)) return closeConnWithReason(conn, "[CPKT_SWITCH_TO_FALLBACK] Specified callerId does not exist")
-
-        console.log("[CPKT_SWITCH_TO_FALLBACK] Request from:", data.callerId, "to", data.recipientId)
-
-        let recipientConn;
-        if ((recipientConn = sessions.get(data.recipientId))) {
-            const newRtcSessionId = uuidv4().slice(0, 8)
-
-            recipientConn.send(JSON.stringify({
-                type: SPKT_SWITCH_TO_FALLBACK,
-                targetId: data.recipientId,
-                callerId: data.callerId,
-                newRtcSessionId
-            }));
-
-            return conn.send(JSON.stringify({
-                targetId: data.callerId, success: true, type: data.type,
-            }));
-        } else {
-            console.log("[CPKT_SWITCH_TO_FALLBACK] recipient does not exist!")
-            return conn.send(JSON.stringify({
-                targetId: data.callerId, success: false, type: data.type,
-                msg: "recipient does not exist",
-            }));
-        }
-    } else if (data.type == CPKT_SWITCH_TO_FALLBACK_ACK) {
-        if (!data.callerId) return closeConnWithReason(conn, "[CPKT_SWITCH_TO_FALLBACK_ACK] Didn't specify callerId")
-        if (!data.recipientId) return closeConnWithReason(conn, "[CPKT_SWITCH_TO_FALLBACK_ACK] Didn't specify recipientId")
-        if (!sessions.get(data.callerId)) return closeConnWithReason(conn, "[CPKT_SWITCH_TO_FALLBACK_ACK] Specified callerId does not exist")
-
-        let recipientConn;
-        if ((recipientConn = sessions.get(data.recipientId))) {
-            recipientConn.send(JSON.stringify({
-                type: SPKT_SWITCH_TO_FALLBACK_ACK,
-                targetId: data.recipientId,
-                callerId: data.callerId,
-                success: data.success
-            }));
-
-            return conn.send(JSON.stringify({
-                targetId: data.callerId, success: true, type: data.type,
-            }));
-        } else {
-            console.log("[CPKT_SWITCH_TO_FALLBACK_ACK] recipient does not exist!")
-            return conn.send(JSON.stringify({
-                targetId: data.callerId, success: false, type: data.type,
-                msg: "recipient does not exist",
-            }));
-        }
-
-    } else if (data.type == CPKT_P2P_FAILED) {
-        if (!data.callerId) return closeConnWithReason(conn, "[CPKT_P2P_FAILED] Didn't specify callerId")
-        if (!data.recipientId) return closeConnWithReason(conn, "[CPKT_P2P_FAILED] Didn't specify recipientId")
-        if (!sessions.get(data.callerId)) return closeConnWithReason(conn, "[CPKT_P2P_FAILED] Specified callerId does not exist")
-
-        let recipientConn;
-        if ((recipientConn = sessions.get(data.recipientId))) {
-            recipientConn.send(JSON.stringify({
-                type: SPKT_P2P_FAILED,
-                targetId: data.recipientId,
-                callerId: data.callerId
-            }));
-
-            return conn.send(JSON.stringify({
-                targetId: data.callerId, success: true, type: data.type,
-            }));
-        } else {
-            console.log("[CPKT_P2P_FAILED] recipient does not exist!")
-            return conn.send(JSON.stringify({
-                targetId: data.callerId, success: false, type: data.type,
-                msg: "recipient does not exist",
-            }));
-        }
-    }
-}

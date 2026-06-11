@@ -25,11 +25,11 @@ const faqs = [
   {
     question: "Do you train AI models with my data?",
     answer:
-      <><a className="text-primary underline" href="https://www.theartnewspaper.com/2025/07/28/wetransfer-artificial-intelligence-terms-service-artists-intellectual-property">Unlike WeTransfer</a>, we never train AI models with your data. Paid transfers are only sent from A to B and are permanently removed on expiry. Quick Transfers are end-to-end encrypted, streamed directly between peers, and are never stored. We offer unprecedented privacy for a very low price.</>
+      <><a className="text-primary underline" href="https://www.theartnewspaper.com/2025/07/28/wetransfer-artificial-intelligence-terms-service-artists-intellectual-property">Unlike WeTransfer</a>, we never train AI models with your data. Paid transfers are only sent from A to B and are permanently removed on expiry. Quick Transfers are end-to-end encrypted, streamed in real time, and are never stored. We offer unprecedented privacy for a very low price.</>
   },
   {
     question: "How do Quick Transfers work?",
-    answer: "It uses WebRTC for peer-to-peer data transfer, meaning the files are streamed directly between peers and not stored anywhere in the process, not even on transfer.zip servers. To let peers initially discover each other, a signaling server is implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through. In addition, the file data is end-to-end encrypted using AES-GCM with a client-side 256 bit generated key, meaning if someone could impersonate a peer or capture the traffic, they would not be able to decrypt the file without knowing the key. Because the file is streamed directly between peers, there are no file size or bandwidth limitations."
+    answer: "Files are streamed in real time from the sender's browser to the receiver's browser through our relay servers, and are not stored anywhere in the process, not even on transfer.zip servers. The file data is end-to-end encrypted using AES-GCM with a 256 bit key generated in your browser. The key is part of the link itself (in the URL fragment, which is never sent to any server), so the relay only ever sees encrypted bytes it cannot read — anyone capturing the traffic would not be able to decrypt the files without the link. Because nothing is stored, there are no file size limits; the transfer simply lasts as long as both browser tabs stay open."
   },
   {
     question: "Is Transfer.zip safe to use?",

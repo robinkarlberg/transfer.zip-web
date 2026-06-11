@@ -8,7 +8,7 @@ Multi-service monorepo, no top-level package.json — each service is its own np
 
 - [next/](next/) — Next.js 16 (App Router) frontend + API routes. Main user-facing app.
 - [worker/](worker/) — Fastify backend. Holds the RSA private key (signs JWTs for node servers), runs `node-cron` cleanup of expired transfers, proxies geo lookups + node control calls. Port 3001.
-- [signaling-server/](signaling-server/) — Plain Node + `ws`. WebRTC signaling + binary relay fallback for Quick Transfers. Port 9002.
+- [signaling-server/](signaling-server/) — Plain Node + `ws`. Relay server for Quick Transfers: session pairing + opaque encrypted binary packet forwarding. Port 9002.
 - [_db/](_db/) — local MongoDB volume (docker compose).
 - [_local_dev_worker_data/](_local_dev_worker_data/) — local RSA keypair (created by `local-dev-create-keys.sh`).
 
@@ -29,7 +29,7 @@ Run + extend the suite when you change: `lib/pricing.js`, `User`/`Team`/`Transfe
 
 ### Two transfer modes
 
-1. **Quick Transfers** — P2P over WebRTC, end-to-end encrypted with a client-generated AES-GCM 256 key. Signaling-server only brokers; if direct P2P fails (or file >10MB — WebRTC forced off for speed), traffic is **relayed** through signaling-server using a custom binary packet protocol with packet-budget flow control (see [signaling-server/index.js](signaling-server/index.js)). No file data in MongoDB. Files exist only while both peers are online.
+1. **Quick Transfers** — real-time, end-to-end encrypted with a client-generated AES-GCM 256 key (the key travels in the link's hash fragment, never to a server). All traffic is **relayed** through signaling-server as opaque binary packets — no WebRTC. Flow control is end-to-end: the receiver acks bytes only after writing them to its output stream, and the sender keeps ≤16MB unacked in flight. Client stack, layered: [lib/client/relay.js](next/src/lib/client/relay.js) (WebSocket transport: sessions, pairing, reconnect) → [lib/client/filetransfer.js](next/src/lib/client/filetransfer.js) (encrypted file protocol: `FileSender`/`FileReceiver`) → [lib/client/quickshare.js](next/src/lib/client/quickshare.js) (`QuickShareSession`, emits UI state snapshots). No file data in MongoDB. Files exist only while both peers are online.
 2. **Stored Transfers** — S3 multipart via Uppy + `@uppy/aws-s3` ([next/src/lib/client/uppy.js](next/src/lib/client/uppy.js)). Client gets presigned URLs from the `transfer.zip-node` server (`/upload/sign`, `/upload/multipart/*`) and PUTs parts directly to S3. Next stores metadata only; bytes never go through Next or the node server. Cross-server auth = RS256 JWTs signed by the worker.
 
 ### Key boundaries

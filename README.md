@@ -18,20 +18,18 @@ A quick overview of the main features, more info further down.
 - **Custom branding** - Upload your own icon and background for the transfer pages (requires an S3 bucket atm)
 - **Email support** - Send emails to recipients, also updates to fit with the branding.
 - **S3/Disk stored transfers** - Supports storing files with S3-compatiable APIs as well as local disk storage.
-- **Quick Transfers** - End-to-end encrypted peer-to-peer transfers, when you don't want to store files, just send them.
+- **Quick Transfers** - End-to-end encrypted real-time transfers, when you don't want to store files, just send them.
 - **Self-hostable** - Easy to **self-host** on your own hardware.
 
 <img src="https://cdn.transfer.zip/img/high-level-architecture.png?" width="650"></img>
 
-### Quick Transfers - End-to-end encrypted WebRTC file transfers in the browser
-Quick Transfers use [WebRTC](http://www.webrtc.org/) for peer-to-peer data transfer, meaning the files are streamed directly between peers and not stored anywhere in the process, not even on Transfer.zip servers. To let peers initially discover each other, a signaling server is implemented in NodeJS using WebSockets, which importantly no sensitive data is sent through. In addition, the file data is end-to-end encrypted using [AES-GCM](https://en.wikipedia.org/wiki/Galois/Counter_Mode) with a client-side 256 bit generated key, meaning if someone could impersonate a peer or capture the traffic, they would not be able to decrypt the file without knowing the key. Because the file is streamed directly between peers, there are **no file size or bandwidth limitations**. The easiest way to Quick Transfer a file is to scan the QR code containing the file link and encryption key. It is also possible to copy the link and share it to the recipient over what medium you prefer the most. 
+### Quick Transfers - End-to-end encrypted real-time file transfers in the browser
+Quick Transfers stream files in real time from the sender's browser to the receiver's browser through a lightweight relay server, without storing them anywhere in the process, not even on Transfer.zip servers. The relay is implemented in NodeJS using WebSockets: it pairs the two browser sessions and forwards opaque binary packets between them. The file data is end-to-end encrypted using [AES-GCM](https://en.wikipedia.org/wiki/Galois/Counter_Mode) with a 256 bit key generated client-side. The key is embedded in the link's hash fragment, which is never sent to the server, so neither the relay nor anyone capturing the traffic can decrypt the files. Because the file is streamed and never stored, there are **no file size limitations**. The easiest way to Quick Transfer a file is to scan the QR code containing the file link and encryption key. It is also possible to copy the link and share it to the recipient over what medium you prefer the most. 
 
-Because of how peer-to-peer works, some network firewalls may not allow direct connections between devices. In that case, the peer-to-peer connection can fallback to using the signalling server as a relay, effectively bypassing network firewall limitations. Due to WebRTC connections being much slower than using the relay, it will forced to be used if files are larger than 10MB, even if WebRTC connections are technically possible. This change was made due to people complaining of slow transfer speeds.
-
-Quick Transfers only work while both users are online at the same time, due to the peer-to-peer nature of the system. 
+Streaming through the relay works on any network where a browser can reach the server — unlike peer-to-peer connections, there are no firewall or NAT traversal caveats. Quick Transfers only work while both users are online at the same time, since the files go directly from browser to browser. 
 
 ### Stored Transfers - File uploads with resumable, scalable storage
-Instead of real-time peer-to-peer transfer like with Quick Transfers, Stored Transfers store the file in an S3-compatible backend. Uploads use S3 multipart with presigned URLs (powered by [Uppy](https://uppy.io/)), so parts go directly from the browser to storage and can resume cleanly on network interruptions. Files are permanently deleted after the transfer's expiry date.
+Instead of real-time transfers like with Quick Transfers, Stored Transfers store the file in an S3-compatible backend. Uploads use S3 multipart with presigned URLs (powered by [Uppy](https://uppy.io/)), so parts go directly from the browser to storage and can resume cleanly on network interruptions. Files are permanently deleted after the transfer's expiry date.
 
 Stored Transfers are just what normal file transfer services like WeTransfer do, but you can host it yourself if you want. 
 
@@ -42,7 +40,6 @@ See the [self-hosting guide](SELFHOSTING.md).
 ## Built with
 
 - Next.js
-- WebRTC
 - WebSockets
 - Node.js
 - Fastify
@@ -50,8 +47,6 @@ See the [self-hosting guide](SELFHOSTING.md).
 - zip.js
 
 ## Some known problems
-
-0-byte files gets stuck on transmit using Quick Transfers.
 
 On Firefox mobile, sending files using Quick Transfer does not work at the moment. This could have something to do with the path being changed after the file has been chosen in the file picker, but not been read yet. This is under investigation and idk how to fix.
 

@@ -58,8 +58,8 @@ const SECTIONS = [
     name: "Sharing",
     rows: [
       {
-        label: "Quick Transfers (peer-to-peer)",
-        tooltip: "Stream files directly between browsers — nothing is stored on our servers.",
+        label: "Quick Transfers (real-time)",
+        tooltip: "Stream files between browsers in real time — nothing is stored on our servers.",
         values: { starter: true, pro: true, teams: true },
       },
       {
