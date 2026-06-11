@@ -45,7 +45,7 @@ export default function ({ stars }) {
           {hasBeenSentLink ?
             "Someone has requested you to send files!"
             :
-            "Temporary file sharing, with no size limit."
+            "Free file sharing, with no size limit."
           }
           {" "}
           <div className="hidden sm:inline">
