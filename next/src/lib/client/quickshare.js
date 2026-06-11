@@ -6,7 +6,7 @@
 import streamSaver from "./StreamSaver";
 import * as zip from "@zip.js/zip.js";
 import { generateUUID } from "./clientUtils";
-import { RelayClient, PeerNotFoundError, PeerDisconnectedError } from "./relay";
+import { RelayClient, PeerNotFoundError } from "./relay";
 import {
 	FileSender,
 	FileReceiver,
@@ -63,7 +63,6 @@ export class QuickShareSession {
 			error: null,         // Error when status == FAILED
 			expired: false,      // FAILED because the link's session no longer exists
 			reconnecting: false, // server connection dropped, retrying in background
-			notice: null,        // transient human-readable info ("receiver disconnected", ...)
 			files: this.#mode === "send" ? this.#files.map(f => ({ name: f.name, size: f.size })) : [],
 			totalBytes: this.#files.reduce((total, f) => total + f.size, 0),
 			bytesTransferred: 0,
@@ -124,8 +123,8 @@ export class QuickShareSession {
 	}
 
 	#startSending(channel) {
-		if (this.#sender && this.#sender.busy) {
-			// Someone opened the link mid-transfer — tell them instead of hanging.
+		if ((this.#sender && this.#sender.busy) || this.#snapshot.status === QuickShareStatus.FINISHED) {
+			// Someone opened the link during/after a transfer — tell them instead of hanging.
 			attachBusyResponder(channel, this.#key);
 			return;
 		}
@@ -134,9 +133,11 @@ export class QuickShareSession {
 		this.#resetTransferProgress();
 		const sender = new FileSender(channel, this.#key, this.#files);
 		this.#sender = sender;
-		this.#update({ status: QuickShareStatus.PEER_CONNECTED, notice: null });
+		this.#update({ status: QuickShareStatus.PEER_CONNECTED });
 
+		let started = false;
 		sender.ondownloadstart = (fileIndex, fileInfo) => {
+			started = true;
 			this.#update({ status: QuickShareStatus.TRANSFERRING, currentFileName: fileInfo.name });
 		};
 		sender.onprogress = ({ ackedBytes }) => {
@@ -152,22 +153,12 @@ export class QuickShareSession {
 				...(finished ? { status: QuickShareStatus.FINISHED, currentFileName: null } : {}),
 			});
 		};
-		sender.oncanceled = () => {
-			if (this.isListener) {
-				this.#backToWaiting("The receiver canceled the download. Your link is still active.");
-			} else {
-				this.#fail(new TransferCanceledError());
-			}
-		};
+		sender.oncanceled = () => this.#fail(new TransferCanceledError());
 		sender.onerror = err => {
 			if (this.#stopped || this.#snapshot.status === QuickShareStatus.FINISHED) return;
-			if (this.isListener) {
-				// The link survives a lost receiver — go back to waiting for one.
-				this.#backToWaiting(
-					err instanceof PeerDisconnectedError
-						? "The receiver disconnected before the transfer finished. They can reopen the link to try again."
-						: err.message,
-				);
+			if (this.isListener && !started) {
+				// The peer opened the link but left before downloading — keep listening.
+				this.#backToWaiting();
 			} else {
 				this.#fail(err);
 			}
@@ -181,7 +172,7 @@ export class QuickShareSession {
 		}
 		const receiver = new FileReceiver(channel, this.#key);
 		this.#receiver = receiver;
-		this.#update({ status: QuickShareStatus.PEER_CONNECTED, notice: null });
+		this.#update({ status: QuickShareStatus.PEER_CONNECTED });
 
 		receiver.onprogress = ({ receivedBytes }) => {
 			this.#noteProgress(this.#completedBytes + receivedBytes);
@@ -198,6 +189,13 @@ export class QuickShareSession {
 			this.#update({ status: QuickShareStatus.FINISHED, currentFileName: null });
 		} catch (err) {
 			if (this.#stopped) return;
+			if (this.isListener && this.#snapshot.status === QuickShareStatus.PEER_CONNECTED) {
+				// The peer left before sending anything — keep listening.
+				receiver.dispose();
+				this.#receiver = null;
+				this.#backToWaiting();
+				return;
+			}
 			// If our save stream broke (user canceled the download), tell the peer.
 			receiver.cancel();
 			this.#fail(err);
@@ -250,11 +248,10 @@ export class QuickShareSession {
 		this.#update({ filesDone: this.#snapshot.filesDone + 1, bytesTransferred: this.#completedBytes });
 	}
 
-	#backToWaiting(notice) {
+	#backToWaiting() {
 		this.#resetTransferProgress();
 		this.#update({
 			status: QuickShareStatus.WAITING_FOR_PEER,
-			notice,
 			bytesTransferred: 0,
 			filesDone: 0,
 			currentFileName: null,

@@ -18,16 +18,7 @@ import { IS_SELFHOST } from "@/lib/isSelfHosted"
 import { sendEvent } from "@/lib/client/umami"
 import { GlobalContext } from "@/context/GlobalContext"
 import Cross from "@/components/Cross"
-import { humanFileSize } from "@/lib/transferUtils"
 import { ZapIcon } from "lucide-react"
-
-const STEP_FOR_STATUS = {
-  [QuickShareStatus.CONNECTING]: 0,
-  [QuickShareStatus.WAITING_FOR_PEER]: 0,
-  [QuickShareStatus.PEER_CONNECTED]: 1,
-  [QuickShareStatus.TRANSFERRING]: 2,
-  [QuickShareStatus.FINISHED]: 3,
-}
 
 export default function QuickShareProgress({ isLoggedIn, isPayingUser }) {
 
@@ -61,9 +52,14 @@ export default function QuickShareProgress({ isLoggedIn, isPayingUser }) {
   const transferring = status === QuickShareStatus.TRANSFERRING
   const expired = snap ? snap.expired : false
   const errorMessage = failed && !expired ? snap.error.message : null
-  const hasConnected = transferring || finished || status === QuickShareStatus.PEER_CONNECTED
-  const activeStep = failed ? -1 : STEP_FOR_STATUS[status]
-  const notice = snap && (snap.reconnecting ? "Connection to the server was lost — reconnecting..." : snap.notice)
+  const hasConnected = transferring || finished
+
+  // Same highlighting as always: the link opener sees step 2 while connecting,
+  // the link creator sees step 1 until a peer shows up.
+  const stepWaiting = !hasBeenSentLink && (status === QuickShareStatus.CONNECTING || status === QuickShareStatus.WAITING_FOR_PEER)
+  const stepConnecting = status === QuickShareStatus.PEER_CONNECTED || (hasBeenSentLink && status === QuickShareStatus.CONNECTING)
+  const stepTransferring = transferring
+  const stepFinished = finished
 
   const sendTitle = "Quick Transfer"
   const recvTitle = "Receive Files"
@@ -76,13 +72,6 @@ export default function QuickShareProgress({ isLoggedIn, isPayingUser }) {
       toast.success("Copied Link", { description: "The Quick Transfer link was successfully copied to the clipboard!" })
     }
   }
-
-  const steps = [
-    (hasBeenSentLink && !IS_SELFHOST) ? "Connecting to the server..." : "Scan the QR code or send the link to the recipient.",
-    "Wait for your devices to establish a connection.",
-    "Stand by while the files are being transferred.",
-    "Done!",
-  ]
 
   return (
     <>
@@ -161,31 +150,14 @@ export default function QuickShareProgress({ isLoggedIn, isPayingUser }) {
                   )
                   :
                   (
-                    <>
-                      <ol className="list-decimal list-inside mb-2">
-                        {steps.map((step, index) => (
-                          <li key={index} className={activeStep == index ? "" : "text-gray-400"}>
-                            {step} {activeStep == index && index != 3 && spinner}
-                          </li>
-                        ))}
-                      </ol>
-                      {transferring && (
-                        <div className="mb-2 text-sm">
-                          {snap.currentFileName && <p className="font-medium text-gray-700 truncate max-w-md">{snap.currentFileName}</p>}
-                          <p className="text-gray-500">
-                            {humanFileSize(snap.bytesTransferred, true)} of {humanFileSize(snap.totalBytes, true)}
-                            {snap.files.length > 1 && <> &middot; {snap.filesDone} of {snap.files.length} files</>}
-                            {snap.speedBps > 0 && <> &middot; {humanFileSize(snap.speedBps, true)}/s</>}
-                          </p>
-                        </div>
-                      )}
-                      {notice && (
-                        <p className="mb-2 text-sm text-amber-600 max-w-md">{notice}</p>
-                      )}
-                      <div className="mb-4 md:mb-2"></div>
-                    </>
+                    <ol className="list-decimal list-inside mb-4 md:mb-2">
+                      <li className={stepWaiting ? "" : "text-gray-400"}>{(hasBeenSentLink && !IS_SELFHOST) ? "Connecting to server..." : "Scan the QR code or send the link to the recipient."} {stepWaiting && spinner}</li>
+                      <li className={stepConnecting ? "" : "text-gray-400"}>Wait for your devices to establish a connection. {stepConnecting && spinner}</li>
+                      <li className={stepTransferring ? "" : "text-gray-400"}>Stand by while the files are being transfered. {stepTransferring && spinner}</li>
+                      <li className={stepFinished ? "" : "text-gray-400"}>Done!</li>
+                    </ol>
                   )}
-                {!IS_SELFHOST && !finished && !failed && (
+                {!IS_SELFHOST && !finished && !errorMessage && (
                   <Link
                     href={"/app"}
                     onNavigate={e => {
