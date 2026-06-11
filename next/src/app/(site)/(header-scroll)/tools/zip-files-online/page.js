@@ -1,8 +1,10 @@
 import ToolLanding from "@/components/tools/ToolLanding";
 import ZipFilesTool from "@/components/tools/ZipFilesTool";
 import RelatedLinks from "@/components/RelatedLinks";
-import MultiStepAction from "@/components/MultiStepAction";
-import Link from 'next/link';
+import ContentArticle from "@/components/content/ContentArticle";
+import { mdxComponents } from "@/mdx-components";
+
+const { h2: H2, p: P, ol: Ol, li: Li, a: A, Link: MdxLink } = mdxComponents()
 
 export const metadata = {
   title: "Zip Files Online | Transfer.zip",
@@ -25,28 +27,23 @@ export default function Page() {
         <ZipFilesTool />
       </ToolLanding>
 
-      <div className="bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16">
-          <div className="mt-8">
-            <h2 className="inline-block text-2xl mb-4 font-bold">How does it work?</h2>
-            <p className="text-lg mb-2">Simply pick files and folders from your computer, and they will be compressed instantly into one zip file.</p>
-            <p className="text-lg mb-2">You can then choose to download or share the newly created zip file for free if needed.</p>
-            <p className="text-lg mb-2"><b>Your files never leave your computer</b> - everything is processed in your browser only.</p>
-            <p className="text-lg mb-2">Want to check for yourself? <a className="text-primary hover:underline" href="https://github.com/robinkarlberg/transfer.zip-web">Check the code on GitHub &rarr;</a></p>
-          </div>
-          <div className="mt-16">
-            <h2 className="inline-block text-2xl mb-4 font-bold">How do I use the tool?</h2>
-            <span className="ms-2 text-gray-500">3 steps</span>
-            <MultiStepAction steps={[
-              { step: 1, icon: "hand-index", text: "Pick your files or select a folder" },
-              { step: 2, icon: "hourglass-split", text: "Click 'Zip' and wait" },
-              { step: 3, icon: "cloud-arrow-down-fill", text: <span>Download or <Link className="text-primary hover:underline" href="/quick">share your zip file</Link></span> },
-            ]} />
-          </div>
-          <div className="mt-16">
-            <RelatedLinks currentSlug="zip-files-online" />
-          </div>
-        </div>
+      <div className="bg-white pt-10">
+        <ContentArticle>
+          <H2>How does it work?</H2>
+          <P>Pick files and folders from your computer, and they are compressed instantly into one zip file.</P>
+          <P>You can then choose to download or share the newly created zip file for free if needed.</P>
+          <P><strong>Your files never leave your computer</strong> - everything is processed in your browser only.</P>
+          <P>Want to check for yourself? <A href="https://github.com/robinkarlberg/transfer.zip-web">Check the code on GitHub &rarr;</A></P>
+
+          <H2>How do I use the tool?</H2>
+          <Ol>
+            <Li>Pick your files, or select a whole folder.</Li>
+            <Li>Click "Zip" and wait.</Li>
+            <Li>Download or <MdxLink href="/quick">share your zip file</MdxLink>.</Li>
+          </Ol>
+
+          <RelatedLinks currentSlug="zip-files-online" />
+        </ContentArticle>
       </div>
     </div>
   );

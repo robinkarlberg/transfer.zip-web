@@ -1,7 +1,11 @@
 import ToolLanding from "@/components/tools/ToolLanding";
 import DownloadTimeCalculator from "@/components/tools/DownloadTimeCalculator";
 import RelatedLinks from "@/components/RelatedLinks";
+import ContentArticle from "@/components/content/ContentArticle";
+import { mdxComponents } from "@/mdx-components";
 import { ZapIcon } from "lucide-react";
+
+const { h2: H2, p: P } = mdxComponents()
 
 export const metadata = {
   title: "Download Time Calculator | Transfer.zip",
@@ -30,16 +34,13 @@ export default function Page() {
         <DownloadTimeCalculator />
       </ToolLanding>
 
-      <div className="bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 py-16">
-          <div className="mt-8">
-            <h2 className="inline-block text-2xl mb-4 font-bold">About this tool</h2>
-            <p className="text-lg mb-2">Enter a file size and your connection speed to get an instant estimate of how long the download will take.</p>
-          </div>
-          <div className="mt-16">
-            <RelatedLinks currentSlug="download-time-calculator" />
-          </div>
-        </div>
+      <div className="bg-white pt-10">
+        <ContentArticle>
+          <H2>About this tool</H2>
+          <P>Enter a file size and your connection speed to get an instant estimate of how long the download will take.</P>
+
+          <RelatedLinks currentSlug="download-time-calculator" />
+        </ContentArticle>
       </div>
     </div>
   );
