@@ -82,7 +82,7 @@ export default function Features1() {
             {" "}when sharing files.
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            Say goodbye to <Link className="text-primary hover:underline" target="_blank" href={"https://www.reddit.com/r/editors/comments/1gk7yh8/is_swisstransfercom_slow_or_is_it_just_me/"}>slow uploads</Link>, size limits, and <Link className="text-primary hover:underline" target="_blank" href={"https://www.reddit.com/r/editors/comments/1htld1d/wetransfer_casually_doubling_my_subscription/"}>expensive pricing</Link>. Transfer.zip makes file sharing simple without breaking the bank.
+            Your clients get a fast download page with your brand on it. You get a price that doesn't double overnight.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
