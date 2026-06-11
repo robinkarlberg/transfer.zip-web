@@ -83,7 +83,7 @@ export default async function Page({ params }) {
       >
         <Image width={1024} height={1024} alt={meta.imgAlt} src={meta.imgSrc} />
       </ContentLanding>
-      <ContentArticle toc={toc} childContent={childContent}>
+      <ContentArticle toc={toc} childContent={childContent} imgSrc={meta.imgSrc}>
         {content}
       </ContentArticle>
     </>

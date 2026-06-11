@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 
-export default function ContentToc({ toc }) {
+export default function ContentToc({ toc, imgSrc }) {
   const [activeId, setActiveId] = useState(toc[0]?.id ?? null)
 
   useEffect(() => {
@@ -37,7 +37,11 @@ export default function ContentToc({ toc }) {
   }, [toc])
 
   return (
-    <nav className="sticky top-28 max-h-[calc(100vh-9rem)] overflow-y-auto space-y-1.5 text-sm">
+    <nav className="sticky top-20 max-h-[calc(100vh-9rem)] overflow-y-auto space-y-1.5 text-sm">
+      {/* {imgSrc && (
+        <img src={imgSrc} alt="" aria-hidden className="w-full rounded-lg border border-gray-200 mb-4" />
+      )} */}
+      {/* {!imgSrc && <p className="font-semibold text-gray-900 mb-3 mt-2">On this page</p>} */}
       <p className="font-semibold text-gray-900 mb-3">On this page</p>
       {toc.map(({ level, title, id }) => {
         const isActive = id === activeId

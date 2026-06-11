@@ -101,7 +101,7 @@ export default function TransferPairPage({ slug }) {
       </ToolLanding>
 
       <div className="bg-white pt-10">
-        <ContentArticle toc={toc} childContent={relatedGuides}>
+        <ContentArticle toc={toc} childContent={relatedGuides} imgSrc={pair.image}>
           <H2>How does it work?</H2>
           {pair.howItWorks.map((paragraph, i) => (
             <P key={i}>{paragraph}</P>
