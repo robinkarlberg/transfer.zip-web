@@ -1,7 +1,7 @@
 import BIcon from "./BIcon"
 // import ProductDemoScreenshot from "@/img/ProductDemoScreenshot.png"
 import logo from "@/img/icon.png"
-import { ChartBarIcon, LockIcon, RotateCcw, RotateCwIcon, UserIcon } from "lucide-react";
+import { ChartBarIcon, ChevronsUpIcon, FileArchiveIcon, LinkIcon, LockIcon, RotateCcw, RotateCwIcon, UserIcon } from "lucide-react";
 import Image from "next/image"
 import Link from "next/link";
 
@@ -23,13 +23,13 @@ const features = [
   // },
   {
     name: 'Custom Branding',
-    description: 'Make every transfer your own. Add your logo and background for a more professional look.',
+    description: 'Make every transfer your own. Add your logo, background and domain for a great look.',
     icon: UserIcon,
   },
   {
-    name: 'Reliable Uploads',
-    description: "Connection dropped? No problem. Uploads retry in the background until they're done.",
-    icon: RotateCwIcon,
+    name: 'Familiar Links',
+    description: "All links end with .zip - a familiar sight for people used to working with files.",
+    icon: LinkIcon,
   },
   // {
   //   name: 'Resumable Uploads',
@@ -37,9 +37,9 @@ const features = [
   //   icon: 'arrow-clockwise',
   // },
   {
-    name: 'Statistics',
-    description: 'See when your files are downloaded and when your links are clicked, with simple stats.',
-    icon: ChartBarIcon,
+    name: 'Made for RAW and 8k',
+    description: 'Gigabit speeds mean less waiting for files to send, and more time working on what matters.',
+    icon: ChevronsUpIcon,
   },
   {
     name: 'Ultimate Trust & Security',
@@ -55,10 +55,31 @@ export default function Features1() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           {/* <Image alt="Logo" src={logo} className="w-16 mx-auto"></Image> */}
-          <h2 className="text-base/7 font-semibold text-primary">Why Choose Us?</h2>
+          <h2 className="text-base/7 font-semibold text-primary">File-sharing for Pros</h2>
           {/* <div className="text-blue-500 mb-4">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div> */}
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            File Sharing Like it Should Be
+            Look{" "}
+            <span className="relative">
+              <span className="relative z-10">professional</span>
+              <svg
+                className="absolute left-0 bottom-[0.1em] w-full text-primary-500"
+                style={{ height: "0.2em" }}
+                viewBox="0 0 100 20"
+                preserveAspectRatio="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2 15 C 20 22, 40 5, 60 12 S 90 18, 98 10"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ vectorEffect: "non-scaling-stroke" }}
+                />
+              </svg>
+            </span>
+            {" "}when sharing files.
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
             Say goodbye to <Link className="text-primary hover:underline" target="_blank" href={"https://www.reddit.com/r/editors/comments/1gk7yh8/is_swisstransfercom_slow_or_is_it_just_me/"}>slow uploads</Link>, size limits, and <Link className="text-primary hover:underline" target="_blank" href={"https://www.reddit.com/r/editors/comments/1htld1d/wetransfer_casually_doubling_my_subscription/"}>expensive pricing</Link>. Transfer.zip makes file sharing simple without breaking the bank.

@@ -391,31 +391,10 @@ export default function FeaturesBento() {
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-base/7 font-semibold text-primary">Features</h2>
           <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Look{" "}
-            <span className="relative">
-              <span className="relative z-10">professional</span>
-              <svg
-                className="absolute left-0 bottom-[0.1em] w-full text-primary-500"
-                style={{ height: "0.2em" }}
-                viewBox="0 0 100 20"
-                preserveAspectRatio="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M2 15 C 20 22, 40 5, 60 12 S 90 18, 98 10"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{ vectorEffect: "non-scaling-stroke" }}
-                />
-              </svg>
-            </span>
-            {" "}when sharing files.
+            Useful features for meaningful ideas.
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            Transfer.zip handles every part of the file lifecycle, professionally.
+            Transfer.zip comes with all features you need to share without hassle.
           </p>
         </div>
       </div>
