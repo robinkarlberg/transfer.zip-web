@@ -79,15 +79,15 @@ function CategorySection({ item }) {
   )
 }
 
-export default function ContentChildren({ children: items, title = "Related Guides" }) {
+export default function ContentChildren({ children: items }) {
   if (!items || items.length === 0) return null
 
   const hasGrouped = items.some((item) => item.children && item.children.length > 0)
 
   if (!hasGrouped) {
     return (
-      <div className="not-prose mt-12 pt-8 border-t border-gray-200">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6">{title}</h2>
+      <div className="not-prose mt-12 pt-8 border-gray-200">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Related</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {items.map((item) => (
             <GuideCard
@@ -104,8 +104,8 @@ export default function ContentChildren({ children: items, title = "Related Guid
   }
 
   return (
-    <div className="not-prose mt-12 pt-8 border-t border-gray-200">
-      <h2 className="text-2xl font-semibold text-gray-900 mb-6">{title}</h2>
+    <div className="not-prose mt-12 pt-8 border-gray-200">
+      {/* <h2 className="text-2xl font-semibold text-gray-900 mb-6">{title}</h2> */}
       <div className="space-y-10">
         {items.map((item) => (
           <CategorySection key={item.slug} item={item} />

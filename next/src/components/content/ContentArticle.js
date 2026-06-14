@@ -11,7 +11,7 @@ export default function ({ children, toc = [], childContent = [], imgSrc }) {
       )}
       <article className="mx-auto max-w-2xl px-4 lg:px-6 mb-20">
         {children}
-        <ContentChildren title="Related Guides">{childContent}</ContentChildren>
+        <ContentChildren>{childContent}</ContentChildren>
       </article>
     </div>
   )
