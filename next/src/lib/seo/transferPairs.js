@@ -9,6 +9,7 @@ export const DEVICES = {
   iphone: { key: "iphone", name: "iPhone" },
   android: { key: "android", name: "Android phone", short: "Android" },
   pc: { key: "pc", name: "PC" },
+  mac: { key: "mac", name: "Mac" },
 }
 
 export const TRANSFER_PAIRS = [
@@ -369,6 +370,162 @@ export const TRANSFER_PAIRS = [
       { q: "Will photo and video quality survive the transfer?", a: "Yes. Files move bit for bit with no recompression, unlike messaging apps. A 4K clip from the Android phone arrives on the iPhone at its exact original size and quality." },
       { q: "Do both phones need to be on the same Wi-Fi?", a: "No. The transfer runs over the internet, so Android on mobile data and iPhone on home Wi-Fi works. Both phones just need to stay online until it finishes." },
       { q: "Is there a file size limit?", a: "No. The files stream directly between the phones without being stored on a server, so multi-gigabyte videos are fine. Bigger transfers simply take longer." },
+    ],
+  },
+  {
+    slug: "transfer-files-from-android-to-mac",
+    image: "/img/content/seo/android-to-mac.png",
+    from: "android",
+    to: "mac",
+    title: "How to Transfer Files from Android to Mac (Android File Transfer Is Gone)",
+    description: "Google discontinued the Android File Transfer app for Mac. Send photos, videos and files from any Android phone to a Mac through the browser instead, without a cable or an app, at any size.",
+    heading: "How to Transfer Files from Android to Mac",
+    headline: { highlightedWord: "Instantly", title: "send files from Android to Mac." },
+    subtitle: "Android File Transfer is discontinued and AirDrop won't talk to Android. Pick your files on the phone, type a 6-digit code on the Mac, and the transfer starts.",
+    howItWorks: [
+      "Android and Mac is the pairing both companies forgot. AirDrop is Apple-only, Google's Quick Share app exists for Windows but not macOS, and the one official tool for the job, the Android File Transfer app, was quietly discontinued in early 2024. Its old download page now points to a Windows-only app.",
+      <>The browser fills the gap. Open <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link> on the Android phone, pick your files, and type the 6-digit code on the Mac. The two devices connect directly and the files stream between them, end-to-end encrypted, with nothing stored on any server.</>,
+      "There's no cable, no MTP driver roulette, and nothing to install on either side. Chrome on the phone and Safari on the Mac are enough, and the two devices don't even need to be on the same network.",
+    ],
+    steps: [
+      { text: "Open this page on your Android phone, tap the button above and pick the photos, videos or files you want on the Mac." },
+      { text: "On the Mac, open transfer.zip/quick in Safari (or any browser) and type the 6-digit code shown on the phone." },
+      { text: "The files download straight to the Mac's Downloads folder. Keep both devices online until the transfer finishes." },
+    ],
+    tips: [
+      {
+        heading: "What happened to Android File Transfer?",
+        body: [
+          "Google removed the Mac app's download in February 2024 and never shipped a replacement; its file-transfer support page now only covers Windows PCs and Chromebooks. The abandoned app still floats around, but it was fragile even in its prime, famous for \"No Android device found\" with the phone plugged in.",
+          "If you specifically want a cable workflow, the open-source OpenMTP app is the community's replacement. For everything else, a browser transfer skips the cable, the drivers, and the mounting problems in one move.",
+        ],
+      },
+      {
+        heading: "Full quality, straight from the phone",
+        body: [
+          "Files arrive exactly as they are on the phone: a 4K video lands frame for frame, RAW photos stay RAW. Nothing is recompressed on the way, which is what happens when you route media through a messaging app instead.",
+          "Sending many files at once? They arrive bundled as a single zip, and macOS unpacks it with a double-click. Keep the phone's screen on for big batches, since Android pauses background browser tabs to save battery.",
+        ],
+      },
+      {
+        heading: "Why not Quick Share, Bluetooth or a cable?",
+        body: [
+          "Quick Share has no macOS app, so that door is closed from the start. Bluetooth file exchange technically works on both platforms but moves at megabytes per minute, and the cable route depends on MTP software that no longer officially exists for the Mac.",
+          "The browser route has none of those dependencies, and it works the same whether the Mac is next to the phone or in another country.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Does this work with Samsung, Pixel and other Android phones?", a: "Yes. Anything with a modern browser like Chrome works: Samsung, Pixel, Xiaomi, OnePlus and the rest. There is no app to install and no account to create." },
+      { q: "What replaced Android File Transfer on Mac?", a: "Officially, nothing: Google discontinued the app in 2024 without a macOS successor. A browser transfer covers the wireless case, and the open-source OpenMTP app covers cable transfers if you prefer USB." },
+      { q: "Where do the files end up on my Mac?", a: "In the Downloads folder, like any browser download. Multiple files arrive as one zip, which macOS extracts with a double-click." },
+      { q: "Do the phone and Mac need to be on the same Wi-Fi?", a: "No. The transfer works over the internet, so the phone can be on mobile data and the Mac on home Wi-Fi. They just need to be online at the same time." },
+      { q: "Is there a file size limit?", a: "No. Files stream directly from the phone to the Mac without being stored on a server, so multi-gigabyte videos are fine. Larger transfers simply take longer." },
+      { q: "Do I need USB debugging or developer mode?", a: "No. This is a normal browser page, not a cable or ADB connection. Nothing on the phone needs to be enabled or configured." },
+    ],
+  },
+  {
+    slug: "transfer-files-from-mac-to-pc",
+    image: "/img/content/seo/mac-to-pc.png",
+    from: "mac",
+    to: "pc",
+    title: "How to Transfer Files from Mac to PC (No Cable or Setup)",
+    description: "There is no official tool for moving files from a Mac to a Windows PC. Stream them directly between the two browsers instead, without formatting a drive or configuring a network share, at any size.",
+    heading: "How to Transfer Files from Mac to PC",
+    headline: { highlightedWord: "Directly", title: "send files from Mac to PC." },
+    subtitle: "Switching from Mac to Windows, or just handing files across the desk? Skip the exFAT drives and SMB shares: pick the files on the Mac, type a 6-digit code on the PC.",
+    howItWorks: [
+      "Mac-to-PC is the direction nobody built a tool for. Apple's Migration Assistant only moves files into a Mac, and Microsoft's transfer tooling is Windows-to-Windows. What's left is the folklore: externally formatted drives, network shares, or uploading everything to a cloud drive just to download it again.",
+      <>A <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link> replaces all of it. Pick the files (or whole folders) on the Mac, and on the PC type the 6-digit code at transfer.zip/quick. The data streams directly between the two browsers, end-to-end encrypted, and never touches a server.</>,
+      "The machines don't need to share a network, a workgroup, or a room. If both are online, the transfer runs, at the speed of the slower connection.",
+    ],
+    steps: [
+      { text: "On the Mac, open this page, click the button above and pick the files or folders to send." },
+      { text: "On the Windows PC, open transfer.zip/quick in any browser and enter the 6-digit code (or scan the QR if it's next to you)." },
+      { text: "The download starts immediately and shows progress on both screens. Keep both machines awake until it completes." },
+    ],
+    tips: [
+      {
+        heading: "Switching from Mac to Windows?",
+        body: [
+          "Move your user files in batches: Desktop, Documents, Pictures, then project folders. Applications need reinstalling on Windows either way, so the actual moving job is files, and a direct transfer handles any volume of them.",
+          "Mind the Apple-format stragglers: Pages, Numbers and Keynote documents should be exported to Word, Excel and PowerPoint on the Mac first. Photos, videos, PDFs and Office files cross over untouched.",
+        ],
+      },
+      {
+        heading: "Why external drives keep biting",
+        body: [
+          "The classic USB-drive route has a format trap: Windows drives usually come as NTFS, which a Mac reads but can't reliably write. Getting a drive both sides fully understand means reformatting to exFAT first, which wipes it.",
+          "A browser transfer has no format at all: files go from disk to disk with nothing in between, and folder structures arrive intact inside a single zip.",
+        ],
+      },
+      {
+        heading: "What about file sharing over the network?",
+        body: [
+          "macOS can share folders to Windows over SMB, and it works, once File Sharing is on, the SMB option is ticked, the accounts are authorized, and both machines are on the same network with discovery behaving. It's a fine setup for permanent home use.",
+          "For a one-off handoff, that's a lot of System Settings for one folder. The code-in-a-browser route needs none of it, and works across different networks too.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Do I need to install anything on the PC or the Mac?", a: "No. Both sides run entirely in the browser: Safari or Chrome on the Mac, any browser on Windows. There is nothing to install or configure." },
+      { q: "Will my Mac files open on Windows?", a: "The common formats all do: photos, videos, music, PDFs and Office documents work identically. Export Pages, Numbers or Keynote files to their Office equivalents before sending." },
+      { q: "Can I send whole folders?", a: "Yes. Use the folder option in the file picker on the Mac, and the folder arrives on the PC as a single zip with its structure intact." },
+      { q: "Is there a size limit for the transfer?", a: "No. Files stream directly between the two machines without server storage, so hundred-gigabyte moves are possible. They just take as long as your connections need." },
+      { q: "Do both computers need to be on the same network?", a: "No. Unlike SMB shares or drive swaps, this works over the internet. Old Mac at the office, new PC at home works fine." },
+      { q: "Is it safe for personal files?", a: "Yes. The transfer is end-to-end encrypted, streams directly between the two browsers, and nothing is stored anywhere. Close the tabs and the code is gone." },
+    ],
+  },
+  {
+    slug: "transfer-files-from-pc-to-mac",
+    image: "/img/content/seo/pc-to-mac.png",
+    from: "pc",
+    to: "mac",
+    title: "How to Transfer Files from PC to Mac Without Migration Assistant",
+    description: "Apple's Migration Assistant is an all-or-nothing move. To get just the files you want from a Windows PC onto a Mac, stream them through the browser with nothing to install and no size limit.",
+    heading: "How to Transfer Files from PC to Mac",
+    headline: { highlightedWord: "Easily", title: "send files from PC to Mac." },
+    subtitle: "Get documents, photos, videos or entire folders from a Windows PC onto a Mac without Migration Assistant's full-move ceremony. Pick files on the PC, type a code on the Mac.",
+    howItWorks: [
+      "Apple does ship a tool for this direction: Windows Migration Assistant. It's built for one scenario, the day you unbox a new Mac, and it moves accounts, mail, bookmarks and files wholesale, with both machines side by side and a pairing code between them. For \"I just need these three folders,\" it's a sledgehammer.",
+      <>With <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link>, you pick exactly what to send on the PC, and the Mac pulls it straight through the browser: type the 6-digit code at transfer.zip/quick and the download starts. Files stream directly between the machines, end-to-end encrypted, with no server in the middle.</>,
+      "It works on any Windows version with a modern browser and any Mac, across different networks, with no size limit. Send one PDF or a hundred gigabytes of photo archive the same way.",
+    ],
+    steps: [
+      { text: "Open this page on the Windows PC, click the button above and select the files or folders for the Mac." },
+      { text: "On the Mac, open transfer.zip/quick in Safari (or any browser) and type the 6-digit code from the PC's screen." },
+      { text: "The files land in the Mac's Downloads folder. Keep both machines online until the progress bar completes." },
+    ],
+    tips: [
+      {
+        heading: "When Migration Assistant is the better tool",
+        body: [
+          "Fair is fair: on a brand-new Mac, if you want your mail accounts, contacts, calendars and browser bookmarks carried over along with the files, Apple's Windows Migration Assistant is built exactly for that one-time move. Install it on the PC, keep both machines close, and follow the pairing code.",
+          "For everything after that day, selective transfers are the job, and that's where the browser route wins: no install, no pairing, just the files you actually want.",
+        ],
+      },
+      {
+        heading: "Where files land, and unzipping",
+        body: [
+          "Downloads arrive in the Mac's Downloads folder. If you sent several files or a folder, they come as one zip: double-click and macOS unpacks it next to the archive, folder structure preserved.",
+          "From there, drag photos into the Photos app, music into Music, and documents wherever they live. Nothing needs converting first.",
+        ],
+      },
+      {
+        heading: "Windows files on a Mac: what works",
+        body: [
+          "Nearly everything you'd actually move: JPG and PNG photos, MP4 videos, MP3s, PDFs and Microsoft Office documents all open natively on macOS, with Office files also opening in Pages, Numbers and Keynote.",
+          "The exception is Windows software: .exe installers don't run on a Mac, so skip the Program Files folder and bring the documents instead.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Do I need an Apple ID or iCloud for this?", a: "No. The transfer runs in the browser on both machines. No Apple ID, Microsoft account or any other sign-in is involved." },
+      { q: "How is this different from Migration Assistant?", a: "Migration Assistant is a one-time, everything-at-once move for setting up a new Mac, and needs its app installed on the PC. A browser transfer is selective: any files, any time, nothing installed." },
+      { q: "Can I move my whole photo library?", a: "Yes. Select the folder on the PC and it streams across with structure intact, whatever the size. Afterwards, import the pictures into the Photos app on the Mac if you want them managed there." },
+      { q: "Do the PC and Mac need to be near each other?", a: "No. The connection works over the internet, so the machines can be on different networks entirely, or different continents." },
+      { q: "Is there a file size limit?", a: "No. The files stream directly between the two computers with nothing stored on a server, so there is no cap. Big moves just take longer, with live progress on both screens." },
+      { q: "Will Windows files open on the Mac?", a: "The everyday formats all do: photos, videos, music, PDFs and Office documents. Windows programs themselves (.exe) don't run on macOS, so move documents rather than installed software." },
     ],
   },
 ]

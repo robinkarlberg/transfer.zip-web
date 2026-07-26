@@ -19,8 +19,17 @@ const detectDeviceKey = () => {
 	if (/iPhone|iPod/.test(ua)) return "iphone"
 	if (/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return "iphone"
 	if (/Android/.test(ua)) return "android"
+	if (/Macintosh/.test(ua)) return "mac"
 	return "pc"
 }
+
+// The pc pages treat "PC" as any computer (Windows, Mac, Linux), so a
+// detected Mac still highlights a pc-keyed button - unless the other side
+// of the pair is an exact "mac" match, which wins.
+const matchesKey = (detected, key, otherKey) =>
+	detected === key || (key === "pc" && detected === "mac" && detected !== otherKey)
+
+const deviceIcon = (key) => (key === "pc" || key === "mac" ? Monitor : Smartphone)
 
 export default function TransferPairWidget({ slug, fromKey, fromName, toKey, toName }) {
 	const [detected, setDetected] = useState(null)
@@ -71,15 +80,15 @@ export default function TransferPairWidget({ slug, fromKey, fromName, toKey, toN
 				<p className="font-semibold text-gray-800 mb-3">Which device are you holding right now?</p>
 				<div className="flex flex-col gap-2">
 					<RoleButton
-						primary={sameDevice || detected === fromKey}
-						icon={fromKey === "pc" ? Monitor : Smartphone}
+						primary={sameDevice || matchesKey(detected, fromKey, toKey)}
+						icon={deviceIcon(fromKey)}
 						label={sameDevice ? `Send from this ${fromName}` : `I'm on the ${fromName}`}
 						sub="Pick files here, get a code for the other device"
 						onClick={() => pickRole("send")}
 					/>
 					<RoleButton
-						primary={!sameDevice && detected === toKey}
-						icon={toKey === "pc" ? Monitor : Smartphone}
+						primary={!sameDevice && matchesKey(detected, toKey, fromKey)}
+						icon={deviceIcon(toKey)}
 						label={sameDevice ? `Receive on this ${toName}` : `I'm on the ${toName}`}
 						sub={`Get a code here, pick the files on the ${fromName}`}
 						onClick={() => pickRole("receive")}

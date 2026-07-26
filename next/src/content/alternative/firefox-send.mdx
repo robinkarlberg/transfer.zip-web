@@ -1,0 +1,143 @@
+---
+title: "Firefox Send Alternatives: What to Use in 2026"
+description: Mozilla shut down Firefox Send in 2020, but its formula of <b>encrypted, expiring, no-account file sharing</b> lives on. These are the best Firefox Send alternatives in 2026.
+imgSrc: /img/content/firefox_send_alternatives.png
+imgAlt: A paper plane carrying an encrypted file
+---
+
+<TLDR>
+Firefox Send was end-to-end encrypted, expiring, and account-free. Mozilla shut it down in **September 2020** after malware gangs abused it.
+
+The closest match today is **Transfer.zip**: end-to-end encrypted, no account, open source, and without Send's 1-2.5 GB size caps.
+</TLDR>
+
+## What happened to Firefox Send?
+
+Firefox Send launched publicly in March 2019 and got the fundamentals right: files were **end-to-end encrypted** in the browser, links **expired** after a time or download count you chose, passwords were optional, and no account was needed for files up to 1 GB (2.5 GB signed in).
+
+The same properties attracted the wrong crowd. Ransomware and phishing operations started distributing payloads through the trusted firefox.com domain, encrypted so scanners couldn't inspect them. Mozilla suspended the service in July 2020 and made the shutdown permanent that September.
+
+The idea outlived the product. Here's what carries it forward in 2026.
+
+---
+
+## 1. Transfer.zip - The same formula, without the size cap
+
+![A screenshot of Transfer.zip homepage.](/img/content/services/transfer-zip.png)
+
+Transfer.zip checks every box Send did: files are **end-to-end encrypted** in the browser (the key travels in the link fragment and never reaches a server), no account is needed, and it's fully [open source](https://github.com/robinkarlberg/transfer.zip-web).
+
+Where it goes past Send: **Quick Transfer** streams files directly between browsers with **no size limit**, since nothing is stored at all. For expiring stored links like Send's, paid plans hold files up to 1 TB for a period you pick, up to 365 days, with a 7-day free trial.
+
+<GoodFor label="Pros:">
+<Pro>End-to-end encrypted, like Send was</Pro>
+<Pro>No account needed for unlimited real-time transfers</Pro>
+<Pro>No 1-2.5 GB cap: no size limit at all</Pro>
+<Pro>Expiring stored links on paid plans (up to 365 days)</Pro>
+<Pro>Open source</Pro>
+</GoodFor>
+<BadFor label="Cons:">
+<Con>Quick Transfer needs both devices online at once</Con>
+<Con>Stored expiring links require a paid plan</Con>
+</BadFor>
+
+<PrimaryLink href="/">Try Transfer.zip</PrimaryLink>
+
+---
+
+## 2. Send (timvisee fork) - Firefox Send, literally continued
+
+When Mozilla pulled the plug, the code survived: the **timvisee/send** fork keeps the original open-source project alive and self-hostable, with a public community instance at send.vis.ee. Same UI, same end-to-end encryption, same expiry-by-downloads-or-time.
+
+The caveats come with community infrastructure: the public instance is run on goodwill, with modest limits and no guarantees, and the same abuse problem that killed the original means instances can be cautious about anonymous use.
+
+<GoodFor label="Pros:">
+<Pro>The actual Firefox Send experience, preserved</Pro>
+<Pro>End-to-end encrypted with download/time expiry</Pro>
+<Pro>Self-hostable if you want full control</Pro>
+</GoodFor>
+<BadFor label="Cons:">
+<Con>Community-run public instance, no SLA</Con>
+<Con>Modest size limits on public instances</Con>
+<Con>Self-hosting is on you: updates, abuse, bandwidth</Con>
+</BadFor>
+
+<ExternalLink href="https://send.vis.ee">Try Send (community instance)</ExternalLink>
+
+---
+
+## 3. SwissTransfer - Free and generous, not end-to-end
+
+SwissTransfer (run by Swiss host Infomaniak) allows **50 GB** per transfer for free with no account, optional passwords, download limits, and expiry up to 30 days. It's the most generous free tier in the category.
+
+The difference from Send's model: files are stored on Infomaniak's servers under Swiss privacy law, encrypted, but not end-to-end. For most files, a fair trade for 50 GB free.
+
+<GoodFor label="Pros:">
+<Pro>50 GB free per transfer</Pro>
+<Pro>Passwords, download limits, and expiry settings included</Pro>
+<Pro>No account, no ads, Swiss data centers</Pro>
+</GoodFor>
+<BadFor label="Cons:">
+<Con>Not end-to-end encrypted</Con>
+<Con>No paid tier to lift limits</Con>
+<Con>Upload/download speeds can be modest</Con>
+</BadFor>
+
+<ExternalLink href="https://swisstransfer.com">Try SwissTransfer</ExternalLink>
+
+---
+
+## 4. Bitwarden Send - For small, sensitive payloads
+
+Bitwarden's Send feature shares text and files end-to-end encrypted with expiry and deletion rules, living inside the password manager many people already run. File sends require a paid plan, and size limits are small: it's built for credentials, keys, and documents rather than big files.
+
+<GoodFor label="Pros:">
+<Pro>End-to-end encrypted with expiry controls</Pro>
+<Pro>Lives in a tool many already use</Pro>
+<Pro>Great for passwords and small sensitive files</Pro>
+</GoodFor>
+<BadFor label="Cons:">
+<Con>File sends need a paid plan</Con>
+<Con>Small size limits, wrong tool for media or archives</Con>
+<Con>Recipients get a Bitwarden-branded page, not yours</Con>
+</BadFor>
+
+<ExternalLink href="https://bitwarden.com/products/send/">Try Bitwarden Send</ExternalLink>
+
+---
+
+## Honorable mention: Thunderbird's revival
+
+Mozilla's sibling project Thunderbird announced its own "Send" as part of the paid Thunderbird Pro bundle, end-to-end encrypted with generous storage. It's tied to the Pro subscription and still rolling out, so it's one to watch rather than the tool to reach for today.
+
+---
+
+## Firefox Send Alternatives at a Glance
+
+| Service | E2E encrypted | Free size limit | Expiring links | Account needed |
+|---------|---------------|-----------------|----------------|----------------|
+| **Transfer.zip** | **Yes** | **None** (real-time) | Yes (paid, up to 365 days) | No |
+| **Send fork (send.vis.ee)** | Yes | Instance-dependent | Yes | No |
+| **SwissTransfer** | No | 50 GB | Yes (up to 30 days) | No |
+| **Bitwarden Send** | Yes | Small (paid feature) | Yes | Yes |
+
+---
+
+### Choosing the Right Firefox Send Alternative
+
+**If you need:**
+
+1. **Send's privacy model without its size caps** → Transfer.zip: E2E, no account, no limit
+2. **Exactly Firefox Send, nostalgia included** → the timvisee Send fork, hosted or self-hosted
+3. **The biggest free stored transfers** → SwissTransfer's 50 GB, if E2E isn't a requirement
+4. **Sharing secrets rather than files** → Bitwarden Send
+
+**Why Transfer.zip stands out:**
+- The only option here that is end-to-end encrypted, account-free, *and* size-unlimited
+- Open source, like Send was, so the encryption claims are auditable
+- Expiring stored links on paid plans replace Send's time and download limits
+- A real company behind it rather than a goodwill instance
+
+---
+
+Want more options? [See our main file transfer alternatives guide](/alternative).
