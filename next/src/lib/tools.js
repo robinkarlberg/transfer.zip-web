@@ -1,6 +1,6 @@
 export const tools = [
   { slug: 'zip-files-online', title: 'Zip Files Online', description: 'Create zip files directly in your browser.' },
-  { slug: 'unzip-files-online', title: 'Unzip Files Online', description: 'Decompress zip archives without uploading.' },
+  { slug: "unzip-files-online", title: "Unzip Files Online", description: "Open ZIP and TAR archives privately in your browser." },
   { slug: 'download-time-calculator', title: 'Download Time Calculator', description: 'Estimate how long a download will take.' },
   { slug: 'convert-heic-to-jpg', title: 'Convert HEIC to JPG', description: 'Turn HEIC photos into JPG format instantly.' },
   // { slug: 'metadata-editor', title: 'File Metadata Editor', description: 'Edit any EXIF tag or audio ID3 metadata.' },

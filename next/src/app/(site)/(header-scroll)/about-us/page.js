@@ -1,35 +1,47 @@
-import Link from "next/link"
-import LandingNav from "@/components/LandingNav"
-import AuthConditional from "../AuthConditional"
-import NoauthLandingHeaderCTAButton from "../NoauthLandingHeaderCTAButton"
+import Link from "next/link";
+import LandingNav from "@/components/LandingNav";
+import AuthConditional from "../AuthConditional";
+import NoauthLandingHeaderCTAButton from "../NoauthLandingHeaderCTAButton";
 
-const milestones = [
-  {
-    year: "July 2023",
-    title: "First version launched",
-    body: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-  },
-  {
-    year: "2024",
-    title: "Incididunt ut labore",
-    body: "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-  },
-  {
-    year: "2025",
-    title: "Magna aliqua veniam",
-    body: "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium totam rem aperiam.",
-  },
-  {
-    year: "2026",
-    title: "Quis nostrud exercitation",
-    body: "Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo nemo enim.",
-  },
-]
+const organizationProfiles = [
+  "https://github.com/robinkarlberg/transfer.zip-web",
+  process.env.NEXT_PUBLIC_FACEBOOK_URL,
+  process.env.NEXT_PUBLIC_INSTAGRAM_URL,
+  process.env.NEXT_PUBLIC_BLUESKY_URL,
+  process.env.NEXT_PUBLIC_TWITTER_URL,
+  process.env.NEXT_PUBLIC_GITHUB_URL,
+].filter(Boolean);
 
 export const metadata = {
-  title: "About Us | Transfer.zip",
-  description: "Our story so far.",
-}
+  title: "About Transfer.zip",
+  description: "Meet the people who maintain Transfer.zip and learn how its open-source file-sharing and browser file tools are built.",
+  openGraph: {
+    title: "About Transfer.zip",
+    description: "Meet the people who maintain Transfer.zip and learn how its open-source file-sharing and browser file tools are built.",
+    url: "https://transfer.zip/about-us",
+    images: ["https://cdn.transfer.zip/og.png"],
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://transfer.zip/#organization",
+      name: "Transfer.zip",
+      url: "https://transfer.zip/",
+      sameAs: organizationProfiles,
+    },
+    {
+      "@type": "Person",
+      "@id": "https://transfer.zip/about-us#robin-karlberg",
+      name: "Robin Karlberg",
+      url: "https://transfer.zip/about-us",
+      sameAs: ["https://github.com/robinkarlberg"],
+    },
+  ],
+};
 
 export default function AboutPage() {
   const authCta = (
@@ -44,68 +56,88 @@ export default function AboutPage() {
         </Link>
       }
     />
-  )
+  );
 
   return (
     <div className="relative">
-      <div className="absolute inset-0 overflow-hidden grain bg-linear-to-b from-primary-700 to-primary-300 -z-10 rounded-b-4xl" />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="absolute inset-x-0 top-0 h-[34rem] overflow-hidden grain bg-linear-to-b from-primary-700 to-primary-300 -z-10 rounded-b-4xl" />
 
       <div className="relative isolate flex flex-col">
         <LandingNav rightSlot={authCta} />
 
-        <div className="mx-auto w-full max-w-7xl px-6 lg:px-8 pb-28 pt-16">
-          <div className="mx-auto max-w-2xl text-center mt-12 sm:mt-16">
+        <main className="mx-auto w-full max-w-7xl px-6 lg:px-8 pb-28 pt-16">
+          <div className="mx-auto max-w-3xl text-center mt-12 sm:mt-16">
             <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl text-shadow-md fade-in-up">
               About Transfer.zip
             </h1>
-            <p className="mt-4 text-lg leading-8 text-white text-shadow-sm fade-in-up-slow">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            <p className="mt-5 text-lg leading-8 text-white text-shadow-sm fade-in-up-slow">
+              Transfer.zip is an open-source file-sharing project led by Robin Karlberg and improved with help from contributors. It includes browser-based file tools, real-time encrypted transfers, and stored file transfers.
             </p>
           </div>
 
-          <div className="relative mx-auto mt-20 sm:mt-28 max-w-5xl fade-in-up-slow">
-            <div
-              aria-hidden
-              className="absolute left-4 top-0 bottom-0 w-px bg-primary-200 sm:left-1/2 sm:-translate-x-1/2"
-            />
+          <div className="mx-auto mt-20 grid max-w-5xl gap-6 md:grid-cols-2 fade-in-up-slow">
+            <section className="rounded-2xl bg-white p-6 sm:p-8 shadow-xl ring-1 ring-gray-200">
+              <p className="text-sm font-semibold text-primary-700">Maintainer</p>
+              <h2 className="mt-2 text-2xl font-bold tracking-tight text-gray-900">Robin Karlberg</h2>
+              <p className="mt-4 leading-7 text-gray-600">
+                Robin leads development of Transfer.zip. His work on the project covers local ZIP processing, encrypted browser file transfers, storage-backed transfers, and the infrastructure that connects them.
+              </p>
+              <div className="mt-6">
+                <Link
+                  href="https://github.com/robinkarlberg"
+                  className="font-semibold text-primary underline underline-offset-4 hover:text-primary-500"
+                >
+                  View Robin&apos;s GitHub profile &rarr;
+                </Link>
+              </div>
+            </section>
 
-            <ul className="space-y-14 sm:space-y-24">
-              {milestones.map((m, i) => {
-                const isLeft = i % 2 === 0
-                return (
-                  <li
-                    key={m.year}
-                    className="relative grid grid-cols-1 sm:grid-cols-2 sm:gap-x-12"
-                  >
-                    <span
-                      aria-hidden
-                      className="absolute left-4 top-6 z-10 h-4 w-4 -translate-x-1/2 rounded-full bg-white shadow-lg sm:left-1/2"
-                    />
-
-                    <div
-                      className={
-                        "pl-12 sm:pl-0 " +
-                        (isLeft ? "sm:pr-10" : "sm:col-start-2 sm:pl-10")
-                      }
-                    >
-                      <div className="rounded-2xl bg-white p-6 sm:p-8 shadow-xl ring-1 ring-gray-200">
-                        <p className="text-sm font-semibold text-primary-700">
-                          {m.year}
-                        </p>
-                        <h3 className="mt-2 text-xl font-bold tracking-tight text-gray-900">
-                          {m.title}
-                        </h3>
-                        <p className="mt-3 text-gray-600">{m.body}</p>
-                      </div>
-                    </div>
-                  </li>
-                )
-              })}
-            </ul>
+            <section className="rounded-2xl bg-white p-6 sm:p-8 shadow-xl ring-1 ring-gray-200">
+              <p className="text-sm font-semibold text-primary-700">Open source</p>
+              <h2 className="mt-2 text-2xl font-bold tracking-tight text-gray-900">Built in public</h2>
+              <p className="mt-4 leading-7 text-gray-600">
+                The Transfer.zip source code and self-hosting documentation are public. Contributors can inspect how files are handled, report problems, suggest improvements, or run the service on their own infrastructure.
+              </p>
+              <div className="mt-6">
+                <Link
+                  href="https://github.com/robinkarlberg/transfer.zip-web"
+                  className="font-semibold text-primary underline underline-offset-4 hover:text-primary-500"
+                >
+                  Explore the source code &rarr;
+                </Link>
+              </div>
+            </section>
           </div>
-        </div>
+
+          <section className="mx-auto mt-10 max-w-5xl rounded-2xl bg-white p-6 sm:p-8 shadow-xl ring-1 ring-gray-200">
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900">How Transfer.zip handles files</h2>
+            <div className="mt-6 grid gap-6 md:grid-cols-3">
+              <div>
+                <h3 className="font-semibold text-gray-900">Browser file tools</h3>
+                <p className="mt-2 leading-7 text-gray-600">
+                  Tools such as the ZIP creator and archive extractor process files locally in the browser. Those files are not uploaded to Transfer.zip.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">Quick Transfers</h3>
+                <p className="mt-2 leading-7 text-gray-600">
+                  Quick Transfers encrypt file data in the browser and stream it through a relay without storing the files on Transfer.zip servers.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">Stored Transfers</h3>
+                <p className="mt-2 leading-7 text-gray-600">
+                  Stored Transfers send files from the browser to configured storage and remove them after the transfer expires.
+                </p>
+              </div>
+            </div>
+          </section>
+        </main>
       </div>
     </div>
-  )
+  );
 }

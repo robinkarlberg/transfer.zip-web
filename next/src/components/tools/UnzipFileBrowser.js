@@ -8,6 +8,7 @@ import { buildNestedStructure } from "@/lib/utils";
 import streamSaver from "@/lib/client/StreamSaver";
 import ToolEmptySpace from "./ToolEmptySpace";
 import FilePreview from "./FilePreview";
+import { readArchiveEntry, writeArchiveEntry } from "@/lib/client/archive";
 
 const MAX_PREVIEW_SIZE = 5 * 1024 * 1024; // 5MB max for preview
 
@@ -48,6 +49,7 @@ const FileBrowserEntry = ({ richFile, isOpen, onClick, onPreview, isSelected }) 
             }}
             className="p-1 hover:bg-gray-200 rounded shrink-0"
             title="Preview"
+            aria-label={`Preview ${richFile.info.name}`}
           >
             <BIcon name={"eye"} className={"text-gray-500"} />
           </button>
@@ -168,11 +170,12 @@ const mapEntriesFromPath = (nestedStructure, openedPaths, toggleDirectoryOpen, o
 };
 
 export default function UnzipFileBrowser() {
-  const { zipFile, richFiles } = useUnzip();
+  const { zipFile, richFiles, password, archiveFormat } = useUnzip();
   const [openedPaths, setOpenedPaths] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewData, setPreviewData] = useState(null);
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+  const [actionError, setActionError] = useState(null);
   const browserRef = useRef(null);
 
   const nestedStructure = useMemo(() =>
@@ -194,20 +197,23 @@ export default function UnzipFileBrowser() {
   }, []);
 
   const handleDownload = useCallback(async (richFile) => {
-    const fileStream = streamSaver.createWriteStream(richFile.info.name);
-    await richFile.entry.getData(fileStream);
-  }, []);
+    setActionError(null);
+    try {
+      const fileStream = streamSaver.createWriteStream(richFile.info.name);
+      await writeArchiveEntry(richFile, fileStream, password);
+    } catch (err) {
+      setActionError(`Could not download ${richFile.info.name}: ${err.message}`);
+    }
+  }, [password]);
 
   const handlePreview = useCallback(async (richFile) => {
     setSelectedFile(richFile);
     setIsLoadingPreview(true);
     setPreviewData(null);
+    setActionError(null);
 
     try {
-      // Use zip.js BlobWriter to get the file data
-      const { BlobWriter } = await import("@zip.js/zip.js");
-      const blobWriter = new BlobWriter(richFile.info.type);
-      const data = await richFile.entry.getData(blobWriter);
+      const data = await readArchiveEntry(richFile, password);
 
       if (richFile.info.type.startsWith('image/')) {
         const url = URL.createObjectURL(data);
@@ -221,12 +227,11 @@ export default function UnzipFileBrowser() {
         setPreviewData({ type: 'text', content: text, mimeType: richFile.info.type });
       }
     } catch (err) {
-      console.error('Preview error:', err);
-      setPreviewData({ type: 'error', message: 'Failed to load preview' });
+      setPreviewData({ type: "error", message: `Could not load preview: ${err.message}` });
     } finally {
       setIsLoadingPreview(false);
     }
-  }, []);
+  }, [password]);
 
   const closePreview = useCallback(() => {
     if (previewData?.url) {
@@ -240,8 +245,8 @@ export default function UnzipFileBrowser() {
     return (
       <div ref={browserRef}>
         <ToolEmptySpace
-          title="Select a ZIP file to get started"
-          subtitle="Browse and preview files from your archive. Click on any file to download it, or use the preview button to view images and text files."
+          title="Select a ZIP or TAR archive to get started"
+          subtitle="Browse and preview files from the archive. Click a file to download it, or use the preview button for supported images and text files."
         />
       </div>
     );
@@ -252,10 +257,19 @@ export default function UnzipFileBrowser() {
       <div className="bg-gray-50 px-4 py-3 border-b flex items-center justify-between">
         <div className="flex items-center gap-2">
           <BIcon name={"file-earmark-zip"} className={"text-primary"} />
-          <span className="font-medium truncate">{zipFile?.name}</span>
+          <span className="font-medium truncate">{zipFile.name}</span>
+          <span className="rounded bg-gray-200 px-2 py-0.5 text-xs font-semibold text-gray-600">
+            {archiveFormat}
+          </span>
         </div>
         <span className="text-sm text-gray-500">{richFiles.length} files</span>
       </div>
+
+      {actionError && (
+        <div role="alert" className="border-b bg-red-50 px-4 py-3 text-sm text-red-700">
+          {actionError}
+        </div>
+      )}
 
       <div className="flex">
         <div className={`${selectedFile ? 'w-1/2 border-r' : 'w-full'} max-h-96 overflow-auto`}>
@@ -271,6 +285,7 @@ export default function UnzipFileBrowser() {
                   onClick={() => handleDownload(selectedFile)}
                   className="p-1 hover:bg-gray-200 rounded"
                   title="Download"
+                  aria-label={`Download ${selectedFile.info.name}`}
                 >
                   <BIcon name={"download"} className={"text-gray-600"} />
                 </button>
@@ -278,6 +293,7 @@ export default function UnzipFileBrowser() {
                   onClick={closePreview}
                   className="p-1 hover:bg-gray-200 rounded"
                   title="Close preview"
+                  aria-label="Close preview"
                 >
                   <BIcon name={"x"} className={"text-gray-600"} />
                 </button>

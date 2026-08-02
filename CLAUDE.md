@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Guidance for Claude Code working in this repo.
+Guidance for Claude Code/Codex working in this repo.
 
 ## Repo layout
 
@@ -18,6 +18,7 @@ The file-storage backend (uploads/zips/S3) lives in a separate repo, `transfer.z
 
 - Don't run commands to (re)start the server - everything is already running.
 - Don't install packages yourself. Give me the command and I'll run it.
+- When building, run with internet access, otherwise it will time out due to Google Fonts not downloading.
 
 ### Tests
 

@@ -10,9 +10,9 @@ export default function UnzipToolClient({ children }) {
     <UnzipProvider>
       <div>
         <ToolLanding
-          title="open your zip file online."
-          highlightedWord="Easily"
-          subtitle="Decompress and view even the largest zip files with this online tool. We can not read your files, as everything is handled locally in your browser."
+          title="open ZIP and TAR archives online."
+          highlightedWord="Privately"
+          subtitle="Extract, browse and preview ZIP or uncompressed TAR archives in your browser. Protected ZIP files open with a local password check, so your files and password stay on your device."
         >
           <UnzipFilePicker />
         </ToolLanding>
