@@ -220,7 +220,10 @@
           )
           const readableStream = ts.readable
   
-          channel.port1.postMessage({ readableStream }, [ readableStream ])
+          // Send the stream with its metadata so a download cannot start before
+          // the worker receives the stream through a separate MessagePort event.
+          response.readableStream = readableStream
+          args[2].push(readableStream)
         }
   
         channel.port1.onmessage = evt => {
@@ -326,4 +329,3 @@
   
     return streamSaver
   })
-  

@@ -154,7 +154,7 @@ export default function QuickShareProgress({ isLoggedIn, isPayingUser }) {
                       :
                       <Transition show={hasConnected || isConnector}>
                         <div className="absolute bg-gray-50 left-0 top-0 w-full max-w-full h-full rounded-lg p-16 border transition data-[closed]:opacity-0">
-                          <Progress autoFinish now={snap ? snap.bytesTransferred : 0} max={snap ? snap.totalBytes : 0} />
+                          <Progress finished={finished} now={snap ? snap.bytesTransferred : 0} max={snap ? snap.totalBytes : 0} />
                         </div>
                       </Transition>
                   }
@@ -194,7 +194,7 @@ export default function QuickShareProgress({ isLoggedIn, isPayingUser }) {
                     <ol className="list-decimal list-inside mb-4 md:mb-2">
                       <li className={stepWaiting ? "" : "text-gray-400"}>{(isConnector && !IS_SELFHOST) ? "Connecting to server..." : quickCode ? "Scan the QR code, copy the link, or enter the code." : "Scan the QR code or send the link to the recipient."} {stepWaiting && spinner}</li>
                       <li className={stepConnecting ? "" : "text-gray-400"}>{peerUnavailable ? "Waiting for the other device to reconnect." : "Wait for your devices to establish a connection."} {stepConnecting && spinner}</li>
-                      <li className={stepTransferring ? "" : "text-gray-400"}>Stand by while the files are being transfered. {stepTransferring && spinner}</li>
+                      <li className={stepTransferring ? "" : "text-gray-400"}>Keep both devices on this page until the transfer finishes. {stepTransferring && spinner}</li>
                       <li className={stepFinished ? "" : "text-gray-400"}>Done!</li>
                     </ol>
                   )}

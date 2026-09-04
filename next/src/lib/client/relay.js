@@ -2,7 +2,7 @@
 // server (signaling-server), session registration and peer pairing, and routes
 // opaque binary packets to RelayChannels. Knows nothing about files or crypto.
 
-import { generateUUID } from "./clientUtils";
+import { generateUUID } from "./clientUtils.js";
 
 const PKT_RELAY = 1;
 
@@ -14,6 +14,9 @@ const KEEPALIVE_INTERVAL = 30_000;
 const RECONNECT_DELAY_MIN = 1_000;
 const RECONNECT_DELAY_MAX = 15_000;
 const PEER_RETRY_DELAY = 1_000;
+const MAX_SOCKET_BUFFERED = 1024 * 1024;
+const BUFFER_POLL_INTERVAL = 10;
+const MAX_PENDING_CHANNEL_BYTES = 1024 * 1024;
 
 const textEnc = new TextEncoder();
 const textDec = new TextDecoder();
@@ -62,15 +65,51 @@ export class SessionTakenError extends Error {
  * (caller side) or RelayClient.onpeerconnect (listener side).
  */
 export class RelayChannel {
-	onmessage = undefined; // (payload: Uint8Array)
 	onclosed = undefined;  // (err: Error)
 
 	closed = false;
+	#onmessage;
+	#pendingMessages = [];
+	#pendingBytes = 0;
 
+	/** @param {RelayClient} client */
 	constructor(client, sessionId, peerId) {
 		this.client = client;
 		this.sessionId = sessionId;
 		this.peerId = peerId;
+	}
+
+	get onmessage() {
+		return this.#onmessage;
+	}
+
+	set onmessage(handler) {
+		this.#onmessage = handler;
+		while (this.#onmessage && this.#pendingMessages.length) {
+			const data = this.#pendingMessages.shift();
+			this.#pendingBytes -= data.byteLength;
+			this.#onmessage(data);
+		}
+	}
+
+	/** @param {Uint8Array} payload */
+	_receive(payload) {
+		if (this.closed) return;
+		if (this.#onmessage) return this.#onmessage(payload);
+		// Key derivation can outlast the peer's first encrypted message on mobile.
+		this.#pendingBytes += payload.byteLength;
+		if (this.#pendingBytes > MAX_PENDING_CHANNEL_BYTES) {
+			return this._fail(new RelayConnectionError("The other device sent data before the connection was ready."));
+		}
+		this.#pendingMessages.push(payload);
+	}
+
+	/** @param {() => boolean} shouldContinue */
+	async waitForDrain(shouldContinue) {
+		while (!this.closed && shouldContinue() && this.client.bufferedAmount > MAX_SOCKET_BUFFERED) {
+			await new Promise(resolve => setTimeout(resolve, BUFFER_POLL_INTERVAL));
+		}
+		if (this.closed) throw new PeerDisconnectedError();
 	}
 
 	/** @param {Uint8Array} payload */
@@ -81,13 +120,14 @@ export class RelayChannel {
 
 	close() {
 		this.closed = true;
+		this.#pendingMessages = [];
+		this.#pendingBytes = 0;
 		this.client._removeChannel(this);
 	}
 
 	_fail(err) {
 		if (this.closed) return;
-		this.closed = true;
-		this.client._removeChannel(this);
+		this.close();
 		this.onclosed && this.onclosed(err);
 	}
 }
@@ -107,6 +147,15 @@ export class RelayClient {
 	#keepaliveId = null;
 	#reconnectTimer = null;
 	#reconnectDelay = RECONNECT_DELAY_MIN;
+	#url;
+
+	constructor(url = WS_URL) {
+		this.#url = url;
+	}
+
+	get bufferedAmount() {
+		return this.#ws ? this.#ws.bufferedAmount : 0;
+	}
 
 	/** Opens the WebSocket. Throws RelayConnectionError if the first dial fails. */
 	async open() {
@@ -182,7 +231,7 @@ export class RelayClient {
 	#dial() {
 		return new Promise((resolve, reject) => {
 			let settled = false;
-			const ws = new WebSocket(WS_URL);
+			const ws = new WebSocket(this.#url);
 			ws.binaryType = "arraybuffer";
 			this.#ws = ws;
 
@@ -283,7 +332,7 @@ export class RelayClient {
 			const senderId = textDec.decode(packet.subarray(1 + SESSION_ID_LENGTH, HEADER_LENGTH));
 			const channel = this.#channels.get(targetId + ":" + senderId);
 			if (!channel) return console.warn("[relay] Packet for unknown channel:", targetId, senderId);
-			channel.onmessage && channel.onmessage(packet.subarray(HEADER_LENGTH));
+			channel._receive(packet.subarray(HEADER_LENGTH));
 			return;
 		}
 

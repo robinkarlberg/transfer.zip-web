@@ -7,6 +7,7 @@ import {
   importTransferKey,
   PeerBusyError,
   TransferCanceledError,
+  TransferTimeoutError,
   ProtocolError,
 } from "@/lib/client/filetransfer";
 
@@ -54,13 +55,13 @@ const setupPair = async (files, opts) => {
   const receiverKey = await importTransferKey(k);
   const [senderChannel, receiverChannel] = createChannelPair();
   const sender = new FileSender(senderChannel, key, files, opts);
-  const receiver = new FileReceiver(receiverChannel, receiverKey);
+  const receiver = new FileReceiver(receiverChannel, receiverKey, opts);
   return { sender, receiver, senderChannel, receiverChannel };
 };
 
 describe("quick transfer protocol", () => {
   it("lists and transfers files end-to-end, including empty files", async () => {
-    const bigBytes = patternBytes(1_200_000); // > 2 chunks at the default 512KB
+    const bigBytes = patternBytes(1_200_000);
     const files = [
       new File([bigBytes], "big.bin", { type: "application/octet-stream" }),
       new File(["hello world"], "hello.txt", { type: "text/plain" }),
@@ -102,9 +103,12 @@ describe("quick transfer protocol", () => {
     expect(lastProgress).toEqual({ fileIndex: 1, receivedBytes: 11, totalBytes: 11 });
   });
 
-  it("keeps at most the send window in flight while the receiver stalls", async () => {
+  it.each([
+    { chunkSize: 4096, window: 16384 },
+    { chunkSize: 3000, window: 4000 },
+    { chunkSize: 32768, window: 4096 },
+  ])("bounds bytes in flight with chunkSize=$chunkSize and window=$window", async opts => {
     const size = 64 * 1024;
-    const opts = { chunkSize: 4096, window: 16384 };
     const files = [new File([patternBytes(size)], "windowed.bin")];
     const { sender, receiver } = await setupPair(files, opts);
 
@@ -209,5 +213,97 @@ describe("quick transfer protocol", () => {
     channel.onclosed(new Error("The other device disconnected."));
 
     await expect(ready).rejects.toThrow("The other device disconnected.");
+  });
+
+  it("times out a stalled save after partial progress on both devices", async () => {
+    const files = [new File([patternBytes(3 * 1024 * 1024)], "photo.bin")];
+    const { sender, receiver } = await setupPair(files, { chunkSize: 512 * 1024, idleTimeout: 200 });
+    let receiverBytes = 0;
+    let writes = 0;
+    let release;
+    const gate = new Promise(resolve => { release = resolve; });
+    const senderFailure = new Promise(resolve => { sender.onerror = resolve; });
+    receiver.onprogress = ({ receivedBytes }) => { receiverBytes = receivedBytes; };
+    const download = receiver.downloadFile(0, async () => {
+      if (++writes > 2) await gate;
+    });
+
+    try {
+      await expect(download).rejects.toBeInstanceOf(TransferTimeoutError);
+      expect(await senderFailure).toBeInstanceOf(TransferTimeoutError);
+      expect(receiverBytes).toBe(1024 * 1024);
+    } finally {
+      release();
+      sender.dispose();
+      receiver.dispose();
+    }
+  });
+
+  it("times out an unanswered file list request", async () => {
+    const { key } = await generateTransferKey();
+    const [channel] = createChannelPair();
+    const receiver = new FileReceiver(channel, key, { idleTimeout: 30 });
+    await expect(receiver.listFiles()).rejects.toBeInstanceOf(TransferTimeoutError);
+  });
+
+  it("allows slow writes as long as the transfer continues making progress", async () => {
+    const files = [new File([patternBytes(32 * 1024)], "slow.bin")];
+    const { sender, receiver } = await setupPair(files, { chunkSize: 4096, idleTimeout: 150 });
+    let received = 0;
+    await receiver.downloadFile(0, async chunk => {
+      await sleep(40);
+      received += chunk.byteLength;
+    });
+    expect(received).toBe(files[0].size);
+    sender.dispose();
+    receiver.dispose();
+  });
+
+  it("rejects the download when sending the final acknowledgement fails", async () => {
+    const { sender, receiver, receiverChannel } = await setupPair([new File([], "empty.txt")]);
+    const send = receiverChannel.send;
+    let requests = 0;
+    receiverChannel.send = packet => {
+      if (++requests === 2) throw new Error("Connection lost during final acknowledgement");
+      send(packet);
+    };
+    try {
+      await expect(receiver.downloadFile(0, () => {})).rejects.toThrow("Connection lost during final acknowledgement");
+    } finally {
+      sender.dispose();
+      receiver.dispose();
+    }
+  });
+
+  it("rejects pending work when the receiver is disposed", async () => {
+    const { key } = await generateTransferKey();
+    const [channel] = createChannelPair();
+    const receiver = new FileReceiver(channel, key);
+    const ready = receiver.waitForSender();
+    const files = receiver.listFiles();
+    receiver.dispose();
+    await expect(ready).rejects.toBeInstanceOf(TransferCanceledError);
+    await expect(files).rejects.toBeInstanceOf(TransferCanceledError);
+  });
+
+  it("waits for the local socket to drain before reading more file data", async () => {
+    const files = [new File([patternBytes(256 * 1024)], "buffered.bin")];
+    const { sender, receiver, senderChannel } = await setupPair(files);
+    let release;
+    const gate = new Promise(resolve => { release = resolve; });
+    let waiting = false;
+    senderChannel.waitForDrain = async () => {
+      waiting = true;
+      await gate;
+    };
+    let receivedBytes = 0;
+    const download = receiver.downloadFile(0, chunk => { receivedBytes += chunk.byteLength; });
+    await waitFor(() => waiting);
+    expect(receivedBytes).toBe(0);
+    release();
+    await download;
+    expect(receivedBytes).toBe(files[0].size);
+    sender.dispose();
+    receiver.dispose();
   });
 });

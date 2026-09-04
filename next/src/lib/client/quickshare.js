@@ -14,6 +14,7 @@ import { generateUUID } from "./clientUtils";
 import { RelayClient, PeerDisconnectedError, PeerNotFoundError, SessionTakenError } from "./relay";
 import { listenerKeyExchange, connectorKeyExchange } from "./keyexchange";
 import { generateQuickCode, codeToSessionId, CODE_SESSION_PREFIX } from "./quickcode";
+import { TransferWakeLock } from "./TransferWakeLock";
 import {
 	FileSender,
 	FileReceiver,
@@ -68,6 +69,7 @@ export class QuickShareSession {
 	#emitTimer = null;
 	#lastEmit = 0;
 	#snapshot;
+	#wakeLock = new TransferWakeLock();
 
 	constructor({ files, k, remoteSessionId, transferDirection, code }) {
 		this.#mode = transferDirection ? (transferDirection === "S" ? "send" : "receive") : null;
@@ -179,6 +181,7 @@ export class QuickShareSession {
 
 	stop() {
 		this.#stopped = true;
+		this.#wakeLock.stop();
 		clearTimeout(this.#emitTimer);
 		clearInterval(this.#codeRotateTimer);
 		this.#sender && this.#sender.dispose();
@@ -438,11 +441,16 @@ export class QuickShareSession {
 			error: err,
 			expired: err instanceof PeerNotFoundError,
 		});
+		this.stop();
 	}
 
 	/** Structural changes emit immediately; byte counters go through #noteProgress. */
 	#update(patch) {
 		Object.assign(this.#snapshot, patch);
+		if (this.#snapshot.status === QuickShareStatus.TRANSFERRING) this.#wakeLock.start();
+		if (this.#snapshot.status === QuickShareStatus.FINISHED || this.#snapshot.status === QuickShareStatus.FAILED) {
+			this.#wakeLock.stop();
+		}
 		this.#emit();
 	}
 

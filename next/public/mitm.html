@@ -107,11 +107,6 @@ function onMessage (event) {
   }
 
   /** @since v2.0.0 */
-  if (data.readableStream) {
-    console.warn("[StreamSaver] You should send the readableStream in the messageChannel, not throught mitm")
-  }
-
-  /** @since v2.0.0 */
   if (!data.pathname) {
     console.warn("[StreamSaver] Please send `data.pathname` (eg: /pictures/summer.jpg)")
     data.pathname = Math.random().toString().slice(-6) + '/' + data.filename

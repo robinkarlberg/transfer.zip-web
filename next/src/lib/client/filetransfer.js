@@ -7,8 +7,9 @@
 // they are written to its output stream, and the sender keeps at most SEND_WINDOW
 // unacked bytes in flight. Acks double as transfer progress for the sender's UI.
 
-export const CHUNK_SIZE = 512 * 1024;
+export const CHUNK_SIZE = 128 * 1024;
 export const SEND_WINDOW = 16 * 1024 * 1024;
+const TRANSFER_IDLE_TIMEOUT = 90_000;
 
 const FRAME_FILE_LIST = 0;
 const FRAME_NEW_FILE = 1;
@@ -19,6 +20,9 @@ const IV_LENGTH = 12;
 
 const textEnc = new TextEncoder();
 const textDec = new TextDecoder();
+
+/** @typedef {{ idleTimeout?: number }} FileReceiverOptions */
+/** @typedef {FileReceiverOptions & { chunkSize?: number, window?: number, announce?: boolean }} FileSenderOptions */
 
 export class PeerBusyError extends Error {
 	constructor() {
@@ -31,6 +35,13 @@ export class TransferCanceledError extends Error {
 	constructor() {
 		super("The transfer was canceled.");
 		this.name = "TransferCanceledError";
+	}
+}
+
+export class TransferTimeoutError extends Error {
+	constructor() {
+		super("The transfer stopped responding. Keep both devices awake, check the connection, and try again.");
+		this.name = "TransferTimeoutError";
 	}
 }
 
@@ -127,12 +138,14 @@ export class FileSender {
 	#ackedBytes = 0;
 	#failed = false;
 	#windowWaiters = [];
+	#idleTimer = null;
 
+	/** @param {FileSenderOptions} opts */
 	constructor(channel, key, files, opts = {}) {
 		this.#channel = channel;
 		this.#key = key;
 		this.#files = files;
-		this.#opts = { chunkSize: CHUNK_SIZE, window: SEND_WINDOW, ...opts };
+		this.#opts = { chunkSize: CHUNK_SIZE, window: SEND_WINDOW, idleTimeout: TRANSFER_IDLE_TIMEOUT, ...opts };
 		pumpMessages(channel, data => this.#handlePacket(data), err => this.#fail(err));
 		channel.onclosed = err => this.#fail(err);
 		if (this.#opts.announce) {
@@ -148,6 +161,7 @@ export class FileSender {
 
 	dispose() {
 		this.#failed = true;
+		clearTimeout(this.#idleTimer);
 		this.#wakeWindowWaiters();
 		this.#channel.onmessage = undefined;
 		this.#channel.onclosed = undefined;
@@ -175,8 +189,10 @@ export class FileSender {
 		}
 	}
 
-	async #send(frameType, body) {
-		this.#channel.send(await encryptFrame(this.#key, frameType, body));
+	async #send(frameType, body, transferId) {
+		const packet = await encryptFrame(this.#key, frameType, body);
+		if (transferId !== undefined && !this.#isCurrent(transferId)) return;
+		this.#channel.send(packet);
 	}
 
 	#startDownload(fileIndex) {
@@ -187,22 +203,32 @@ export class FileSender {
 		this.#transferId += 1;
 		this.#sentBytes = 0;
 		this.#ackedBytes = 0;
+		this.#resetTimeout();
 		// Runs detached - the pump must keep draining acks while we send.
-		this.#sendFile(fileIndex, file, this.#transferId).catch(err => this.#fail(err));
+		const transferId = this.#transferId;
+		this.#sendFile(fileIndex, file, transferId).catch(err => {
+			if (this.#isCurrent(transferId)) this.#fail(err);
+		});
 	}
 
 	async #sendFile(fileIndex, file, transferId) {
 		const fileInfo = { fileIndex, transferId, ...toFileInfo(file) };
 		this.ondownloadstart && this.ondownloadstart(fileIndex, fileInfo);
-		await this.#send(FRAME_NEW_FILE, encodeJson(fileInfo));
+		await this.#send(FRAME_NEW_FILE, encodeJson(fileInfo), transferId);
 
 		let offset = 0;
 		while (offset < file.size && this.#isCurrent(transferId)) {
 			await this.#waitForWindow(transferId);
 			if (!this.#isCurrent(transferId)) return;
-			const chunk = new Uint8Array(await file.slice(offset, offset + this.#opts.chunkSize).arrayBuffer());
+			// Relay channels expose local socket backpressure as well as peer acks.
+			if (this.#channel.waitForDrain) await this.#channel.waitForDrain(() => this.#isCurrent(transferId));
 			if (!this.#isCurrent(transferId)) return;
-			await this.#send(FRAME_FILE_DATA, chunk);
+			const available = this.#opts.window - (this.#sentBytes - this.#ackedBytes);
+			const size = Math.min(this.#opts.chunkSize, available, file.size - offset);
+			const chunk = new Uint8Array(await file.slice(offset, offset + size).arrayBuffer());
+			if (!this.#isCurrent(transferId)) return;
+			await this.#send(FRAME_FILE_DATA, chunk, transferId);
+			if (!this.#isCurrent(transferId)) return;
 			offset += chunk.byteLength;
 			this.#sentBytes = offset;
 			this.#emitProgress(fileIndex, file);
@@ -213,10 +239,12 @@ export class FileSender {
 	#handleAck({ transferId, bytesWritten, done }) {
 		if (transferId !== this.#transferId || this.#fileIndex === -1) return;
 		const fileIndex = this.#fileIndex;
+		if (bytesWritten > this.#ackedBytes) this.#resetTimeout();
 		this.#ackedBytes = bytesWritten;
 		this.#wakeWindowWaiters();
 		this.#emitProgress(fileIndex, this.#files[fileIndex]);
 		if (done) {
+			clearTimeout(this.#idleTimer);
 			this.#fileIndex = -1;
 			this.onfilecomplete && this.onfilecomplete(fileIndex);
 		}
@@ -224,6 +252,7 @@ export class FileSender {
 
 	#cancelActive() {
 		if (this.#fileIndex === -1) return;
+		clearTimeout(this.#idleTimer);
 		this.#fileIndex = -1;
 		this.#transferId += 1;
 		this.#wakeWindowWaiters();
@@ -240,7 +269,7 @@ export class FileSender {
 	}
 
 	#isCurrent(transferId) {
-		return this.#transferId === transferId && !this.#failed;
+		return this.#transferId === transferId && this.#fileIndex !== -1 && !this.#failed;
 	}
 
 	async #waitForWindow(transferId) {
@@ -255,9 +284,15 @@ export class FileSender {
 		for (const resolve of waiters) resolve();
 	}
 
+	#resetTimeout() {
+		clearTimeout(this.#idleTimer);
+		this.#idleTimer = setTimeout(() => this.#fail(new TransferTimeoutError()), this.#opts.idleTimeout);
+	}
+
 	#fail(err) {
 		if (this.#failed) return;
 		this.#failed = true;
+		clearTimeout(this.#idleTimer);
 		this.#wakeWindowWaiters();
 		this.onerror && this.onerror(err);
 	}
@@ -279,16 +314,22 @@ export class FileReceiver {
 	#senderReady = false;
 	#download = null;     // { fileIndex, write, resolve, reject, fileInfo, receivedBytes }
 	#failed = false;
+	#idleTimeout;
+	#idleTimer = null;
 
-	constructor(channel, key) {
+	/** @param {FileReceiverOptions} options */
+	constructor(channel, key, options = {}) {
 		this.#channel = channel;
 		this.#key = key;
+		this.#idleTimeout = options.idleTimeout ?? TRANSFER_IDLE_TIMEOUT;
 		pumpMessages(channel, data => this.#handlePacket(data), err => this.#fail(err));
 		channel.onclosed = err => this.#fail(err);
 	}
 
 	dispose() {
 		this.#failed = true;
+		clearTimeout(this.#idleTimer);
+		this.#rejectInFlight(new TransferCanceledError());
 		this.#channel.onmessage = undefined;
 		this.#channel.onclosed = undefined;
 	}
@@ -311,6 +352,7 @@ export class FileReceiver {
 		// before a dying channel can reject it.
 		return new Promise((resolve, reject) => {
 			this.#pendingList = { resolve, reject };
+			this.#resetTimeout();
 			this.#sendControl({ action: "list" }).catch(err => {
 				this.#fail(err);
 				reject(err);
@@ -326,6 +368,7 @@ export class FileReceiver {
 		if (this.#download) throw new Error("A download is already in progress");
 		return new Promise((resolve, reject) => {
 			this.#download = { fileIndex, write, resolve, reject, fileInfo: null, receivedBytes: 0 };
+			this.#resetTimeout();
 			this.#sendControl({ action: "download", fileIndex }).catch(err => {
 				this.#fail(err);
 				reject(err);
@@ -335,6 +378,7 @@ export class FileReceiver {
 
 	/** Cancels the active download (e.g. the user aborted the save stream). */
 	async cancel() {
+		clearTimeout(this.#idleTimer);
 		const download = this.#download;
 		this.#download = null;
 		download && download.reject(new TransferCanceledError());
@@ -357,6 +401,7 @@ export class FileReceiver {
 			const pending = this.#pendingList;
 			this.#pendingList = null;
 			if (!pending) return console.warn("[FileReceiver] Unsolicited file list");
+			clearTimeout(this.#idleTimer);
 			pending.resolve(decodeJson(body));
 		} else if (frameType === FRAME_NEW_FILE) {
 			const fileInfo = decodeJson(body);
@@ -365,6 +410,7 @@ export class FileReceiver {
 				return console.warn("[FileReceiver] Unexpected file announcement:", fileInfo);
 			}
 			download.fileInfo = fileInfo;
+			this.#resetTimeout();
 			if (fileInfo.size === 0) await this.#finishDownload(download);
 		} else if (frameType === FRAME_FILE_DATA) {
 			const download = this.#download;
@@ -374,6 +420,7 @@ export class FileReceiver {
 			// The download may have been canceled while the write was pending.
 			if (this.#download !== download) return;
 			download.receivedBytes += body.byteLength;
+			this.#resetTimeout();
 			this.onprogress && this.onprogress({
 				fileIndex: download.fileIndex,
 				receivedBytes: download.receivedBytes,
@@ -412,12 +459,15 @@ export class FileReceiver {
 	}
 
 	async #finishDownload(download) {
-		this.#download = null;
 		await this.#sendAck(download, true);
+		if (this.#download !== download) return;
+		this.#download = null;
+		clearTimeout(this.#idleTimer);
 		download.resolve(download.fileInfo);
 	}
 
 	#rejectInFlight(err) {
+		clearTimeout(this.#idleTimer);
 		if (this.#pendingList) {
 			this.#pendingList.reject(err);
 			this.#pendingList = null;
@@ -430,6 +480,11 @@ export class FileReceiver {
 			this.#download.reject(err);
 			this.#download = null;
 		}
+	}
+
+	#resetTimeout() {
+		clearTimeout(this.#idleTimer);
+		this.#idleTimer = setTimeout(() => this.#fail(new TransferTimeoutError()), this.#idleTimeout);
 	}
 
 	#fail(err) {
