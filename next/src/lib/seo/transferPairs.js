@@ -22,10 +22,10 @@ export const TRANSFER_PAIRS = [
     description: "Send photos, videos and documents from your iPhone to any Windows PC in seconds. Type a 6-digit code in the browser and the transfer starts, no iTunes or cable needed.",
     heading: "How to Transfer Files from iPhone to PC",
     headline: { highlightedWord: "Instantly", title: "send files from iPhone to PC." },
-    subtitle: "Move photos, videos and documents from your iPhone to any computer without iTunes or a cable. Pick your files, then type a 6-digit code on the PC.",
+    subtitle: "Move photos, videos and documents from your iPhone to your computer. Open a browser on both devices to get started.",
     howItWorks: [
       "Getting files off an iPhone usually means a Lightning cable and iTunes, emailing yourself attachments, or waiting for iCloud to sync. This works differently: your iPhone and your PC connect directly through the browser, and the files stream between them in real time.",
-      <>It's the same <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link> feature you can use from the homepage: your files never touch a cloud drive or a server, and there is no file size limit. A 4&nbsp;GB holiday video works just as well as a single photo.</>,
+      <>It's the same <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link> feature you can use from the homepage: your files are never stored on a cloud drive or server, and there is no file size limit. A 4&nbsp;GB holiday video works just as well as a single photo.</>,
       "Because the transfer runs in the browser, it works with Safari on the iPhone and any browser on the PC, whether that's Windows 10, Windows 11 or Linux. Both devices just need to be online at the same time.",
     ],
     steps: [
@@ -74,7 +74,7 @@ export const TRANSFER_PAIRS = [
     description: "Send files from a Windows PC to your iPhone wirelessly, without iTunes or a cable. Scan a QR code or type a short code and the download starts.",
     heading: "How to Transfer Files from PC to iPhone",
     headline: { highlightedWord: "Wirelessly", title: "send files from PC to iPhone." },
-    subtitle: "Get documents, music, videos or any other file from your computer onto your iPhone without iTunes, iCloud or a Lightning cable. Scan a QR code and the download starts.",
+    subtitle: "Send files from your computer straight to your iPhone. Use your browser, without setting up iTunes or iCloud.",
     howItWorks: [
       "Apple makes it easy to move files between Apple devices, and surprisingly hard to get a file from a Windows PC onto an iPhone. iTunes file sharing only works app by app, and iCloud means uploading to Apple's servers first and waiting for a sync.",
       <>With <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link>, your PC and iPhone talk to each other directly through the browser. You pick the files on the PC, and your iPhone either scans a QR code with the camera or types a 6-digit code, whichever is faster.</>,
@@ -104,7 +104,7 @@ export const TRANSFER_PAIRS = [
         heading: "Skip the cloud detour",
         body: [
           "The classic workarounds all have a catch: iTunes needs to be installed and trusted, iCloud and Google Drive upload your file to a data center just to download it again three meters away, and email caps attachments at 25 MB.",
-          "A direct transfer has none of those steps. The file streams from your PC to the iPhone and exists nowhere in between.",
+          "A direct transfer has none of those steps. The file streams from your PC to the iPhone through an encrypted connection, without server storage.",
         ],
       },
     ],
@@ -125,7 +125,7 @@ export const TRANSFER_PAIRS = [
     description: "Move files between two computers with your browser. Type a 6-digit code on the other PC and the files transfer directly, no USB stick or cloud upload involved.",
     heading: "How to Transfer Files from PC to PC",
     headline: { highlightedWord: "Easily", title: "transfer files from PC to PC." },
-    subtitle: "Moving to a new computer or sending a folder to a colleague? Transfer directly between two browsers instead of digging out a USB stick or uploading to a cloud drive.",
+    subtitle: "Move documents, photos or whole folders between computers. All you need is a browser and an internet connection on each.",
     howItWorks: [
       "The usual options for PC-to-PC transfers all have friction: USB drives are slow and never have enough space, network shares need both machines configured just right, and cloud drives mean uploading everything first and downloading it again.",
       <>A <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link> connects the two browsers directly. One PC picks the files and shows a 6-digit code; the other types the code at transfer.zip/quick. The data streams between them immediately, encrypted from end to end and never stored anywhere.</>,
@@ -177,7 +177,7 @@ export const TRANSFER_PAIRS = [
     description: "Send photos, videos and files from any Android phone to your computer wirelessly. All it takes is a code typed into the browser, no cable or drivers involved.",
     heading: "How to Transfer Files from Android to PC",
     headline: { highlightedWord: "Instantly", title: "send files from Android to PC." },
-    subtitle: "Skip the USB cable and the missing-driver dance. Pick files on your Android phone, type a 6-digit code on the PC, and the transfer starts immediately.",
+    subtitle: "Move photos, videos and documents from your Android phone to your computer. Use your browser instead of a USB cable.",
     howItWorks: [
       "Plugging an Android phone into a PC is a coin flip: sometimes the file transfer mode appears, sometimes Windows pretends the phone doesn't exist. Google's Quick Share for Windows works, but only after installing an app and signing in on both ends.",
       <>The browser route needs none of that. Open <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link> on the phone, pick your files in Chrome (or any browser), and type the code on the PC. The two devices connect directly and stream the files between them.</>,
@@ -216,7 +216,7 @@ export const TRANSFER_PAIRS = [
       { q: "Do I need USB debugging or developer mode?", a: "No. This is a normal browser page, not a cable or ADB connection. Nothing on the phone needs to be enabled or configured." },
       { q: "Where do my files land on the PC?", a: "In the browser's download folder, usually Downloads. Several files sent together arrive as one zip archive." },
       { q: "Does the phone need to be on Wi-Fi?", a: "No. Mobile data works too. The phone and PC don't need to share a network, they each just need an internet connection." },
-      { q: "Is there a limit on file size or number of files?", a: "No fixed limits. The files stream directly from phone to PC without a server in the middle, so even very large videos transfer fine." },
+      { q: "Is there a limit on file size or number of files?", a: "No fixed limits. The files stream from phone to PC without being stored on a server, so even very large videos transfer fine." },
     ],
   },
   {
@@ -228,7 +228,7 @@ export const TRANSFER_PAIRS = [
     description: "Transfer files from your computer to any Android phone over the internet, no cable or app needed. Scan a QR code or type a short code and the download starts.",
     heading: "How to Transfer Files from PC to Android",
     headline: { highlightedWord: "Wirelessly", title: "send files from PC to Android." },
-    subtitle: "Move documents, videos, music or any other files from your computer to an Android phone without a cable or yet another app. Beats emailing yourself attachments.",
+    subtitle: "Send files from your computer to your Android phone. Connect the two browsers with a code or a quick scan.",
     howItWorks: [
       "Getting files onto an Android phone usually means digging out a USB cable or uploading to Google Drive just to download them again on the phone. Both work; both are slower than they should be.",
       <>With <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link>, you pick the files on the PC and the phone connects to them directly: scan the QR code with the camera, or type the 6-digit code into the browser. The download starts on the spot.</>,
@@ -278,7 +278,7 @@ export const TRANSFER_PAIRS = [
     description: "AirDrop doesn't work with Android, but this does. Send photos, videos and files from iPhone to any Android phone through the browser, free and without an app.",
     heading: "How to Transfer Files from iPhone to Android",
     headline: { highlightedWord: "Easily", title: "send files from iPhone to Android." },
-    subtitle: "AirDrop stops at the Apple garden fence. Send photos, videos and any other files from an iPhone to an Android phone directly in the browser, with no app on either side.",
+    subtitle: "Share original photos, videos and documents from iPhone to Android. Open a browser on each phone to get started.",
     howItWorks: [
       "Moving files between an iPhone and an Android phone is the classic cross-platform headache: AirDrop is Apple-only, Quick Share is Android-only, and messaging apps crush photo and video quality on the way through.",
       <>A <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link> sidesteps the platform war because it runs in the browser both phones already have. One phone picks the files and shows a code, and the other phone types it in. That's the whole process.</>,
@@ -329,7 +329,7 @@ export const TRANSFER_PAIRS = [
     description: "Quick Share can't reach an iPhone, and Move to iOS only runs during setup. Send photos, videos and files from any Android phone to an iPhone through the browser instead.",
     heading: "How to Transfer Files from Android to iPhone",
     headline: { highlightedWord: "Directly", title: "send files from Android to iPhone." },
-    subtitle: "Quick Share won't talk to iPhones, and messaging apps wreck your video quality. Pick the files on the Android phone, type a 6-digit code on the iPhone, and they stream straight across.",
+    subtitle: "Send photos, videos and documents from Android to iPhone. Both phones just need a browser and an internet connection.",
     howItWorks: [
       "Android and iPhone each have a perfectly good sharing feature that refuses to talk to the other side: Quick Share stays on Android, AirDrop stays on Apple. The browser is the neutral ground both phones already have, so that's where this transfer runs.",
       <>Open <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link> on the Android phone and pick your files; a 6-digit code appears. Type that code into transfer.zip/quick in Safari on the iPhone and the files stream across encrypted, directly from phone to phone.</>,
@@ -381,7 +381,7 @@ export const TRANSFER_PAIRS = [
     description: "Google discontinued the Android File Transfer app for Mac. Send photos, videos and files from any Android phone to a Mac through the browser instead, without a cable or an app, at any size.",
     heading: "How to Transfer Files from Android to Mac",
     headline: { highlightedWord: "Instantly", title: "send files from Android to Mac." },
-    subtitle: "Android File Transfer is discontinued and AirDrop won't talk to Android. Pick your files on the phone, type a 6-digit code on the Mac, and the transfer starts.",
+    subtitle: "Move photos, videos and files from Android to your Mac. Transfer in your browser, without a cable or Android File Transfer.",
     howItWorks: [
       "Android and Mac is the pairing both companies forgot. AirDrop is Apple-only, Google's Quick Share app exists for Windows but not macOS, and the one official tool for the job, the Android File Transfer app, was quietly discontinued in early 2024. Its old download page now points to a Windows-only app.",
       <>The browser fills the gap. Open <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link> on the Android phone, pick your files, and type the 6-digit code on the Mac. The two devices connect directly and the files stream between them, end-to-end encrypted, with nothing stored on any server.</>,
@@ -433,10 +433,10 @@ export const TRANSFER_PAIRS = [
     description: "There is no official tool for moving files from a Mac to a Windows PC. Stream them directly between the two browsers instead, without formatting a drive or configuring a network share, at any size.",
     heading: "How to Transfer Files from Mac to PC",
     headline: { highlightedWord: "Directly", title: "send files from Mac to PC." },
-    subtitle: "Switching from Mac to Windows, or just handing files across the desk? Skip the exFAT drives and SMB shares: pick the files on the Mac, type a 6-digit code on the PC.",
+    subtitle: "Move documents, photos or whole folders from your Mac to a Windows PC. Transfer in your browser, without setting up a shared drive.",
     howItWorks: [
       "Mac-to-PC is the direction nobody built a tool for. Apple's Migration Assistant only moves files into a Mac, and Microsoft's transfer tooling is Windows-to-Windows. What's left is the folklore: externally formatted drives, network shares, or uploading everything to a cloud drive just to download it again.",
-      <>A <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link> replaces all of it. Pick the files (or whole folders) on the Mac, and on the PC type the 6-digit code at transfer.zip/quick. The data streams directly between the two browsers, end-to-end encrypted, and never touches a server.</>,
+      <>A <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link> replaces all of it. Pick the files (or whole folders) on the Mac, and on the PC type the 6-digit code at transfer.zip/quick. The data streams directly between the two browsers, end-to-end encrypted, and is never stored on a server.</>,
       "The machines don't need to share a network, a workgroup, or a room. If both are online, the transfer runs, at the speed of the slower connection.",
     ],
     steps: [
@@ -456,7 +456,7 @@ export const TRANSFER_PAIRS = [
         heading: "Why external drives keep biting",
         body: [
           "The classic USB-drive route has a format trap: Windows drives usually come as NTFS, which a Mac reads but can't reliably write. Getting a drive both sides fully understand means reformatting to exFAT first, which wipes it.",
-          "A browser transfer has no format at all: files go from disk to disk with nothing in between, and folder structures arrive intact inside a single zip.",
+          "A browser transfer has no format at all: files are transferred without server storage, and folder structures arrive intact inside a single zip.",
         ],
       },
       {
@@ -485,10 +485,10 @@ export const TRANSFER_PAIRS = [
     description: "Apple's Migration Assistant is an all-or-nothing move. To get just the files you want from a Windows PC onto a Mac, stream them through the browser with nothing to install and no size limit.",
     heading: "How to Transfer Files from PC to Mac",
     headline: { highlightedWord: "Easily", title: "send files from PC to Mac." },
-    subtitle: "Get documents, photos, videos or entire folders from a Windows PC onto a Mac without Migration Assistant's full-move ceremony. Pick files on the PC, type a code on the Mac.",
+    subtitle: "Send the files you need from Windows to your Mac. Transfer in your browser, without setting up Migration Assistant.",
     howItWorks: [
       "Apple does ship a tool for this direction: Windows Migration Assistant. It's built for one scenario, the day you unbox a new Mac, and it moves accounts, mail, bookmarks and files wholesale, with both machines side by side and a pairing code between them. For \"I just need these three folders,\" it's a sledgehammer.",
-      <>With <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link>, you pick exactly what to send on the PC, and the Mac pulls it straight through the browser: type the 6-digit code at transfer.zip/quick and the download starts. Files stream directly between the machines, end-to-end encrypted, with no server in the middle.</>,
+      <>With <Link className="font-medium text-primary underline underline-offset-4 hover:text-primary-500" href="/quick">Quick Transfer</Link>, you pick exactly what to send on the PC, and the Mac pulls it straight through the browser: type the 6-digit code at transfer.zip/quick and the download starts. Files stream directly between the machines, end-to-end encrypted, without being stored on a server.</>,
       "It works on any Windows version with a modern browser and any Mac, across different networks, with no size limit. Send one PDF or a hundred gigabytes of photo archive the same way.",
     ],
     steps: [

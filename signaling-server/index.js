@@ -1,4 +1,4 @@
-import { WebSocketServer } from "ws";
+import { WebSocket, WebSocketServer } from "ws";
 
 // Relay server for Quick Transfers. Knows nothing about file contents -
 // payloads are AES-GCM encrypted client-side. It pairs sessions and forwards
@@ -16,6 +16,9 @@ const MAX_PAYLOAD = 4 * 1024 * 1024;
 // only a client ignoring flow control can reach it.
 const MAX_TARGET_BUFFERED = 256 * 1024 * 1024;
 const PING_INTERVAL = 30_000;
+// Mobile Safari may suspend its socket while the user shares a link. The
+// reservation contains no file data and is reclaimed with a per-tab secret.
+const SESSION_RESUME_GRACE = 5 * 60_000;
 
 // Pairing-code sessions ("c." + 6 digits, still 8 chars). The small id space
 // makes them guessable, so they are one-shot (claimed by the first connect)
@@ -26,7 +29,7 @@ const CONNECT_FAILS_WINDOW = 60_000;
 
 const textDec = new TextDecoder();
 
-/** sessionId -> { conn, peers: Set<sessionId>, claimed: boolean } */
+/** sessionId -> { conn, peers, claimed, resumeToken, expiryTimer } */
 const sessions = new Map();
 
 /** ip -> { count, windowStart } - failed connect attempts (guess protection) */
@@ -43,25 +46,52 @@ const noteConnectFail = (ip) => {
     return entry.count > CONNECT_FAILS_MAX;
 };
 
-const send = (conn, obj) => conn.send(JSON.stringify(obj));
+const send = (conn, obj) => {
+    if (conn.readyState === WebSocket.OPEN) conn.send(JSON.stringify(obj));
+};
 
 const closeWithReason = (conn, reason) => {
     console.log("Closing conn:", reason);
     conn.close();
 };
 
-const removeSession = (sessionId, notifyPeers) => {
-    const session = sessions.get(sessionId);
-    if (!session) return;
-    console.log("Removing session:", sessionId);
-    sessions.delete(sessionId);
-    session.conn._sessionIds.delete(sessionId);
+const sendPeerNotFound = (conn, id, peerId) => {
+    console.log("[connect] Peer not found:", peerId);
+    if (noteConnectFail(conn._ip)) {
+        return closeWithReason(conn, "[connect] Too many failed attempts from " + conn._ip);
+    }
+    return send(conn, { type: "connect", targetId: id, success: false, notFound: true });
+};
+
+const disconnectPeers = (sessionId, session, notifyPeers) => {
     for (const peerId of session.peers) {
         const peer = sessions.get(peerId);
         if (!peer) continue;
         peer.peers.delete(sessionId);
-        if (notifyPeers) send(peer.conn, { type: "peer-disconnect", targetId: peerId, peerId: sessionId });
+        if (notifyPeers && peer.conn) send(peer.conn, { type: "peer-disconnect", targetId: peerId, peerId: sessionId });
     }
+    session.peers.clear();
+};
+
+const removeSession = (sessionId, notifyPeers) => {
+    const session = sessions.get(sessionId);
+    if (!session) return;
+    console.log("Removing session:", sessionId);
+    clearTimeout(session.expiryTimer);
+    sessions.delete(sessionId);
+    if (session.conn) session.conn._sessionIds.delete(sessionId);
+    disconnectPeers(sessionId, session, notifyPeers);
+};
+
+const suspendSession = (sessionId) => {
+    const session = sessions.get(sessionId);
+    if (!session) return;
+    if (!session.resumeToken) return removeSession(sessionId, true);
+    console.log("Suspending session:", sessionId);
+    session.conn._sessionIds.delete(sessionId);
+    session.conn = null;
+    disconnectPeers(sessionId, session, true);
+    session.expiryTimer = setTimeout(() => removeSession(sessionId, false), SESSION_RESUME_GRACE);
 };
 
 function handleRelayPacket(conn, data) {
@@ -78,7 +108,7 @@ function handleRelayPacket(conn, data) {
     // Packets can legitimately still be in flight right after a peer vanished - drop them.
     if (!sender.peers.has(targetId)) return;
     const target = sessions.get(targetId);
-    if (!target) return;
+    if (!target || !target.conn) return;
 
     if (target.conn.bufferedAmount > MAX_TARGET_BUFFERED) {
         return closeWithReason(conn, "[relay] Flow control violation, target buffer full");
@@ -97,9 +127,12 @@ function handleControlMessage(conn, message) {
     }
 
     if (data.type === "login") {
-        const { id } = data;
+        const { id, resumeToken } = data;
         if (typeof id !== "string" || id.length !== SESSION_ID_LENGTH) {
             return closeWithReason(conn, "[login] Invalid session id");
+        }
+        if (resumeToken !== undefined && (typeof resumeToken !== "string" || resumeToken.length < 32 || resumeToken.length > 128)) {
+            return closeWithReason(conn, "[login] Invalid resume token");
         }
         if (id.startsWith("c.") && !CODE_SESSION_RE.test(id)) {
             return closeWithReason(conn, "[login] Invalid code session id");
@@ -107,11 +140,24 @@ function handleControlMessage(conn, message) {
         if (conn._sessionIds.size >= MAX_SESSIONS_PER_CONN) {
             return closeWithReason(conn, "[login] Too many sessions");
         }
-        if (sessions.has(id)) {
+        const existing = sessions.get(id);
+        if (existing && resumeToken && existing.resumeToken === resumeToken) {
+            clearTimeout(existing.expiryTimer);
+            if (existing.conn && existing.conn !== conn) {
+                existing.conn._sessionIds.delete(id);
+                disconnectPeers(id, existing, true);
+            }
+            existing.conn = conn;
+            existing.expiryTimer = null;
+            conn._sessionIds.add(id);
+            console.log("[resume]", id);
+            return send(conn, { type: "login", targetId: id, success: true });
+        }
+        if (existing) {
             // Not a close: the previous owner may just not be reaped yet, the client retries.
             return send(conn, { type: "login", targetId: id, success: false, taken: true, msg: "Session ID already taken" });
         }
-        sessions.set(id, { conn, peers: new Set(), claimed: false });
+        sessions.set(id, { conn, peers: new Set(), claimed: false, resumeToken: resumeToken || null, expiryTimer: null });
         conn._sessionIds.add(id);
         console.log("[login]", id);
         return send(conn, { type: "login", targetId: id, success: true });
@@ -132,11 +178,11 @@ function handleControlMessage(conn, message) {
         }
         const target = typeof peerId === "string" && peerId !== id ? sessions.get(peerId) : undefined;
         if (!target || target.claimed) {
-            console.log("[connect] Peer not found:", peerId);
-            if (noteConnectFail(conn._ip)) {
-                return closeWithReason(conn, "[connect] Too many failed attempts from " + conn._ip);
-            }
-            return send(conn, { type: "connect", targetId: id, success: false, notFound: true });
+            return sendPeerNotFound(conn, id, peerId);
+        }
+        if (!target.conn) {
+            if (CODE_SESSION_RE.test(peerId)) return sendPeerNotFound(conn, id, peerId);
+            return send(conn, { type: "connect", targetId: id, success: false, unavailable: true });
         }
         // Codes are guessable, so they pair exactly once.
         if (CODE_SESSION_RE.test(peerId)) target.claimed = true;
@@ -187,7 +233,7 @@ wss.on("connection", (conn, req) => {
     conn.on("close", () => {
         console.log("Connection closed");
         for (const sessionId of [...conn._sessionIds]) {
-            removeSession(sessionId, true);
+            suspendSession(sessionId);
         }
     });
 

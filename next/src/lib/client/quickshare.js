@@ -11,7 +11,7 @@
 import streamSaver from "./StreamSaver";
 import * as zip from "@zip.js/zip.js";
 import { generateUUID } from "./clientUtils";
-import { RelayClient, PeerNotFoundError, SessionTakenError } from "./relay";
+import { RelayClient, PeerDisconnectedError, PeerNotFoundError, SessionTakenError } from "./relay";
 import { listenerKeyExchange, connectorKeyExchange } from "./keyexchange";
 import { generateQuickCode, codeToSessionId, CODE_SESSION_PREFIX } from "./quickcode";
 import {
@@ -54,6 +54,7 @@ export class QuickShareSession {
 	#sender = null;
 	#receiver = null;
 	#stopped = false;
+	#retryingLinkPeer = false;
 
 	#registeredCode = null; // listener: currently registered code
 	#codeClaimed = false;
@@ -83,6 +84,7 @@ export class QuickShareSession {
 			error: null,         // Error when status == FAILED
 			expired: false,      // FAILED because the link's session / the code no longer exists
 			reconnecting: false, // server connection dropped, retrying in background
+			peerUnavailable: false, // link exists, but its browser is temporarily offline
 			files: this.#mode === "send" ? this.#files.map(f => ({ name: f.name, size: f.size })) : [],
 			totalBytes: this.#files.reduce((total, f) => total + f.size, 0),
 			bytesTransferred: 0,
@@ -109,6 +111,9 @@ export class QuickShareSession {
 						this.#rotateCode();
 					}
 				}
+			};
+			this.#client.onpeerwait = waiting => {
+				if (!this.#stopped) this.#update({ peerUnavailable: waiting });
 			};
 			await this.#client.open();
 
@@ -238,6 +243,22 @@ export class QuickShareSession {
 		else this.#startReceiving(channel, key, viaCode);
 	}
 
+	async #retryLinkPeer() {
+		if (this.#stopped || this.isListener || this.#code || this.#retryingLinkPeer) return;
+		this.#retryingLinkPeer = true;
+		this.#update({ status: QuickShareStatus.CONNECTING, reconnecting: true });
+		try {
+			const channel = await this.#client.connect(this.#sessionId, this.#remoteSessionId);
+			if (this.#stopped) return channel.close();
+			this.#update({ reconnecting: false });
+			this.#handlePeer(channel, this.#key);
+		} catch (err) {
+			this.#fail(err);
+		} finally {
+			this.#retryingLinkPeer = false;
+		}
+	}
+
 	#startSending(channel, key, viaCode = false) {
 		if ((this.#sender && this.#sender.busy) || this.#snapshot.status === QuickShareStatus.FINISHED) {
 			// Someone opened the link during/after a transfer - tell them instead of hanging.
@@ -275,6 +296,8 @@ export class QuickShareSession {
 			if (this.isListener && !started) {
 				// The peer opened the link but left before downloading - keep listening.
 				this.#backToWaiting();
+			} else if (!viaCode && !started && err instanceof PeerDisconnectedError) {
+				this.#retryLinkPeer();
 			} else {
 				this.#fail(err);
 			}
@@ -312,6 +335,12 @@ export class QuickShareSession {
 				receiver.dispose();
 				this.#receiver = null;
 				this.#backToWaiting();
+				return;
+			}
+			if (!viaCode && this.#snapshot.status === QuickShareStatus.PEER_CONNECTED && err instanceof PeerDisconnectedError) {
+				receiver.dispose();
+				this.#receiver = null;
+				this.#retryLinkPeer();
 				return;
 			}
 			// If our save stream broke (user canceled the download), tell the peer.

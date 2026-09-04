@@ -2,6 +2,8 @@
 // server (signaling-server), session registration and peer pairing, and routes
 // opaque binary packets to RelayChannels. Knows nothing about files or crypto.
 
+import { generateUUID } from "./clientUtils";
+
 const PKT_RELAY = 1;
 
 const SESSION_ID_LENGTH = 8;
@@ -11,6 +13,7 @@ const REQUEST_TIMEOUT = 15_000;
 const KEEPALIVE_INTERVAL = 30_000;
 const RECONNECT_DELAY_MIN = 1_000;
 const RECONNECT_DELAY_MAX = 15_000;
+const PEER_RETRY_DELAY = 1_000;
 
 const textEnc = new TextEncoder();
 const textDec = new TextDecoder();
@@ -91,12 +94,14 @@ export class RelayChannel {
 
 export class RelayClient {
 	onpeerconnect = undefined;  // (channel: RelayChannel) - listener side
+	onpeerwait = undefined;     // (waiting: boolean) - target has a resumable session but is temporarily offline
 	onstatechange = undefined;  // ("connecting" | "connected" | "reconnecting" | "closed")
 	onsessionlost = undefined;  // (sessionId) - a session could not survive a reconnect
 
 	#ws = null;
 	#closed = false;
 	#sessionIds = new Set();
+	#sessionTokens = new Map(); // sessionId -> secret token used to reclaim it after a disconnect
 	#channels = new Map();  // `${sessionId}:${peerId}` -> RelayChannel
 	#pending = new Map();   // `${type}:${targetId}` -> { resolve, reject, timeoutId }
 	#keepaliveId = null;
@@ -114,7 +119,9 @@ export class RelayClient {
 	 * after a reconnect, so listener links survive transient network drops.
 	 */
 	async login(sessionId) {
-		const resp = await this.#request({ type: "login", id: sessionId }, "login:" + sessionId);
+		const resumeToken = this.#sessionTokens.get(sessionId) || generateUUID();
+		this.#sessionTokens.set(sessionId, resumeToken);
+		const resp = await this.#request({ type: "login", id: sessionId, resumeToken }, "login:" + sessionId);
 		if (!resp.success) throw resp.taken ? new SessionTakenError() : new RelayConnectionError(resp.msg);
 		this.#sessionIds.add(sessionId);
 	}
@@ -122,6 +129,7 @@ export class RelayClient {
 	/** Unregisters a session id (e.g. rotating a pairing code). Fire-and-forget. */
 	logout(sessionId) {
 		this.#sessionIds.delete(sessionId);
+		this.#sessionTokens.delete(sessionId);
 		if (this.#ws && this.#ws.readyState === WebSocket.OPEN) {
 			this.#ws.send(JSON.stringify({ type: "logout", id: sessionId }));
 		}
@@ -129,13 +137,25 @@ export class RelayClient {
 
 	/** Pairs one of our sessions with a peer session and returns the channel. */
 	async connect(sessionId, peerId) {
-		const resp = await this.#request({ type: "connect", id: sessionId, peerId }, "connect:" + sessionId);
-		if (!resp.success) {
-			throw resp.notFound ? new PeerNotFoundError() : new RelayConnectionError(resp.msg);
+		let waiting = false;
+		while (true) {
+			const resp = await this.#request({ type: "connect", id: sessionId, peerId }, "connect:" + sessionId);
+			if (resp.success) {
+				if (waiting) this.onpeerwait && this.onpeerwait(false);
+				const channel = new RelayChannel(this, sessionId, peerId);
+				this.#channels.set(sessionId + ":" + peerId, channel);
+				return channel;
+			}
+			if (!resp.unavailable) {
+				if (waiting) this.onpeerwait && this.onpeerwait(false);
+				throw resp.notFound ? new PeerNotFoundError() : new RelayConnectionError(resp.msg);
+			}
+			if (!waiting) {
+				waiting = true;
+				this.onpeerwait && this.onpeerwait(true);
+			}
+			await new Promise(resolve => setTimeout(resolve, PEER_RETRY_DELAY));
 		}
-		const channel = new RelayChannel(this, sessionId, peerId);
-		this.#channels.set(sessionId + ":" + peerId, channel);
-		return channel;
 	}
 
 	close() {
