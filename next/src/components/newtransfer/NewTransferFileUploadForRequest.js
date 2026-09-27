@@ -11,14 +11,7 @@ import { prepareTransferFiles, uploadFiles } from "@/lib/client/uploader";
 import { useRouter } from "next/navigation";
 import Progress from "../elements/Progress";
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
+import ErrorDialog from "@/components/ErrorDialog";
 import { FileContext } from "@/context/FileProvider";
 import { GlobalContext } from "@/context/GlobalContext";
 import { useFileDrop } from "@/hooks/client/useFileDrop";
@@ -118,10 +111,7 @@ export default function ({ brandProfile, transferRequest }) {
     }
     catch (err) {
       setFailed(true)
-      displayErrorMessage({
-        title: "Error",
-        body: err.message
-      })
+      displayErrorMessage({ body: err.message })
       console.error(err)
     }
     finally {
@@ -283,25 +273,7 @@ export default function ({ brandProfile, transferRequest }) {
 
   return (
     <>
-      <Dialog open={showErrorMessage} onOpenChange={setShowErrorMessage}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{errorMessage?.title}</DialogTitle>
-            {/* <DialogDescription>
-              This action cannot be undone. This will permanently delete your account
-              and remove your data from our servers.
-            </DialogDescription> */}
-          </DialogHeader>
-          <div>
-            {errorMessage?.body}
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Ok</Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ErrorDialog open={showErrorMessage} onOpenChange={setShowErrorMessage} title={errorMessage?.title} message={errorMessage?.body} />
       <form style={{ display: "none" }}>
         <input ref={fileInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" multiple></input>
         <input ref={folderInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" webkitdirectory="true"></input>

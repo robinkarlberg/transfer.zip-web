@@ -370,3 +370,29 @@
     100% { opacity: 1; transform: scale(1); filter: blur(0); }
   }
 }
+
+/* Ticket halves: each bites a quarter circle out of the corners on the named side,
+   so two halves placed edge to edge form the notches at the perforation */
+@utility ticket-cut-r {
+  mask:
+    radial-gradient(circle at 100% 0, transparent 12px, black 12.5px) top / 100% 51% no-repeat,
+    radial-gradient(circle at 100% 100%, transparent 12px, black 12.5px) bottom / 100% 51% no-repeat;
+}
+
+@utility ticket-cut-l {
+  mask:
+    radial-gradient(circle at 0 0, transparent 12px, black 12.5px) top / 100% 51% no-repeat,
+    radial-gradient(circle at 0 100%, transparent 12px, black 12.5px) bottom / 100% 51% no-repeat;
+}
+
+@utility ticket-cut-b {
+  mask:
+    radial-gradient(circle at 0 100%, transparent 12px, black 12.5px) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 100%, transparent 12px, black 12.5px) right / 51% 100% no-repeat;
+}
+
+@utility ticket-cut-t {
+  mask:
+    radial-gradient(circle at 0 0, transparent 12px, black 12.5px) left / 51% 100% no-repeat,
+    radial-gradient(circle at 100% 0, transparent 12px, black 12.5px) right / 51% 100% no-repeat;
+}

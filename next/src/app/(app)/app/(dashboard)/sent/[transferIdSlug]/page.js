@@ -1,5 +1,6 @@
 import GenericPage from "@/components/dashboard/GenericPage"
 import TransferPage from "@/components/dashboard/TransferPage"
+import { listBrandProfilesForUser } from "@/lib/server/mongoose/helpers/brandProfiles"
 import Transfer from "@/lib/server/mongoose/models/Transfer"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
 import { isValidObjectId } from "mongoose"
@@ -22,9 +23,13 @@ export default async function ({ params }) {
     }
   }
 
-  // const brandProfiles = await BrandProfile.find({ author: auth.user._id })
+  const brandProfiles = await listBrandProfilesForUser(auth.user)
 
   return (
-    <TransferPage user={auth.user.toJsonAsClient()} transfer={await selectedTransfer.toJsonAsOwner()} />
+    <TransferPage
+      user={auth.user.toJsonAsClient()}
+      transfer={await selectedTransfer.toJsonAsOwner()}
+      brandProfiles={brandProfiles.map(profile => profile.toJsonAsClient())}
+    />
   )
 }

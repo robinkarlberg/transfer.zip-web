@@ -10,14 +10,7 @@ import { capitalizeFirstLetter, tryCopyToClipboard } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Progress from "../elements/Progress";
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
+import ErrorDialog from "@/components/ErrorDialog";
 import { GlobalContext } from "@/context/GlobalContext";
 import { newTransferRequest } from "@/lib/client/Api";
 import Link from "next/link";
@@ -88,10 +81,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
         // router.replace(`/app/requests`)
       }
       catch (err) {
-        displayErrorMessage({
-          title: "Oops",
-          body: err?.message || "Unknown error, try again."
-        })
+        displayErrorMessage({ body: err.message })
         setFailed(true)
       }
     }
@@ -291,25 +281,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   return (
     <>
-      <Dialog open={showErrorMessage} onOpenChange={setShowErrorMessage}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{errorMessage?.title}</DialogTitle>
-            {/* <DialogDescription>
-              This action cannot be undone. This will permanently delete your account
-              and remove your data from our servers.
-            </DialogDescription> */}
-          </DialogHeader>
-          <div>
-            {errorMessage?.body}
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Ok</Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ErrorDialog open={showErrorMessage} onOpenChange={setShowErrorMessage} title={errorMessage?.title} message={errorMessage?.body} />
       <DynamicIsland
         expand={!small}
         showQuickLink={true}

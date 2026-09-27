@@ -25,6 +25,7 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
+import ErrorDialog from "@/components/ErrorDialog";
 import { FileContext } from "@/context/FileProvider";
 import { GlobalContext } from "@/context/GlobalContext";
 import { useFileDrop } from "@/hooks/client/useFileDrop";
@@ -163,10 +164,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
       }
       catch (err) {
         setFailed(true)
-        displayErrorMessage({
-          title: "Error",
-          body: err.message
-        })
+        displayErrorMessage({ body: err.message })
         console.error(err)
       }
       finally {
@@ -529,25 +527,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   return (
     <>
-      <Dialog open={showErrorMessage} onOpenChange={setShowErrorMessage}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{errorMessage?.title}</DialogTitle>
-            {/* <DialogDescription>
-              This action cannot be undone. This will permanently delete your account
-              and remove your data from our servers.
-            </DialogDescription> */}
-          </DialogHeader>
-          <div>
-            {errorMessage?.body}
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Ok</Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ErrorDialog open={showErrorMessage} onOpenChange={setShowErrorMessage} title={errorMessage?.title} message={errorMessage?.body} />
       <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
