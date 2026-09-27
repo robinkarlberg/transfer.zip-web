@@ -105,16 +105,14 @@ TransferSchema.methods.clearPassword = function () {
     this.encryptedPassword = null
 }
 
-TransferSchema.methods.logDownload = function (count = 1) {
-    for (let i = 0; i < count; i++) {
-        this.downloads.push({})
-    }
+// Atomic $push rather than save(): save() re-validates every file subdoc, which takes
+// seconds on transfers with tens of thousands of files
+TransferSchema.methods.logDownload = function () {
+    return this.constructor.updateOne({ _id: this._id }, { $push: { downloads: {} } })
 }
 
-TransferSchema.methods.logView = function (count = 1) {
-    for (let i = 0; i < count; i++) {
-        this.views.push({})
-    }
+TransferSchema.methods.logView = function () {
+    return this.constructor.updateOne({ _id: this._id }, { $push: { views: {} } })
 }
 
 // store an email address that this transfer will be shared with

@@ -3,10 +3,10 @@ import Image from "next/image"
 
 export default function ({ brandProfile }) {
   return (
-    <header className="backdrop-blur bg-gray-50/70 fixed top-0 left-0 w-full z-10 border-b data-[closed]:opacity-0 opacity-100 transition-all">
-      <div className="flex items-center gap-x-1 justify-center p-4">
-        <Image alt="Brand Profile Icon" width={32} height={32} src={brandProfile.iconUrl || icon} />
-        <span className='ms-0.5 font-bold'>{brandProfile.name || "Transfer.zip"}</span>
+    <header className="fixed inset-x-0 top-4 z-30 flex justify-center px-3 sm:top-6">
+      <div className="flex h-14 min-w-0 items-center gap-2.5 rounded-full bg-white pr-5 pl-2.5 shadow-[0_18px_50px_rgba(17,24,39,0.12)] ring-1 ring-gray-200">
+        <Image alt="" width={36} height={36} src={brandProfile.iconUrl || icon} className="size-9 shrink-0 rounded-full object-cover" />
+        <span className="truncate text-lg font-bold tracking-tight text-gray-900">{brandProfile.name || "Transfer.zip"}</span>
       </div>
     </header>
   )

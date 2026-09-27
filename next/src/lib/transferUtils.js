@@ -57,6 +57,39 @@ export const humanFileType = (type) => {
   return split.length <= 1 ? split : split[1].replace(/^x-/, "")
 }
 
+/**
+ * Collapses folder uploads into one entry per top-level folder, the way they look on disk,
+ * so a transfer with thousands of files still lists as a handful of rows. Keeps upload order.
+ * @param {{ name: string, size?: number, type?: string }[]} files stored file infos or browser `File`s
+ * @param {(file: any) => string} pathOf defaults to the stored `relativePath`; pass `webkitRelativePath` for `File`s
+ */
+export const groupFilesByFolder = (files, pathOf = file => file.relativePath || file.name) => {
+  const entries = []
+  const folders = new Map()
+  files.forEach((file, i) => {
+    const path = pathOf(file)
+    const slash = path.indexOf("/")
+    if (slash === -1) {
+      entries.push({ key: `file:${i}`, name: path, folder: false, type: file.type, count: 1, size: file.size || 0, files: [file] })
+      return
+    }
+    const name = path.slice(0, slash)
+    let folder = folders.get(name)
+    if (!folder) {
+      folder = { key: `folder:${name}`, name, folder: true, count: 0, size: 0, files: [] }
+      folders.set(name, folder)
+      entries.push(folder)
+    }
+    folder.count++
+    folder.size += file.size || 0
+    folder.files.push(file)
+  })
+  return entries
+}
+
+/** "1 file", "25,081 files" */
+export const formatCount = (count, noun) => `${count.toLocaleString("en-US")} ${noun}${count === 1 ? "" : "s"}`
+
 const textEnc = new TextEncoder()
 const textDec = new TextDecoder()
 

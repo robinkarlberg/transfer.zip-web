@@ -12,7 +12,7 @@ export async function POST(req, { params }) {
 
   const auth = await useServerAuth()
 
-  const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } }).populate('author').populate('brandProfile');
+  const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } }).select('-files').populate('author').populate('brandProfile');
   if (!transfer) {
     return NextResponse.json(resp('transfer not found'), { status: 404 });
   }
@@ -21,7 +21,7 @@ export async function POST(req, { params }) {
     return NextResponse.json(resp({}));
   }
 
-  transfer.logDownload();
+  await transfer.logDownload();
 
   const now = new Date();
   const author = transfer.author;
@@ -36,10 +36,8 @@ export async function POST(req, { params }) {
       link: `${process.env.SITE_URL}/app/sent/${transfer._id.toString()}`,
       brand,
     });
-    transfer.lastDownloadEmailSentAt = now;
+    await Transfer.updateOne({ _id: transfer._id }, { $set: { lastDownloadEmailSentAt: now } });
   }
-
-  await transfer.save();
 
   return NextResponse.json(resp({}));
 }

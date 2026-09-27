@@ -91,7 +91,7 @@ export default function HowItWorks() {
   return (
     <section id="how-it-works" className="relative isolate scroll-mt-24 px-4 pt-8 pb-24 sm:pb-32">
       {/* The sky ends here: it sinks into the clouds behind the card and comes out white */}
-      <CloudBank className="absolute inset-x-0 bottom-0 -z-10 h-[576px] w-full sm:h-[720px]" />
+      <CloudBank className="absolute inset-x-0 bottom-0 -z-10 h-[576px] w-full sm:h-[max(720px,37vw)]" />
       <div className="mx-auto max-w-4xl">
         <h2 className="text-center text-4xl font-bold tracking-tight text-white text-shadow-sm sm:text-5xl">How it works</h2>
         <div className="mt-10 rounded-3xl bg-white p-2 shadow-xl sm:p-3">

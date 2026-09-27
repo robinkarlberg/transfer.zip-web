@@ -1,8 +1,8 @@
 "use client"
 
 import BIcon from "@/components/BIcon";
-import { humanFileSize, humanFileType } from "@/lib/transferUtils";
-import { ArrowRightIcon, FileIcon, FolderPlusIcon, LinkIcon, PlusIcon, RotateCcwIcon, XIcon, ZapIcon } from "lucide-react";
+import { formatCount, groupFilesByFolder, humanFileSize, humanFileType } from "@/lib/transferUtils";
+import { ArrowRightIcon, FileIcon, FolderIcon, FolderPlusIcon, LinkIcon, PlusIcon, RotateCcwIcon, XIcon, ZapIcon } from "lucide-react";
 import { useContext, useMemo, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -33,6 +33,8 @@ import Link from "next/link";
 import BrandingToggle from "./BrandingToggle";
 import DynamicIsland from "./DynamicIsland";
 import AddedEmailField from "./AddedEmailField";
+
+const FILE_ROWS_LISTED = 100
 
 export default function ({ isDashboard, loaded, user, storage, brandProfiles, initialTab }) {
 
@@ -237,8 +239,13 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     return files.reduce((total, file) => total + file.size, 0);
   }, [files]);
 
-  const removeFile = file => {
-    setFiles(files.filter(otherFile => otherFile !== file))
+  // Folder picks collapse to one row per top-level folder, so a huge folder is one row, not thousands
+  const fileEntries = useMemo(() => groupFilesByFolder(files, file => file.webkitRelativePath || file.name), [files])
+  const unlistedCount = files.length - fileEntries.slice(0, FILE_ROWS_LISTED).reduce((total, entry) => total + entry.count, 0)
+
+  const removeEntry = entry => {
+    const removed = new Set(entry.files)
+    setFiles(files.filter(file => !removed.has(file)))
   }
 
   const handleEmailAdd = () => {
@@ -329,22 +336,28 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   const showPickFiles = files.length == 0
 
-  const leftSectionContent = files.map((file, i) => {
-    return (
-      <div key={i} className="p-3 py-2 -my-1 hover:bg-gray-50 rounded-lg select-none relative group">
-        <div className="flex items-center gap-1">
-          <FileIcon size={16} className="flex-none text-gray-600" />
-          <p className="overflow-hidden text-ellipsis whitespace-nowrap font-medium text-gray-600">{file.name}</p>
+  const leftSectionContent = [
+    ...fileEntries.slice(0, FILE_ROWS_LISTED).map(entry => {
+      const Icon = entry.folder ? FolderIcon : FileIcon
+      return (
+        <div key={entry.key} className="p-3 py-2 -my-1 hover:bg-gray-50 rounded-lg select-none relative group">
+          <div className="flex items-center gap-1">
+            <Icon size={16} className="flex-none text-gray-600" />
+            <p className="overflow-hidden text-ellipsis whitespace-nowrap font-medium text-gray-600">{entry.name}</p>
+          </div>
+          <span className="text-sm text-gray-500">
+            {entry.folder ? formatCount(entry.count, "file") : humanFileSize(entry.size, true)}<BIcon name={"dot"} />{entry.folder ? humanFileSize(entry.size, true) : humanFileType(entry.type)}
+          </span>
+          <div className="absolute top-0 right-5 flex h-full items-center opacity-0 group-hover:opacity-100">
+            <button onClick={() => removeEntry(entry)} aria-label={`Remove ${entry.name}`} className="p-1 bg-white border rounded-md text-gray-700">
+              <XIcon size={16} />
+            </button>
+          </div>
         </div>
-        <span className="text-sm text-gray-500">{humanFileSize(file.size, true)}<BIcon name={"dot"} />{humanFileType(file.type)}</span>
-        <div className="absolute top-0 right-5 flex h-full items-center opacity-0 group-hover:opacity-100">
-          <button onClick={() => removeFile(file)} className="p-1 bg-white border rounded-md text-gray-700">
-            <XIcon size={16} />
-          </button>
-        </div>
-      </div>
-    )
-  })
+      )
+    }),
+    unlistedCount > 0 && <p key="unlisted" className="px-3 py-2 text-sm text-gray-500">and {formatCount(unlistedCount, "more file")}</p>
+  ]
 
   const leftSectionLowerBar = (
     <>

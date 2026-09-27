@@ -15,6 +15,8 @@ import {
   humanFileSizeWithUnit,
   humanFileSizePair,
   humanFileType,
+  groupFilesByFolder,
+  formatCount,
 } from "@/lib/transferUtils";
 
 describe("capitalizeFirstLetter", () => {
@@ -243,5 +245,64 @@ describe("getFileNameFromPath", () => {
   it("returns the trailing path segment", () => {
     expect(getFileNameFromPath("a/b/c.txt")).toBe("c.txt");
     expect(getFileNameFromPath("just-a-file.txt")).toBe("just-a-file.txt");
+  });
+});
+
+describe("groupFilesByFolder", () => {
+  const summary = entries => entries.map(({ key, name, folder, count, size }) => ({ key, name, folder, count, size }));
+
+  it("collapses each top-level folder into one entry with its file count and size", () => {
+    const files = [
+      { name: "a.jpg", relativePath: "Photos/a.jpg", size: 10 },
+      { name: "b.jpg", relativePath: "Photos/2024/b.jpg", size: 5 },
+      { name: "c.mp4", relativePath: "Videos/c.mp4", size: 100 },
+    ];
+    const entries = groupFilesByFolder(files);
+    expect(summary(entries)).toEqual([
+      { key: "folder:Photos", name: "Photos", folder: true, count: 2, size: 15 },
+      { key: "folder:Videos", name: "Videos", folder: true, count: 1, size: 100 },
+    ]);
+    expect(entries[0].files).toEqual([files[0], files[1]]);
+  });
+
+  it("keeps loose files as their own entries, in upload order around folders", () => {
+    const entries = groupFilesByFolder([
+      { name: "notes.txt", relativePath: "notes.txt", size: 1, type: "text/plain" },
+      { name: "a.jpg", relativePath: "Photos/a.jpg", size: 10 },
+      { name: "song.mp3", size: 3, type: "audio/mpeg" },
+      { name: "b.jpg", relativePath: "Photos/b.jpg", size: 10 },
+    ]);
+    expect(entries.map(entry => entry.name)).toEqual(["notes.txt", "Photos", "song.mp3"]);
+    expect(entries[0]).toMatchObject({ key: "file:0", folder: false, type: "text/plain", count: 1, size: 1 });
+    expect(entries[1].count).toBe(2);
+  });
+
+  it("does not merge loose files that share a name", () => {
+    const entries = groupFilesByFolder([{ name: "a.jpg", size: 1 }, { name: "a.jpg", size: 2 }]);
+    expect(entries.map(entry => entry.key)).toEqual(["file:0", "file:1"]);
+  });
+
+  it("reads the path through pathOf, for browser Files", () => {
+    const entries = groupFilesByFolder(
+      [{ name: "a.jpg", webkitRelativePath: "Trip/a.jpg", size: 1 }, { name: "b.jpg", webkitRelativePath: "", size: 2 }],
+      file => file.webkitRelativePath || file.name
+    );
+    expect(summary(entries)).toEqual([
+      { key: "folder:Trip", name: "Trip", folder: true, count: 1, size: 1 },
+      { key: "file:1", name: "b.jpg", folder: false, count: 1, size: 2 },
+    ]);
+  });
+
+  it("stays linear on huge transfers", () => {
+    const files = Array.from({ length: 100_000 }, (_, i) => ({ name: `${i}.jpg`, relativePath: `Dump/${i % 10}/${i}.jpg`, size: 1 }));
+    expect(summary(groupFilesByFolder(files))).toEqual([{ key: "folder:Dump", name: "Dump", folder: true, count: 100_000, size: 100_000 }]);
+  });
+});
+
+describe("formatCount", () => {
+  it("pluralizes and adds thousands separators", () => {
+    expect(formatCount(1, "file")).toBe("1 file");
+    expect(formatCount(0, "file")).toBe("0 files");
+    expect(formatCount(25081, "file")).toBe("25,081 files");
   });
 });
