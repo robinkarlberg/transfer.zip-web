@@ -46,7 +46,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
 
   const [isRequesting, setIsRequesting] = useState(false);
 
-  const [frequency, setFrequency] = useState("monthly")
+  const [frequency, setFrequency] = useState("yearly")
 
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [emailConfirm, setEmailConfirm] = useState("")
@@ -134,7 +134,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
         <div className={``}>
           <div className="mx-auto max-w-4xl px-6 mt-4 lg:px-8">
             {/* <div className="mb-8 text-center">
-              <h2 className="inline-block font-medium text-lg text-gray-500">
+              <h2 className="inline-block font-sans font-medium text-lg text-gray-500">
                 Trusted by more than 11k users every month!
               </h2>
             </div> */}

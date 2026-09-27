@@ -389,8 +389,8 @@ export default function FeaturesBento() {
     <section className="bg-white py-24 sm:py-32" id="features">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-base/7 font-semibold text-primary">Features</h2>
-          <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
+          <h2 className="font-sans text-base/7 font-semibold text-primary">Features</h2>
+          <p className="mt-2 font-heading text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
             Useful features for meaningful ideas.
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">

@@ -13,6 +13,8 @@ import { GithubIcon, StarIcon, ZapIcon } from "lucide-react"
 import NewTransferFileRequest from "@/components/newtransfer/NewTransferFileRequest"
 import ConditionalLandingFileRequest from "./ConditionalLandingFileRequest"
 import { cn } from "@/lib/utils"
+import Squiggle from "@/components/Squiggle"
+import WordWheel from "@/components/WordWheel"
 
 export default async function ({ mode }) {
 
@@ -43,26 +45,7 @@ export default async function ({ mode }) {
         <div className="grow mx-auto w-full max-w-7xl px-6 flex flex-col items-center justify-center mt-8 sm:mt-0">
           <h1 className="mx-auto text-center max-w-2xl text-4xl font-bold tracking-tight text-white fade-in-up">
             Try the{" "}
-            <span className="relative">
-              <span className="relative z-10">easiest</span>
-              <svg
-                className="absolute left-0 bottom-[0.08em] w-full text-primary-200"
-                style={{ height: "0.15em" }}
-                viewBox="0 0 100 20"
-                preserveAspectRatio="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M2 15 C 20 22, 40 5, 60 12 S 90 18, 98 10"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{ vectorEffect: "non-scaling-stroke" }}
-                />
-              </svg>
-            </span>
+            <Squiggle className="text-primary-200"><WordWheel /></Squiggle>
             {" "}way to{" "}
             {mode === "receive" ? "receive files." : "send files."}
           </h1>

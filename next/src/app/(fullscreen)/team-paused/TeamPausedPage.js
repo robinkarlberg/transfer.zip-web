@@ -9,7 +9,7 @@ import { createCheckoutSession, logout } from "@/lib/client/Api"
 import { toast } from "sonner"
 
 export default function TeamPausedPage({ user, team, isOwner, previousSeats }) {
-  const [frequency, setFrequency] = useState("monthly")
+  const [frequency, setFrequency] = useState("yearly")
   const [isRequesting, setIsRequesting] = useState(false)
 
   const handleLogout = async () => {

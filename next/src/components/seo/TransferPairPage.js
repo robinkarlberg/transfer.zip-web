@@ -78,7 +78,7 @@ export default function TransferPairPage({ slug }) {
               Send files from <span className="underline decoration-primary-200 decoration-4 underline-offset-4">{fromLabel} to {toLabel}</span>.
             </h1>
             <p className="mt-4 text-center text-sm font-medium text-white">Free to use. No app or account needed.</p>
-            <div id="start-transfer" className="mt-9 w-full max-w-sm scroll-mt-24 sm:mt-12">
+            <div id="start-transfer" className="mt-9 w-full max-w-md scroll-mt-24 sm:mt-12">
               <TransferPairWidget slug={pair.slug} fromKey={from.key} fromName={from.name} toKey={to.key} toName={to.name} />
             </div>
           </section>

@@ -28,6 +28,11 @@ import { cn, sleep } from "@/lib/utils"
 const PLAN_ORDER = ["starter", "pro", "teams"]
 const FEATURED_PLAN = "pro"
 
+// The floating header pill doesn't hide what scrolls above it, so the stuck
+// row paints its own background up to the viewport top, plus a bottom divider
+// since collapsed borders don't stick with the cells.
+const STUCK_COVER = "before:absolute before:-left-px before:right-0 before:bottom-full before:h-24 after:absolute after:-left-px after:right-0 after:top-full after:h-px after:bg-gray-200"
+
 const SECTIONS = [
   {
     name: "Transfers",
@@ -307,7 +312,9 @@ function parseDollar(cents) {
 }
 
 export default function PricingComparisonTable({ authCta, user }) {
-  const [frequency, setFrequency] = useState("monthly")
+  // Upgrades keep the current sub's interval, so paying users should see prices in that interval
+  const isPaying = user && user.plan !== "free"
+  const [frequency, setFrequency] = useState(isPaying && user.planInterval === "month" ? "monthly" : "yearly")
   const [isStuck, setIsStuck] = useState(false)
   const sentinelRef = useRef(null)
 
@@ -325,7 +332,7 @@ export default function PricingComparisonTable({ authCta, user }) {
     if (!sentinel) return
     const observer = new IntersectionObserver(
       ([entry]) => setIsStuck(!entry.isIntersecting),
-      { rootMargin: "-68px 0px 0px 0px", threshold: 0 }
+      { rootMargin: "-96px 0px 0px 0px", threshold: 0 }
     )
     observer.observe(sentinel)
     return () => observer.disconnect()
@@ -424,8 +431,8 @@ export default function PricingComparisonTable({ authCta, user }) {
                   <tr>
                     <td
                       className={cn(
-                        "sticky top-16 z-20 bg-white align-bottom border-b border-gray-200 transition-[padding] duration-200",
-                        isStuck ? "px-6 py-3" : "p-6"
+                        "sticky top-24 z-20 bg-white align-bottom border-b border-gray-200 transition-[padding] duration-200",
+                        isStuck ? cn("px-6 py-3 before:bg-white", STUCK_COVER) : "p-6"
                       )}
                     >
                       <p className="text-2xl font-bold text-gray-900">Choose your plan</p>
@@ -437,9 +444,9 @@ export default function PricingComparisonTable({ authCta, user }) {
                           key={planId}
                           scope="col"
                           className={cn(
-                            "sticky top-16 z-20 align-top text-left border-l border-b border-gray-200 font-normal transition-[padding] duration-200",
-                            isStuck ? "px-6 py-3" : "p-6",
-                            featured ? "bg-primary-50" : "bg-white"
+                            "sticky top-24 z-20 align-top text-left border-l border-b border-gray-200 font-normal transition-[padding] duration-200",
+                            isStuck ? cn("px-6 py-3", STUCK_COVER) : "p-6",
+                            featured ? "bg-primary-50 before:bg-primary-50" : "bg-white before:bg-white"
                           )}
                         >
                           <PlanHeader planId={planId} frequency={frequency} featured={featured} layout="desktop" stuck={isStuck} user={user} onAction={handleAction} busy={busyPlan === planId} />

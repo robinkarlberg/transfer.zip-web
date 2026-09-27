@@ -1,92 +1,162 @@
 "use client"
 
-import BIcon from "@/components/BIcon"
-import FileUpload from "@/components/elements/FileUpload"
-import QuestionCircle from "@/components/elements/QuestionCircle"
 import { FileContext } from "@/context/FileProvider"
 import { useQuickShare } from "@/hooks/client/useQuickShare"
 import { getComputedNewLocation } from "@/lib/client/hash"
 import { parseQuickCodeInput } from "@/lib/client/quickcode"
+import { cn } from "@/lib/utils"
+import { ArrowRightIcon, ChevronDownIcon, LockIcon, StarIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useContext, useEffect, useState } from "react"
+import Flight from "@/components/quick/Flight"
+import HowItWorks from "./HowItWorks"
+import QuickFilePicker from "@/components/quick/QuickFilePicker"
 
-export default function ({ stars }) {
+const TABS = [
+  { id: "send", label: "Send" },
+  { id: "receive", label: "Receive" },
+]
 
-  const { setFiles } = useContext(FileContext)
-  const { hasBeenSentLink, k, remoteSessionId, transferDirection } = useQuickShare()
+function Tabs({ tab, onChange }) {
+  return (
+    <div role="tablist" className="relative mb-2 grid grid-cols-2 rounded-2xl bg-gray-100 p-1">
+      <div
+        aria-hidden="true"
+        className={cn(
+          "absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-xl bg-white shadow-sm transition-transform duration-300 ease-out",
+          tab === "receive" && "translate-x-full"
+        )}
+      />
+      {TABS.map(({ id, label }) => (
+        <button
+          key={id}
+          type="button"
+          role="tab"
+          aria-selected={tab === id}
+          onClick={() => onChange(id)}
+          className={cn("relative h-10 text-sm font-semibold transition-colors", tab === id ? "text-gray-900" : "text-gray-500 hover:text-gray-900")}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  )
+}
 
-  const [codeInput, setCodeInput] = useState("")
-  const parsedCode = parseQuickCodeInput(codeInput)
+function ReceivePanel({ onCreate }) {
+  return (
+    <div className="flex min-h-80 animate-poof-in flex-col items-center justify-center px-6 py-10 text-center">
+      <div className="w-48 overflow-hidden rounded-2xl bg-linear-to-b from-primary-100 to-primary-50">
+        <svg viewBox="0 0 200 110" className="block w-full" aria-hidden="true">
+          <circle cx={150} cy={80} r={14} className="fill-white stroke-primary-300" strokeWidth={2} />
+          <circle cx={150} cy={80} r={4} className="fill-primary-500" />
+          <Flight from={[24, 34]} via={[96, -6]} to={[150, 80]} progress={0.58} hovering />
+        </svg>
+      </div>
+      <p className="mt-6 text-lg font-semibold text-gray-900">Get files from someone</p>
+      <p className="mt-1 text-sm text-gray-500">You'll get a link to send them.</p>
+      <button
+        type="button"
+        onClick={onCreate}
+        className="mt-5 inline-flex h-11 items-center rounded-full bg-primary px-6 font-semibold text-white transition hover:bg-primary-light active:scale-[0.98]"
+      >
+        Create link
+      </button>
+    </div>
+  )
+}
 
+function CodeForm() {
   const router = useRouter()
+  const [input, setInput] = useState("")
+  const code = parseQuickCodeInput(input)
 
-  const handleCodeSubmit = e => {
+  const handleSubmit = e => {
     e.preventDefault()
-    if (!parsedCode) return
-    router.push("/quick/progress#c=" + parsedCode, { scroll: false })
+    if (!code) return
+    router.push("/quick/progress#c=" + code, { scroll: false })
   }
 
-  const handleFiles = (files) => {
+  return (
+    <form onSubmit={handleSubmit} className="mt-4 flex animate-poof-in items-center gap-2 rounded-full bg-white p-1.5 pl-5 shadow-lg animate-delay-300">
+      <label htmlFor="quick-code" className="text-sm font-medium whitespace-nowrap text-gray-500">Have a code?</label>
+      <input
+        id="quick-code"
+        type="text"
+        inputMode="numeric"
+        autoComplete="one-time-code"
+        placeholder="123 456"
+        value={input}
+        onChange={e => setInput(e.target.value)}
+        className="w-24 border-0 bg-transparent p-0 text-center font-semibold tracking-widest text-gray-900 outline-none placeholder:font-normal placeholder:text-gray-300 focus:ring-0"
+      />
+      <button
+        type="submit"
+        disabled={!code}
+        aria-label="Connect"
+        className="grid size-9 place-items-center rounded-full bg-primary text-white transition hover:bg-primary-light disabled:scale-90 disabled:bg-gray-100 disabled:text-gray-400"
+      >
+        <ArrowRightIcon size={16} />
+      </button>
+    </form>
+  )
+}
+
+export default function QuickShareNew({ stars }) {
+  const router = useRouter()
+  const { setFiles } = useContext(FileContext)
+  const { hasBeenSentLink, transferDirection } = useQuickShare()
+  const [tab, setTab] = useState("send")
+
+  const handleFiles = files => {
     setFiles(files)
-    if (hasBeenSentLink) {
-      router.push("/quick/progress" + window.location.hash, { scroll: false })
-    }
-    else {
-      router.push("/quick/progress#S", { scroll: false })
-    }
-  }
-
-  const onReceiveClicked = e => {
-    router.push("/quick/progress#R", { scroll: false })
+    router.push("/quick/progress" + (hasBeenSentLink ? window.location.hash : "#S"), { scroll: false })
   }
 
   useEffect(() => {
     if (transferDirection == "R") {
-      // console.log(getComputedNewLocation(transferDirection) + window.location.hash)
       router.replace(getComputedNewLocation(transferDirection) + window.location.hash, { scroll: false })
     }
   }, [transferDirection])
 
   return (
-    <div className="w-full max-w-96 text-center">
-      <div className={hasBeenSentLink ? "mb-2" : "mb-28"}>
-        <h1 className="font-extrabold text-4xl tracking-tight md:text-5xl mb-2 text-gray-800">{hasBeenSentLink ? "Send Files" : "Quick Transfer"}</h1>
-        <h2 className="text-gray-600 mb-4 md:text-lg">
-          {hasBeenSentLink ?
-            "Someone has requested you to send files!"
-            :
-            "Free file sharing, with no size limit."
-          }
-          {" "}
-          <div className="hidden sm:inline">
-            <QuestionCircle text={"Link expires when tab is closed. Both of you need to be online at the same time."} />
+    <>
+      <section className="relative flex min-h-svh flex-col items-center justify-center px-4 pt-28 pb-20">
+        <h1 className="fade-in-up text-center text-5xl font-bold tracking-tight text-white sm:text-6xl">
+          {hasBeenSentLink ? "Send files" : "Quick Transfer"}
+        </h1>
+        <p className="fade-in-up mt-3 max-w-md text-center text-lg text-white text-shadow-sm">
+          {hasBeenSentLink ? "Someone is waiting for your files." : "Send files of any size, straight to another device."}
+        </p>
+
+        <div className="mt-10 w-full max-w-md">
+          <div className="animate-poof-in rounded-3xl bg-white p-2 shadow-2xl animate-delay-150 motion-reduce:animate-none">
+            {!hasBeenSentLink && <Tabs tab={tab} onChange={setTab} />}
+            {/* Stays mounted on the Receive tab so a file dragged onto the page still lands here */}
+            <div className={cn(tab === "send" ? "animate-poof-in" : "hidden")}>
+              <QuickFilePicker
+                onSubmit={handleFiles}
+                onDragStart={() => setTab("send")}
+              />
+            </div>
+            {tab === "receive" && <ReceivePanel onCreate={() => router.push("/quick/progress#R", { scroll: false })} />}
           </div>
-        </h2>
-      </div>
-      <FileUpload onFiles={handleFiles} onReceiveClicked={hasBeenSentLink ? undefined : onReceiveClicked} />
-      {!hasBeenSentLink && (
-        <form onSubmit={handleCodeSubmit} className="mt-4 flex items-center justify-center gap-2">
-          <input
-            type="text"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            placeholder="Have a code? e.g. 712 394"
-            value={codeInput}
-            onChange={e => setCodeInput(e.target.value)}
-            className="block w-48 rounded-md border-0 py-1.5 px-3 text-center text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-          />
-          <button
-            type="submit"
-            disabled={!parsedCode}
-            className="rounded-md bg-white px-3 py-1.5 text-sm font-medium text-primary shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:text-gray-400"
-          >
-            Connect
-          </button>
-        </form>
-      )}
-      <p className="text-gray-500 text-xs mt-2">
-        We do not use cookies. Your files are protected with end-to-end encryption, meaning they remain unreadable by anyone but you.<br /><a href="https://github.com/robinkarlberg/transfer.zip-web" className="text-primary hover:underline">GitHub {stars && <span>({stars} <BIcon name={"star"} />)</span>} </a>
-      </p>
-    </div>
+        </div>
+
+        {!hasBeenSentLink && <CodeForm />}
+
+        <div className="mt-8 flex animate-poof-in items-center gap-6 text-sm font-semibold text-white text-shadow-sm animate-delay-450">
+          <span className="inline-flex items-center gap-1.5"><LockIcon size={14} /> End-to-end encrypted</span>
+          <a href="https://github.com/robinkarlberg/transfer.zip-web" target="_blank" className="inline-flex items-center gap-1.5 hover:underline">
+            <StarIcon size={14} /> Star on GitHub{stars && ` (${stars})`}
+          </a>
+        </div>
+
+        <a href="#how-it-works" aria-label="How it works" className="absolute bottom-6 left-1/2 -translate-x-1/2 p-2 text-white">
+          <ChevronDownIcon className="animate-bounce" />
+        </a>
+      </section>
+      <HowItWorks />
+    </>
   )
 }

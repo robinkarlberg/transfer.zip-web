@@ -1,10 +1,11 @@
 "use client"
 
+import FileDropOverlay from "@/components/FileDropOverlay"
 import { cn } from "@/lib/utils"
 import { Transition } from "@headlessui/react"
 import Link from "next/link"
 
-export default function ({ expand, quickLinkHref, quickLinkContent, showQuickLink, startOverlay, showStartOverlay, endOverlay, showEndOverlay, leftSectionContent, leftSectionLowerBar, rightSection }) {
+export default function ({ dragging, expand, quickLinkHref, quickLinkContent, showQuickLink, startOverlay, showStartOverlay, endOverlay, showEndOverlay, leftSectionContent, leftSectionLowerBar, rightSection }) {
 
   return (
     <div className="relative mx-auto">
@@ -30,6 +31,7 @@ export default function ({ expand, quickLinkHref, quickLinkContent, showQuickLin
         <Transition show={showStartOverlay}>
           {startOverlay}
         </Transition>
+        {dragging && <FileDropOverlay radius={12} />}
         <div className="grid grid-cols-1 md:grid-cols-5 h-full">
           {(leftSectionContent || leftSectionLowerBar) && (
             <div className={cn(

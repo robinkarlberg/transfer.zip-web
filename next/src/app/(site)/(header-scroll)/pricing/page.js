@@ -18,10 +18,10 @@ export const metadata = {
     siteName: "Transfer.zip",
     images: [
       {
-        url: "https://cdn.transfer.zip/og.png",
+        url: "/img/og/pricing.jpg",
         width: 1200,
         height: 630,
-        alt: "Transfer.zip pricing.",
+        alt: "Transfer.zip. Simple plans. Big transfers. Three paper folders for Starter, Pro and Teams.",
       },
     ],
     locale: "en_US",
@@ -31,7 +31,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Pricing | Transfer.zip",
     description: "Compare Transfer.zip plans side-by-side. No hidden fees, cancel anytime.",
-    images: ["https://cdn.transfer.zip/og.png"],
+    images: ["/img/og/pricing.jpg"],
   },
 }
 

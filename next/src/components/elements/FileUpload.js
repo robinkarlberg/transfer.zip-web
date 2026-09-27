@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { Transition } from "@headlessui/react"
 import { humanFileSize, humanFileType } from "@/lib/transferUtils"
 import { cn, humanFileName } from "@/lib/utils"
+import FileDropOverlay from "@/components/FileDropOverlay"
+import { useFileDrop } from "@/hooks/client/useFileDrop"
 
 import {
   Popover,
@@ -26,9 +28,8 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
 
   const [error, setError] = useState(null)
 
-  const handleFileInputChange = (e) => {
-    const newFiles = [...files, ...e.target.files]
-
+  /** @param {File[]} newFiles */
+  const updateFiles = newFiles => {
     const names = new Set()
 
     try {
@@ -64,6 +65,14 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
     setFiles(newFiles)
     onFilesChange && onFilesChange(newFiles)
   }
+
+  const handleFileInputChange = e => updateFiles([...files, ...e.target.files])
+
+  // Stays active during progress so a stray drop is swallowed instead of the browser navigating away
+  const dragging = useFileDrop(dropped => {
+    if (showProgress || dropped.length === 0) return
+    updateFiles(singleFile ? dropped.slice(0, 1) : [...files, ...dropped])
+  })
 
   const handlePickFiles = e => {
     e.preventDefault()
@@ -192,6 +201,7 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
             </div>
           </div>
         </Transition>
+        {dragging && !showProgress && <FileDropOverlay />}
       </div>
     </>
   )

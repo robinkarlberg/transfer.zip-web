@@ -19,8 +19,8 @@ export default function FeaturesNew() {
     <div className="bg-white py-24 sm:py-32" id="about-quick-transfer">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className="text-base/7 font-semibold text-primary">Quick Transfer</h2>
-          <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
+          <h2 className="font-sans text-base/7 font-semibold text-primary">Quick Transfer</h2>
+          <p className="mt-2 font-heading text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
             {/* Unlimited File Size -<br/>Unlimited Privacy */}
             Keep Your Tab Open -<br />Send 100GB Files <span className="bg-primary-200 px-2 text-primary rounded-xl whitespace-nowrap">for Free</span>
           </p>

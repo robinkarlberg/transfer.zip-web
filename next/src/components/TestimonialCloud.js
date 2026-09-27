@@ -23,9 +23,9 @@ export default function TestimonialCloud({ className }) {
     <div id="reviews" className={`bg-gray-50 pt-10 mb-8 border border-dashed ${className}`}>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-base/7 font-semibold text-primary">Our Reviews</h2>
+          <h2 className="font-sans text-base/7 font-semibold text-primary">Our Reviews</h2>
           {/* <div className="text-blue-500 mb-4">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div> */}
-          <p className="mt-2 text-pretty text-3xl font-bold tracking-tight text-gray-800 sm:text-5xl lg:text-balance">
+          <p className="mt-2 font-heading text-pretty text-3xl font-bold tracking-tight text-gray-800 sm:text-5xl lg:text-balance">
             Users <BIcon name={"heart-fill"} className={"text-red-400 text-2xl sm:text-4xl"}/> Transfer.zip
           </p>
         </div>

@@ -55,9 +55,9 @@ export default function Features1() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           {/* <Image alt="Logo" src={logo} className="w-16 mx-auto"></Image> */}
-          <h2 className="text-base/7 font-semibold text-primary">File-sharing for Pros</h2>
+          <h2 className="font-sans text-base/7 font-semibold text-primary">File-sharing for Pros</h2>
           {/* <div className="text-blue-500 mb-4">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div> */}
-          <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
+          <p className="mt-2 font-heading text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
             Look{" "}
             <span className="relative">
               <span className="relative z-10">professional</span>

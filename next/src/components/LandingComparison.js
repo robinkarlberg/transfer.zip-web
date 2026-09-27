@@ -90,14 +90,14 @@ const services = [
 ]
 
 export default function LandingComparison() {
-  const [frequency, setFrequency] = useState("monthly")
+  const [frequency, setFrequency] = useState("yearly")
 
   return (
     <div className="bg-white py-24 sm:py-32" id="comparison">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-base/7 font-semibold text-primary">How we compare</h2>
-          <p className="mt-2 text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
+          <h2 className="font-sans text-base/7 font-semibold text-primary">How we compare</h2>
+          <p className="mt-2 font-heading text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
             How does Transfer.zip compare?
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">

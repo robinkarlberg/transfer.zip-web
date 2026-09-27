@@ -8,6 +8,8 @@ import { ARCHIVE_ACCEPT, SUPPORTED_ARCHIVE_LABEL } from "@/lib/client/archive";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import FileDropOverlay from "@/components/FileDropOverlay";
+import { useFileDrop } from "@/hooks/client/useFileDrop";
 
 export default function UnzipFilePicker({ className }) {
   const {
@@ -28,6 +30,10 @@ export default function UnzipFilePicker({ className }) {
     await unzip(files[0]);
     e.target.value = "";
   };
+
+  const dragging = useFileDrop((dropped) => {
+    if (!isLoading && dropped.length) unzip(dropped[0]);
+  });
 
   const handleClick = () => {
     fileInputRef.current.click();
@@ -127,6 +133,7 @@ export default function UnzipFilePicker({ className }) {
             <span className="font-medium mt-4 text-lg">Pick a ZIP or TAR archive</span>
           </div>
         )}
+        {dragging && !isLoading && <FileDropOverlay label="Let go to open it" />}
         </div>
         <p className="mt-3 text-center text-sm font-medium text-white">
           Supported formats: {SUPPORTED_ARCHIVE_LABEL}

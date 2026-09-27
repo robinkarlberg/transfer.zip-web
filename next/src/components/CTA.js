@@ -1,57 +1,36 @@
-import { useContext } from "react";
 import Link from 'next/link';
-import { isWaitlist } from "@/lib/utils";
+import Squiggle from "./Squiggle";
+import WordWheel from "./WordWheel";
+
+const RINGS = ["size-[24rem]", "size-[40rem]", "size-[56rem]", "size-[72rem]"]
 
 export default function CTA() {
   return (
-    <div className="bg-white">
-      <div className="mx-auto max-w-7xl py-24 sm:px-6 sm:py-32 lg:px-8">
-        <div className="relative isolate overflow-hidden bg-gray-900 px-6 pt-16 shadow-2xl sm:rounded-3xl sm:px-16 md:pt-24 lg:flex lg:gap-x-20 lg:px-24 lg:pt-0 pb-16">
-          <svg
-            viewBox="0 0 1024 1024"
+    <section className="bg-white px-2 py-24 sm:px-4 sm:py-32">
+      <div className="relative isolate mx-auto max-w-7xl overflow-hidden rounded-[2rem] px-6 py-24 text-center shadow-2xl sm:rounded-[3rem] sm:px-16 sm:py-32">
+        <div aria-hidden="true" className="grain absolute inset-0 -z-10 bg-linear-to-b from-primary-600 to-primary-400 before:inset-0" />
+        {RINGS.map(size => (
+          <div
+            key={size}
             aria-hidden="true"
-            className="absolute left-1/2 top-1/2 -z-10 size-[64rem] -translate-y-1/2 [mask-image:radial-gradient(closest-side,white,transparent)] sm:left-full sm:-ml-80 lg:left-1/2 lg:ml-0 lg:-translate-x-1/2 lg:translate-y-0"
+            className={`absolute left-1/2 top-1/2 -z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary-300 opacity-60 ${size}`}
+          />
+        ))}
+        <h2 className="mx-auto max-w-2xl text-balance text-4xl font-bold tracking-tight text-white sm:text-5xl">
+          Try the <Squiggle className="text-primary-200"><WordWheel /></Squiggle> way to send files.
+        </h2>
+        <p className="mx-auto mt-6 max-w-xl text-pretty text-lg/8 font-medium text-primary-50">
+          Thousands of people switch to Transfer.zip every month because they're tired of big companies overcharging. Send big files fast, for less.
+        </p>
+        <div className="mt-10 flex justify-center">
+          <Link
+            href={"/app"}
+            className="flex h-12 items-center rounded-full bg-white px-6 text-sm font-semibold text-gray-900 shadow-lg hover:bg-primary-50"
           >
-            <circle r={512} cx={512} cy={512} fill="url(#759c1415-0410-454c-8f7c-9a820de03642)" fillOpacity="0.7" />
-            <defs>
-              <radialGradient id="759c1415-0410-454c-8f7c-9a820de03642">
-                <stop stopColor="#7775D6" />
-                <stop offset={1} stopColor="#E935C1" />
-              </radialGradient>
-            </defs>
-          </svg>
-          <div className="mx-auto max-w-2xl text-center lg:flex-auto py-16 lg:pt-32 lg:pb-16">
-            <h2 className="text-balance text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-              Try the Better Way to Send Files
-            </h2>
-            <p className="mt-6 text-pretty text-lg/8 text-gray-300">
-              {/* Share your files effortlessly and securely. There are no hidden fees, and it only takes a minute to get started. */}
-              Thousands of people switch to Transfer.zip every month because they're tired of big companies overcharging. Send big files quickly, easily, and for less - start now.
-            </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Link
-                // onClick={e => { if (isWaitlist()) { e.preventDefault(); } }}
-                href={"/app"}
-                className="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-              >
-                Send Large Files Now &rarr;
-              </Link>
-              {/* <a href="#" className="text-sm/6 font-semibold text-white">
-                Learn more <span aria-hidden="true">→</span>
-              </a> */}
-            </div>
-          </div>
-          {/* <div className="relative mt-16 h-80 lg:mt-8">
-            <img
-              alt="App screenshot"
-              src="https://tailwindui.com/plus/img/component-images/dark-project-app-screenshot.png"
-              width={1824}
-              height={1080}
-              className="absolute left-0 top-0 w-[57rem] max-w-none rounded-md bg-white/5 ring-1 ring-white/10"
-            />
-          </div> */}
+            Send large files now <span aria-hidden="true">&nbsp;&rarr;</span>
+          </Link>
         </div>
       </div>
-    </div>
+    </section>
   )
 }

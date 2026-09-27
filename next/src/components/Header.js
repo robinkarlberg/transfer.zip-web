@@ -1,19 +1,19 @@
 "use client"
 
-import { useState, useMemo, useContext, useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { Transition } from '@headlessui/react'
 import {
-  Dialog,
-  DialogPanel,
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-  Popover,
-  PopoverButton,
-  PopoverGroup,
-  PopoverPanel,
-  Transition,
-} from '@headlessui/react'
-import BIcon from './BIcon'
+  ArrowUpRightIcon,
+  ChevronDownIcon,
+  CircleHelpIcon,
+  InboxIcon,
+  LayoutGridIcon,
+  MenuIcon,
+  MessageSquareQuoteIcon,
+  SparklesIcon,
+  XIcon,
+  ZapIcon,
+} from 'lucide-react'
 
 import logo from "../img/icon.png"
 import Link from 'next/link'
@@ -22,22 +22,35 @@ import { IS_SELFHOST } from '@/lib/isSelfHosted'
 import { getUser } from '@/lib/client/Api'
 import { GlobalContext } from '@/context/GlobalContext'
 import { sendEvent } from '@/lib/client/umami'
-import { ZapIcon } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const products = [
-  { name: 'Why choose us', description: 'What makes Transfer.zip different.', href: '/#why-choose-us', icon: "stars" },
-  { name: 'Reviews', description: 'What real users say about Transfer.zip.', href: '/#reviews', icon: "chat-quote-fill" },
-  { name: 'Features', description: 'Look professional when sharing files.', href: '/#features', icon: "lightbulb" },
-  { name: 'Comparison', description: 'Transfer.zip compared to other services', href: '/#comparison', icon: "lightning-fill" },
-]
-const callsToAction = [
-  { name: 'FAQ', href: "/#faq", icon: "question-lg" },
-  { name: 'Contact', href: `/contact`, icon: "envelope-fill" },
+  { name: 'Quick Transfer', description: 'Free, end-to-end encrypted, no size limit.', href: '/quick', icon: ZapIcon, tile: 'bg-sky-50 hover:bg-sky-100', badge: 'bg-sky-500 text-white' },
+  { name: 'Request Files', description: 'A link anyone can use to upload files to you.', href: '/receive', icon: InboxIcon, tile: 'bg-emerald-50 hover:bg-emerald-100', badge: 'bg-emerald-500 text-white' },
+  { name: 'Why choose us', description: 'What makes Transfer.zip different.', href: '/#why-choose-us', icon: SparklesIcon, tile: 'bg-violet-50 hover:bg-violet-100', badge: 'bg-violet-500 text-white' },
+  { name: 'Features', description: 'Everything you need to send and receive.', href: '/#features', icon: LayoutGridIcon, tile: 'bg-amber-50 hover:bg-amber-100', badge: 'bg-amber-400 text-amber-950' },
+  { name: 'Reviews', description: 'What real users say about Transfer.zip.', href: '/#reviews', icon: MessageSquareQuoteIcon, tile: 'bg-pink-50 hover:bg-pink-100', badge: 'bg-pink-500 text-white' },
+  { name: 'FAQ', description: 'Answers to the questions we get most.', href: '/#faq', icon: CircleHelpIcon, tile: 'bg-orange-50 hover:bg-orange-100', badge: 'bg-orange-500 text-white' },
 ]
 
+const links = [
+  { name: 'Compare', href: '/#comparison' },
+  { name: 'Pricing', href: '/pricing' },
+  { name: 'Contact', href: '/contact' },
+]
+
+const CTA_CLASS = "group inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-3.5 text-sm font-semibold text-white transition-all hover:bg-primary-light active:scale-[0.98]"
+
+function CtaArrow() {
+  return <ArrowUpRightIcon className="size-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
+}
+
+// Hovering "Product" or the logo grows the pill itself into the product grid
+// (grid-template-rows 0fr/1fr). Hover is delegated through data-menu-open /
+// data-menu-close markers, unmarked areas leave the state alone.
 export default function Header({ scrollAware }) {
   const { openSignupDialog } = useContext(GlobalContext)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const [showHeader, setShowHeader] = useState(!scrollAware)
 
   const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -56,6 +69,8 @@ export default function Header({ scrollAware }) {
     sendEvent("header_cta_click", { is_logged_in: true })
   }
 
+  const closeMenu = () => setMenuOpen(false)
+
   useEffect(() => {
     getUser().then(res => {
       if (res.user != null) {
@@ -63,10 +78,6 @@ export default function Header({ scrollAware }) {
       }
     })
   }, [])
-
-  const handleLinkClicked = e => {
-    setMobileMenuOpen(false)
-  }
 
   useEffect(() => {
     if (!scrollAware) return
@@ -100,226 +111,140 @@ export default function Header({ scrollAware }) {
     }
   }, [])
 
+  useEffect(() => {
+    if (!menuOpen) return
+    const onKeyDown = e => {
+      if (e.key === "Escape") setMenuOpen(false)
+    }
+    document.addEventListener("keydown", onKeyDown)
+    return () => document.removeEventListener("keydown", onKeyDown)
+  }, [menuOpen])
+
+  const handleMouseOver = e => {
+    // Taps fire emulated mouseover, touch devices use the menu button instead
+    if (!window.matchMedia("(hover: hover)").matches) return
+    if (e.target.closest("[data-menu-open]")) setMenuOpen(true)
+    else if (e.target.closest("[data-menu-close]")) setMenuOpen(false)
+  }
+
   return (
-    <Transition unmount={false} show={showHeader || mobileMenuOpen}>
-      <header className="backdrop-blur bg-gray-50/70 fixed top-0 left-0 w-full z-30 border-b data-[closed]:opacity-0 opacity-100 transition-all">
-        <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8">
-          <div className="flex lg:flex-1">
-            <Link href="/" className="-m-1.5 p-1.5 flex items-center gap-x-1">
-              {/* <span className="sr-only">{process.env.NEXT_PUBLIC_SITE_NAME}</span> */}
-              <Image
-                alt="Logo"
-                src={logo}
-                className="h-8 w-auto"
-              />
-              <span className='font-bold'>{process.env.NEXT_PUBLIC_SITE_NAME}</span>
-            </Link>
-          </div>
-          <div className="flex lg:hidden">
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(true)}
-              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+    <Transition unmount={false} show={showHeader || menuOpen}>
+      <header className="fixed inset-x-0 top-4 z-30 px-3 transition duration-300 ease-out data-[closed]:-translate-y-4 data-[closed]:opacity-0 sm:top-6">
+        <nav
+          aria-label="Global"
+          onMouseOver={handleMouseOver}
+          onMouseLeave={closeMenu}
+          className="relative mx-auto w-full max-w-3xl rounded-[1.75rem] bg-white shadow-[0_18px_50px_rgba(17,24,39,0.12)] ring-1 ring-gray-200"
+        >
+          <div className="flex h-14 items-center gap-2 px-2.5 sm:px-3">
+            <Link
+              href="/"
+              data-menu-open={IS_SELFHOST ? undefined : true}
+              className="flex shrink-0 items-center gap-2 rounded-full py-1 pr-2 text-gray-900 transition-opacity hover:opacity-80"
             >
-              <span className="sr-only">Open main menu</span>
-              <BIcon name={"list"} aria-hidden="true" className="text-xl" />
-            </button>
-          </div>
-          {!IS_SELFHOST && (
-            <PopoverGroup className="hidden lg:flex lg:gap-x-12">
-              <Popover className="relative">
-                <PopoverButton className="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900">
-                  Product
-                  <BIcon name={"chevron-down"} aria-hidden="true" className="size-5 flex-none text-gray-400" />
-                </PopoverButton>
+              <Image src={logo} alt={process.env.NEXT_PUBLIC_SITE_NAME} className="size-9 object-contain" priority />
+              <span className="hidden text-lg font-bold tracking-tight min-[440px]:inline">{process.env.NEXT_PUBLIC_SITE_NAME}</span>
+            </Link>
 
-                <PopoverPanel
-                  transition
-                  className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5 transition data-[closed]:translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in"
+            {!IS_SELFHOST && (
+              <div className="hidden flex-1 items-center justify-center gap-0.5 md:flex">
+                <button
+                  type="button"
+                  data-menu-open
+                  aria-expanded={menuOpen}
+                  aria-controls="header-menu"
+                  onClick={() => setMenuOpen(value => !value)}
+                  className={cn("flex items-center gap-1 rounded-full px-3 py-2 text-sm font-medium transition-colors", menuOpen ? "text-gray-900" : "text-gray-600 hover:text-gray-900")}
                 >
-                  {({ close }) => (
-                    <>
-                      <div className="p-4">
-                        {products.map((item) => (
-                          <div
-                            key={item.name}
-                            className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50"
-                          >
-                            <div className="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                              <BIcon name={item.icon} aria-hidden="true" className="size-6 text-gray-600 group-hover:text-primary" />
-                            </div>
-                            <div className="flex-auto">
-                              <Link onClick={close} href={item.href} className="block font-semibold text-gray-900">
-                                {item.name}
-                                <span className="absolute inset-0" />
-                              </Link>
-                              <p className="mt-1 text-gray-600">{item.description}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-                        {callsToAction.map((item) => (
-                          <Link
-                            onClick={close}
-                            key={item.name}
-                            href={item.href}
-                            className="flex items-center justify-center gap-x-2.5 p-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-100"
-                          >
-                            <BIcon name={item.icon} center aria-hidden="true" className="size-5 flex-none text-gray-400" />
-                            {item.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </PopoverPanel>
-              </Popover>
-
-              <Link href="/#comparison" className="text-sm/6 font-semibold text-gray-900">
-                Compare
-              </Link>
-              <Link href="/pricing" className="text-sm/6 font-semibold text-gray-900">
-                Pricing
-              </Link>
-              <Link href="/contact" className="text-sm/6 font-semibold text-gray-900">
-                Contact
-              </Link>
-            </PopoverGroup>
-          )}
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            {isLoggedIn ? (
-              <Link onNavigate={handleMyTransfersClick} href="/app/sent" className="text-sm/6 font-semibold text-white rounded-full bg-primary px-3 py-0.5 hover:bg-primary-light">
-                My Transfers <span aria-hidden="true">&rarr;</span>
-              </Link>
-            ) : IS_SELFHOST ? (
-              <Link onNavigate={handleSignInClick} href="/signin" className="text-sm/6 font-semibold text-white rounded-full bg-primary px-3 py-0.5 hover:bg-primary-light">
-                Sign in <span aria-hidden="true">&rarr;</span>
-              </Link>
-            ) : (
-              <div className="flex gap-3 items-center">
-                <Link onNavigate={handleSignInClick} className="text-sm/6 font-semibold text-gray-900 hover:underline" href="/signin">
-                  Sign in
-                </Link>
-                <Link onNavigate={handleCreateAccountClick} href="/signin" className="text-sm/6 font-semibold text-white rounded-full bg-primary px-3 py-1 hover:bg-primary-light flex items-center gap-1">
-                  <ZapIcon className="h-4 w-4" /> Create Account
-                </Link>
+                  Product
+                  <ChevronDownIcon className={cn("size-3.5 transition-transform duration-200", menuOpen && "rotate-180")} aria-hidden="true" />
+                </button>
+                {links.map(link => (
+                  <Link key={link.name} data-menu-close href={link.href} className="rounded-full px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900">
+                    {link.name}
+                  </Link>
+                ))}
               </div>
             )}
-          </div>
-        </nav>
-        <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
-          <div className="fixed inset-0 z-10" />
-          <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-            <div className="flex items-center justify-between">
-              <a href="#" className="-m-1.5 p-1.5">
-                <span className="sr-only">Transfer.zip</span>
-                <Image
-                  alt="Logo"
-                  src={logo}
-                  className="h-8 w-auto"
-                />
-              </a>
+
+            <div data-menu-close className="ml-auto flex shrink-0 items-center gap-1.5">
+              {isLoggedIn ? (
+                <Link onNavigate={handleMyTransfersClick} href="/app/sent" className={CTA_CLASS}>
+                  My Transfers <CtaArrow />
+                </Link>
+              ) : IS_SELFHOST ? (
+                <Link onNavigate={handleSignInClick} href="/signin" className={CTA_CLASS}>
+                  Sign in <CtaArrow />
+                </Link>
+              ) : (
+                <>
+                  <Link onNavigate={handleSignInClick} href="/signin" className="hidden rounded-full px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 sm:inline-flex">
+                    Sign in
+                  </Link>
+                  <Link onNavigate={handleCreateAccountClick} href="/signin" className={CTA_CLASS}>
+                    Create Account <CtaArrow />
+                  </Link>
+                </>
+              )}
+            </div>
+
+            {!IS_SELFHOST && (
               <button
                 type="button"
-                onClick={() => setMobileMenuOpen(false)}
-                className="-m-2.5 rounded-md p-2.5 text-gray-700"
+                aria-expanded={menuOpen}
+                aria-controls="header-menu"
+                onClick={() => setMenuOpen(value => !value)}
+                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-900 hover:bg-gray-200 md:hidden"
               >
-                <span className="sr-only">Close menu</span>
-                <BIcon name={"x-lg"} aria-hidden="true" className="size-6" />
+                <span className="sr-only">{menuOpen ? "Close menu" : "Open menu"}</span>
+                {menuOpen ? <XIcon className="size-4" aria-hidden="true" /> : <MenuIcon className="size-4" aria-hidden="true" />}
               </button>
-            </div>
-            <div className="mt-6 flow-root">
-              <div className="-my-6 divide-y divide-gray-500/10">
-                <div className="space-y-2 py-6">
-                  <Disclosure as="div" className="-mx-3">
-                    <DisclosureButton className="group flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
-                      Product
-                      <BIcon aria-hidden="true" className="size-5 flex-none group-data-[open]:rotate-180" />
-                    </DisclosureButton>
-                    <DisclosurePanel className="mt-2 space-y-2">
-                      {[...products, ...callsToAction].map((item) => (
-                        <DisclosureButton
-                          onClick={handleLinkClicked}
-                          key={item.name}
-                          as="a"
-                          href={item.href}
-                          className="block rounded-lg py-2 pl-6 pr-3 text-sm/7 font-semibold text-gray-900 hover:bg-gray-50"
-                        >
-                          {item.name}
-                        </DisclosureButton>
-                      ))}
-                    </DisclosurePanel>
-                  </Disclosure>
-                  <Link
-                    onClick={handleLinkClicked}
-                    href="/#comparison"
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                  >
-                    Compare
-                  </Link>
-                  <Link
-                    onClick={handleLinkClicked}
-                    href="/pricing"
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                  >
-                    Pricing
-                  </Link>
-                  <Link
-                    onClick={handleLinkClicked}
-                    href="/contact"
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                  >
-                    Contact
-                  </Link>
-                  {/* <Link
-                    onClick={handleLinkClicked}
-                    href="/legal/privacy-policy"
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                  >
-                    Privacy
-                  </Link> */}
-                </div>
-                <div className="py-6">
-                  {isLoggedIn ? (
-                    <Link
-                      onNavigate={handleMyTransfersClick}
-                      href="/app"
-                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                    >
-                      My Transfers
-                    </Link>
-                  ) : IS_SELFHOST ? (
-                    <Link
-                      onNavigate={handleSignInClick}
-                      href="/signin"
-                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                    >
-                      Sign in
-                    </Link>
-                  ) : (
-                    <div className="space-y-2">
+            )}
+          </div>
+
+          {!IS_SELFHOST && (
+            <div
+              id="header-menu"
+              inert={!menuOpen}
+              className={cn("grid transition-[grid-template-rows] duration-300", menuOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}
+            >
+              <div className="min-h-0 overflow-hidden">
+                <div className={cn("px-2.5 pb-2.5 pt-1 transition-opacity duration-200 sm:px-3 sm:pb-3", menuOpen ? "opacity-100" : "opacity-0")}>
+                  <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+                    {products.map(item => (
                       <Link
-                        onNavigate={handleSignInClick}
-                        href="/signin"
-                        className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                        key={item.name}
+                        href={item.href}
+                        onClick={closeMenu}
+                        className={cn("flex flex-col items-center gap-3 rounded-[1.25rem] px-3 py-4 text-center transition-colors sm:py-5", item.tile)}
                       >
+                        <span className={cn("flex size-10 items-center justify-center rounded-full", item.badge)}>
+                          <item.icon className="size-[18px]" aria-hidden="true" />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-sm font-semibold text-gray-900">{item.name}</span>
+                          <span className="mt-1 hidden text-xs leading-4 text-gray-600 sm:block">{item.description}</span>
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2 md:hidden">
+                    {links.map(link => (
+                      <Link key={link.name} href={link.href} onClick={closeMenu} className="rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 hover:text-gray-900">
+                        {link.name}
+                      </Link>
+                    ))}
+                    {!isLoggedIn && (
+                      <Link onNavigate={handleSignInClick} href="/signin" onClick={closeMenu} className="rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 hover:text-gray-900 sm:hidden">
                         Sign in
                       </Link>
-                      <Link
-                        onNavigate={handleCreateAccountClick}
-                        href="/signin"
-                        className="-mx-3 flex items-center gap-2 rounded-lg px-3 py-2.5 text-base/7 font-semibold text-white bg-primary hover:bg-primary-light"
-                      >
-                        <ZapIcon className="h-4 w-4" /> Create Account
-                      </Link>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
-          </DialogPanel>
-        </Dialog>
+          )}
+        </nav>
       </header>
     </Transition>
   )

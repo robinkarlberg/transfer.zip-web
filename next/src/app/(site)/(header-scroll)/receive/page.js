@@ -3,7 +3,7 @@ import FAQ from "@/components/FAQ";
 import Features1 from "@/components/Features1";
 import FeaturesBento from "@/components/FeaturesBento";
 import HashInterceptor from "@/components/HashInterceptor";
-import IndieStatement from "@/components/IndieStatement";
+import FounderNote from "@/components/FounderNote";
 import LandingComparison from "@/components/LandingComparison";
 import Pricing from "@/components/Pricing";
 import TestimonialCloud from "@/components/TestimonialCloud";
@@ -14,17 +14,17 @@ export const metadata = {
   description:
     "Free sharing of photos, videos and documents. Send large files instantly with a link or email. Simple, fast and secure file sharing with Transfer.zip.",
   openGraph: {
-    title: "Quick & Easy File Transfer | Transfer.zip",
+    title: "Receive Files | Transfer.zip",
     description:
       "Free sharing of photos, videos and documents. Send large files instantly with a link or email. Simple, fast and secure file sharing with Transfer.zip.",
-    url: "https://transfer.zip",
+    url: "https://transfer.zip/receive",
     siteName: "Transfer.zip",
     images: [
       {
-        url: "https://cdn.transfer.zip/og.png",
+        url: "/img/og/receive.jpg",
         width: 1200,
         height: 630,
-        alt: "Transfer.zip tagline \"Send Big Files Without Limits\".",
+        alt: "Transfer.zip. Receive files. With a link. Documents arriving in a white paper inbox.",
       },
     ],
     locale: "en_US",
@@ -35,7 +35,7 @@ export const metadata = {
     title: "Receive Files | Quick & Easy - Transfer.zip",
     description:
       "Receive large files instantly with a link or email. Simple, fast and secure file sharing with Transfer.zip.",
-    images: ["https://cdn.transfer.zip/og.png"],
+    images: ["/img/og/receive.jpg"],
   },
 };
 
@@ -48,15 +48,7 @@ export default function () {
       <TestimonialCloud />
       <FeaturesBento />
       <LandingComparison />
-      <div className="relative">
-        <div className="w-full h-screen overflow-hidden absolute grain bg-linear-to-b from-primary-600 to-primary-300" />
-        <div className="py-24 px-2 sm:px-8 relative">
-          <p className="text-center mt-2 text-pretty text-3xl font-bold tracking-tight text-white sm:text-3xl lg:text-balance text-shadow-md">
-            A quick message from the founder.
-          </p>
-          <IndieStatement compact />
-        </div>
-      </div>
+      <FounderNote />
       <Pricing />
       <FAQ />
       <CTA />

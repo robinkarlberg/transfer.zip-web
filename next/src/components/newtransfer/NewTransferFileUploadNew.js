@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dialog";
 import { FileContext } from "@/context/FileProvider";
 import { GlobalContext } from "@/context/GlobalContext";
+import { useFileDrop } from "@/hooks/client/useFileDrop";
 import Link from "next/link";
 import BrandingToggle from "./BrandingToggle";
 import DynamicIsland from "./DynamicIsland";
@@ -174,8 +175,9 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     }
   }
 
-  const handleFileInputChange = (e) => {
-    const newFiles = [...files, ...e.target.files]
+  /** @param {File[]} incoming */
+  const addFiles = incoming => {
+    const newFiles = [...files, ...incoming]
 
     const names = new Set()
 
@@ -215,6 +217,11 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     setFiles(newFiles)
     // onFilesChange(newFiles)
   }
+
+  const handleFileInputChange = e => addFiles([...e.target.files])
+
+  // Stays active mid-upload so a stray drop is swallowed instead of the browser navigating away
+  const dragging = useFileDrop(dropped => !uploadingFiles && addFiles(dropped))
 
   const handlePickFiles = e => {
     e.preventDefault()
@@ -590,6 +597,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
         <input ref={folderInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" webkitdirectory="true"></input>
       </form>
       <DynamicIsland
+        dragging={dragging && !uploadingFiles}
         expand={!small}
         leftSectionContent={leftSectionContent}
         leftSectionLowerBar={leftSectionLowerBar}
