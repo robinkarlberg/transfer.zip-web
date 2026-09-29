@@ -28,6 +28,17 @@ export async function generateMetadata({ params }) {
     return {
       title: meta.title || null,
       description: meta.description || null,
+      ...(meta.dateModified && {
+        openGraph: {
+          type: "article",
+          title: meta.title,
+          description: meta.description,
+          url: `https://transfer.zip/${slugPath}`,
+          siteName: "Transfer.zip",
+          images: [{ url: meta.imgSrc, alt: meta.imgAlt }],
+          modifiedTime: meta.dateModified,
+        },
+      }),
     }
   }
   const children = await getChildrenBySlug(slugPath)
@@ -71,9 +82,24 @@ export default async function Page({ params }) {
   }
 
   const { meta, content, toc } = result
+  const articleJsonLd = meta.dateModified && {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: meta.title,
+    description: meta.description,
+    image: new URL(meta.imgSrc, "https://transfer.zip").href,
+    url: `https://transfer.zip/${slugPath}`,
+    dateModified: meta.dateModified,
+  }
 
   return (
     <>
+      {articleJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd).replace(/</g, "\\u003c") }}
+        />
+      )}
       <ContentLanding
         title={meta.title}
         description={<span dangerouslySetInnerHTML={{ __html: meta.description }} />}
