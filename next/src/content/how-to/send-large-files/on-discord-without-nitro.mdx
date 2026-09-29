@@ -1,13 +1,13 @@
 ---
 title: How to Send Large Files on Discord without Nitro (2026 Guide)
-description: "Discord's 10 MB limit too small? Send files over 10 MB on Discord without Nitro: paste a free Transfer.zip link, boost your server, or split and compress the file."
+description: "Discord's 20 MB limit too small? Send files over 20 MB on Discord without Nitro: paste a free Transfer.zip link, boost your server, or split and compress the file."
 imgSrc: /img/content/discord.png
 imgAlt: Discord logo with a large file icon
 linkText: Send large files instantly with Transfer.zip
 ---
 
 <TLDR>
-Discord's free tier caps files at **10 MB**.
+Discord's standard free upload limit is **20 MB** per file.
 
 The quickest fix: upload to **Transfer.zip** (unlimited size, end-to-end encrypted) and paste the link in chat.
 
@@ -16,15 +16,19 @@ Pick your files, copy the link, send it. **No account, no Nitro.**
 
 ## Discord File Size Limits (2026)
 
-For non-Nitro users, Discord caps **every** upload at **10 MB**: images, videos, and documents alike. It's the same limit in DMs, group chats, and servers.
+Discord's standard free upload limit is **20 MB per file**, including in DMs and group chats. Boosted servers can allow larger uploads, as covered below.
 
 | Plan | Upload Limit | Price |
 |------|--------------|-------|
-| **Free** | 10 MB | $0 |
+| **Free** | 20 MB | $0 |
 | **Nitro Basic** | 50 MB | $2.99/mo |
-| **Nitro** | 500 MB | $9.99/mo |
+| **Nitro** | Up to 1 GB | $9.99/mo |
 
-You don't have to pay, though. There are two free ways past the limit: **share a link** (no size cap at all) or **raise your server's limit with boosts**. Both are covered below.
+**Update (September 29, 2026):** [Discord's File Attachments FAQ](https://support.discord.com/hc/en-us/articles/25444343291031-File-Attachments-FAQ), updated today, now lists **20 MB for free accounts**, **50 MB for Nitro Basic**, and **up to 1 GB for Nitro**. Discord dates the free limit increase to August 2026.
+
+Discord checks file size **before compression** on desktop and mobile, and some users may get higher experimental limits.
+
+To send larger files without buying Nitro, **share a link** or **use a server that's already boosted**. Both are covered below.
 
 ---
 
@@ -70,10 +74,12 @@ Upload there, set sharing to **"Anyone with the link,"** and paste it in Discord
 
 ## Method 2: Boost the Server to Raise the Limit (No Nitro)
 
-Server Boosts raise the upload limit for **everyone in that server**, Nitro or not:
+[Server Boosts](https://support.discord.com/hc/en-us/articles/360028038352-Server-Boosting-FAQ) let members without Nitro upload larger files **inside that server**:
 
 - **Level 2** (7 boosts) → **50 MB** per file
 - **Level 3** (14 boosts) → **100 MB** per file
+
+Some servers can also enable an experimental **Larger File Uploads** perk for **5 boosts**, allowing **250 MB** files. Availability is limited to selected servers.
 
 If you're already in a community boosted to Level 2 or 3, you can drop bigger files there right now, no Nitro needed.
 
@@ -85,9 +91,9 @@ The raised limit only applies **inside that boosted server**, not in DMs. And bo
 
 ## Method 3: Split the File into Parts (Upload Straight to Discord)
 
-If you need the file uploaded *in* Discord, not as a link, split it into chunks under 10 MB.
+If you need the file uploaded *in* Discord, not as a link, split it into chunks under 20 MB.
 
-Install [7-Zip](https://www.7-zip.org/), right-click your file → **Add to archive** → set **Split to volumes** to `9M`. You'll get `file.7z.001`, `.002`, and so on. Upload each part to Discord.
+Install [7-Zip](https://www.7-zip.org/), right-click your file → **Add to archive** → set **Split to volumes** to `19M`. You'll get `file.7z.001`, `.002`, and so on. Upload each part to Discord.
 
 To rebuild it, the recipient downloads **every** part into one folder and extracts `.001` with 7-Zip.
 
@@ -95,7 +101,7 @@ To rebuild it, the recipient downloads **every** part into one folder and extrac
 All parts must sit in the same folder to extract. If even one is missing, the archive won't open, so make sure your recipient grabs every piece before extracting.
 </Warning>
 
-WinRAR works the same way: right-click → **Add to archive** → **Split to volumes**, `9M`.
+WinRAR works the same way: right-click → **Add to archive** → **Split to volumes**, `19M`.
 
 ---
 
@@ -106,37 +112,37 @@ WinRAR works the same way: right-click → **Add to archive** → **Split to vol
 - **Windows:** right-click → **Send to** → **Compressed (zipped) folder**
 - **Mac:** right-click → **Compress "[filename]"**
 
-For **video**, the win is re-encoding, not zipping. Dropping a clip to 720p with [HandBrake](https://handbrake.fr/) or [Vert.sh](https://vert.sh/) often gets it well under 10 MB while still looking sharp.
+For **video**, the win is re-encoding, not zipping. Try re-encoding a clip at 720p with [HandBrake](https://handbrake.fr/) or [Vert.sh](https://vert.sh/), then check that the exported file is under 20 MB before attaching it.
 
 <Tip>
-A short gameplay or screen-recording clip re-encoded to **H.264 at 720p** usually lands under 10 MB and uploads straight to Discord, no link needed.
+The final size depends on duration and bitrate. Compress the video yourself before attaching it; Discord's own compression won't get an oversized source file past the upload check.
 </Tip>
 
 ---
 
 ## FAQ
 
-**How do I send a video larger than 10 MB on Discord?**
-Either re-encode it to 720p so it fits (Method 4), or, to keep full quality, upload it to [Transfer.zip](https://transfer.zip) and paste the link. A link has no size cap.
+**How do I send a video larger than 20 MB on Discord?**
+Either re-encode it to under 20 MB (Method 4), or, to keep full quality, upload it to [Transfer.zip](https://transfer.zip) and paste the link. A link has no size cap.
 
 **Does boosting a server remove the file limit?**
-It raises it, doesn't remove it: a Level 2 server allows 50 MB and Level 3 allows 100 MB for every member. It only applies in that server, and it still caps out. For anything bigger, share a link.
+It raises it, doesn't remove it: Level 2 allows 50 MB and Level 3 allows 100 MB for members without Nitro. Some servers also have an experimental 250 MB perk. These limits only apply inside that server. For anything bigger, share a link.
 
 **What's the largest file I can send on Discord for free?**
-Uploaded directly into chat: 100 MB, and only in a Level 3 boosted server. As a link, there's no limit. Transfer.zip handles files of any size.
+Normally 20 MB per file, or 100 MB in a Level 3 boosted server without buying Nitro yourself. Selected servers with the experimental Larger File Uploads perk allow 250 MB. As a link, there's no limit. Transfer.zip handles files of any size.
 
 **Can I get banned for sharing external links?**
 No. Discord allows external links, and posting a download link for an oversized file is completely normal.
 
 **Can I send large files in Discord DMs?**
-The same 10 MB limit applies in DMs and group chats. Boosts only help inside a server, so for DMs use a link, a split archive, or a compressed file.
+Free accounts have a standard 20 MB limit in DMs and group chats. Boosts only help inside a server, so for DMs use a link, a split archive, or a compressed file.
 
 **Is Nitro worth it just for uploads?**
-If you regularly send 50-500 MB files and want the other perks, maybe. For the occasional big file, a free link is enough, and Nitro still caps at 500 MB, so anything larger needs a link anyway.
+If you regularly send 50 MB to 1 GB files and want the other perks, maybe. For the occasional big file, a free link is enough, and Nitro still caps at 1 GB, so anything larger needs a link anyway.
 
 ---
 
-**Bottom line:** You don't need Nitro to share large files on Discord. For anything over 10 MB, paste a link. [Transfer.zip](https://transfer.zip) gives you one instantly and for free, with no size limit.
+**Bottom line:** You don't need Nitro to share large files on Discord. For anything over 20 MB, paste a link. [Transfer.zip](https://transfer.zip) gives you one instantly and for free, with no size limit.
 
 **Related guides:**
 - [Share files anonymously](/how-to/share-files/anonymously)
