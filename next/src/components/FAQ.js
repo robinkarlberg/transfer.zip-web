@@ -1,5 +1,7 @@
 "use client"
 
+import { englishLandingText } from "@/lib/landing/en";
+
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/react"
 import { PlusIcon } from "lucide-react"
 import Link from "next/link"
@@ -78,8 +80,8 @@ const faqs = [
   },
 ]
 
-export default function FAQ({ quickOnly }) {
-  const shown = quickOnly ? faqs.filter(faq => faq.quick) : faqs
+export default function FAQ({ quickOnly, items = faqs, text = englishLandingText.faq }) {
+  const shown = quickOnly ? items.filter(faq => faq.quick) : items
 
   return (
     <section className="bg-white" id="faq">
@@ -89,9 +91,9 @@ export default function FAQ({ quickOnly }) {
             <div className="lg:sticky lg:top-28">
               <SectionHeading
                 align="left"
-                eyebrow="FAQ"
-                title="Frequently asked questions"
-                description={<>Can't find what you're looking for? <Link href="/contact" className="font-semibold text-primary hover:underline">Get in touch</Link> and we'll help you out.</>}
+                eyebrow={text.eyebrow}
+                title={text.title}
+                description={<>{text.contactBefore} <Link href="/contact" className="font-semibold text-primary hover:underline">{text.contactLink}</Link>{text.contactAfter}</>}
               />
             </div>
           </div>
@@ -111,7 +113,7 @@ export default function FAQ({ quickOnly }) {
                   </DisclosureButton>
                 </dt>
                 <DisclosurePanel as="dd" className="pb-5 pr-12">
-                  <p className="text-base/7 text-gray-600">{faq.answer}</p>
+                  <p className="text-base/7 text-gray-600">{faq.answer}{faq.link && <> <a className="text-primary underline" href={faq.link.href} target="_blank" rel="noopener noreferrer">{faq.link.label}</a></>}</p>
                 </DisclosurePanel>
               </Disclosure>
             ))}

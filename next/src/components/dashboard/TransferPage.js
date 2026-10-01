@@ -412,7 +412,7 @@ export default function ({ user, transfer, brandProfiles }) {
 
       <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <DialogContent>
-          <DialogHeader>
+          <DialogHeader variant="destructive">
             <DialogTitle>Delete Transfer</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete this transfer? This action cannot be undone.

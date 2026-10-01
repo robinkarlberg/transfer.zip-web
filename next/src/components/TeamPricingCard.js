@@ -1,18 +1,20 @@
 "use client"
 
+import { englishLandingText } from "@/lib/landing/en";
+
 import { useState } from "react"
 import Link from "next/link"
 import BIcon from "./BIcon"
 import NumberFlow from '@number-flow/react'
 import { sendEvent } from "@/lib/client/umami"
 
-export default function TeamPricingCard({ frequency, tier, onTierSelected, eventName, compact }) {
+export default function TeamPricingCard({ frequency, tier, onTierSelected, eventName, compact, text = englishLandingText.teamPricing }) {
   const [seats, setSeats] = useState(tier.minSeats || 2)
 
   const pricePerSeat = tier.price[frequency]
   const totalPrice = pricePerSeat * seats
 
-  const _buttonText = "Get Started with Teams"
+  const _buttonText = text.button
 
   return (
     <div className="bg-white ring-1 ring-gray-200 rounded-3xl p-8 flex flex-col shadow-lg">
@@ -22,7 +24,7 @@ export default function TeamPricingCard({ frequency, tier, onTierSelected, event
         </p>
         <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary ring-1 ring-inset ring-primary/20">
           <BIcon name="people-fill" className="me-1" />
-          {seats} users
+          {seats} {text.users}
         </span>
       </div>
 
@@ -32,21 +34,22 @@ export default function TeamPricingCard({ frequency, tier, onTierSelected, event
             <NumberFlow
               value={totalPrice}
               prefix="$"
+              locales={text.locale}
               continuous={false}
             />
           </div>
         </div>
-        <span className="text-gray-500 text-base">/month</span>
+        <span className="text-gray-500 text-base">{text.month}</span>
       </div>
 
       <p className="text-gray-500 text-sm mt-2">
-        ${pricePerSeat}/seat
+        ${pricePerSeat}{text.seat}
       </p>
 
       {frequency === "yearly" && (
         <div className="mt-3">
           <span className="badge-bling relative overflow-hidden inline-block px-2.5 py-0.5 border rounded-full text-xs text-amber-600 border-amber-500 bg-amber-50">
-            Save ${(tier.price.monthly - tier.price.yearly) * seats * 12}/year
+            {text.save} ${(tier.price.monthly - tier.price.yearly) * seats * 12}{text.year}
           </span>
         </div>
       )}
@@ -55,6 +58,7 @@ export default function TeamPricingCard({ frequency, tier, onTierSelected, event
       <div className="mt-4">
         <input
           type="range"
+          aria-label={text.seatsLabel}
           min={tier.minSeats || 2}
           max={tier.maxSeats || 25}
           value={seats}
@@ -62,7 +66,7 @@ export default function TeamPricingCard({ frequency, tier, onTierSelected, event
           className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary"
         />
         <div className="flex justify-between text-xs text-gray-400 mt-1">
-          <span>{tier.minSeats || 2} users</span>
+          <span>{tier.minSeats || 2} {text.users}</span>
           <span>{tier.maxSeats || 25}+</span>
         </div>
       </div>

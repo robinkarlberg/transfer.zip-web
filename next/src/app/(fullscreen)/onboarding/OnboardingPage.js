@@ -193,7 +193,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
       </div>
       <Dialog open={showDeleteModal} onOpenChange={open => { if (!deleting) setShowDeleteModal(open) }}>
         <DialogContent className="sm:max-w-md">
-          <DialogHeader>
+          <DialogHeader variant="destructive">
             <DialogTitle>Delete your account?</DialogTitle>
             <DialogDescription>
               This will permanently delete your account and all associated transfers, transfer requests, and brand profiles. Any active subscription will be cancelled immediately, with no refund for unused time. This cannot be undone.

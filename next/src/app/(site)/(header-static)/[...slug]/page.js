@@ -8,7 +8,6 @@ import {
   getChildrenBySlug,
   slugToTitle,
 } from "@/lib/server/content"
-import Image from "next/image"
 import { notFound } from "next/navigation"
 
 export const dynamicParams = true
@@ -72,11 +71,13 @@ export default async function Page({ params }) {
         <ContentLanding
           title={`${categoryTitle} Guides`}
           description={description}
-          href={"/"}
-          linkText={"Send your files now with Transfer.zip"}
           slugPath={slugPath}
         />
-        <ContentArticle childContent={childContent} />
+        <ContentArticle
+          childContent={childContent}
+          href={"/"}
+          linkText={"Send your files now with Transfer.zip"}
+        />
       </>
     )
   }
@@ -103,13 +104,17 @@ export default async function Page({ params }) {
       <ContentLanding
         title={meta.title}
         description={<span dangerouslySetInnerHTML={{ __html: meta.description }} />}
+        slugPath={slugPath}
+        imgSrc={meta.imgSrc}
+        imgAlt={meta.imgAlt}
+      />
+      <ContentArticle
+        toc={toc}
+        childContent={childContent}
+        imgSrc={meta.imgSrc}
         href={meta.href || "/"}
         linkText={meta.linkText || "Send your files now with Transfer.zip"}
-        slugPath={slugPath}
       >
-        <Image width={1024} height={1024} alt={meta.imgAlt} src={meta.imgSrc} />
-      </ContentLanding>
-      <ContentArticle toc={toc} childContent={childContent} imgSrc={meta.imgSrc}>
         {content}
       </ContentArticle>
     </>

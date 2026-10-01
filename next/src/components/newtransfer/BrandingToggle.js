@@ -1,11 +1,12 @@
 "use client"
 
+import { englishLandingText } from "@/lib/landing/en";
 import { Select, SelectContent, SelectItem, SelectTriggerFix } from "@/components/ui/select";
 import { HexagonIcon, PaintbrushIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
-export default function ({ brandProfiles, brandProfileId, setBrandProfileId }) {
+export default function ({ brandProfiles, brandProfileId, setBrandProfileId, text = englishLandingText.upload.brandProfile }) {
 
   const [selecting, setSelecting] = useState(false)
 
@@ -23,14 +24,14 @@ export default function ({ brandProfiles, brandProfileId, setBrandProfileId }) {
             brandProfile ?
               <>
                 {brandProfile.iconUrl ?
-                  <Image alt="Brand Profile Icon" width={24} height={24} src={brandProfile.iconUrl} /> :
+                  <Image alt={text.icon} width={24} height={24} src={brandProfile.iconUrl} /> :
                   <HexagonIcon className="w-[24px] h-[24px] p-0.5 rounded-lg border-2 border-dashed border-gray-400" />
                 }
                 <span className="text-sm font-medium text-gray-700">{brandProfile.name}</span>
               </>
               :
               <>
-                <span className="text-sm text-gray-700 flex items-center gap-2"><PaintbrushIcon className="text-gray-700" /> Brand</span>
+                <span className="text-sm text-gray-700 flex items-center gap-2"><PaintbrushIcon className="text-gray-700" /> {text.brand}</span>
               </>
           }
         </SelectTriggerFix>
@@ -42,14 +43,14 @@ export default function ({ brandProfiles, brandProfileId, setBrandProfileId }) {
                 key={profile.id}
                 value={profile.id}>
                 {profile.iconUrl ?
-                  <Image alt="Brand Profile Icon" width={24} height={24} src={profile.iconUrl} /> :
+                  <Image alt={text.icon} width={24} height={24} src={profile.iconUrl} /> :
                   <HexagonIcon className="w-[24px] h-[24px] p-0.5 rounded-lg border-2 border-dashed border-gray-400" />
                 }
                 <span className="text-sm font-medium text-gray-700">{profile.name}</span>
               </SelectItem>)
-            ), <SelectItem key={"nonee"} value={null}>No brand profile</SelectItem>]
+            ), <SelectItem key={"nonee"} value={null}>{text.none}</SelectItem>]
             :
-            <SelectItem key={"none"} value={"none"} disabled>No brand profiles.</SelectItem>
+            <SelectItem key={"none"} value={"none"} disabled>{text.empty}</SelectItem>
           }
         </SelectContent>
       </Select>

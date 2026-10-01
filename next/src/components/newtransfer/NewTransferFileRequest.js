@@ -6,7 +6,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
-import { capitalizeFirstLetter, tryCopyToClipboard } from "@/lib/utils";
+import { tryCopyToClipboard } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import Progress from "../elements/Progress";
 
@@ -17,10 +17,12 @@ import Link from "next/link";
 import BrandingToggle from "./BrandingToggle";
 import DynamicIsland from "./DynamicIsland";
 import { toast } from "sonner";
-import { ApplicationContext } from "@/context/ApplicationContext";
+import { englishLandingText } from "@/lib/landing/en";
 import AddedEmailField from "./AddedEmailField";
 
-export default function ({ isDashboard, loaded, user, storage, brandProfiles, initialTab }) {
+const defaultText = { ...englishLandingText.upload, ...englishLandingText.request }
+
+export default function ({ isDashboard, loaded, user, storage, brandProfiles, initialTab, text = defaultText, homeHref = "/" }) {
 
   const router = useRouter()
 
@@ -70,8 +72,8 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
       if (tab == "email" && emailRecipients.length === 0)
         return displayErrorMessage({
-          title: "Oops.",
-          body: "You did not add any recipient email!"
+          title: text.errorTitle,
+          body: text.addRecipients
         })
 
       try {
@@ -95,8 +97,8 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     if ((!user || user.plan == "free")) {
       if (emailRecipients.length >= 2) {
         displayErrorMessage({
-          title: "Oops.",
-          body: <><Link className="text-primary underline hover:text-primary-light" target="_blank" href="/pricing">Upgrade your plan</Link> to send a file to up to 30 people at once.</>
+          title: text.errorTitle,
+          body: <><Link className="text-primary underline hover:text-primary-light" target="_blank" href="/pricing">{text.upgrade}</Link> {text.upgradeRecipients}</>
         })
         return
       }
@@ -104,15 +106,15 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     else {
       if (user.plan == "starter" && emailRecipients.length >= 10) {
         displayErrorMessage({
-          title: "Oops.",
-          body: "With the Starter plan, you can only send a file transfer to up to 10 email recipients at once. Upgrade to Pro to send up to 30 emails per transfer."
+          title: text.errorTitle,
+          body: text.starterRecipients
         })
         return
       }
       if (user.plan == "pro" && emailRecipients.length >= 30) {
         displayErrorMessage({
-          title: "Oops.",
-          body: "With the Pro plan, you can only send a file transfer to up to 30 email recipients at once."
+          title: text.errorTitle,
+          body: text.proRecipients
         })
         return
       }
@@ -150,7 +152,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
   const handleCopyClick = async e => {
     if (await tryCopyToClipboard(transferRequest.uploadUrl)) {
-      toast.success("Copied Link", { description: "The request link was successfully copied to the clipboard!" })
+      toast.success(text.copiedLink, { description: text.copiedDescription })
     }
   }
 
@@ -161,17 +163,17 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
   const endOverlay = (
     <>
       <div className="relative w-full h-full max-w-44 max-h-44">
-        <Progress max={1} now={1} showUnits={false} finished={true} finishedText={(emailRecipients && emailRecipients.length > 0) ? `Your request was sent!` : `Your request link was created!`} failed={failed} />
+        <Progress max={1} now={1} showUnits={false} finished={true} finishedText={emailRecipients.length > 0 ? text.finished.email : text.finished.link} failed={failed} text={text.progress} />
       </div>
       <div className="flex flex-col gap-2">
         {
           failed ?
             <>
-              {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Reload Page <RotateCcwIcon size={12} /></Button>}
+              {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>{text.reload} <RotateCcwIcon size={12} /></Button>}
               {/* {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Send more files</Button>} */}
             </> : <>
-              {finished && <Button size={"sm"} onClick={handleCopyClick}><CopyIcon size={12}/> Copy Request Link</Button>}
-              {finished && <Button size={"sm"} variant={"outline"} onClick={() => router.push("/app/requests")}>View in Dashboard</Button>}
+              {finished && <Button size={"sm"} onClick={handleCopyClick}><CopyIcon size={12}/> {text.copyRequestLink}</Button>}
+              {finished && <Button size={"sm"} variant={"outline"} onClick={() => router.push("/app/requests")}>{text.view}</Button>}
             </>
         }
       </div>
@@ -188,7 +190,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
               onClick={() => setTab(key)}
               key={key}
               className={`py-2 ${key == tab ? "font-medium text-primary bg-primary-50" : "text-gray-500 hover:bg-gray-50"}`}>
-              {capitalizeFirstLetter(key)}
+              {text.tabs[key]}
             </button>
           ))}
         </div>
@@ -203,13 +205,13 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
                 onKeyDown={handleEmailInputKeyDown}
                 onBlur={handleEmailBlur}
                 id="email"
-                placeholder="Recipient(s) email"
+                placeholder={text.recipients}
                 type="email"
                 className={"pe-24"}
               />
               <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
                 <button type="button" onClick={handleEmailAdd} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
-                  <PlusIcon size={12} /> Add Email
+                  <PlusIcon size={12} /> {text.addEmail}
                 </button>
               </div>
             </div>
@@ -223,7 +225,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
         {!quickTransferEnabled && <>
           <div>
             <Input
-              placeholder="Title"
+              placeholder={text.title}
               type={"text"}
               name="name"
               required
@@ -233,7 +235,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
             <div>
               <Textarea
                 id="description"
-                placeholder="Message..."
+                placeholder={text.message}
                 type="text"
                 name="description"
               />
@@ -243,50 +245,50 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
             <hr />
             <div className="relative flex items-center justify-start">
               <div className="left-2 absolute h-1 bg-white w-[68px] flex items-center justify-start">
-                <span className="inline-block text-xs mx-auto text-gray-400">SETTINGS</span>
+                <span className="inline-block text-xs mx-auto text-gray-400">{text.settings}</span>
               </div>
             </div>
           </div>
-          <BrandingToggle brandProfiles={brandProfiles} brandProfileId={brandProfileId} setBrandProfileId={setBrandProfileId} />
+          <BrandingToggle brandProfiles={brandProfiles} brandProfileId={brandProfileId} setBrandProfileId={setBrandProfileId} text={text.brandProfile} />
         </>}
         {quickTransferEnabled && <>
           {/* "w-0 min-w-full" prevents the box from stretching the parent */}
           <div className="p-4 ring-1 ring-inset text-gray-800 ring-gray-200 rounded-lg w-0 min-w-full">
-            <p className="font-semibold">Temporary file-sharing link.</p>
+            <p className="font-semibold">{text.temporaryTitle}</p>
             <p className="mt-1 text-sm text-gray-600">
-              This will create a temporary link for downloading files, of any size, from other people. The link will expire when your browser tab is closed.
+              {text.temporaryDescription}
             </p>
           </div>
           {!payingUser && (
             <button onClick={() => openSignupDialog()} type="button" className="text-start w-full bg-purple-50 text-purple-600 rounded-lg p-3 px-4 hover:bg-purple-100">
               <div className="flex justify-between">
-                <div className="flex items-center gap-2">Unlock links that never expire!</div>
+                <div className="flex items-center gap-2">{text.keepLinks}</div>
                 <span>&rarr;</span>
               </div>
               <div className="mt-1 text-start text-sm text text-purple-500">
-                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Receive files by email</p>
-                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Custom logo & branding</p>
-                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Receive up to 1TB</p>
-                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Start for free</p>
+                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> {text.emailFeature}</p>
+                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> {text.branding}</p>
+                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> {text.receiveLimit}</p>
+                <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> {text.startFree}</p>
               </div>
             </button>
           )}
         </>}
       </div>
       <div className="flex-none p-2 flex flex-row-reverse items-center gap-2 --border-t">
-        <Button size={"sm"}>{!quickTransferEnabled && tab == "email" ? <>Request Files <ArrowRightIcon /></> : <>Get a Request Link <LinkIcon /></>} </Button>
+        <Button size={"sm"}>{!quickTransferEnabled && tab == "email" ? <>{text.requestFiles} <ArrowRightIcon /></> : <>{text.getLink} <LinkIcon /></>} </Button>
       </div>
     </form>
   )
 
   return (
     <>
-      <ErrorDialog open={showErrorMessage} onOpenChange={setShowErrorMessage} title={errorMessage?.title} message={errorMessage?.body} />
+      <ErrorDialog open={showErrorMessage} onOpenChange={setShowErrorMessage} title={errorMessage?.title || text.defaultErrorTitle} message={errorMessage?.body} closeText={text.gotIt} />
       <DynamicIsland
         expand={!small}
         showQuickLink={true}
-        quickLinkHref={isDashboard ? "/app" : "/"}
-        quickLinkContent={"Send Files Instead"}
+        quickLinkHref={isDashboard ? "/app" : homeHref}
+        quickLinkContent={text.sendInstead}
         showStartOverlay={false}
         showEndOverlay={finished}
         endOverlay={endOverlay}

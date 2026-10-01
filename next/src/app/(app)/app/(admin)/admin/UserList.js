@@ -91,7 +91,7 @@ function Entry({ user, currentUser, onDeleteUser, onUpdateRole }) {
           {showDeleteModal && (
             <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
               <DialogContent className="sm:max-w-md">
-                <DialogHeader>
+                <DialogHeader variant="destructive">
                   <DialogTitle>Remove User {user.email} </DialogTitle>
                   <DialogDescription>
                     Are you sure you want to delete this user? This action cannot be undone.
@@ -169,7 +169,7 @@ function InviteEntry({ invite }) {
           {showDeleteModal && (
             <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
               <DialogContent className="sm:max-w-md">
-                <DialogHeader>
+                <DialogHeader variant="destructive">
                   <DialogTitle>Delete Invite to {invite.email} </DialogTitle>
                   <DialogDescription>
                     Are you sure you want to delete this invite? This action cannot be undone.

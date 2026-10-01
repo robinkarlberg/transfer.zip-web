@@ -1,5 +1,7 @@
 "use client"
 
+import { englishLandingText } from "@/lib/landing/en";
+
 import { useEffect, useRef, useState } from "react"
 import { pollMagicLinkStatus, verifyMagicLinkCode } from "@/lib/client/Api"
 import { Button } from "./ui/button"
@@ -14,7 +16,7 @@ const POLL_INTERVAL_MS = 2500
 // - same-browser click: switch to a "signed in" state with a CTA into /app
 // - cross-device click: switch to a 6-digit code input so the user can finish
 //   sign-in on this device using the code displayed on the other device
-export default function MagicLinkSentArea({ requestId, email, redirectTo = "/app", onReset }) {
+export default function MagicLinkSentArea({ requestId, email, redirectTo = "/app", onReset, text = englishLandingText.signup.area.magicLink }) {
   const [stage, setStage] = useState("sent") // sent | codeNeeded | verifying | signedIn
   const [code, setCode] = useState("")
   const [error, setError] = useState(null)
@@ -38,12 +40,12 @@ export default function MagicLinkSentArea({ requestId, email, redirectTo = "/app
           setStage("codeNeeded")
         }
         if (res.status === "expired") {
-          setError("This sign-in session expired. Request a new link.")
+          setError(text.expired)
           return
         }
       } catch (err) {
         if (err.status === 401 || err.status === 404) {
-          setError("This sign-in session expired. Request a new link.")
+          setError(text.expired)
           return
         }
         // transient errors fall through to the next tick
@@ -78,11 +80,11 @@ export default function MagicLinkSentArea({ requestId, email, redirectTo = "/app
           <BIcon name="check-circle-fill" className="text-primary" />
         </div>
         <div>
-          <p className="text-base font-semibold text-gray-900">You're signed in</p>
+          <p className="text-base font-semibold text-gray-900">{text.signedIn}</p>
           {/* <p className="text-sm text-gray-600 mt-1">Now go send some files.</p> */}
         </div>
         <Button onClick={() => { window.location.href = redirectTo }} className="w-full">
-          Go to dashboard
+          {text.dashboard}
         </Button>
       </div>
     )
@@ -91,14 +93,14 @@ export default function MagicLinkSentArea({ requestId, email, redirectTo = "/app
   const domain = email && email.split("@")[1]
   const mailInfo = domain ? emailDomains[domain] : null
   const mailLink = mailInfo
-    ? <a className="text-primary hover:underline" href={mailInfo.url} target="_blank" rel="noopener noreferrer">Open {mailInfo.prettyName} &rarr;</a>
+    ? <a className="text-primary hover:underline" href={mailInfo.url} target="_blank" rel="noopener noreferrer">{text.open} {mailInfo.prettyName} &rarr;</a>
     : null
 
   if (stage === "codeNeeded" || stage === "verifying") {
     return (
       <div className="space-y-3">
         <div className="text-sm text-gray-700">
-          The sign-in email was opened on a different browser. Enter the 6-digit code shown there to finish signing in here.
+          {text.otherBrowser}
         </div>
         <form onSubmit={handleVerify} className="space-y-2">
           <Input
@@ -111,13 +113,13 @@ export default function MagicLinkSentArea({ requestId, email, redirectTo = "/app
             className="tracking-[0.5em] text-center text-lg font-mono"
           />
           <Button disabled={code.length !== 6 || stage === "verifying"} className="w-full">
-            {stage === "verifying" && <Spinner />} Verify and sign in
+            {stage === "verifying" && <Spinner />} {text.verify}
           </Button>
         </form>
         {error && <p className="text-red-600 text-sm text-center">{error}</p>}
         {onReset && (
           <button type="button" onClick={onReset} className="text-xs text-gray-500 hover:text-gray-700 block mx-auto">
-            Use a different email
+            {text.differentEmail}
           </button>
         )}
       </div>
@@ -127,10 +129,10 @@ export default function MagicLinkSentArea({ requestId, email, redirectTo = "/app
   return (
     <div className="space-y-4 text-center text-sm">
       <p className="text-gray-800 text-base font-semibold">
-        An email has been sent to your inbox!
+        {text.sent}
       </p>
       <div className="text-gray-600 text-sm flex items-center justify-center gap-2">
-        <Spinner sizeClassName="h-4 w-4" /> Waiting for you to open the link...
+        <Spinner sizeClassName="h-4 w-4" /> {text.waiting}
       </div>
       {error && <p className="text-red-600">{error}</p>}
       {mailLink && (

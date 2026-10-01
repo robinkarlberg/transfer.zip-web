@@ -163,7 +163,7 @@ const Entry = ({ transferRequest, onLocalUpdate }) => {
       </div>
       <Dialog open={showDeleteConfirm} onOpenChange={open => !deleting && setShowDeleteConfirm(open)}>
         <DialogContent>
-          <DialogHeader>
+          <DialogHeader variant="destructive">
             <DialogTitle>Delete request{name ? ` "${name}"` : ""}?</DialogTitle>
             <DialogDescription>
               {receivedTransfers.length === 0

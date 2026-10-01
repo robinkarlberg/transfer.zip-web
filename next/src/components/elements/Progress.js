@@ -1,3 +1,4 @@
+import { englishLandingText } from "@/lib/landing/en";
 import { useMemo } from "react"
 import { buildStyles, CircularProgressbar, CircularProgressbarWithChildren } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -7,7 +8,7 @@ import { humanFileSizePair, humanFileSizeWithUnit } from "@/lib/transferUtils";
 import Spinner from "./Spinner";
 import Cross from "../Cross";
 
-export default function Progress({ now, max, showUnits, autoFinish, finished, finishedText, failed }) {
+export default function Progress({ now, max, showUnits, autoFinish, finished, finishedText, failed, text = englishLandingText.upload.progress }) {
   const percent = useMemo(() => !max ? 0 : Math.floor(now / max * 100), [now, max])
 
   const humanMax = humanFileSizePair(max, true)
@@ -23,7 +24,7 @@ export default function Progress({ now, max, showUnits, autoFinish, finished, fi
               <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center transition data-[closed]:opacity-0">
                 <Cross />
                 <div className="text-center font-bold">
-                  Unfortunately, there was an error.
+                  {text.failed}
                 </div>
               </div>
             </Transition>
@@ -40,7 +41,7 @@ export default function Progress({ now, max, showUnits, autoFinish, finished, fi
               <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center transition data-[closed]:opacity-0">
                 <Spinner className={"text-primary"} sizeClassName={"w-16 h-16"} />
                 <div className="mt-5 text-center">
-                  Processing files...
+                  {text.processing}
                 </div>
               </div>
             </Transition>
@@ -52,7 +53,7 @@ export default function Progress({ now, max, showUnits, autoFinish, finished, fi
                     textColor: "currentColor",
                     pathColor: "currentColor"
                   })} >
-                  {showUnits && <span className="text-sm mt-12 text-gray-500">{humanNowAmount} of {humanMax.amount}{humanMax.unit}</span>}
+                  {showUnits && <span className="text-sm mt-12 text-gray-500">{humanNowAmount} {text.of} {humanMax.amount}{humanMax.unit}</span>}
                 </CircularProgressbarWithChildren>
               </div>
             </Transition>

@@ -59,7 +59,7 @@ export default function SignUpModal({ show, onShowChange }) {
   }
 
   return (
-    <Modal show={show} onClose={() => onShowChange(false)} style={"none"} size={"max-w-3xl"}>
+    <Modal show={show} onClose={() => onShowChange(false)} title="Sign up" style={"none"} size={"max-w-3xl"}>
       <div className="flex p-4">
         <div className="hidden sm:block grow">
           <h2 className="text-3xl font-bold mb-2">Extend your link's life! 👋</h2>

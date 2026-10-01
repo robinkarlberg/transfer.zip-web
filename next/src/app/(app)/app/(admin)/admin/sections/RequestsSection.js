@@ -288,7 +288,7 @@ export default function RequestsSection({ requests, role }) {
 
         <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
           <DialogContent className="sm:max-w-md">
-            <DialogHeader>
+            <DialogHeader variant="destructive">
               <DialogTitle>Delete request{deleteTarget?.name ? ` "${deleteTarget.name}"` : ""}?</DialogTitle>
               <DialogDescription>
                 {deleteTarget && deleteTarget.receivedTransfersCount === 0

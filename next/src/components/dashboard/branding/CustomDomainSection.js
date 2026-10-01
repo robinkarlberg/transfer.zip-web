@@ -155,7 +155,7 @@ function RemoveDomainAction({ domain, busy, onConfirm }) {
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader>
+        <DialogHeader variant="destructive">
           <DialogTitle>Remove custom domain</DialogTitle>
           <DialogDescription>
             <span className="font-mono">{domain.domain}</span> will stop serving your transfers immediately. Existing links pointing at this domain will break until you reconnect it.

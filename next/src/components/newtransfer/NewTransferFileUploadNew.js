@@ -1,7 +1,10 @@
 "use client"
 
+import { englishLandingText } from "@/lib/landing/en";
+import { getLandingLanguage, RECEIVE_PATHS } from "@/lib/landing/routes";
+
 import BIcon from "@/components/BIcon";
-import { formatCount, groupFilesByFolder, humanFileSize, humanFileType } from "@/lib/transferUtils";
+import { groupFilesByFolder, humanFileSize, humanFileType } from "@/lib/transferUtils";
 import { ArrowRightIcon, FileIcon, FolderIcon, FolderPlusIcon, LinkIcon, PlusIcon, RotateCcwIcon, XIcon, ZapIcon } from "lucide-react";
 import { useContext, useMemo, useRef, useState } from "react";
 import { Button } from "../ui/button";
@@ -13,8 +16,7 @@ import { newTransfer } from "@/lib/client/Api";
 import { prepareTransferFiles, uploadFiles } from "@/lib/client/uploader";
 import { EXPIRATION_TIMES } from "@/lib/constants";
 import { getLimit, LIMIT } from "@/lib/pricing";
-import { capitalizeFirstLetter } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Progress from "../elements/Progress";
 
 import {
@@ -36,9 +38,10 @@ import AddedEmailField from "./AddedEmailField";
 
 const FILE_ROWS_LISTED = 100
 
-export default function ({ isDashboard, loaded, user, storage, brandProfiles, initialTab }) {
+export default function ({ isDashboard, loaded, user, storage, brandProfiles, initialTab, text = englishLandingText.upload }) {
 
   const router = useRouter()
+  const language = getLandingLanguage(usePathname())
 
   const { files: globalFiles, setFiles: setGlobalFiles } = useContext(FileContext)
   const { openSignupDialog } = useContext(GlobalContext)
@@ -92,7 +95,6 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     !quickTransferEnabled &&
     (storage ? totalBytesToSend > storage.maxStorageBytes - storage.usedStorageBytes : false)
 
-
   const [failed, setFailed] = useState(false)
   const [tab, setTab] = useState(initialTab || (payingUser ? "email" : "link"))
 
@@ -119,14 +121,14 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
       if (files.length === 0)
         return displayErrorMessage({
-          title: "Oops.",
-          body: "Add some files first ;)"
+          title: text.errorTitle,
+          body: text.addFiles
         })
 
       if (tab == "email" && emailRecipients.length === 0)
         return displayErrorMessage({
-          title: "Oops.",
-          body: "You did not add any recipient email!"
+          title: text.errorTitle,
+          body: text.addRecipients
         })
 
       setFilesToUpload(files) // Just to be safe
@@ -199,14 +201,14 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     }
     catch (err) {
       displayErrorMessage({
-        title: "Oops.",
+        title: text.errorTitle,
         body: (
           <>
             <p>
-              We can't send multiple files with the same name! Try again.
+              {text.duplicate}
             </p>
             <p className="text-gray-500 text-sm mt-2">
-              <span className="font-medium">Name:</span> <span className="font-mono break-all">{err.message}</span>
+              <span className="font-medium">{text.name}</span> <span className="font-mono break-all">{err.message}</span>
             </p>
           </>
         )
@@ -256,8 +258,8 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     if ((!user || user.plan == "free")) {
       if (emailRecipients.length >= 2) {
         displayErrorMessage({
-          title: "Oops.",
-          body: <><Link className="text-primary underline hover:text-primary-light" target="_blank" href="/pricing">Upgrade your plan</Link> to send a file to up to 30 people at once.</>
+          title: text.errorTitle,
+          body: <><Link className="text-primary underline hover:text-primary-light" target="_blank" href="/pricing">{text.upgrade}</Link> {text.upgradeRecipients}</>
         })
         return
       }
@@ -265,15 +267,15 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     else {
       if (user.plan == "starter" && emailRecipients.length >= 10) {
         displayErrorMessage({
-          title: "Oops.",
-          body: "With the Starter plan, you can only send a file transfer to up to 10 email recipients at once. Upgrade to Pro to send up to 30 emails per transfer."
+          title: text.errorTitle,
+          body: text.starterRecipients
         })
         return
       }
       if (user.plan == "pro" && emailRecipients.length >= 30) {
         displayErrorMessage({
-          title: "Oops.",
-          body: "With the Pro plan, you can only send a file transfer to up to 30 email recipients at once."
+          title: text.errorTitle,
+          body: text.proRecipients
         })
         return
       }
@@ -327,9 +329,9 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
       <div className="text-white rounded-full bg-primary w-12 h-12 flex items-center justify-center group-hover:bg-primary-light">
         <PlusIcon size={24} />
       </div>
-      <span className="font-medium mt-2 text-lg">Pick files</span>
+      <span className="font-medium mt-2 text-lg">{text.pickFiles}</span>
       <button onClick={handleSelectFolder} className="text-gray-500 text-sm font-medium mt-2 underline hover:text-primary">
-        or select a folder
+        {text.pickFolder}
       </button>
     </div>
   )
@@ -346,23 +348,23 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
             <p className="overflow-hidden text-ellipsis whitespace-nowrap font-medium text-gray-600">{entry.name}</p>
           </div>
           <span className="text-sm text-gray-500">
-            {entry.folder ? formatCount(entry.count, "file") : humanFileSize(entry.size, true)}<BIcon name={"dot"} />{entry.folder ? humanFileSize(entry.size, true) : humanFileType(entry.type)}
+            {entry.folder ? `${entry.count.toLocaleString(text.locale)} ${entry.count === 1 ? text.file : text.files.toLowerCase()}` : humanFileSize(entry.size, true)}<BIcon name={"dot"} />{entry.folder ? humanFileSize(entry.size, true) : humanFileType(entry.type)}
           </span>
           <div className="absolute top-0 right-5 flex h-full items-center opacity-0 group-hover:opacity-100">
-            <button onClick={() => removeEntry(entry)} aria-label={`Remove ${entry.name}`} className="p-1 bg-white border rounded-md text-gray-700">
+            <button onClick={() => removeEntry(entry)} aria-label={`${text.remove} ${entry.name}`} className="p-1 bg-white border rounded-md text-gray-700">
               <XIcon size={16} />
             </button>
           </div>
         </div>
       )
     }),
-    unlistedCount > 0 && <p key="unlisted" className="px-3 py-2 text-sm text-gray-500">and {formatCount(unlistedCount, "more file")}</p>
+    unlistedCount > 0 && <p key="unlisted" className="px-3 py-2 text-sm text-gray-500">{text.moreFiles[unlistedCount === 1 ? "one" : "other"].replace("{count}", unlistedCount.toLocaleString(text.locale))}</p>
   ]
 
   const leftSectionLowerBar = (
     <>
-      <Button onClick={handlePickFiles} size={"sm"} variant={"outline"}><PlusIcon /> Files</Button>
-      <Button onClick={handleSelectFolder} size={"sm"} variant={"outline"}><FolderPlusIcon /> Folder</Button>
+      <Button onClick={handlePickFiles} size={"sm"} variant={"outline"}><PlusIcon /> {text.files}</Button>
+      <Button onClick={handleSelectFolder} size={"sm"} variant={"outline"}><FolderPlusIcon /> {text.folder}</Button>
       <span className="ms-auto text-gray-500 text-sm me-2 hidden sm:inline">{humanFileSize(totalFileSize, true)}</span>
     </>
   )
@@ -370,17 +372,17 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
   const endOverlay = (
     <>
       <div className="relative w-full h-full max-w-44 max-h-44">
-        <Progress max={totalBytesToSend} now={bytesTransferred} showUnits={true} finished={finished} finishedText={`Your files were ${tab == "email" ? "sent" : "uploaded"}!`} failed={failed} />
+        <Progress max={totalBytesToSend} now={bytesTransferred} showUnits={true} finished={finished} finishedText={text.finished[tab]} text={text.progress} failed={failed} />
       </div>
       <div className="flex flex-col gap-2">
         {
           failed ?
             <>
-              {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Reload Page <RotateCcwIcon size={12} /></Button>}
-              {/* {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Send more files</Button>} */}
+              {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>{text.reload} <RotateCcwIcon size={12} /></Button>}
+              {/* {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>{text.sendMore}</Button>} */}
             </> : <>
-              {finished && <Button size={"sm"} onClick={handleViewTransferClick}>View transfer <ArrowRightIcon size={12} /></Button>}
-              {finished && <Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Send more files</Button>}
+              {finished && <Button size={"sm"} onClick={handleViewTransferClick}>{text.view} <ArrowRightIcon size={12} /></Button>}
+              {finished && <Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>{text.sendMore}</Button>}
             </>
         }
       </div>
@@ -405,7 +407,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
             key={key}
             disabled={!free && !payingUser}
             className={`py-2 flex justify-center items-center gap-2 ${key == tab ? "font-medium text-primary bg-primary-50" : "text-gray-500 not-disable:hover:bg-gray-50"}`}>
-            {capitalizeFirstLetter(key)}{(free && !payingUser) && <span className="font-bold px-1 text-xs bg-white text-primary-500 rounded">FREE</span>}
+            {text.tabs[key]}{(free && !payingUser) && <span className="font-bold px-1 text-xs bg-white text-primary-500 rounded">{text.free}</span>}
           </button>
         ))}
         {/* <button className="py-2 font-medium text-primary bg-primary-50">Email</button>
@@ -420,13 +422,13 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
                 onKeyDown={handleEmailInputKeyDown}
                 onBlur={handleEmailBlur}
                 id="email"
-                placeholder="Recipient(s) email"
+                placeholder={text.recipients}
                 type="email"
                 className={"pe-24"}
               />
               <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
                 <button type="button" onClick={handleEmailAdd} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
-                  <PlusIcon size={12} /> Add Email
+                  <PlusIcon size={12} /> {text.addEmail}
                 </button>
               </div>
             </div>
@@ -440,7 +442,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
         {!quickTransferEnabled && <>
           <div>
             <Input
-              placeholder="Title"
+              placeholder={text.title}
               type={"text"}
               name="name"
               required
@@ -450,7 +452,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
             <div>
               <Textarea
                 id="description"
-                placeholder="Message..."
+                placeholder={text.message}
                 type="text"
                 name="description"
                 maxLength={400}
@@ -461,18 +463,18 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
             <hr />
             <div className="relative flex items-center justify-start">
               <div className="left-2 absolute h-1 bg-white w-[68px] flex items-center justify-start">
-                <span className="inline-block text-xs mx-auto text-gray-400">SETTINGS</span>
+                <span className="inline-block text-xs mx-auto text-gray-400">{text.settings}</span>
               </div>
             </div>
           </div>
-          <BrandingToggle brandProfiles={brandProfiles} brandProfileId={brandProfileId} setBrandProfileId={setBrandProfileId} />
+          <BrandingToggle text={text.brandProfile} brandProfiles={brandProfiles} brandProfileId={brandProfileId} setBrandProfileId={setBrandProfileId} />
         </>}
         {tooLittleStorage && (
           <div className="w-full">
             <button type="button" onClick={() => router.push("/pricing")} className="w-full shadow-sm text-start rounded-lg text-white bg-red-500 px-4 py-3 group transition-colors hover:bg-red-600">
-              <h5 className="font-bold text-sm mb-1"><span className="group-hover:underline">Hey big sender...</span></h5>
+              <h5 className="font-bold text-sm mb-1"><span className="group-hover:underline">{text.storageTitle}</span></h5>
               <p className="font-medium text-sm">
-                Your storage is full. Upgrade your subscription now to send bigger files. <span className="group-hover:ms-1 transition-all">&rarr;</span>
+                {text.storageDescription} <span className="group-hover:ms-1 transition-all">&rarr;</span>
               </p>
             </button>
           </div>
@@ -483,30 +485,30 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
           {payingUser ?
             (
               <div className="p-4 ring-1 ring-inset text-gray-800 ring-gray-200 rounded-lg w-0 min-w-full">
-                <p className="font-semibold">Temporary file-sharing link.</p>
+                <p className="font-semibold">{text.temporaryTitle}</p>
                 <p className="mt-1 text-sm text-gray-600">
-                  This will create a temporary download link with end-to-end encryption. The link will expire when your browser tab is closed.
+                  {text.temporaryDescription}
                 </p>
               </div>
             )
             : (
               <button onClick={() => openSignupDialog(files)} type="button" className="text-start w-full bg-purple-50 text-purple-600 rounded-lg p-3 px-4 hover:bg-purple-100">
                 <div className="flex justify-between">
-                  <div className="flex items-center gap-2">Keep download links for a year.</div>
+                  <div className="flex items-center gap-2">{text.keepLinks}</div>
                   <span>&rarr;</span>
                 </div>
                 <div className="mt-1 text-start text-sm text text-purple-500">
-                  <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Unlimited transfers</p>
-                  <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Custom logo & branding</p>
-                  <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Send files by email</p>
-                  <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> Start for free</p>
+                  <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> {text.unlimited}</p>
+                  <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> {text.branding}</p>
+                  <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> {text.emailFeature}</p>
+                  <p className="flex items-center gap-2"><ZapIcon fill="currentColor" size={12} /> {text.startFree}</p>
                 </div>
               </button>
             )}
         </>}
       </div>
       <div className="flex-none p-2 flex items-center gap-2 --border-t">
-        <span className="ms-auto text-sm text-gray-500">Expires <span className="hidden sm:inline">after</span></span>
+        <span className="ms-auto hidden text-sm text-gray-500 sm:inline">{text.expires} {text.after}</span>
         <Select value={selectedExpiryTime} onValueChange={e => {
           if(!payingUser && e != "0") {
             setShowUpgradeDialog(true)
@@ -517,8 +519,8 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
           }
           setSelectedExpiryTime(e)
         }} id="expiresInDays" name="expiresInDays">
-          <SelectTrigger size="sm" className={"w-[8.5rem]"}>
-            <SelectValue placeholder="Expires" />
+          <SelectTrigger size="sm" className={"w-[8.5rem]"} aria-label={text.expires}>
+            <SelectValue placeholder={text.expires} />
           </SelectTrigger>
           <SelectContent side="top">
             {EXPIRATION_TIMES.map(item => (
@@ -528,59 +530,58 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
                 disabled={payingUser ? parseInt(item.days) > maxExpiryDays : false}
               >
                 {/* remove the badge when its selected */}
-                {item.period}{!payingUser && (item.free ? <span className="font-bold px-1 text-xs bg-primary-100 text-primary-500 rounded">FREE</span> : <ZapIcon className="text-purple-500" size={8} />)}
+                {text.expiration[item.days]}{!payingUser && (item.free ? <span className="font-bold px-1 text-xs bg-primary-100 text-primary-500 rounded">{text.free}</span> : <ZapIcon className="text-purple-500" size={8} />)}
               </SelectItem>)
             )}
           </SelectContent>
         </Select>
-        <Button disabled={tooLittleStorage} size={"sm"}>{tab == "email" ? <>Transfer <ArrowRightIcon /></> : <>Get Link <LinkIcon /></>} </Button>
+        <Button disabled={tooLittleStorage} size={"sm"}>{tab == "email" ? <>{text.transfer} <ArrowRightIcon /></> : <>{text.getLink} <LinkIcon /></>} </Button>
       </div>
     </form>
   )
 
   return (
     <>
-      <ErrorDialog open={showErrorMessage} onOpenChange={setShowErrorMessage} title={errorMessage?.title} message={errorMessage?.body} />
+      <ErrorDialog open={showErrorMessage} onOpenChange={setShowErrorMessage} title={errorMessage?.title ?? text.defaultErrorTitle} message={errorMessage?.body} closeText={text.gotIt} />
       <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Keep your files available longer</DialogTitle>
+            <DialogTitle>{text.upgradeTitle}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <p className="text-gray-600">
-              Free transfers expire when you close your browser tab. Upgrade to keep your download links active for up to a year.
+              {text.upgradeDescription}
             </p>
             <div className="bg-purple-50 rounded-lg p-4 space-y-2">
               <p className="flex items-center gap-2 text-purple-700">
                 <ZapIcon fill="currentColor" size={14} />
-                Links that last up to 1 year
+                {text.yearLinks}
               </p>
               <p className="flex items-center gap-2 text-purple-700">
                 <ZapIcon fill="currentColor" size={14} />
-                Send files directly by email
+                {text.emailDirect}
               </p>
               <p className="flex items-center gap-2 text-purple-700">
                 <ZapIcon fill="currentColor" size={14} />
-                Custom branding & logo
+                {text.brandingUpgrade}
               </p>
               <p className="flex items-center gap-2 text-purple-700">
                 <ZapIcon fill="currentColor" size={14} />
-                Unlimited file transfers
+                {text.unlimitedUpgrade}
               </p>
             </div>
           </div>
-          <DialogFooter className="flex-col sm:flex-col gap-2">
+          <DialogFooter>
             <Button
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium"
               onClick={() => {
                 setShowUpgradeDialog(false)
                 openSignupDialog(files)
               }}
             >
-              Start for free &rarr;
+              {text.startFree} &rarr;
             </Button>
             <DialogClose asChild>
-              <Button variant="ghost" className="w-full text-gray-500">Maybe later</Button>
+              <Button variant="ghost">{text.later}</Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>
@@ -595,8 +596,9 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
         leftSectionContent={leftSectionContent}
         leftSectionLowerBar={leftSectionLowerBar}
         showQuickLink={files.length == 0}
-        quickLinkHref={isDashboard ? "/app/receive" : "/receive"}
-        quickLinkContent={"Request Files"}
+        quickLinkHref={isDashboard ? "/app/receive" : RECEIVE_PATHS[language]}
+        quickLinkContent={text.requestFiles}
+        dropLabel={text.dropLabel}
         showStartOverlay={showPickFiles}
         startOverlay={PickFiles}
         showEndOverlay={uploadingFiles}

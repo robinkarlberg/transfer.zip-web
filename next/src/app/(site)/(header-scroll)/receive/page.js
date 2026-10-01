@@ -8,11 +8,16 @@ import LandingComparison from "@/components/LandingComparison";
 import Pricing from "@/components/Pricing";
 import TestimonialCloud from "@/components/TestimonialCloud";
 import LandingNew from "../LandingNew";
+import { RECEIVE_ALTERNATES, RECEIVE_PATHS } from "@/lib/landing/routes";
 
 export const metadata = {
   title: "Transfer.zip | Receive Files - Quick & Easy",
   description:
     "Free sharing of photos, videos and documents. Send large files instantly with a link or email. Simple, fast and secure file sharing with Transfer.zip.",
+  alternates: {
+    canonical: RECEIVE_PATHS.en,
+    languages: RECEIVE_ALTERNATES,
+  },
   openGraph: {
     title: "Receive Files | Transfer.zip",
     description:

@@ -1,28 +1,31 @@
 "use client"
 
-import { PILL_BUTTON, StormCloud } from "@/components/quick/TransferParts"
-import { Dialog, DialogClose, DialogOverlay, DialogPortal } from "@/components/ui/dialog"
-import { cn } from "@/lib/utils"
-import * as DialogPrimitive from "@radix-ui/react-dialog"
+import { StormCloud } from "@/components/quick/TransferParts"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogTitle } from "@/components/ui/dialog"
 
 /** Dialog take on Quick Transfer's failed card. `message` can be a string or JSX. */
-export default function ErrorDialog({ open, onOpenChange, title = "Something went wrong", message }) {
+export default function ErrorDialog({ open, onOpenChange, title = "Something went wrong", message, closeText = "Got it" }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogPortal>
-        <DialogOverlay />
-        <DialogPrimitive.Content className="fixed top-1/2 left-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-3xl bg-white p-6 text-center shadow-2xl outline-none data-[state=open]:animate-poof-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 sm:p-8">
+      <DialogContent showCloseButton={false}>
+        <div className="text-center">
           <StormCloud />
-          <DialogPrimitive.Title className="mt-2 text-3xl font-bold tracking-tight text-gray-900">{title}</DialogPrimitive.Title>
-          {/* div, not p, since some messages pass their own paragraphs */}
-          <DialogPrimitive.Description asChild>
-            <div className="mx-auto mt-2 max-w-xs break-words text-gray-500">{message}</div>
-          </DialogPrimitive.Description>
+          <div className="mt-2">
+            <DialogTitle>{title}</DialogTitle>
+          </div>
+          <div className="mx-auto mt-2 max-w-xs">
+            <DialogDescription asChild>
+              <div>{message}</div>
+            </DialogDescription>
+          </div>
+        </div>
+        <DialogFooter>
           <DialogClose asChild>
-            <button type="button" className={cn(PILL_BUTTON, "mt-6")}>Got it</button>
+            <Button>{closeText}</Button>
           </DialogClose>
-        </DialogPrimitive.Content>
-      </DialogPortal>
+        </DialogFooter>
+      </DialogContent>
     </Dialog>
   )
 }

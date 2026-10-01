@@ -1,5 +1,7 @@
 "use client"
 
+import { englishLandingText } from "@/lib/landing/en";
+
 import Link from "next/link"
 import BIcon from "./BIcon"
 import NumberFlow from '@number-flow/react'
@@ -9,8 +11,8 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function PricingCards({ frequency, tiers, compact, onTierSelected, hasFreeTrial, eventName }) {
-  const _buttonText = hasFreeTrial ? "Start a 7-day Free Trial" : "Subscribe"
+export default function PricingCards({ frequency, tiers, compact, onTierSelected, hasFreeTrial, eventName, text = englishLandingText.pricingCards }) {
+  const _buttonText = hasFreeTrial ? text.trial : text.subscribe
   return tiers.map((tier, tierIdx) => (
     <div
       key={tier.name}
@@ -30,7 +32,7 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
         </p>
         {tier.featured && (
           <span className="inline-flex items-center rounded-full bg-primary/20 px-2.5 py-1 text-xs font-medium text-primary-lighter ring-1 ring-inset ring-primary/40">
-            Best Value
+            {text.bestValue}
           </span>
         )}
       </div>
@@ -45,11 +47,12 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
             <NumberFlow
               value={tier.price[frequency]}
               prefix="$"
+              locales={text.locale}
               continous={false}
             />
           </div>
         </div>
-        <span className={classNames(tier.featured ? 'text-gray-400' : 'text-gray-500', 'text-base')}>{tier.lifetime ? "once" : "/month"}</span>
+        <span className={classNames(tier.featured ? 'text-gray-400' : 'text-gray-500', 'text-base')}>{tier.lifetime ? text.once : text.month}</span>
       </div>
       {frequency === "yearly" && (
         <div className="mt-3">
@@ -59,7 +62,7 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
                 : 'text-amber-600 border-amber-500 bg-amber-50'
               }`}
           >
-            Save ${Math.round((tier.price.monthly - tier.price.yearly) * 12)}/year
+            {text.save} ${Math.round((tier.price.monthly - tier.price.yearly) * 12)}{text.year}
           </span>
         </div>
       )}
@@ -109,7 +112,7 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
         <p className={`mt-2 text-center text-xs ${tier.featured
           ? 'text-gray-300'
           : 'text-gray-500'}`}>
-          $0 due today. Cancel anytime.
+          {text.due}
         </p>
       )}
     </div>

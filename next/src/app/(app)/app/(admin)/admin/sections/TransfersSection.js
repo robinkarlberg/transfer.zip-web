@@ -392,7 +392,7 @@ export default function TransfersSection({ transfers, role, maxExpiryDays }) {
 
         <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
           <DialogContent className="sm:max-w-md">
-            <DialogHeader>
+            <DialogHeader variant="destructive">
               <DialogTitle>Delete transfer</DialogTitle>
               <DialogDescription>
                 {deleteTarget ? `"${deleteTarget.name}" by ${deleteTarget.author?.email || "unknown member"} will be permanently deleted.` : ""}

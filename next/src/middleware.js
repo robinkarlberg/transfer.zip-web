@@ -3,6 +3,7 @@ import { IS_SELFHOST } from "./lib/isSelfHosted"
 import { AB_TESTS } from "./lib/abtests"
 import { abTest } from "./lib/server/abtestServer"
 import { isOwnHost } from "./lib/hostUtils"
+import { getLandingLanguage, LANDING_LANGUAGE_HEADER } from "./lib/landing/routes"
 
 const selfHostBlacklist = [
   "/api/stripe"
@@ -124,7 +125,9 @@ export function middleware(req) {
       return NextResponse.redirect(newUrl, { status: 301 })
     }
   }
-  else return applyAbTests(req, NextResponse.next())
+  const requestHeaders = new Headers(req.headers)
+  requestHeaders.set(LANDING_LANGUAGE_HEADER, getLandingLanguage(pathname))
+  return applyAbTests(req, NextResponse.next({ request: { headers: requestHeaders } }))
 }
 
 export const config = {

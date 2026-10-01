@@ -32,12 +32,14 @@ export default async function Page() {
     <>
       <ContentLanding
         title="How to Guides"
-        description="Browse our step-by-step guides on how to."
-        href="/"
-        linkText="Send your files now with Transfer.zip"
+        description="Browse our step-by-step guides on how to do file stuff."
         slugPath="how-to"
       />
-      <ContentArticle childContent={[transferGuides, ...childContent]} />
+      <ContentArticle
+        childContent={[transferGuides, ...childContent]}
+        href="/"
+        linkText="Send your files now with Transfer.zip"
+      />
     </>
   )
 }

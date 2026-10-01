@@ -4,7 +4,7 @@ const primaryColor = colors.blue
 const compColor = colors.amber
 
 /** @type {import('tailwindcss').Config} */
-export const content = ["./src/**/*.{html,js}"]
+export const content = ["./src/**/*.{html,js,jsx}"]
 export const theme = {
   extend: {
     colors: {

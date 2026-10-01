@@ -12,15 +12,41 @@ const STEPS = [
   { title: "They get the files", text: "Keep this tab open until it's done." },
 ]
 
-// Scenes: 0 empty, 1 files on the laptop, 2 link shared, 3 plane in the air, 4 landed
+// Scenes: 0 empty, 1 files on the sender, 2 link shared, 3 plane in the air, 4 landed
 const SCENE_MS = [1000, 2200, 2200, 1600, 2600]
 const SCENE_STEP = [-1, 0, 1, 2, 2]
 const FLIGHT_MS = 1600
 
-const ROUTE = { from: [158, 74], via: [362, -30], to: [569, 58] }
-const LAPTOP_PHOTOS = [109, 144, 179]
-const PHONE_PHOTOS = [96, 124, 152]
+// Sender is drawn around LEFT, receiver around RIGHT
+const LEFT = 158
+const RIGHT = 569
+const VIA = [362, -30]
 const PHOTO_FILLS = ["fill-primary-400", "fill-comp-400", "fill-primary-300"]
+
+function Laptop({ cx }) {
+  return (
+    <>
+      <rect x={cx - 62} y={96} width={124} height={82} rx={10} className="fill-white stroke-gray-900" strokeWidth={3} />
+      <rect x={cx - 54} y={104} width={108} height={66} rx={5} className="fill-primary-50" />
+      <path d={`M${cx - 78} 180 H${cx + 78} L${cx + 70} 191 Q${cx + 68} 194 ${cx + 64} 194 H${cx - 64} Q${cx - 68} 194 ${cx - 70} 191 Z`} className="fill-white stroke-gray-900" strokeWidth={3} strokeLinejoin="round" />
+    </>
+  )
+}
+
+function Phone({ cx }) {
+  return (
+    <>
+      <rect x={cx - 32} y={78} width={64} height={112} rx={12} className="fill-white stroke-gray-900" strokeWidth={3} />
+      <rect x={cx - 25} y={88} width={50} height={92} rx={6} className="fill-primary-50" />
+    </>
+  )
+}
+
+// Offsets are relative to the device's center; the plane takes off and lands just above `top`
+const DEVICES = {
+  laptop: { Body: Laptop, top: 96, shadow: { cy: 206, rx: 92, ry: 9 }, photos: [[-49, 126], [-14, 126], [21, 126]], photoWidth: 28, badge: [62, 98] },
+  phone: { Body: Phone, top: 78, shadow: { cy: 202, rx: 46, ry: 8 }, photos: [[-19, 96], [-19, 124], [-19, 152]], photoWidth: 38, badge: [32, 80] },
+}
 
 const easeInOut = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
 
@@ -42,7 +68,9 @@ function Photo({ x, y, width, height, fill, className, style }) {
   )
 }
 
-export default function HowItWorks() {
+export default function HowItWorks({ heading = "How it works", steps = STEPS, from = "laptop", to = "phone" }) {
+  const sender = DEVICES[from]
+  const receiver = DEVICES[to]
   const sceneRef = useRef(null)
   const [scene, setScene] = useState(0)
   const [flight, setFlight] = useState(0)
@@ -93,23 +121,20 @@ export default function HowItWorks() {
       {/* The sky ends here: it sinks into the clouds behind the card and comes out white */}
       <CloudBank className="absolute inset-x-0 bottom-0 -z-10 h-[576px] w-full sm:h-[max(720px,37vw)]" />
       <div className="mx-auto max-w-4xl">
-        <h2 className="text-center text-4xl font-bold tracking-tight text-white text-shadow-sm sm:text-5xl">How it works</h2>
+        <h2 className="text-center text-4xl font-bold tracking-tight text-white text-shadow-sm sm:text-5xl">{heading}</h2>
         <div className="mt-10 rounded-3xl bg-white p-2 shadow-xl sm:p-3">
           <div ref={sceneRef} className="overflow-hidden rounded-2xl bg-linear-to-b from-primary-100 to-primary-50">
             <svg viewBox="0 0 720 236" className="block w-full" aria-hidden="true">
-              <ellipse cx={158} cy={206} rx={92} ry={9} className="fill-primary-200" />
-              <ellipse cx={569} cy={202} rx={46} ry={8} className="fill-primary-200" />
+              <ellipse cx={LEFT} {...sender.shadow} className="fill-primary-200" />
+              <ellipse cx={RIGHT} {...receiver.shadow} className="fill-primary-200" />
 
-              {/* Laptop */}
-              <rect x={96} y={96} width={124} height={82} rx={10} className="fill-white stroke-gray-900" strokeWidth={3} />
-              <rect x={104} y={104} width={108} height={66} rx={5} className="fill-primary-50" />
-              <path d="M80 180 H236 L228 191 Q226 194 222 194 H94 Q90 194 88 191 Z" className="fill-white stroke-gray-900" strokeWidth={3} strokeLinejoin="round" />
-              {LAPTOP_PHOTOS.map((x, i) => (
+              <sender.Body cx={LEFT} />
+              {sender.photos.map(([dx, y], i) => (
                 <Photo
-                  key={x}
-                  x={x}
-                  y={126}
-                  width={28}
+                  key={i}
+                  x={LEFT + dx}
+                  y={y}
+                  width={sender.photoWidth}
                   height={22}
                   fill={PHOTO_FILLS[i]}
                   className={cn(POP, scene >= 1 ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0")}
@@ -117,24 +142,22 @@ export default function HowItWorks() {
                 />
               ))}
 
-              {/* Phone */}
-              <rect x={537} y={78} width={64} height={112} rx={12} className="fill-white stroke-gray-900" strokeWidth={3} />
-              <rect x={544} y={88} width={50} height={92} rx={6} className="fill-primary-50" />
-              {PHONE_PHOTOS.map((y, i) => (
+              <receiver.Body cx={RIGHT} />
+              {receiver.photos.map(([dx, y], i) => (
                 <Photo
-                  key={y}
-                  x={550}
+                  key={i}
+                  x={RIGHT + dx}
                   y={y}
-                  width={38}
+                  width={receiver.photoWidth}
                   height={22}
                   fill={PHOTO_FILLS[i]}
                   className={cn(POP, scene === 4 ? "scale-100 opacity-100" : "scale-50 opacity-0")}
                   style={{ transitionDelay: `${scene === 4 ? 150 + i * 140 : 0}ms` }}
                 />
               ))}
-              {scene === 4 && <CheckBadge x={601} y={80} r={13} />}
+              {scene === 4 && <CheckBadge x={RIGHT + receiver.badge[0]} y={receiver.badge[1]} r={13} />}
 
-              <Flight {...ROUTE} progress={flight} drawn={scene >= 2} hidePlane={scene < 2 || scene === 4} hovering={scene === 2} scale={1.3} />
+              <Flight from={[LEFT, sender.top - 22]} via={VIA} to={[RIGHT, receiver.top - 20]} progress={flight} drawn={scene >= 2} hidePlane={scene < 2 || scene === 4} hovering={scene === 2} scale={1.3} />
 
               {/* The shared link */}
               <g className={cn(POP, scene === 2 ? "scale-100 opacity-100" : "scale-0 opacity-0")}>
@@ -146,7 +169,7 @@ export default function HowItWorks() {
             </svg>
           </div>
           <ol className="grid gap-4 p-4 sm:grid-cols-3 sm:gap-6 sm:p-6">
-            {STEPS.map(({ title, text }, i) => (
+            {steps.map(({ title, text }, i) => (
               <li key={title} className="flex gap-3">
                 <span className={cn(
                   "grid size-8 shrink-0 place-items-center rounded-full text-sm font-semibold transition-colors duration-500",

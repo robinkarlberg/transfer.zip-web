@@ -1,5 +1,7 @@
 "use client"
 
+import { englishLandingText } from "@/lib/landing/en";
+
 import {
   Dialog,
   DialogContent,
@@ -9,6 +11,7 @@ import {
 import { getUser } from "@/lib/client/Api"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
+import { UserRoundIcon } from "lucide-react"
 import NewSignUpArea from "./NewSignUpArea"
 import { Button } from "./ui/button"
 import Link from "next/link"
@@ -18,7 +21,7 @@ const STATE_GMAIL_TAB = "gmail_tab"
 const STATE_CHECK_EMAIL = "check_email"
 const STATE_NOT_PAID = "not_paid"
 
-export default function ({ open, setOpen, files, transfer }) {
+export default function ({ open, setOpen, files, transfer, text = englishLandingText.signup }) {
 
   const [state, setState] = useState(STATE_START)
 
@@ -31,7 +34,7 @@ export default function ({ open, setOpen, files, transfer }) {
         <span className="font-mono bg-gray-50 px-0.5 text-gray-800">{files[0].name.slice(0, 25 - 3)}…{files[0].name.slice(files[0].name.length - 3)}</span>
         : <span className="font-mono bg-gray-50 px-0.5 text-gray-800">{files[0].name}</span>
     ) : (
-      files?.length == 0 || !files ? `files` : <span>your <span className="font-mono bg-gray-50 px-0.5 text-gray-800">{files?.length} files</span></span>
+      files?.length == 0 || !files ? text.files : <span>{text.your} <span className="font-mono bg-gray-50 px-0.5 text-gray-800">{files.length} {text.files}</span></span>
     )
 
   const handleGoogleLogin = () => {
@@ -86,7 +89,7 @@ export default function ({ open, setOpen, files, transfer }) {
     <>
       {files && (
         <p className="text-gray-600 mb-1 text-center">
-          <span className="font-mono bg-gray-50 px-0.5 text-gray-800">{filename}</span> {files?.length == 1 ? "is" : "are"} ready to upload.
+          <span className="font-mono bg-gray-50 px-0.5 text-gray-800">{filename}</span> {files.length == 1 ? text.readySingle : text.readyPlural}
         </p>
       )}
     </>
@@ -100,14 +103,14 @@ export default function ({ open, setOpen, files, transfer }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChangeProxy}>
-      <DialogContent showCloseButton={false} className={"w-sm"}>
-        <DialogHeader>
-          <DialogTitle className={"text-center text-2xl"}>
-            {state == STATE_START && (transfer ? "View all your transfers in one Dashboard" :
-              (files ? "Extend your link's life!" : "Unlock Better File Sharing"))}
-            {state == STATE_GMAIL_TAB && "Sign in on the new tab."}
-            {state == STATE_CHECK_EMAIL && "Check your email."}
-            {state == STATE_NOT_PAID && "Aaaalmost there!"}
+      <DialogContent showCloseButton={false}>
+        <DialogHeader icon={<UserRoundIcon />}>
+          <DialogTitle>
+            {state == STATE_START && (transfer ? text.dashboardTitle :
+              (files ? text.extendTitle : text.title))}
+            {state == STATE_GMAIL_TAB && text.newTabTitle}
+            {state == STATE_CHECK_EMAIL && text.emailTitle}
+            {state == STATE_NOT_PAID && text.planTitle}
           </DialogTitle>
           {/* <DialogDescription>
             {typeof window === "undefined" ? "" : getAbTestClient("default_plan_frequency")}
@@ -119,18 +122,18 @@ export default function ({ open, setOpen, files, transfer }) {
               <p className="text-gray-600 mb-4 text-center">
                 {
                   files ?
-                    <>Keep {filename} available for up to a year.</>
-                    : <>The simplest way to send files on the web.</>
+                    <>{text.keepBefore} {filename} {text.keepAfter}</>
+                    : <>{text.description}</>
                 }
               </p>
-              <NewSignUpArea onGoogleLogin={handleGoogleLogin} onEmailLogin={handleEmailLogin} newtab />
+              <NewSignUpArea onGoogleLogin={handleGoogleLogin} onEmailLogin={handleEmailLogin} text={text.area} newtab />
             </div>
           )}
           {state == STATE_GMAIL_TAB && (
             <div>
               {waitingElems}
               <p className="text-gray-600 mb-4 text-center">
-                Finish the signin in the new tab.
+                {text.newTabDescription}
               </p>
             </div>
           )}
@@ -138,7 +141,7 @@ export default function ({ open, setOpen, files, transfer }) {
             <div>
               {waitingElems}
               <p className="text-gray-600 mb-4 text-center">
-                Follow the link in the email to finish the sign in!
+                {text.emailDescription}
               </p>
             </div>
           )}
@@ -146,9 +149,9 @@ export default function ({ open, setOpen, files, transfer }) {
             <div>
               {waitingElems}
               <p className="text-gray-600 mb-4 text-center">
-                Pick a plan for your free trial to begin sharing files.
+                {text.planDescription}
               </p>
-              <Button asChild className={"w-full"}><Link href="/onboarding" target="_blank">Pick a plan &rarr;</Link></Button>
+              <Button asChild className={"w-full"}><Link href="/onboarding" target="_blank">{text.planButton} &rarr;</Link></Button>
             </div>
           )}
         </div>

@@ -9,6 +9,8 @@ import Script from "next/script";
 import "./globals.css";
 import { IS_DEV } from "@/lib/server/serverUtils";
 import { Toaster } from "sonner";
+import DocumentLanguage from "@/components/DocumentLanguage";
+import { LANDING_LANGUAGE_HEADER } from "@/lib/landing/routes";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -57,11 +59,12 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   const headersList = await headers();
+  const language = headersList.get(LANDING_LANGUAGE_HEADER) === "sv" ? "sv" : "en";
   const ua = headersList.get("user-agent") || "";
   const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
 
   return (
-    <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} ${fraunces.variable}`}>
+    <html lang={language} data-scroll-behavior="smooth" className={`${inter.variable} ${fraunces.variable}`}>
       {/* <Head> */}
       <Script src="/lib/ponyfill.min.js"></Script>
       {/* </Head> */}
@@ -69,6 +72,7 @@ export default async function RootLayout({ children }) {
       {!IS_SELFHOST && process.env.UMAMI_ANALYTICS_WEBSITE_ID && process.env.UMAMI_ANALYTICS_WEBSITE_ID.length == "36" ? <Script defer src="https://umami.rkt.dev/script.js" data-website-id={process.env.UMAMI_ANALYTICS_WEBSITE_ID} data-exclude-hash="true"></Script> : <></>}
       {!IS_SELFHOST && !IS_DEV && process.env.SIGMA_SEO_SITE_ID && <Script defer src="https://unhidden.so/seo.js" data-website-id={process.env.SIGMA_SEO_SITE_ID}></Script>}
       <body className="font-sans antialiased">
+        <DocumentLanguage />
         <GlobalProvider isSafari={isSafari}>
           <FileProvider>
             {children}

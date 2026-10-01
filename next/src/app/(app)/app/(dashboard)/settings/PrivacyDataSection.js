@@ -76,7 +76,7 @@ export default function PrivacyDataSection({ user }) {
 
       <Dialog open={showDeleteModal} onOpenChange={open => { if (!deleting) setShowDeleteModal(open) }}>
         <DialogContent className="sm:max-w-md">
-          <DialogHeader>
+          <DialogHeader variant="destructive">
             <DialogTitle>Delete your account?</DialogTitle>
             <DialogDescription>
               This will permanently delete your account and all associated transfers, transfer requests, and brand profiles. This cannot be undone.

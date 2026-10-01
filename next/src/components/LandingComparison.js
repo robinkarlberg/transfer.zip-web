@@ -1,5 +1,7 @@
 "use client"
 
+import { englishLandingText } from "@/lib/landing/en";
+
 import { Check, X } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
@@ -11,102 +13,102 @@ import smashLogo from "@/img/logos/smash-logo.png"
 import PricingToggle from "./PricingToggle"
 import { cn } from "@/lib/utils"
 
-const services = [
-  {
-    name: "Transfer.zip",
-    logo: (
-      <div className="size-12 rounded-xl bg-primary-50 flex items-center justify-center">
-        <Image src={logo} alt="Transfer.zip" width={32} height={32} />
-      </div>
-    ),
-    price: { monthly: 9, yearly: 6 },
-    planName: "Starter plan",
-    features: [
-      { value: "Unlimited", label: "free file size", good: true },
-      { label: "End-to-end encryption", good: true },
-      {
-        value: "0",
-        label: "trackers",
-        good: true,
-        tooltip:
-          "We use a self-hosted analytics instance on our own server. Your visit is recorded by us and nobody else.",
-      },
-      { label: "Open source", good: true },
-      { label: "No AI training on your files", good: true },
-      { label: "Files stored up to 365 days", good: true },
-    ],
-    footnote: "*Quick Transfers are free, unlimited, and offer E2E. We don't bill extra for VAT.",
-    featured: true,
-    cta: { label: "View & compare plans", href: "/pricing" },
-  },
-  {
-    name: "WeTransfer",
-    logo: (
-      <Image src={wetransferLogo} alt="WeTransfer" width={48} height={48} className="size-12" />
-    ),
-    price: { monthly: 12, yearly: 10 },
-    planName: "Starter plan",
-    features: [
-      { value: "3 GB", label: "free file size", good: false },
-      { label: "End-to-end encryption", good: false },
-      {
-        value: "6",
-        label: "trackers",
-        good: false,
-        tooltip:
-          "Loads googletagmanager.com, doubleclick.net, googlesyndication.com, google.com, bat.bing.com and DataHog.",
-      },
-      { label: "Open source", good: false },
-      { label: "No AI training on your files", good: false },
-      { label: "Files stored up to 365 days", good: true },
-    ],
-    footnote: "*Starter capped at 300 GB total transfer per month. Price includes 20% VAT.",
-    cta: { label: "Full comparison", href: "/comparison/wetransfer" },
-  },
-  {
-    name: "Smash",
-    logo: (
-      <Image src={smashLogo} alt="Smash" width={48} height={48} className="size-12" />
-    ),
-    price: { monthly: 12, yearly: 7 },
-    planName: "Pro plan",
-    features: [
-      { value: "2 GB", label: "free file size", good: false },
-      { label: "End-to-end encryption", good: true },
-      {
-        value: "1",
-        label: "tracker",
-        good: false,
-        tooltip:
-          "Loads googletagmanager.com (Google Analytics). Your visit and webpage actions are reported to Google when you use the site.",
-      },
-      { label: "Open source", good: false },
-      { label: "No AI training on your files", good: true },
-      { label: "Files stored up to 365 days", good: false },
-    ],
-    footnote: "*Files over 2 GB queue during peak hours on free. Price includes 20% VAT.",
-    cta: { label: "Full comparison", href: "/comparison/smash" },
-  },
-]
+export default function LandingComparison({ text = englishLandingText.comparison, toggleText, pricingHref = "/pricing" }) {
+  const services = [
+    {
+      name: "Transfer.zip",
+      logo: (
+        <div className="size-12 rounded-xl bg-primary-50 flex items-center justify-center">
+          <Image src={logo} alt="Transfer.zip" width={32} height={32} />
+        </div>
+      ),
+      price: { monthly: 9, yearly: 6 },
+      planName: text.starterPlan,
+      features: [
+        { value: text.unlimited, label: text.freeSize, good: true },
+        { label: text.e2e, good: true },
+        {
+          value: "0",
+          label: text.trackers,
+          good: true,
+          tooltip:
+            text.ownAnalytics,
+        },
+        { label: text.openSource, good: true },
+        { label: text.noAi, good: true },
+        { label: text.storage, good: true },
+      ],
+      footnote: text.ownFootnote,
+      featured: true,
+      cta: { label: text.viewPlans, href: pricingHref },
+    },
+    {
+      name: "WeTransfer",
+      logo: (
+        <Image src={wetransferLogo} alt="WeTransfer" width={48} height={48} className="size-12" />
+      ),
+      price: { monthly: 12, yearly: 10 },
+      planName: text.starterPlan,
+      features: [
+        { value: "3 GB", label: text.freeSize, good: false },
+        { label: text.e2e, good: false },
+        {
+          value: "6",
+          label: text.trackers,
+          good: false,
+          tooltip:
+            text.wetransferTrackers,
+        },
+        { label: text.openSource, good: false },
+        { label: text.noAi, good: false },
+        { label: text.storage, good: true },
+      ],
+      footnote: text.wetransferFootnote,
+      cta: { label: text.fullComparison, href: "/comparison/wetransfer" },
+    },
+    {
+      name: "Smash",
+      logo: (
+        <Image src={smashLogo} alt="Smash" width={48} height={48} className="size-12" />
+      ),
+      price: { monthly: 12, yearly: 7 },
+      planName: text.proPlan,
+      features: [
+        { value: "2 GB", label: text.freeSize, good: false },
+        { label: text.e2e, good: true },
+        {
+          value: "1",
+          label: text.tracker,
+          good: false,
+          tooltip:
+            text.smashTrackers,
+        },
+        { label: text.openSource, good: false },
+        { label: text.noAi, good: true },
+        { label: text.storage, good: false },
+      ],
+      footnote: text.smashFootnote,
+      cta: { label: text.fullComparison, href: "/comparison/smash" },
+    },
+  ]
 
-export default function LandingComparison() {
   const [frequency, setFrequency] = useState("yearly")
 
   return (
     <div className="bg-white py-24 sm:py-32" id="comparison">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-sans text-base/7 font-semibold text-primary">How we compare</h2>
+          <h2 className="font-sans text-base/7 font-semibold text-primary">{text.eyebrow}</h2>
           <p className="mt-2 font-heading text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            How does Transfer.zip compare?
+            {text.title}
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            We built Transfer.zip because the popular options were either expensive, restrictive, or quietly training AI on your files.
+            {text.description}
           </p>
         </div>
 
         <div className="mt-10">
-          <PricingToggle frequency={frequency} setFrequency={setFrequency} />
+          <PricingToggle frequency={frequency} setFrequency={setFrequency} text={toggleText} />
         </div>
 
         <div className="mx-auto mt-12 grid max-w-xl grid-cols-1 gap-6 lg:max-w-none lg:grid-cols-3">
@@ -131,12 +133,12 @@ export default function LandingComparison() {
                     "text-4xl font-bold tracking-tight",
                     service.featured ? "text-primary-700" : "text-gray-900"
                   )}>
-                    <NumberFlow value={service.price[frequency]} prefix="$" />
+                    <NumberFlow value={service.price[frequency]} prefix="$" locales={text.locale} />
                   </span>
-                  <span className="text-base text-gray-500">/mo</span>
+                  <span className="text-base text-gray-500">{text.month}</span>
                 </div>
                 <p className="mt-1 text-sm text-gray-500">
-                  {service.planName}, billed {frequency}
+                  {service.planName}, {text.billing[frequency]}
                 </p>
               </div>
 

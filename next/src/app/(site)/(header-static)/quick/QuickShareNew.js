@@ -9,7 +9,7 @@ import { ArrowRightIcon, ChevronDownIcon, LockIcon, StarIcon } from "lucide-reac
 import { useRouter } from "next/navigation"
 import { useContext, useEffect, useState } from "react"
 import Flight from "@/components/quick/Flight"
-import HowItWorks from "./HowItWorks"
+import HowItWorks from "@/components/quick/HowItWorks"
 import QuickFilePicker from "@/components/quick/QuickFilePicker"
 
 const TABS = [
@@ -123,7 +123,27 @@ export default function QuickShareNew({ stars }) {
     <>
       <section className="relative flex min-h-svh flex-col items-center justify-center px-4 pt-28 pb-20">
         <h1 className="fade-in-up text-center text-5xl font-bold tracking-tight text-white sm:text-6xl">
-          {hasBeenSentLink ? "Send files" : "Quick Transfer"}
+          {hasBeenSentLink ? "Send files" : (
+            <>
+              Quick{" "}
+              {/* .zip hangs outside the layout, so on phones "Transfer" needs its own line to keep it on screen */}
+              <br className="sm:hidden" />
+              <span className="relative inline-block">
+                Transfer
+                {/* The front dot is the "." of ".zip". Paused, the stream's dots sit at a third and two thirds of
+                    their path, which is the static trail; hovering runs the loop from there without a jump */}
+                <span aria-hidden="true" className="absolute bottom-0 left-[calc(100%+0.06em)] origin-bottom-left -rotate-10 text-[0.55em] whitespace-nowrap [--zip-play:paused] motion-safe:hover:[--zip-play:running]">
+                  <span className="relative inline-block w-[0.49em] *:absolute *:-top-[0.15em] *:-left-[0.15em] *:size-[0.3em] *:animate-zip-stream *:rounded-full *:bg-white">
+                    <span />
+                    <span style={{ animationDelay: "-400ms" }} />
+                    <span style={{ animationDelay: "-800ms" }} />
+                  </span>
+                  <span className="mr-[0.03em] inline-block size-[0.3em] animate-zip-gulp rounded-full bg-white" />
+                  zip
+                </span>
+              </span>
+            </>
+          )}
         </h1>
         <p className="fade-in-up mt-3 max-w-md text-center text-lg text-white text-shadow-sm">
           {hasBeenSentLink ? "Someone is waiting for your files." : "Send files of any size, straight to another device."}

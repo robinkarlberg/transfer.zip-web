@@ -1,3 +1,4 @@
+import { englishLandingText } from "@/lib/landing/en";
 import BIcon from "./BIcon"
 
 const testimonials = [
@@ -18,15 +19,15 @@ const testimonials = [
   },
 ]
 
-export default function TestimonialCloud({ className }) {
+export default function TestimonialCloud({ className, text = englishLandingText.testimonials }) {
   return (
     <div id="reviews" className={`bg-gray-50 pt-10 mb-8 border border-dashed ${className}`}>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-sans text-base/7 font-semibold text-primary">Our Reviews</h2>
+          <h2 className="font-sans text-base/7 font-semibold text-primary">{text.eyebrow}</h2>
           {/* <div className="text-blue-500 mb-4">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div> */}
           <p className="mt-2 font-heading text-pretty text-3xl font-bold tracking-tight text-gray-800 sm:text-5xl lg:text-balance">
-            Users <BIcon name={"heart-fill"} className={"text-red-400 text-2xl sm:text-4xl"}/> Transfer.zip
+            {text.users} <BIcon name={"heart-fill"} className={"text-red-400 text-2xl sm:text-4xl"}/> Transfer.zip
           </p>
         </div>
         <div className="mx-auto pb-10 pt-16 grid max-w-lg grid-cols-1 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:gap-x-10 lg:mx-0 md:max-w-none md:grid-cols-3">
@@ -34,7 +35,7 @@ export default function TestimonialCloud({ className }) {
             return (
               <div key={testimonial.proof} className="col-span-1 text-center h-32">
                 <div className="text-blue-500 mb-2">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div>
-                <div className="text-gray-600 mb-2"><p><BIcon name={"quote"} /> {testimonial.quote}</p></div>
+                <div className="text-gray-600 mb-2"><p lang="en"><BIcon name={"quote"} /> {testimonial.quote}</p></div>
                 <div className="font-bold text-gray-700">
                   <BIcon name={"reddit"} className={"me-1"} />
                   <a className="hover:underline" target="_blank" href={testimonial.proof}>{testimonial.author}</a>

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import { Transition } from "@headlessui/react"
 import Link from "next/link"
 
-export default function ({ dragging, expand, quickLinkHref, quickLinkContent, showQuickLink, startOverlay, showStartOverlay, endOverlay, showEndOverlay, leftSectionContent, leftSectionLowerBar, rightSection }) {
+export default function ({ dragging, expand, quickLinkHref, quickLinkContent, showQuickLink, startOverlay, showStartOverlay, endOverlay, showEndOverlay, leftSectionContent, leftSectionLowerBar, rightSection, dropLabel }) {
 
   return (
     <div className="relative mx-auto">
@@ -31,7 +31,7 @@ export default function ({ dragging, expand, quickLinkHref, quickLinkContent, sh
         <Transition show={showStartOverlay}>
           {startOverlay}
         </Transition>
-        {dragging && <FileDropOverlay radius={12} />}
+        {dragging && <FileDropOverlay radius={12} label={dropLabel} />}
         <div className="grid grid-cols-1 md:grid-cols-5 h-full">
           {(leftSectionContent || leftSectionLowerBar) && (
             <div className={cn(

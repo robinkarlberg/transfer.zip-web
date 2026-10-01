@@ -210,7 +210,7 @@ export default function ({ initialProfile, isNew, backHref = "/app/branding" }) 
               </Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader>
+              <DialogHeader variant="destructive">
                 <DialogTitle>Delete Brand Profile</DialogTitle>
                 <DialogDescription>
                   Are you sure you want to delete this brand profile? This action cannot be undone.

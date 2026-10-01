@@ -2,9 +2,10 @@
 
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
-import { XIcon } from "lucide-react"
+import { MessageCircleIcon, Trash2Icon, XIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 
 function Dialog({
   ...props
@@ -38,7 +39,7 @@ function DialogOverlay({
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 duration-150 motion-reduce:animate-none fixed inset-0 z-50 bg-black/50",
         className
       )}
       {...props} />
@@ -49,6 +50,7 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
+  closeLabel = "Close",
   ...props
 }) {
   return (
@@ -57,18 +59,19 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg",
+          "fixed top-1/2 left-1/2 z-50 grid w-[calc(100%-2rem)] max-w-md max-h-[calc(100dvh-2rem)] -translate-x-1/2 -translate-y-1/2 gap-6 overflow-y-auto rounded-3xl bg-white p-6 text-gray-900 shadow-2xl outline-none data-[state=open]:animate-dialog-in data-[state=closed]:animate-dialog-out motion-reduce:animate-none sm:p-8 [&_:is([data-slot=button],[data-slot=dialog-close])]:rounded-full [&_:is([data-slot=button],[data-slot=dialog-close])]:font-semibold",
           className
         )}
         {...props}>
         {children}
         {showCloseButton && (
-          <DialogPrimitive.Close
-            data-slot="dialog-close"
-            className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4">
-            <XIcon />
-            <span className="sr-only">Close</span>
-          </DialogPrimitive.Close>
+          <div className="absolute top-4 right-4">
+            <DialogClose asChild>
+              <Button variant="ghost" size="icon" aria-label={closeLabel} className="text-gray-400 hover:bg-gray-100 hover:text-gray-900">
+                <XIcon className="size-5" aria-hidden="true" />
+              </Button>
+            </DialogClose>
+          </div>
         )}
       </DialogPrimitive.Content>
     </DialogPortal>
@@ -77,13 +80,26 @@ function DialogContent({
 
 function DialogHeader({
   className,
+  children,
+  variant = "default",
+  icon = variant === "destructive" ? <Trash2Icon /> : <MessageCircleIcon />,
   ...props
 }) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
-      {...props} />
+      className={cn("flex min-w-0 flex-col gap-3 text-center", className)}
+      {...props}>
+      {icon && (
+        <div aria-hidden="true" className={cn(
+          "mx-auto mb-1 grid size-16 shrink-0 place-items-center rounded-full [&_svg]:size-8",
+          variant === "destructive" ? "bg-red-50 text-destructive" : "bg-primary-50 text-primary-600"
+        )}>
+          {icon}
+        </div>
+      )}
+      {children}
+    </div>
   );
 }
 
@@ -94,7 +110,7 @@ function DialogFooter({
   return (
     <div
       data-slot="dialog-footer"
-      className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
+      className={cn("flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap [&_:is([data-slot=button],[data-slot=dialog-close])]:h-11 [&_:is([data-slot=button],[data-slot=dialog-close])]:px-6 sm:[&_:is([data-slot=button],[data-slot=dialog-close])]:flex-1", className)}
       {...props} />
   );
 }
@@ -106,7 +122,7 @@ function DialogTitle({
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("text-lg leading-none font-semibold", className)}
+      className={cn("text-3xl leading-tight font-bold tracking-tight text-gray-900 break-words", className)}
       {...props} />
   );
 }
@@ -118,7 +134,7 @@ function DialogDescription({
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn("text-gray-500 leading-relaxed break-words", className)}
       {...props} />
   );
 }

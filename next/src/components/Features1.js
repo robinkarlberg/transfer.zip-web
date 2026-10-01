@@ -1,3 +1,4 @@
+import { englishLandingText } from "@/lib/landing/en";
 import BIcon from "./BIcon"
 // import ProductDemoScreenshot from "@/img/ProductDemoScreenshot.png"
 import logo from "@/img/icon.png"
@@ -5,62 +6,41 @@ import { ChartBarIcon, ChevronsUpIcon, FileArchiveIcon, LinkIcon, LockIcon, Rota
 import Image from "next/image"
 import Link from "next/link";
 
-const features = [
-  // {
-  //   name: 'Privacy First',
-  //   description: 'Your privacy matters. User data is securely hosted in the EU, keeping your life safe and private.',
-  //   icon: 'shield-check',
-  // },
-  // {
-  //   name: 'No Limits',
-  //   description: "Easily transfer massive files without ever hitting a limit.",
-  //   icon: 'arrow-clockwise',
-  // },
-  // {
-  //   name: 'Files Available All Year',
-  //   description: 'Your files stay accessible all year. No more expiry anxiety.',
-  //   icon: 'calendar',
-  // },
-  {
-    name: 'Custom Branding',
-    description: 'Make every transfer your own. Add your logo, background and domain for a great look.',
-    icon: UserIcon,
-  },
-  {
-    name: 'Familiar Links',
-    description: "All links end with .zip - a familiar sight for people used to working with files.",
-    icon: LinkIcon,
-  },
-  // {
-  //   name: 'Resumable Uploads',
-  //   description: 'Transfers interrupted? No worries. Easily resume uploads when your network goes down.',
-  //   icon: 'arrow-clockwise',
-  // },
-  {
-    name: 'Made for RAW and 8k',
-    description: 'Gigabit speeds mean less waiting for files to send, and more time working on what matters.',
-    icon: ChevronsUpIcon,
-  },
-  {
-    name: 'Ultimate Trust & Security',
-    description: <>All file data is stored encrypted, and the source code is fully open. <Link target="_blank" className="text-primary hover:underline whitespace-nowrap" href="https://github.com/robinkarlberg/transfer.zip-web">See the code on GitHub &rarr;</Link></>,
-    icon: LockIcon,
-  },
-];
-
-export default function Features1() {
+export default function Features1({ text = englishLandingText.features }) {
+  const features = [
+    {
+      name: text.brandingTitle,
+      description: text.brandingDescription,
+      icon: UserIcon,
+    },
+    {
+      name: text.linksTitle,
+      description: text.linksDescription,
+      icon: LinkIcon,
+    },
+    {
+      name: text.speedTitle,
+      description: text.speedDescription,
+      icon: ChevronsUpIcon,
+    },
+    {
+      name: text.securityTitle,
+      description: <>{text.securityDescription} <Link target="_blank" className="text-primary hover:underline whitespace-nowrap" href="https://github.com/robinkarlberg/transfer.zip-web">{text.sourceLink}</Link></>,
+      icon: LockIcon,
+    },
+  ];
 
   return (
     <div className="bg-white py-24 sm:py-32" id="why-choose-us">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           {/* <Image alt="Logo" src={logo} className="w-16 mx-auto"></Image> */}
-          <h2 className="font-sans text-base/7 font-semibold text-primary">File-sharing for Pros</h2>
+          <h2 className="font-sans text-base/7 font-semibold text-primary">{text.eyebrow}</h2>
           {/* <div className="text-blue-500 mb-4">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div> */}
           <p className="mt-2 font-heading text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Look{" "}
+            {text.titleBefore}{" "}
             <span className="relative">
-              <span className="relative z-10">professional</span>
+              <span className="relative z-10">{text.titleHighlight}</span>
               <svg
                 className="absolute left-0 bottom-[0.1em] w-full text-primary-500"
                 style={{ height: "0.2em" }}
@@ -79,10 +59,10 @@ export default function Features1() {
                 />
               </svg>
             </span>
-            {" "}when sharing files.
+            {" "}{text.titleAfter}
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            Your clients get a fast download page with your brand on it. You get a price that doesn't double overnight.
+            {text.description}
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">

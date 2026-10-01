@@ -1,5 +1,7 @@
 "use client"
 
+import { englishLandingText } from "@/lib/landing/en";
+
 import { AnimatePresence, motion, useInView } from "framer-motion"
 import { SendIcon, ZapIcon } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
@@ -26,7 +28,7 @@ function TypingDots({ color = "bg-gray-400" }) {
   )
 }
 
-function TransferRequestsWidget() {
+function TransferRequestsWidget({ text }) {
   const [step, setStep] = useState(0)
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: "-50px" })
@@ -85,8 +87,8 @@ function TransferRequestsWidget() {
                 className="flex justify-start"
               >
                 <div className="bg-gray-100 text-gray-900 text-sm rounded-2xl rounded-bl-sm px-3 py-2 max-w-[85%]">
-                  <p>Hey John,</p>
-                  <p className="mt-3">Where should I send you the assets?</p>
+                  <p>{text.hello}</p>
+                  <p className="mt-3">{text.question}</p>
                 </div>
               </motion.div>
             )}
@@ -115,8 +117,8 @@ function TransferRequestsWidget() {
                 className="flex justify-end"
               >
                 <div className="bg-primary-500 text-white text-sm rounded-2xl rounded-br-sm px-3 py-2 max-w-[85%]">
-                  <p>Here you go: <span className="font-mono underline hover:cursor-pointer">transfer.zip/upload/7ab516…</span></p>
-                  <p className="mt-3">No need for an account :)</p>
+                  <p>{text.reply} <span className="font-mono underline hover:cursor-pointer">transfer.zip/upload/7ab516…</span></p>
+                  <p className="mt-3">{text.noAccount}</p>
                 </div>
               </motion.div>
             )}
@@ -135,7 +137,7 @@ const EMAIL_SAMPLE = [
 ]
 const EMAIL_TOTAL = 50
 
-function EmailBroadcastWidget() {
+function EmailBroadcastWidget({ text }) {
   const [step, setStep] = useState(0)
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: "-50px" })
@@ -170,7 +172,7 @@ function EmailBroadcastWidget() {
     <div ref={ref} className="space-y-3">
       <IslandReveal>
         <div className="bg-white rounded-xl p-3.5">
-          <p className="text-xs text-gray-500 font-medium mb-2">To</p>
+          <p className="text-xs text-gray-500 font-medium mb-2">{text.to}</p>
           <div className="flex flex-wrap gap-1.5 min-h-[3.25rem]">
             {EMAIL_SAMPLE.map((email, i) => (
               <motion.span
@@ -195,7 +197,7 @@ function EmailBroadcastWidget() {
               transition={{ duration: 0.2 }}
               className="inline-flex items-center bg-gray-100 text-gray-700 text-xs font-semibold px-2 py-1 rounded-md"
             >
-              +{remainder} more
+              +{remainder} {text.more}
             </motion.span>
           </div>
         </div>
@@ -205,7 +207,7 @@ function EmailBroadcastWidget() {
         <div className="bg-white rounded-xl p-3 flex items-center justify-between">
           <span className="text-sm font-semibold text-gray-700">8 GB</span>
           <div className="inline-flex items-center gap-1.5 bg-primary-600 text-white rounded-lg px-3 py-1.5">
-            <span className="text-sm font-semibold">Transfer</span>
+            <span className="text-sm font-semibold">{text.transfer}</span>
             <SendIcon className="size-3.5" />
           </div>
         </div>
@@ -214,7 +216,7 @@ function EmailBroadcastWidget() {
   )
 }
 
-function SpeedWidget() {
+function SpeedWidget({ text }) {
   const [speed, setSpeed] = useState(0)
   const target = 1000
   const ref = useRef(null)
@@ -264,7 +266,7 @@ function SpeedWidget() {
             />
           </div>
           <p className="mt-3 text-xs text-gray-500">
-            Maximum download speed across regions
+            {text.speedCaption}
           </p>
         </div>
       </IslandReveal>
@@ -272,10 +274,10 @@ function SpeedWidget() {
   )
 }
 
-const PLAINTEXT_MESSAGE = "Hi! Here are the Q4 deliverables, let me know what you think."
 const HEX = "0123456789abcdef"
 
-function SecurityWidget() {
+function SecurityWidget({ text: copy }) {
+  const PLAINTEXT_MESSAGE = copy.sampleMessage
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: "-50px" })
   const [text, setText] = useState(PLAINTEXT_MESSAGE)
@@ -332,7 +334,7 @@ function SecurityWidget() {
               {encrypted ? "What others see" : "Your file data"}
             </p> */}
             <span className="text-[10px] text-gray-400 font-mono uppercase tracking-wider">
-              Encryption
+              {copy.encryption}
             </span>
           </div>
           <p
@@ -349,52 +351,52 @@ function SecurityWidget() {
   )
 }
 
-const bentoCards = [
-  {
-    info: "Transfer Requests",
-    title: "Receive files with a link.",
-    description:
-      "Create personalised upload links anyone can use to send you files. No account needed. Embed them on your site or share through email.",
-    Widget: TransferRequestsWidget,
-    className: "md:col-span-7 md:row-span-2",
-  },
-  {
-    info: "Send Files by Email",
-    title: "Send to 50 inboxes at once.",
-    description:
-      "Email a file to up to 50 recipients in one click. Every link allows unlimited downloads, meaning no awkward conversations with your clients.",
-    Widget: EmailBroadcastWidget,
-    className: "md:col-span-5 md:row-span-2",
-  },
-  {
-    info: "Speed",
-    title: "Send files at full speed.",
-    description:
-      "Every file streams from high-speed servers worldwide, so your work gets shared without waiting.",
-    Widget: SpeedWidget,
-    className: "md:col-span-5 md:row-span-2",
-  },
-  {
-    info: "Privacy & Security",
-    title: "Privacy by default.",
-    description:
-      "Security encompasses everything we do. Every file is encrypted at rest on our servers and we never track you or sell your information.",
-    Widget: SecurityWidget,
-    className: "md:col-span-7 md:row-span-2",
-  },
-]
+export default function FeaturesBento({ text = englishLandingText.bento }) {
+  const bentoCards = [
+    {
+      info: text.requestsLabel,
+      title: text.requestsTitle,
+      description:
+        text.requestsDescription,
+      Widget: TransferRequestsWidget,
+      className: "md:col-span-7 md:row-span-2",
+    },
+    {
+      info: text.emailLabel,
+      title: text.emailTitle,
+      description:
+        text.emailDescription,
+      Widget: EmailBroadcastWidget,
+      className: "md:col-span-5 md:row-span-2",
+    },
+    {
+      info: text.speedLabel,
+      title: text.speedTitle,
+      description:
+        text.speedDescription,
+      Widget: SpeedWidget,
+      className: "md:col-span-5 md:row-span-2",
+    },
+    {
+      info: text.securityLabel,
+      title: text.securityTitle,
+      description:
+        text.securityDescription,
+      Widget: SecurityWidget,
+      className: "md:col-span-7 md:row-span-2",
+    },
+  ]
 
-export default function FeaturesBento() {
   return (
     <section className="bg-white py-24 sm:py-32" id="features">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-sans text-base/7 font-semibold text-primary">Features</h2>
+          <h2 className="font-sans text-base/7 font-semibold text-primary">{text.eyebrow}</h2>
           <p className="mt-2 font-heading text-pretty text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">
-            Useful features for meaningful ideas.
+            {text.title}
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            Transfer.zip comes with all features you need to share without hassle.
+            {text.description}
           </p>
         </div>
       </div>
@@ -417,7 +419,7 @@ export default function FeaturesBento() {
                 <p className="mt-1 text-base text-gray-600 max-w-md">{card.description}</p>
               </div>
               <div className="mt-6 flex-1">
-                <card.Widget />
+                <card.Widget text={text} />
               </div>
             </div>
           ))}

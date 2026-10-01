@@ -1,5 +1,7 @@
 "use client"
 
+import { englishLandingText } from "@/lib/landing/en";
+
 import { CheckIcon } from "lucide-react"
 import { Homemade_Apple } from "next/font/google"
 import Image from "next/image"
@@ -13,13 +15,13 @@ const signature = Homemade_Apple({
   subsets: ["latin"],
 })
 
-const promises = [
-  "train AI on your content.",
-  "sell your data.",
-  "put shareholders before users.",
-]
+export default function FounderNote({ text = englishLandingText.founder }) {
+  const promises = [
+    text.aiPromise,
+    text.dataPromise,
+    text.usersPromise,
+  ]
 
-export default function FounderNote() {
   const sectionRef = useRef(null)
   const [inView, setInView] = useState(false)
 
@@ -51,17 +53,17 @@ export default function FounderNote() {
             {/* Starts on the white page and only goes dark mid-scroll, so the text has to flip with the backdrop */}
             <div className={cn("px-2 transition-colors duration-700 sm:px-0", inView ? "text-white" : "text-gray-900")}>
               <blockquote className="font-heading text-balance text-4xl font-bold tracking-tight sm:text-5xl">
-                <p>&ldquo;Your files should stay yours.&rdquo;</p>
+                <p>&ldquo;{text.quote}&rdquo;</p>
               </blockquote>
               <div className="mt-8 flex items-center gap-4">
                 <Image
-                  alt="Portrait photo of Robin, the creator of Transfer.zip"
+                  alt={text.portrait}
                   src={robin}
                   className="size-14 rounded-full ring-4 ring-white"
                 />
                 <div>
                   <p className="font-semibold">Robin</p>
-                  <p className={cn("text-sm transition-colors duration-700", inView ? "text-gray-400" : "text-gray-500")}>Founder of Transfer.zip</p>
+                  <p className={cn("text-sm transition-colors duration-700", inView ? "text-gray-400" : "text-gray-500")}>{text.role}</p>
                 </div>
               </div>
             </div>
@@ -72,16 +74,16 @@ export default function FounderNote() {
                 {/* Rules sit on the text baseline, so every block below must keep the 2rem line rhythm */}
                 <div className="-mx-6 bg-[linear-gradient(to_bottom,transparent_calc(2rem-1px),var(--color-gray-200)_calc(2rem-1px))] bg-size-[100%_2rem] bg-position-[0_-5px] px-6 text-lg/8 text-gray-700 sm:-mx-10 sm:px-10">
                   <p>
-                    Transfer.zip is an independent service without shareholders to appease. We put our energy into making file transfers <span className="underline decoration-wavy decoration-primary-500">fast</span>, <span className="underline decoration-wavy decoration-primary-500">reliable</span>, and <span className="underline decoration-wavy decoration-primary-500">simple</span>, and we keep prices low by not carrying the overhead of a large corporation.
+                    {text.intro} <span className="underline decoration-wavy decoration-primary-500">{text.fast}</span>, <span className="underline decoration-wavy decoration-primary-500">{text.reliable}</span>{text.and}<span className="underline decoration-wavy decoration-primary-500">{text.simple}</span>{text.ending}
                   </p>
                   <p className="mt-8">
-                    In a world where your data has become the product, where companies now train AI on your content and sell your information to advertisers, we believe your files should stay yours.
+                    {text.secondParagraph}
                   </p>
                   <ul className="mt-8">
                     {promises.map(promise => (
                       <li key={promise} className="flex items-center gap-3 text-gray-900">
                         <CheckIcon size={18} strokeWidth={3} className="shrink-0 text-primary-600" />
-                        <span>We will <b>never</b> {promise}</span>
+                        <span>{text.promiseBefore} <b>{text.never}</b> {promise}</span>
                       </li>
                     ))}
                   </ul>

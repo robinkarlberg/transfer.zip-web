@@ -1,3 +1,4 @@
+import { englishLandingText } from "@/lib/landing/en";
 import BIcon from "@/components/BIcon"
 import LandingNav from "@/components/LandingNav"
 import Link from "next/link"
@@ -16,7 +17,7 @@ import { cn } from "@/lib/utils"
 import Squiggle from "@/components/Squiggle"
 import WordWheel from "@/components/WordWheel"
 
-export default async function ({ mode }) {
+export default async function ({ mode, text = englishLandingText.hero, navText, accountText, uploadText, requestText, homeHref = "/", pricingHref = "/pricing", showLanguageSwitch = false }) {
 
   const res = await fetch("https://api.github.com/repos/robinkarlberg/transfer.zip-web",
     {
@@ -31,12 +32,16 @@ export default async function ({ mode }) {
       <div className="w-full h-screen overflow-hidden absolute grain bg-linear-to-b from-primary-600 to-primary-300" />
       <div className="relative isolate flex min-h-screen flex-col">
         <LandingNav
+          homeHref={homeHref}
+          pricingHref={pricingHref}
+          text={navText}
+          showLanguageSwitch={showLanguageSwitch}
           rightSlot={
             <AuthConditional
-              noauth={<NoauthLandingHeaderCTAButton />}
+              noauth={<NoauthLandingHeaderCTAButton text={accountText} />}
               auth={
                 <Link data-umami-event="landing_header_cta_click" data-umami-event-is_logged_in="true" href={"/app/sent"} className="flex items-center text-sm font-semibold text-gray-800 rounded-xl bg-white px-5 h-12 hover:bg-primary-50">
-                  My Transfers <span aria-hidden="true">&rarr;</span>
+                  {text.myTransfers} <span aria-hidden="true">&rarr;</span>
                 </Link>
               }
             />
@@ -44,13 +49,12 @@ export default async function ({ mode }) {
         />
         <div className="grow mx-auto w-full max-w-7xl px-6 flex flex-col items-center justify-center mt-8 sm:mt-0">
           <h1 className="mx-auto text-center max-w-2xl text-4xl font-bold tracking-tight text-white fade-in-up">
-            Try the{" "}
-            <Squiggle className="text-primary-200"><WordWheel /></Squiggle>
-            {" "}way to{" "}
-            {mode === "receive" ? "receive files." : "send files."}
+            {text.titleBefore}{" "}
+            <Squiggle className="text-primary-200"><WordWheel words={text.words} /></Squiggle>
+            {" "}{mode === "receive" ? text.receiveAfter : text.sendAfter}
           </h1>
           <Link href={"https://github.com/robinkarlberg/transfer.zip-web"} target="_blank" className={"mt-4 [&_svg:not([class*='size-'])]:size-4 text-white inline-flex items-center justify-center gap-2 text-shadow-sm text-sm hover:underline font-semibold fade-in-up-slow mb-24 2xl:mb-32"}>
-            <StarIcon /> Star on GitHub ({stars})
+            <StarIcon /> {text.github} ({stars})
           </Link>
           {/* <p className="mx-auto text-center text-lg leading-8 text-gray-700 max-w-md mb-12">
             No queue. No size limits.
@@ -58,22 +62,22 @@ export default async function ({ mode }) {
           <div className="fade-in-up-slow">
             {
               mode != "receive" ?
-                <Suspense fallback={<NewTransferFileUploadNew loaded={false} />}>
-                  <ConditionalLandingFileUpload />
+                <Suspense fallback={<NewTransferFileUploadNew loaded={false} text={uploadText} />}>
+                  <ConditionalLandingFileUpload text={uploadText} />
                 </Suspense>
                 :
-                <Suspense fallback={<NewTransferFileRequest loaded={false} />}>
-                  <ConditionalLandingFileRequest />
+                <Suspense fallback={<NewTransferFileRequest loaded={false} text={requestText} homeHref={homeHref} />}>
+                  <ConditionalLandingFileRequest text={requestText} homeHref={homeHref} />
                 </Suspense>
             }
           </div>
         </div>
         <div className="mx-auto px-6 flex flex-col sm:flex-row items-center justify-center gap-8 mt-4 mb-16 fade-in-up-slow">
           {[
-            { icon: <ZapIcon size={16} />, text: "Data is encrypted", mobile: false },
-            { icon: <ZapIcon size={16} />, text: <Link className="hover:underline" href={"https://github.com/robinkarlberg/transfer.zip-web"}>Open source</Link>, mobile: false },
-            { icon: <ZapIcon size={16} />, text: "Send 100GB+ for free", mobile: false },
-            { icon: <ZapIcon size={16} />, text: "No size limit, data is encrypted", mobile: true },
+            { icon: <ZapIcon size={16} />, text: text.encrypted, mobile: false },
+            { icon: <ZapIcon size={16} />, text: <Link className="hover:underline" href={"https://github.com/robinkarlberg/transfer.zip-web"}>{text.openSource}</Link>, mobile: false },
+            { icon: <ZapIcon size={16} />, text: text.largeFiles, mobile: false },
+            { icon: <ZapIcon size={16} />, text: text.mobileNote, mobile: true },
           ].map(({ icon, text, mobile }) => <div key={text} className={cn(
             "text-shadow-sm items-center gap-2 rounded-xl font-semibold text-white",
             mobile ? "flex sm:hidden" : "hidden sm:flex"
