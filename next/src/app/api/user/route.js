@@ -80,12 +80,12 @@ export async function DELETE() {
       { author: user._id },
       { transferRequest: { $in: myRequestIds } }
     ]
-  }).select("_id nodeUrl backendVersion")
+  }).select("_id nodeUrl")
 
   // Fire-and-forget the node-side deletes; orphaned files get swept by a
   // tidy script later (see CLEANUP_TODO.md).
   for (const t of transfersToDelete) {
-    workerTransferDelete(t.nodeUrl, t._id.toString(), t.backendVersion)
+    workerTransferDelete(t.nodeUrl, t._id.toString())
       .catch(err => logError(err).forRoute("api/user/DELETE workerTransferDelete"))
   }
 

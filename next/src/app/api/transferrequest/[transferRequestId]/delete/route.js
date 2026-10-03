@@ -23,7 +23,7 @@ export async function POST(req, { params }) {
   for (const transfer of linkedTransfers) {
     // Fire-and-forget node cleanup, same as /api/transfer/[id]/delete.
     // Leftover files get reaped by the worker's cleanup cron.
-    workerTransferDelete(transfer.nodeUrl, transfer._id.toString(), transfer.backendVersion).catch(console.error)
+    workerTransferDelete(transfer.nodeUrl, transfer._id.toString()).catch(console.error)
     await transfer.deleteOne()
   }
 

@@ -65,13 +65,10 @@ const TransferSchema = new mongoose.Schema({
     encryptionKey: { type: Buffer },
     encryptionIV: { type: Buffer },
 
-    storageLocation: String, // deprecated, still used for a few transfers (maybe migrate?)
     nodeUrl: String,
 
     finishedUploading: { type: Boolean, default: false },
     lastDownloadEmailSentAt: Date,
-
-    backendVersion: { type: Number, required: true, default: 1 }
 }, { timestamps: true })
 
 function encPassword(pass) {

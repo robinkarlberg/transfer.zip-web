@@ -193,8 +193,7 @@ export async function POST(req) {
       encryptionKey,
       encryptionIV,
       files: transferFiles,
-      brandProfile: usedBrandProfile ? usedBrandProfile._id : undefined,
-      backendVersion: 2
+      brandProfile: usedBrandProfile ? usedBrandProfile._id : undefined
     })
 
     const conf = await getConf()

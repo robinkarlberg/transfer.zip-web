@@ -1,5 +1,9 @@
-import { describe, it, expect } from "vitest";
+import { afterEach, describe, it, expect, vi } from "vitest";
 import Transfer from "@/lib/server/mongoose/models/Transfer";
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
 
 describe("Transfer password encryption", () => {
   it("round-trips through setPassword → getPassword", () => {
@@ -75,5 +79,30 @@ describe("Transfer.registerFile", () => {
     expect(t.files).toHaveLength(1);
     expect(t.files[0].name).toBe("b.txt");
     expect(t.files[0].size).toBe(42);
+  });
+});
+
+describe("existing transfer compatibility", () => {
+  it.each([undefined, 1, 2])("preserves links and file details for stored version %s", async (backendVersion) => {
+    vi.stubEnv("SITE_URL", "https://transfer.example");
+    vi.stubEnv("NEXT_PUBLIC_DL_DOMAIN", "");
+    const transfer = Transfer.hydrate({
+      _id: "000000000000000000000001",
+      secretCode: "existing-link",
+      name: "Existing transfer",
+      nodeUrl: "https://node.example",
+      backendVersion,
+      storageLocation: "hetzner",
+      finishedUploading: true,
+      files: [{ _id: "000000000000000000000002", name: "video.mp4", relativePath: "video.mp4", type: "video/mp4", size: 42 }],
+    });
+
+    expect(transfer.validateSync()).toBeUndefined();
+    const owner = await transfer.toJsonAsOwner();
+    expect(owner.downloadUrl).toBe("https://transfer.example/transfer/existing-link");
+    expect(owner.nodeUrl).toBe("https://node.example");
+    expect(owner.finishedUploading).toBe(true);
+    expect(owner.size).toBe(42);
+    expect(owner.files).toEqual([{ id: "000000000000000000000002", name: "video.mp4", relativePath: "video.mp4", type: "video/mp4", size: 42 }]);
   });
 });

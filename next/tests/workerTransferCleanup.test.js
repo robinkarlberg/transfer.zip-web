@@ -19,19 +19,14 @@ describe("worker transfer cleanup requests", () => {
     vi.unstubAllGlobals();
   });
 
-  it.each([
-    [2, 2],
-    [1, 1],
-    [undefined, 1],
-  ])("sends storage version %s as %s", async (version, expectedVersion) => {
-    await controlTransferDelete("https://node.example", "transfer-id", version);
+  it("sends deletion to the owning node", async () => {
+    await controlTransferDelete("https://node.example", "transfer-id");
 
     const [url, request] = fetch.mock.calls[0];
     expect(url).toBe("https://node.example/control/transfer/delete");
     expect(request.method).toBe("POST");
     expect(JSON.parse(request.body)).toEqual({
       transferId: "transfer-id",
-      backendVersion: expectedVersion,
     });
   });
 
@@ -39,7 +34,7 @@ describe("worker transfer cleanup requests", () => {
     const failure = { success: false, message: "Storage deletion failed" };
     fetch.mockResolvedValue({ json: async () => failure });
 
-    await expect(controlTransferDelete("https://node.example", "transfer-id", 2))
+    await expect(controlTransferDelete("https://node.example", "transfer-id"))
       .rejects.toEqual(failure);
   });
 });

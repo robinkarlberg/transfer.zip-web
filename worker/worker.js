@@ -54,7 +54,7 @@ const deleteExpiredTransfers = async () => {
     ]
   }).toArray()
   for (let transfer of expiredTransfers) {
-    await controlTransferDelete(transfer.nodeUrl, transfer._id.toString(), transfer.backendVersion)
+    await controlTransferDelete(transfer.nodeUrl, transfer._id.toString())
     await db.collection("transfers").deleteOne({ _id: transfer._id })
   }
 

@@ -22,7 +22,7 @@ export async function POST(req, { params }) {
 
   await transfer.deleteOne()
 
-  workerTransferDelete(transfer.nodeUrl, transfer._id.toString(), transfer.backendVersion).catch(console.error)
+  workerTransferDelete(transfer.nodeUrl, transfer._id.toString()).catch(console.error)
 
   logTeamEvent({
     team: admin.team,

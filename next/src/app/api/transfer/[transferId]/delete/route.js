@@ -41,7 +41,7 @@ export async function POST(req, { params }) {
 
   // Do not await this, it will just lag too much. We assume the deletion succeeds.
   // We can always delete left over files with a tidy script later.
-  workerTransferDelete(transfer.nodeUrl, transfer._id.toString(), transfer.backendVersion).catch(console.error)
+  workerTransferDelete(transfer.nodeUrl, transfer._id.toString()).catch(console.error)
 
   if (transfer.team) {
     logTeamEvent({

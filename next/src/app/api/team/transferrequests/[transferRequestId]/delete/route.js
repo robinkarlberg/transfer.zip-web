@@ -26,7 +26,7 @@ export async function POST(req, { params }) {
   const linkedTransfers = await Transfer.find({ transferRequest: transferRequest._id })
 
   for (const transfer of linkedTransfers) {
-    workerTransferDelete(transfer.nodeUrl, transfer._id.toString(), transfer.backendVersion).catch(console.error)
+    workerTransferDelete(transfer.nodeUrl, transfer._id.toString()).catch(console.error)
     await transfer.deleteOne()
   }
 

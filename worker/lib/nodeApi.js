@@ -55,6 +55,6 @@ export const post = async (nodeUrl, endpoint, payload) => {
   }
 }
 
-export async function controlTransferDelete(nodeUrl, transferId, backendVersion = 1) {
-  return await post(nodeUrl, "/control/transfer/delete", { transferId, backendVersion })
+export async function controlTransferDelete(nodeUrl, transferId) {
+  return await post(nodeUrl, "/control/transfer/delete", { transferId })
 }
