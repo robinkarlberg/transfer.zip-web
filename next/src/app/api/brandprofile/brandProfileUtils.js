@@ -87,11 +87,16 @@ export async function deleteObjectFromS3({ key }) {
 }
 
 export function getBrandIconUrl(brandProfileId) {
-  return `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET_NAME}/${getBrandIconPath(brandProfileId)}`
+  return `${getBrandPublicBaseUrl()}/${getBrandIconPath(brandProfileId)}`
 }
 
 export function getBrandBackgroundUrl(brandProfileId) {
-  return `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET_NAME}/${getBrandBackgroundPath(brandProfileId)}`
+  return `${getBrandPublicBaseUrl()}/${getBrandBackgroundPath(brandProfileId)}`
+}
+
+function getBrandPublicBaseUrl() {
+  const baseUrl = process.env.S3_PUBLIC_URL || `${process.env.S3_ENDPOINT}/${process.env.S3_BUCKET_NAME}`
+  return baseUrl.replace(/\/+$/, "")
 }
 
 function getBrandIconPath(brandProfileId) {

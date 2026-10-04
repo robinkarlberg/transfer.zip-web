@@ -9,6 +9,11 @@ const nextConfig = {
         protocol: "https",
         hostname: "nbg1.your-objectstorage.com",
         pathname: "/**"
+      },
+      {
+        protocol: "https",
+        hostname: "assets-public.transfer.zip",
+        pathname: "/assets/brandprofiles/**"
       }
     ]
   },
