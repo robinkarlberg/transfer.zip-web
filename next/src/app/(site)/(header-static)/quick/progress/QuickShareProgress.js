@@ -8,7 +8,7 @@ import { sendEvent } from "@/lib/client/umami"
 import { IS_SELFHOST } from "@/lib/isSelfHosted"
 import { humanFileSize } from "@/lib/transferUtils"
 import { cn } from "@/lib/utils"
-import { ArrowRightIcon } from "lucide-react"
+import { ArrowRightIcon, Link2OffIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useContext, useEffect, useRef, useState } from "react"
@@ -21,7 +21,7 @@ export default function QuickShareProgress({ isLoggedIn }) {
   const router = useRouter()
 
   const { openSignupDialog } = useContext(GlobalContext)
-  const { files } = useContext(FileContext)
+  const { files, setFiles } = useContext(FileContext)
   const { hasBeenSentLink, k, remoteSessionId, transferDirection, code } = useQuickShare()
 
   const [snap, setSnap] = useState(null)
@@ -63,23 +63,31 @@ export default function QuickShareProgress({ isLoggedIn }) {
         : isConnector || hasConnected || status === QuickShareStatus.PEER_CONNECTED ? "flight"
           : "waiting"
 
-  const upsell = !isConnector && !finished && (view === "waiting" || view === "flight") && (
-    <div className="-mx-6 -mb-6 mt-8 rounded-b-3xl bg-gray-50 px-6 py-4 text-center text-sm sm:-mx-8 sm:-mb-8 sm:px-8">
-      <p className="text-gray-500">This link stops working when you close this tab.</p>
+  // A receiver has nothing to hand over, whatever an earlier send left in the context
+  const upsellFiles = mode === "send" ? files : []
+
+  const upsell = !isConnector && (view === "waiting" || view === "flight") && (
+    <div className="-mx-6 -mb-6 mt-8 rounded-b-3xl bg-primary-50 px-6 py-5 text-center sm:-mx-8 sm:-mb-8 sm:px-8">
+      <p className="text-sm font-semibold text-balance text-gray-900">
+        <Link2OffIcon size={16} className="mr-2 -mt-0.5 inline text-primary-600" />
+        {finished ? "This link only worked once." : "This link stops working when you close this tab."}
+      </p>
       {!IS_SELFHOST && (
         <Link
           href={"/app"}
           onNavigate={e => {
-            sendEvent("quick_transfer_upsell_click", { is_logged_in: isLoggedIn })
+            sendEvent("quick_transfer_upsell_click", { is_logged_in: isLoggedIn, finished })
+            // The /app picker starts out with whatever is in the file context
+            setFiles(upsellFiles)
             if (!isLoggedIn) {
               e.preventDefault()
-              openSignupDialog(files)
+              openSignupDialog(upsellFiles)
             }
           }}
-          className="group mt-1 inline-flex items-center gap-1 font-semibold text-primary hover:text-primary-light"
+          className="group mt-3 inline-flex h-10 items-center justify-center gap-1.5 rounded-full bg-primary px-5 text-sm font-semibold text-white transition hover:bg-primary-light active:scale-[0.98]"
         >
           Keep your files online longer
-          <ArrowRightIcon size={14} className="transition-transform group-hover:translate-x-0.5" />
+          <ArrowRightIcon size={15} className="transition-transform group-hover:translate-x-0.5" />
         </Link>
       )}
     </div>

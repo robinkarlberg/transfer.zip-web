@@ -6,7 +6,7 @@ import { getLandingLanguage, RECEIVE_PATHS } from "@/lib/landing/routes";
 import BIcon from "@/components/BIcon";
 import { groupFilesByFolder, humanFileSize, humanFileType } from "@/lib/transferUtils";
 import { ArrowRightIcon, FileIcon, FolderIcon, FolderPlusIcon, LinkIcon, PlusIcon, RotateCcwIcon, XIcon, ZapIcon } from "lucide-react";
-import { useContext, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
@@ -49,11 +49,17 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
   const payingUser = user && user.plan != "free"
   const maxExpiryDays = getLimit(user?.plan, LIMIT.MAX_EXPIRY_DAYS) ?? 0
 
-  const [files, setFiles] = useState([
+  // The dashboard starts out with files handed over from a Quick Transfer
+  const [files, setFiles] = useState(isDashboard ? globalFiles : [
     // { name: "test.zip", size: 123152134523, type: "application/zip" },
     // { name: "file.png", size: 123152134523, type: "image/png" },
     // { name: "loandasodnasdaosdasd asdasd 12-12-12.zip", size: 94737 },
   ])
+
+  // Taken once, so coming back to this page later starts with an empty picker
+  useEffect(() => {
+    if (isDashboard) setGlobalFiles([])
+  }, [])
 
   const [uploadProgressMap, setUploadProgressMap] = useState(null)
   const [finished, setFinished] = useState(false)
