@@ -4,8 +4,8 @@ import { useContext, useState } from "react";
 import { login, register, requestPasswordReset } from "@/lib/client/Api";
 
 import logo from "@/img/icon.png"
+import clouds from "@/img/download-clouds.png"
 import { useRouter } from "next/navigation";
-import SignInWithGoogleButton from "@/components/SignInWithGoogleButton";
 import Spinner from "@/components/elements/Spinner";
 import Image from "next/image";
 import Link from "next/link";
@@ -14,6 +14,8 @@ import Modal from "@/components/elements/Modal";
 import { sleep } from "@/lib/utils";
 import { IS_SELFHOST } from "@/lib/isSelfHosted";
 import NewSignUpArea from "@/components/NewSignUpArea";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 /*
   This example requires some changes to your config:
@@ -33,6 +35,7 @@ export default function SignInPage(params) {
   const { displayGenericModal, displaySuccessModal, displayErrorModal } = useContext(ApplicationContext)
   const [message, setMessage] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
 
   const [loadingForgotPassword, setLoadingForgotPassword] = useState(false)
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false)
@@ -116,112 +119,97 @@ export default function SignInPage(params) {
           </form>
         </div>
       </Modal>
-      <div className="flex min-h-[100vh] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <button className="absolute top-8 text-xl me-1 text-primary hover:text-primary-light" onClick={() => window.history.back()}>&larr; Back</button>
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <Image
-            alt="Your Company"
-            src={logo}
-            className="mx-auto h-10 w-auto"
-          />
-          <h2 className="mt-10 text-center text-3xl/9 font-bold tracking-tight text-gray-900">
-            Welcome!
-          </h2>
-        </div>
+      <div className="relative isolate grid min-h-svh lg:grid-cols-2">
+        <div className="relative grid place-items-center px-4 py-20">
+          <button className="absolute top-6 left-6 text-sm font-medium text-white hover:text-primary-100 lg:text-gray-600 lg:hover:text-gray-900" onClick={() => window.history.back()}>&larr; Back</button>
+          {/* A floating card over the sky on small screens, flat on the white column once the sky moves beside it */}
+          <div className="w-full max-w-sm rounded-[32px] bg-white p-7 shadow-2xl sm:p-8 lg:p-0 lg:shadow-none">
+            <Image
+              alt="Transfer.zip"
+              src={logo}
+              className="mx-auto size-12 object-contain"
+              priority
+            />
+            {/* Once the magic link is sent, NewSignUpArea shows its own heading for each stage */}
+            {!emailSent && (
+              <>
+                <h1 className="mt-4 text-center text-3xl font-bold tracking-tight text-gray-900">
+                  Welcome!
+                </h1>
+                {!IS_SELFHOST && <p className="mt-2 text-center text-gray-500">Sign in or create an account.</p>}
+              </>
+            )}
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          {
-            IS_SELFHOST ?
-              <form onSubmit={handleSubmit} action="#" method="POST" className="space-y-6">
-                <div>
-                  <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
-                    Email address
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="user@example.com"
-                      required
-                      autoComplete="email"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between">
-                    <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-                      Password
+            <div className={emailSent ? "mt-4" : "mt-7"}>
+              {
+                IS_SELFHOST ?
+                  <form onSubmit={handleSubmit} action="#" method="POST">
+                    <label htmlFor="email" className="block px-1 text-sm font-medium text-gray-900">
+                      Email address
                     </label>
-                    <div className="text-sm">
-                      <button type="button" onClick={() => setShowForgotPasswordModal(true)} className="font-semibold text-primary hover:text-primary-light">
+                    <div className="mt-2">
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="user@example.com"
+                        required
+                        autoComplete="email"
+                        className="h-12 rounded-full px-5"
+                      />
+                    </div>
+                    <div className="mt-5 flex items-center justify-between px-1">
+                      <label htmlFor="password" className="block text-sm font-medium text-gray-900">
+                        Password
+                      </label>
+                      <button type="button" onClick={() => setShowForgotPasswordModal(true)} className="text-sm font-semibold text-primary hover:text-primary-light">
                         Forgot password?
                       </button>
                     </div>
-                  </div>
-                  <div className="mt-2">
-                    <input
-                      id="password"
-                      name="password"
-                      type="password"
-                      required
-                      autoComplete="current-password"
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm/6"
-                    />
-                  </div>
-                </div>
-                <div>
-                  {message &&
-                    <div className="mb-2">
-                      <span className="text-red-600 text-sm">{message}</span>
+                    <div className="mt-2">
+                      <Input
+                        id="password"
+                        name="password"
+                        type="password"
+                        required
+                        autoComplete="current-password"
+                        className="h-12 rounded-full px-5"
+                      />
                     </div>
-                  }
-                  <div>
-                    <button
-                      disabled={loading}
-                      type="submit"
-                      className="flex w-full justify-center rounded-md bg-primary px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                    >
-                      Sign in {loading && <Spinner className={"ms-2"} />}
-                    </button>
-                    {!IS_SELFHOST && (
-                      <div className="mt-2 flex flex-row gap-2">
-                        <SignInWithGoogleButton disabled={loading} />
-                        {/* <button
-                    disabled={loading}
-                    type="submit"
-                    className="flex w-full justify-center rounded-md bg-white px-3 py-1.5 text-sm/6 font-semibold text-gray-700 hover:text-black shadow-sm border border-gray-500 hover:border-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                  >
-                    <BIcon name={"github"} className={"me-1"} /> GitHub
-                  </button> */}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </form>
-              :
-              <div className="border border-gray-100 rounded-xl p-6 shadow-xs">
-                <NewSignUpArea />
-              </div>
-          }
+                    {message && <p className="mt-3 text-center text-sm text-red-600">{message}</p>}
+                    <Button disabled={loading} className="mt-5 h-12 w-full rounded-full font-semibold">
+                      {loading && <Spinner />} Sign in
+                    </Button>
+                  </form>
+                  :
+                  <NewSignUpArea pill onEmailLogin={() => setEmailSent(true)} onReset={() => setEmailSent(false)} />
+              }
+            </div>
 
-          {IS_SELFHOST ?
-            <p className="mt-10 text-center text-sm/6 text-gray-500">
-              Self-managed instance of{' '}
-              <Link href="https://transfer.zip/" className="font-semibold text-primary hover:text-primary-light">
-                Transfer.zip
-              </Link>
-            </p>
-            : (
-              <p className="mt-10 text-center text-sm/6 text-gray-500">
-                Having trouble?{' '}
-                <Link href="mailto:support@transfer.zip" className="font-semibold text-primary hover:text-primary-light">
-                  Contact Us
+            {IS_SELFHOST ?
+              <p className="mt-6 text-center text-sm text-gray-500">
+                Self-managed instance of{' '}
+                <Link href="https://transfer.zip/" className="font-semibold text-primary hover:text-primary-light">
+                  Transfer.zip
                 </Link>
               </p>
-            )}
+              : (
+                <p className="mt-6 text-center text-sm text-gray-500">
+                  Having trouble?{' '}
+                  <Link href="mailto:support@transfer.zip" className="font-semibold text-primary hover:text-primary-light">
+                    Contact Us
+                  </Link>
+                </p>
+              )}
+          </div>
+        </div>
+        <div aria-hidden="true" className="absolute inset-0 -z-10 lg:static lg:z-auto lg:p-3">
+          <div className="relative h-full overflow-hidden bg-linear-to-b from-primary-600 to-primary-300 lg:rounded-3xl">
+            {/* Taller than the panel so the clouds' ragged base is clipped off */}
+            <div className="absolute inset-x-0 top-0 h-[120%] lg:h-[130%]">
+              <Image fill priority alt="" src={clouds} className="object-cover object-bottom lg:object-right-bottom" />
+            </div>
+          </div>
         </div>
       </div>
     </>

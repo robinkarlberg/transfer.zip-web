@@ -9,6 +9,7 @@ import { Input } from "./ui/input"
 import Spinner from "./elements/Spinner"
 import BIcon from "./BIcon"
 import { emailDomains } from "../lib/emailDomains"
+import { cn } from "@/lib/utils"
 
 const POLL_INTERVAL_MS = 2500
 
@@ -16,12 +17,14 @@ const POLL_INTERVAL_MS = 2500
 // - same-browser click: switch to a "signed in" state with a CTA into /app
 // - cross-device click: switch to a 6-digit code input so the user can finish
 //   sign-in on this device using the code displayed on the other device
-export default function MagicLinkSentArea({ requestId, email, redirectTo = "/app", onReset, text = englishLandingText.signup.area.magicLink }) {
+export default function MagicLinkSentArea({ requestId, email, redirectTo = "/app", onReset, pill, text = englishLandingText.signup.area.magicLink }) {
   const [stage, setStage] = useState("sent") // sent | codeNeeded | verifying | signedIn
   const [code, setCode] = useState("")
   const [error, setError] = useState(null)
   const stageRef = useRef(stage)
   stageRef.current = stage
+  // In the pill layout the host hides its own heading once the link is sent, so the stage message becomes the heading
+  const titleClass = pill && "font-heading text-2xl font-bold tracking-tight text-balance text-gray-900"
 
   useEffect(() => {
     let cancelled = false
@@ -80,10 +83,10 @@ export default function MagicLinkSentArea({ requestId, email, redirectTo = "/app
           <BIcon name="check-circle-fill" className="text-primary" />
         </div>
         <div>
-          <p className="text-base font-semibold text-gray-900">{text.signedIn}</p>
+          <p className={cn("text-base font-semibold text-gray-900", titleClass)}>{text.signedIn}</p>
           {/* <p className="text-sm text-gray-600 mt-1">Now go send some files.</p> */}
         </div>
-        <Button onClick={() => { window.location.href = redirectTo }} className="w-full">
+        <Button onClick={() => { window.location.href = redirectTo }} className={cn("w-full", pill && "h-12 rounded-full font-semibold")}>
           {text.dashboard}
         </Button>
       </div>
@@ -99,7 +102,7 @@ export default function MagicLinkSentArea({ requestId, email, redirectTo = "/app
   if (stage === "codeNeeded" || stage === "verifying") {
     return (
       <div className="space-y-3">
-        <div className="text-sm text-gray-700">
+        <div className={cn("text-sm text-gray-700", pill && "text-center")}>
           {text.otherBrowser}
         </div>
         <form onSubmit={handleVerify} className="space-y-2">
@@ -110,9 +113,9 @@ export default function MagicLinkSentArea({ requestId, email, redirectTo = "/app
             value={code}
             onChange={e => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
             autoFocus
-            className="tracking-[0.5em] text-center text-lg font-mono"
+            className={cn("tracking-[0.5em] text-center text-lg font-mono", pill && "h-12 rounded-full")}
           />
-          <Button disabled={code.length !== 6 || stage === "verifying"} className="w-full">
+          <Button disabled={code.length !== 6 || stage === "verifying"} className={cn("w-full", pill && "h-12 rounded-full font-semibold")}>
             {stage === "verifying" && <Spinner />} {text.verify}
           </Button>
         </form>
@@ -128,7 +131,7 @@ export default function MagicLinkSentArea({ requestId, email, redirectTo = "/app
 
   return (
     <div className="space-y-4 text-center text-sm">
-      <p className="text-gray-800 text-base font-semibold">
+      <p className={cn("text-gray-800 text-base font-semibold", titleClass)}>
         {text.sent}
       </p>
       <div className="text-gray-600 text-sm flex items-center justify-center gap-2">

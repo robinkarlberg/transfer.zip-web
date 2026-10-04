@@ -42,3 +42,12 @@ export function toLargeRegion(iso2) {
   if (ASIA.has(iso2)) return 'EU'; // change to 'AS' later if needed
   return 'EU';
 }
+
+// Helper: worker geo lookup → "SE" | "EU" | "OTHER"
+// "EU" covers the whole continent, not just member states. geo is null for unknown ips
+export function toVisitorRegion(geo) {
+  if (!geo) return "OTHER";
+  if (geo.country === "SE") return "SE";
+  if (EUROPE.has(geo.country)) return "EU";
+  return "OTHER";
+}

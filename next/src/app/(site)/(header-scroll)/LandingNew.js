@@ -1,6 +1,7 @@
 import { englishLandingText } from "@/lib/landing/en";
 import BIcon from "@/components/BIcon"
 import LandingNav from "@/components/LandingNav"
+import MadeInBadge from "@/components/MadeInBadge"
 import Link from "next/link"
 import { Suspense } from 'react'
 import AuthConditional from "./AuthConditional"
@@ -83,6 +84,7 @@ export default async function ({ mode, text = englishLandingText.hero, navText, 
             mobile ? "flex sm:hidden" : "hidden sm:flex"
           )}><span className="ms-0.5">{icon}</span> {text}</div>)}
         </div>
+        <MadeInBadge />
       </div>
     </div>
   )

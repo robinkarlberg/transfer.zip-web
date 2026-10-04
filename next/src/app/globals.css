@@ -378,6 +378,44 @@
   }
 }
 
+/* "Made in" badge. The meatball travels 250% of its box while spinning 322deg, which is
+   what a ball of that size turns over that distance, so it rolls without slipping */
+@theme {
+  --animate-meatball-roll-in: meatball-roll-in 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-meatball-spin: meatball-spin 1100ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-flag-plant: flag-plant 700ms cubic-bezier(0.34, 1.3, 0.64, 1) 1050ms both;
+  --animate-corner-in: corner-in 700ms cubic-bezier(0.34, 1.3, 0.64, 1) both;
+  --animate-star-pop: star-pop 450ms cubic-bezier(0.34, 1.3, 0.64, 1) both;
+
+  @keyframes meatball-roll-in {
+    from { transform: translateX(250%); }
+    to { transform: translateX(0); }
+  }
+
+  @keyframes meatball-spin {
+    from { transform: rotate(322deg); }
+    to { transform: rotate(0deg); }
+  }
+
+  @keyframes corner-in {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+  }
+
+  @keyframes flag-plant {
+    0% { opacity: 0; transform: translateY(-16px) rotate(-22deg); }
+    50% { opacity: 1; transform: translateY(1px) rotate(9deg); }
+    75% { transform: translateY(0) rotate(-4deg); }
+    100% { opacity: 1; transform: translateY(0) rotate(0deg); }
+  }
+
+  @keyframes star-pop {
+    0% { opacity: 0; transform: scale(0) rotate(-72deg); }
+    70% { opacity: 1; transform: scale(1.4) rotate(0deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+}
+
 /* Quick Transfer ".zip" mark: dots stream into the period, which swells as each one lands.
    Three dots staggered by a third of zip-stream each arrive once per zip-gulp cycle. Set
    --zip-play on an ancestor to pause or run them all in sync */

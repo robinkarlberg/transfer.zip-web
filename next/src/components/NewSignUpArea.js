@@ -10,8 +10,9 @@ import Spinner from "./elements/Spinner"
 import { sendEvent } from "@/lib/client/umami"
 import { requestMagicLink } from "@/lib/client/Api"
 import MagicLinkSentArea from "./MagicLinkSentArea"
+import { cn } from "@/lib/utils"
 
-export default function ({ onGoogleLogin, onEmailLogin, newtab, text = englishLandingText.signup.area }) {
+export default function ({ onGoogleLogin, onEmailLogin, onReset, newtab, pill, text = englishLandingText.signup.area }) {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(null) // { requestId, email } once the link is sent
@@ -48,7 +49,11 @@ export default function ({ onGoogleLogin, onEmailLogin, newtab, text = englishLa
       <MagicLinkSentArea
         requestId={sent.requestId}
         email={sent.email}
-        onReset={() => setSent(null)}
+        onReset={() => {
+          setSent(null)
+          onReset && onReset()
+        }}
+        pill={pill}
         text={text.magicLink}
       />
     )
@@ -56,8 +61,8 @@ export default function ({ onGoogleLogin, onEmailLogin, newtab, text = englishLa
 
   return (
     <div>
-      <SignInWithGoogleButton onClick={handleGoogleLogin} newtab={newtab} text={text.google} />
-      <div className="relative">
+      <SignInWithGoogleButton onClick={handleGoogleLogin} newtab={newtab} pill={pill} text={text.google} />
+      <div className={cn("relative", pill && "my-5")}>
         <hr className="absolute top-0 mt-2.5 w-full" />
         <p className="relative z-10 text-center text-gray-600 my-2 text-sm"><span className="bg-white px-3">{text.or}</span></p>
       </div>
@@ -67,8 +72,9 @@ export default function ({ onGoogleLogin, onEmailLogin, newtab, text = englishLa
           type="email"
           placeholder={text.emailPlaceholder}
           required
+          className={cn(pill && "h-12 rounded-full px-5")}
         ></Input>
-        <Button disabled={loading} className={"mt-2 w-full"}>{loading && <Spinner />} {text.emailButton}</Button>
+        <Button disabled={loading} className={cn("mt-2 w-full", pill && "mt-3 h-12 rounded-full font-semibold")}>{loading && <Spinner />} {text.emailButton}</Button>
       </form>
       {error && <p className="text-red-600 text-sm mt-2 text-center">{error}</p>}
     </div>

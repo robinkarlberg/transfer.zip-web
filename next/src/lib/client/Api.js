@@ -344,6 +344,12 @@ export async function getDownloadToken(secretCode) {
     return await post(`/sign`, { secretCode, scope: "download" })
 }
 
+// geo
+
+export async function getGeoRegion() {
+    return await get("/geo")
+}
+
 // errors
 
 export async function sendTrackError(payload) {
