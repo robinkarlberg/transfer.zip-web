@@ -19,7 +19,7 @@ function EuCorner({ lines }) {
       viewBox="0 0 100 100"
       role="img"
       aria-label={lines.join(" ")}
-      className="pointer-events-none absolute bottom-0 right-0 -z-10 size-24 origin-bottom-right animate-corner-in font-heading motion-reduce:animate-none sm:size-40"
+      className="pointer-events-none absolute bottom-0 right-0 -z-10 hidden size-40 origin-bottom-right animate-corner-in font-heading motion-reduce:animate-none lg:block"
     >
       <circle cx={EU_CENTER} cy={EU_CENTER} r="84" fill="#003399" />
       {EU_STAR_ANGLES.map((degrees, i) => {
@@ -49,13 +49,13 @@ function SwedishMeatball({ lines }) {
     <div
       role="img"
       aria-label={lines.join(" ")}
-      className="pointer-events-none absolute bottom-0 right-0 -z-10 flex items-center gap-2 overflow-hidden pb-2 pl-2 pr-3 pt-12 sm:gap-3 sm:pb-6 sm:pr-6 sm:pt-20"
+      className="pointer-events-none absolute bottom-0 right-0 -z-10 hidden items-center gap-3 overflow-hidden pb-6 pl-2 pr-6 pt-20 lg:flex"
     >
       {/* White outline keeps the text readable on both the blue hero and white sections */}
       <svg
         viewBox="0 0 92 44"
         aria-hidden="true"
-        className="h-10 w-auto overflow-visible font-heading fade-in-up-500 animate-delay-1500 motion-reduce:animate-none sm:h-14"
+        className="h-14 w-auto overflow-visible font-heading fade-in-up-500 animate-delay-1500 motion-reduce:animate-none"
       >
         <g textAnchor="end" strokeWidth="4" strokeLinejoin="round" paintOrder="stroke" className="fill-gray-900 stroke-white">
           <text x="90" y="15" fontSize="13" fontWeight="600">{lines[0]}</text>
@@ -65,7 +65,7 @@ function SwedishMeatball({ lines }) {
       <svg
         viewBox="0 0 36 36"
         aria-hidden="true"
-        className="size-12 shrink-0 animate-meatball-roll-in overflow-visible motion-reduce:animate-none sm:size-20"
+        className="size-20 shrink-0 animate-meatball-roll-in overflow-visible motion-reduce:animate-none"
       >
         <defs>
           <radialGradient id="made-in-meatball-shade" cx="0.36" cy="0.3" r="0.75">
