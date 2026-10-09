@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 import { NextRequest } from "next/server"
 import { getLandingMetadata } from "@/lib/landing/metadata"
 import { LANDING_LANGUAGE_HEADER } from "@/lib/landing/routes"
+import { SWEDISH_PRICING_COOKIE } from "@/lib/billingCurrency"
 
 vi.mock("@/lib/server/content", () => ({
   getAllSlugs: async () => ["comparison/wetransfer"],
@@ -43,6 +44,18 @@ describe("landing metadata", () => {
 })
 
 describe("request language", () => {
+  it("remembers Swedish pricing through signup without redirecting or setting it on prefetch", async () => {
+    vi.doMock("@/lib/isSelfHosted", () => ({ IS_SELFHOST: false }))
+    const { middleware } = await import("@/middleware")
+    const response = middleware(new NextRequest("https://transfer.zip/sv"))
+    expect(response.cookies.get(SWEDISH_PRICING_COOKIE)).toMatchObject({ value: "1", httpOnly: true, path: "/", sameSite: "lax" })
+    expect(response.headers.get("location")).toBeNull()
+    const prefetch = middleware(new NextRequest("https://transfer.zip/sv", { headers: { "next-router-prefetch": "1" } }))
+    expect(prefetch.cookies.has(SWEDISH_PRICING_COOKIE)).toBe(false)
+    const english = middleware(new NextRequest("https://transfer.zip/", { headers: { cookie: `${SWEDISH_PRICING_COOKIE}=1` } }))
+    expect(english.headers.get(`x-middleware-request-${LANDING_LANGUAGE_HEADER}`)).toBe("en")
+    expect(english.headers.get("location")).toBeNull()
+  })
   it.each([
     ["/", "en"],
     ["/sv", "sv"],

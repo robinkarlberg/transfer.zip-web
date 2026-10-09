@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
+import { GlobeIcon } from "lucide-react"
 
 import BIcon from "@/components/BIcon"
 import { Button } from "@/components/ui/button"
@@ -227,7 +228,7 @@ function ConnectDomainDialog() {
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader>
+        <DialogHeader icon={<GlobeIcon />}>
           <DialogTitle>Connect a domain</DialogTitle>
           <DialogDescription>
             We'll activate it automatically once your DNS is pointing at us.

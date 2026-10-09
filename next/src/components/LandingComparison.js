@@ -5,7 +5,8 @@ import { englishLandingText } from "@/lib/landing/en";
 import { Check, X } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import NumberFlow from "@number-flow/react"
+import PriceNumber from "./elements/PriceNumber"
+import { PLANS, getMonthlyPrice } from "@/lib/pricing"
 import { useState } from "react"
 import logo from "@/img/icon.png"
 import wetransferLogo from "@/img/logos/wetransfer-logo.png"
@@ -13,7 +14,9 @@ import smashLogo from "@/img/logos/smash-logo.png"
 import PricingToggle from "./PricingToggle"
 import { cn } from "@/lib/utils"
 
-export default function LandingComparison({ text = englishLandingText.comparison, toggleText, pricingHref = "/pricing" }) {
+export default function LandingComparison({ currency, text = englishLandingText.comparison, toggleText, pricingHref = "/pricing" }) {
+  const swedishPricing = currency === "sek"
+  const competitorVat = swedishPricing ? 25 : 20
   const services = [
     {
       name: "Transfer.zip",
@@ -22,7 +25,8 @@ export default function LandingComparison({ text = englishLandingText.comparison
           <Image src={logo} alt="Transfer.zip" width={32} height={32} />
         </div>
       ),
-      price: { monthly: 9, yearly: 6 },
+      price: { monthly: getMonthlyPrice(PLANS.starter.id, "monthly", currency), yearly: getMonthlyPrice(PLANS.starter.id, "yearly", currency) },
+      currency,
       planName: text.starterPlan,
       features: [
         { value: text.unlimited, label: text.freeSize, good: true },
@@ -47,7 +51,8 @@ export default function LandingComparison({ text = englishLandingText.comparison
       logo: (
         <Image src={wetransferLogo} alt="WeTransfer" width={48} height={48} className="size-12" />
       ),
-      price: { monthly: 12, yearly: 10 },
+      price: swedishPricing ? { monthly: 100 * 1.25, yearly: 84 * 1.25 } : { monthly: 12, yearly: 10 },
+      currency: swedishPricing ? "sek" : "usd",
       planName: text.starterPlan,
       features: [
         { value: "3 GB", label: text.freeSize, good: false },
@@ -63,7 +68,7 @@ export default function LandingComparison({ text = englishLandingText.comparison
         { label: text.noAi, good: false },
         { label: text.storage, good: true },
       ],
-      footnote: text.wetransferFootnote,
+      footnote: text.wetransferFootnote.replace("{vat}", competitorVat),
       cta: { label: text.fullComparison, href: "/comparison/wetransfer" },
     },
     {
@@ -71,7 +76,8 @@ export default function LandingComparison({ text = englishLandingText.comparison
       logo: (
         <Image src={smashLogo} alt="Smash" width={48} height={48} className="size-12" />
       ),
-      price: { monthly: 12, yearly: 7 },
+      price: swedishPricing ? { monthly: 10 * 1.25, yearly: 6 * 1.25 } : { monthly: 12, yearly: 7 },
+      currency: swedishPricing ? "eur" : "usd",
       planName: text.proPlan,
       features: [
         { value: "2 GB", label: text.freeSize, good: false },
@@ -87,7 +93,7 @@ export default function LandingComparison({ text = englishLandingText.comparison
         { label: text.noAi, good: true },
         { label: text.storage, good: false },
       ],
-      footnote: text.smashFootnote,
+      footnote: text.smashFootnote.replace("{vat}", competitorVat),
       cta: { label: text.fullComparison, href: "/comparison/smash" },
     },
   ]
@@ -133,12 +139,12 @@ export default function LandingComparison({ text = englishLandingText.comparison
                     "text-4xl font-bold tracking-tight",
                     service.featured ? "text-primary-700" : "text-gray-900"
                   )}>
-                    <NumberFlow value={service.price[frequency]} prefix="$" locales={text.locale} />
+                    <PriceNumber value={service.price[frequency]} currency={service.currency} />
                   </span>
                   <span className="text-base text-gray-500">{text.month}</span>
                 </div>
                 <p className="mt-1 text-sm text-gray-500">
-                  {service.planName}, {text.billing[frequency]}
+                  {service.planName}, {text.billing[frequency]} · {service.currency.toUpperCase()}
                 </p>
               </div>
 

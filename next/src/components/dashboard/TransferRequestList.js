@@ -1,6 +1,7 @@
 "use client"
 
-import { useParams, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { useCallback, useMemo, useState } from "react"
 import EmptySpace from "../elements/EmptySpace"
 import { toast } from "sonner"
@@ -12,7 +13,7 @@ import {
   getTransferRequestList,
 } from "@/lib/client/Api"
 import BIcon from "../BIcon"
-import { Link2OffIcon, LinkIcon } from "lucide-react"
+import { DotIcon, Link2OffIcon, LinkIcon } from "lucide-react"
 import { Button } from "../ui/button"
 import {
   Dialog,
@@ -26,17 +27,15 @@ import {
 const INACTIVE_PAGE_SIZE = 10
 
 const Entry = ({ transferRequest, onLocalUpdate }) => {
-  const { transferId: displayedTransferId } = useParams()
-
+  const router = useRouter()
   const uploadLink = transferRequest.uploadUrl
   const { active, id, name } = transferRequest
+  const detailUrl = `/app/requests/${id}`
   const receivedTransfers = transferRequest.receivedTransfers || []
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [busy, setBusy] = useState(false)
-
-  const isSelected = id === displayedTransferId
 
   const handleCopy = async () => {
     if (await tryCopyToClipboard(uploadLink)) {
@@ -110,57 +109,46 @@ const Entry = ({ transferRequest, onLocalUpdate }) => {
   const extraTransfers = receivedTransfers.length - previewTransfers.length
 
   return (
-    <div className={`hover:cursor-default group text-start shadow-xs rounded-xl border border-gray-200 ${isSelected ? "bg-gray-50" : "bg-white"} px-5 py-4 group`}>
-      <div className="flex gap-4">
-        <div className={cn(
-          "w-12 aspect-square flex items-center justify-center text-center text-white rounded-lg",
-          active ? "bg-primary-500" : "bg-gray-300"
-        )}>
-          {active ? <LinkIcon /> : <Link2OffIcon />}
-        </div>
-        <div>
-          <h3 className={`text-lg font-bold mb-0.5 me-1 text-nowrap ${isSelected ? "text-black" : "text-gray-800"}`}>{name}</h3>
-          <div className="text-sm text-gray-600 font-medium group-hover:hidden">
-            <span className="">
-              {
-                active ?
-                  (
-                    transferRequest.receivedTransfersCount == 0 ?
-                      <>Request link is active</>
-                      :
-                      <><BIcon name={"arrow-down"} /> {transferRequest.receivedTransfersCount} transfer{transferRequest.receivedTransfersCount != 1 && "s"} received</>
-                  )
-                  :
-                  <><BIcon name={"stop-fill"} /> Inactive</>
-              }
-            </span>
+    <>
+      {/* Same entry as TransferList: the bottom line turns into the actions on hover */}
+      <div onClick={() => router.push(detailUrl)} className="border border-gray-200 group text-start rounded-xl bg-white px-5 py-4 hover:cursor-pointer hover:bg-gray-100 shadow-xs">
+        <div className="flex gap-4">
+          <div className={cn(
+            "w-12 aspect-square shrink-0 flex items-center justify-center text-center text-white rounded-lg",
+            active ? "bg-primary-500" : "bg-gray-300"
+          )}>
+            {active ? <LinkIcon /> : <Link2OffIcon />}
           </div>
-          <div className="text-sm text-gray-600 font-medium hidden group-hover:block">
-            {
-              active && (
-                <>
-                  <button onClick={handleCopyLinkClicked} className="underline hover:text-primary">Copy Link</button>
-                  <BIcon name="dot" />
-                </>
-              )
-            }
-            <button
-              onClick={active ? handleDeactivate : handleActivate}
-              disabled={busy}
-              className={`underline ${active ? "hover:text-red-600" : "hover:text-primary"} disabled:opacity-60`}
-            >
-              {active ? "Deactivate" : "Reactivate"} Link
-            </button>
-            <BIcon name="dot" />
-            <button
-              onClick={handleDeleteClicked}
-              className="underline hover:text-red-600"
-            >
-              Delete
-            </button>
+          <div className="min-w-0">
+            <h3 className="text-lg font-bold mb-0.5 me-1 truncate text-gray-800"><Link href={detailUrl} onClick={e => e.stopPropagation()}>{name}</Link></h3>
+            <div className="text-sm text-gray-600 font-medium group-hover:hidden group-has-[:focus-visible]:hidden">
+              <span className="">
+                {
+                  active ?
+                    (
+                      transferRequest.receivedTransfersCount == 0 ?
+                        <>Request link is active</>
+                        :
+                        <><BIcon name={"arrow-down"} /> {transferRequest.receivedTransfersCount} transfer{transferRequest.receivedTransfersCount != 1 && "s"} received</>
+                    )
+                    :
+                    <><BIcon name={"stop-fill"} /> Inactive</>
+                }
+              </span>
+            </div>
+            <div className="text-sm text-gray-600 font-medium hidden group-hover:block group-has-[:focus-visible]:block">
+              <button onClick={handleCopyLinkClicked} className="underline hover:text-primary">Copy Link</button>
+              <DotIcon size={16} className="inline" />
+              <button onClick={active ? handleDeactivate : handleActivate} disabled={busy} className={`underline ${active ? "hover:text-red-600" : "hover:text-primary"} disabled:opacity-60`}>
+                {active ? "Close Request" : "Reopen Request"}
+              </button>
+              <DotIcon size={16} className="inline" />
+              <button onClick={handleDeleteClicked} className="underline hover:text-red-600">Delete</button>
+            </div>
           </div>
         </div>
       </div>
+      {/* Outside the entry: clicks in the portaled dialog would otherwise bubble to its onClick */}
       <Dialog open={showDeleteConfirm} onOpenChange={open => !deleting && setShowDeleteConfirm(open)}>
         <DialogContent>
           <DialogHeader variant="destructive">
@@ -196,7 +184,7 @@ const Entry = ({ transferRequest, onLocalUpdate }) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   )
 }
 

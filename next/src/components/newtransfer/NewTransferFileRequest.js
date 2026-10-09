@@ -19,6 +19,7 @@ import DynamicIsland from "./DynamicIsland";
 import { toast } from "sonner";
 import { englishLandingText } from "@/lib/landing/en";
 import AddedEmailField from "./AddedEmailField";
+import RequestIdentificationSetting from "./RequestIdentificationSetting"
 
 const defaultText = { ...englishLandingText.upload, ...englishLandingText.request }
 
@@ -32,6 +33,8 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
   const [emailRecipients, setEmailRecipients] = useState([])
 
   const [brandProfileId, setBrandProfileId] = useState(brandProfiles && brandProfiles.length > 0 ? brandProfiles[0].id : null)
+  const [requireIdentification, setRequireIdentification] = useState(false)
+  const [creating, setCreating] = useState(false)
 
   const [errorMessage, setErrorMessage] = useState(null)
   const [showErrorMessage, setShowErrorMessage] = useState(false)
@@ -76,15 +79,19 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
           body: text.addRecipients
         })
 
+      setCreating(true)
+      setFailed(false)
       try {
-        const { transferRequest } = await newTransferRequest({ name, description, emails: emailRecipients, brandProfileId })
+        const { transferRequest } = await newTransferRequest({ name, description, emails: tab === "email" ? emailRecipients : [], brandProfileId, requireIdentification })
         setTransferRequest(transferRequest)
         setFinished(true)
-        // router.replace(`/app/requests`)
       }
       catch (err) {
         displayErrorMessage({ body: err.message })
         setFailed(true)
+      }
+      finally {
+        setCreating(false)
       }
     }
   }
@@ -163,7 +170,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
   const endOverlay = (
     <>
       <div className="relative w-full h-full max-w-44 max-h-44">
-        <Progress max={1} now={1} showUnits={false} finished={true} finishedText={emailRecipients.length > 0 ? text.finished.email : text.finished.link} failed={failed} text={text.progress} />
+        <Progress max={1} now={1} showUnits={false} finished={true} finishedText={transferRequest?.emailsSharedWith.length > 0 ? text.finished.email : text.finished.link} failed={failed} text={text.progress} />
       </div>
       <div className="flex flex-col gap-2">
         {
@@ -173,7 +180,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
               {/* {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Send more files</Button>} */}
             </> : <>
               {finished && <Button size={"sm"} onClick={handleCopyClick}><CopyIcon size={12}/> {text.copyRequestLink}</Button>}
-              {finished && <Button size={"sm"} variant={"outline"} onClick={() => router.push("/app/requests")}>{text.view}</Button>}
+              {finished && <Button size={"sm"} variant={"outline"} onClick={() => router.push(`/app/requests/${transferRequest.id}`)}>{text.view}</Button>}
             </>
         }
       </div>
@@ -228,19 +235,18 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
               placeholder={text.title}
               type={"text"}
               name="name"
+              maxLength={200}
               required
             />
           </div>
-          {tab == "email" && <>
-            <div>
-              <Textarea
-                id="description"
-                placeholder={text.message}
-                type="text"
-                name="description"
-              />
-            </div>
-          </>}
+          <div>
+            <Textarea
+              id="description"
+              placeholder={text.message}
+              name="description"
+              maxLength={2000}
+            />
+          </div>
           <div className="py-1">
             <hr />
             <div className="relative flex items-center justify-start">
@@ -248,6 +254,9 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
                 <span className="inline-block text-xs mx-auto text-gray-400">{text.settings}</span>
               </div>
             </div>
+          </div>
+          <div className="py-2">
+            <RequestIdentificationSetting checked={requireIdentification} onCheckedChange={setRequireIdentification} disabled={creating} />
           </div>
           <BrandingToggle brandProfiles={brandProfiles} brandProfileId={brandProfileId} setBrandProfileId={setBrandProfileId} text={text.brandProfile} />
         </>}
@@ -276,7 +285,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
         </>}
       </div>
       <div className="flex-none p-2 flex flex-row-reverse items-center gap-2 --border-t">
-        <Button size={"sm"}>{!quickTransferEnabled && tab == "email" ? <>{text.requestFiles} <ArrowRightIcon /></> : <>{text.getLink} <LinkIcon /></>} </Button>
+        <Button size={"sm"} disabled={creating}>{!quickTransferEnabled && tab == "email" ? <>{text.requestFiles} <ArrowRightIcon /></> : <>{text.getLink} <LinkIcon /></>} </Button>
       </div>
     </form>
   )

@@ -38,6 +38,11 @@ const baseTransferSchema = z.object({
 // Schema for uploads to an existing transfer request (guest uploads)
 const transferRequestUploadSchema = baseTransferSchema.extend({
   transferRequestSecretCode: z.string().min(1),
+  submission: z.object({
+    name: z.string().trim().max(100, "Name must be 100 characters or less").default(""),
+    email: z.union([z.string().trim().email("Enter a valid email address").max(254), z.literal("")]).default(""),
+    message: z.string().trim().max(2000, "Message must be 2000 characters or less").default(""),
+  }).prefault({}),
   emails: z.array(z.string()).max(0, "Cannot send emails when uploading to a request").optional()
 })
 
@@ -65,7 +70,7 @@ const validateAndAuthorize = async (body, auth) => {
   const parsed = schema.safeParse(body)
 
   if (!parsed.success) {
-    return { error: parsed.error.message, status: 400 }
+    return { error: parsed.error.issues[0].message, status: 400 }
   }
 
   const data = parsed.data
@@ -78,6 +83,12 @@ const validateAndAuthorize = async (body, auth) => {
 
     if (!transferRequest) {
       return { error: "Transfer request not found", status: 404 }
+    }
+    if (!transferRequest.active) {
+      return { error: "This file request is closed", status: 409 }
+    }
+    if (transferRequest.requireIdentification && (!data.submission.name || !data.submission.email)) {
+      return { error: "Enter your name and email address to upload to this request", status: 400 }
     }
 
     return { data, transferRequest }
@@ -185,6 +196,7 @@ export async function POST(req) {
 
     const transfer = new Transfer({
       transferRequest: transferRequest ? transferRequest._id : undefined,
+      submission: transferRequest ? data.submission : undefined,
       author: auth ? auth.user._id : undefined,
       team: teamTag,
       name: transferRequest ? transferRequest.name : name,

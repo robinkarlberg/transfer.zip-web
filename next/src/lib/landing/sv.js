@@ -9,7 +9,7 @@ export const swedishLandingText = {
     "securityTitle": "Öppenhet och säkerhet",
     "securityDescription": "Alla filer lagras krypterat och hela källkoden är öppen.",
     "sourceLink": "Se koden på GitHub →",
-    "eyebrow": "Fildelning för företag",
+    "eyebrow": "Fildelning för företag och frilansare",
     "titleBefore": "Dela filer som ett",
     "titleHighlight": "proffs",
     "titleAfter": "",
@@ -154,7 +154,7 @@ export const swedishLandingText = {
     }
   },
   "pricingToggle": {
-    "save": "SPARA 33%",
+    "save": "Spara",
     "label": "Betalningsintervall",
     "yearly": "Årsvis",
     "monthly": "Månadsvis"
@@ -165,9 +165,10 @@ export const swedishLandingText = {
     "bestValue": "Mest för pengarna",
     "once": "engångsbetalning",
     "month": "/månad",
-    "due": "0 $ att betala idag. Avsluta när du vill.",
+    "due": "{price} att betala idag. Avsluta när du vill.",
     "save": "Spara",
     "year": "/år",
+    "billedYearly": "Faktureras årsvis med {price}.",
     "locale": "sv-SE"
   },
   "teamPricing": {
@@ -177,6 +178,7 @@ export const swedishLandingText = {
     "seat": "/användare",
     "save": "Spara",
     "year": "/år",
+    "billedYearly": "Faktureras årsvis med {price}.",
     "seatsLabel": "Antal användare",
     "locale": "sv-SE"
   },
@@ -191,7 +193,7 @@ export const swedishLandingText = {
     "free": "Gratis",
     "freeDescription": "Skicka filer utan storleksgräns med totalsträckskryptering. Inget konto behövs, men filerna är bara tillgängliga så länge fliken är öppen.",
     "quickButton": "Prova en snabböverföring",
-    "description": "Abonnemang från {price} $ i månaden vid årsbetalning. Prova gratis i 7 dagar. Vi är oberoende och har inga aktieägare att betala, så vi kan hålla priserna nere. Priserna anges i USD."
+    "description": "Abonnemang från {price} i månaden vid årsbetalning. Prova gratis i 7 dagar. Vi är oberoende och har inga aktieägare att betala, så vi kan hålla priserna nere."
   },
   "comparison": {
     "starterPlan": "Starter",
@@ -208,10 +210,10 @@ export const swedishLandingText = {
     "ownFootnote": "*Snabböverföringar är gratis, saknar storleksgräns och är totalsträckskrypterade. Moms tillkommer inte.",
     "viewPlans": "Visa och jämför abonnemang",
     "wetransferTrackers": "Laddar googletagmanager.com, doubleclick.net, googlesyndication.com, google.com, bat.bing.com och DataHog.",
-    "wetransferFootnote": "*Starter är begränsat till totalt 300 GB per månad. Priset inkluderar 20 % moms.",
+    "wetransferFootnote": "*Starter är begränsat till totalt 300 GB per månad. Priset inkluderar {vat} % moms.",
     "fullComparison": "Fullständig jämförelse",
     "smashTrackers": "Laddar googletagmanager.com (Google Analytics). Besök och aktivitet på sidan rapporteras till Google.",
-    "smashFootnote": "*Gratisöverföringar över 2 GB köas vid hög belastning. Priset inkluderar 20 % moms.",
+    "smashFootnote": "*Gratisöverföringar över 2 GB köas vid hög belastning. Priset inkluderar {vat} % moms.",
     "eyebrow": "Jämförelse",
     "title": "Hur står sig Transfer.zip?",
     "description": "Vi byggde Transfer.zip för att erbjuda ett prisvärt alternativ med färre begränsningar och respekt för dina filer.",
@@ -327,7 +329,7 @@ export const swedishLandingText = {
     },
     {
       "question": "Hur fungerar Teams?",
-      "answer": "Ett abonnemang för flera användare. Teamets ägare betalar 15 USD per användare och månad, eller 10 USD vid årsbetalning, och bjuder in medlemmar. Varje användare får 1 TB lagring. Medlemmar och varumärkesprofiler hanteras centralt. Minst 2 och högst 25 användare."
+      "answer": "Ett abonnemang för flera användare. Teamets ägare betalar per användare och bjuder in medlemmar. Varje användare får 1 TB lagring. Medlemmar och varumärkesprofiler hanteras centralt. Minst 2 och högst 25 användare."
     },
     {
       "question": "Kan jag köra Transfer.zip på min egen server?",

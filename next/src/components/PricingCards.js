@@ -4,14 +4,16 @@ import { englishLandingText } from "@/lib/landing/en";
 
 import Link from "next/link"
 import BIcon from "./BIcon"
-import NumberFlow from '@number-flow/react'
+import PriceNumber from "./elements/PriceNumber"
+import { getAnnualSavings, getMonthlyPrice, getPriceAmount } from "@/lib/pricing"
+import { formatPrice } from "@/lib/billingCurrency"
 import { sendEvent } from "@/lib/client/umami"
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function PricingCards({ frequency, tiers, compact, onTierSelected, hasFreeTrial, eventName, text = englishLandingText.pricingCards }) {
+export default function PricingCards({ frequency, tiers, currency, compact, onTierSelected, hasFreeTrial, eventName, text = englishLandingText.pricingCards }) {
   const _buttonText = hasFreeTrial ? text.trial : text.subscribe
   return tiers.map((tier, tierIdx) => (
     <div
@@ -44,12 +46,7 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
           )}
         >
           <div className="-my-3">
-            <NumberFlow
-              value={tier.price[frequency]}
-              prefix="$"
-              locales={text.locale}
-              continous={false}
-            />
+            <PriceNumber value={getMonthlyPrice(tier.id, frequency, currency)} currency={currency} />
           </div>
         </div>
         <span className={classNames(tier.featured ? 'text-gray-400' : 'text-gray-500', 'text-base')}>{tier.lifetime ? text.once : text.month}</span>
@@ -62,8 +59,11 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
                 : 'text-amber-600 border-amber-500 bg-amber-50'
               }`}
           >
-            {text.save} ${Math.round((tier.price.monthly - tier.price.yearly) * 12)}{text.year}
+            {text.save} {formatPrice(getAnnualSavings(tier.id, currency), currency)}{text.year}
           </span>
+          <p className={classNames("mt-2 text-xs", tier.featured ? "text-gray-300" : "text-gray-500")}>
+            {text.billedYearly.replace("{price}", formatPrice(getPriceAmount(tier.id, "yearly", currency), currency))}
+          </p>
         </div>
       )}
       {!compact && (<p className={classNames(tier.featured ? 'text-gray-300' : 'text-gray-600', 'mt-4 text-sm/6')}>
@@ -112,7 +112,7 @@ export default function PricingCards({ frequency, tiers, compact, onTierSelected
         <p className={`mt-2 text-center text-xs ${tier.featured
           ? 'text-gray-300'
           : 'text-gray-500'}`}>
-          {text.due}
+          {text.due.replace("{price}", formatPrice(0, currency))}
         </p>
       )}
     </div>

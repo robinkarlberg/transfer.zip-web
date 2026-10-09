@@ -58,7 +58,7 @@ const faqs = [
   },
   {
     question: "How does the Teams plan work?",
-    answer: "One subscription, multiple users. The team owner is billed per seat ($15/user/month, or $10/user/month billed yearly), invites members, and each user gets their own 1TB of storage. Member management and brand profiles are centralized. Minimum 2 seats, maximum 25."
+    answer: "One subscription, multiple users. The team owner pays per seat and invites members, and each user gets their own 1TB of storage. Member management and brand profiles are centralized. Minimum 2 seats, maximum 25."
   },
   {
     question: "Can I self-host Transfer.zip?",

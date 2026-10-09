@@ -2,19 +2,23 @@ import { resp } from "@/lib/server/serverUtils";
 import { getStripe } from "@/lib/server/stripe";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 import { NextResponse } from "next/server";
+import { PLANS, getStripePriceId } from "@/lib/pricing";
+import { z } from "zod";
 
+const upgradeSchema = z.object({ tier: z.literal(PLANS.pro.id), preview: z.boolean().default(false) }).strict()
+
+/** @param {import("next/server").NextRequest} req */
 export async function POST(req) {
-  const { tier, preview } = await req.json()
-
-  if (!["pro"].includes(tier.toLowerCase())) { // "starter", "pro"
-    return NextResponse.json(resp("Invalid tier. Tier must be 'pro'."), { status: 400 })
-  }
+  const parsed = upgradeSchema.safeParse(await req.json())
+  if (!parsed.success) return NextResponse.json(resp(parsed.error.issues[0].message), { status: 400 })
+  const { tier, preview } = parsed.data
 
   const auth = await useServerAuth()
   if (!auth) {
     return NextResponse.json(resp("Unauthorized"), { status: 401 })
   }
   const { user } = auth
+  if (user.hasTeam) return NextResponse.json(resp("Manage the team's subscription from billing settings."), { status: 403 })
 
   if (user.getPlan() == "free") {
     return NextResponse.json(resp("User is on free plan..."), { status: 409 })
@@ -28,16 +32,11 @@ export async function POST(req) {
 
   const stripe = getStripe()
 
-  const priceId = user.planInterval == "month" ?
-    (tier.toLowerCase() == "starter" ? process.env.STRIPE_SUB_STARTER_PRICE_ID : process.env.STRIPE_SUB_PRO_PRICE_ID)
-    : (tier.toLowerCase() == "starter" ? process.env.STRIPE_SUB_STARTER_PRICE_YEARLY_ID : process.env.STRIPE_SUB_PRO_PRICE_YEARLY_ID)
-
   let subscription;
   try {
-    const subscriptions = await stripe.subscriptions.list({ customer: user.stripe_customer_id });
-    if (subscriptions.data.length > 0) {
-      subscription = subscriptions.data[0];
-    } else {
+    const subscriptions = await stripe.subscriptions.list({ customer: user.stripe_customer_id, status: "all", limit: 100 });
+    subscription = subscriptions.data.find(sub => ["active", "trialing", "past_due"].includes(sub.status))
+    if (!subscription) {
       return NextResponse.json(resp("User has no active subscription"), { status: 409 })
     }
   } catch (err) {
@@ -45,7 +44,11 @@ export async function POST(req) {
     return NextResponse.json(resp(err.message), { status: 500 })
   }
 
-  const subscriptionItemId = subscription.items.data[0].id
+  const item = subscription.items.data[0]
+  const interval = item.price.recurring.interval === "month" ? "monthly" : "yearly"
+  const priceId = getStripePriceId(tier, interval, subscription.currency)
+  if (!priceId) return NextResponse.json(resp("Price not configured for this currency and plan."), { status: 400 })
+  const subscriptionItemId = item.id
 
   const items = [{
     id: subscriptionItemId,
@@ -56,7 +59,7 @@ export async function POST(req) {
     // Set proration date to this moment:
     const proration_date = Math.floor(Date.now() / 1000);
 
-    const { total, lines } = await stripe.invoices.createPreview({
+    const { total, lines, currency } = await stripe.invoices.createPreview({
       customer: user.stripe_customer_id,
       subscription: subscription.id,
       subscription_details: {
@@ -69,6 +72,7 @@ export async function POST(req) {
     return NextResponse.json(resp({
       invoice: {
         total,
+        currency,
         lines: lines.data.map(({ amount, description, parent }) => ({ amount, description, proration: parent?.subscription_item_details?.proration }))
       }
     }))

@@ -41,7 +41,7 @@ const testimonials = [
   },
 ]
 
-export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial }) {
+export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial, currency }) {
   const router = useRouter()
 
   const [isRequesting, setIsRequesting] = useState(false);
@@ -85,10 +85,10 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
     setIsRequesting(true); // Set the state to indicate a request is in progress.
 
     try {
-      const res = await createCheckoutSession(tier, frequency, { seats });
+      const res = await createCheckoutSession(tier, frequency, { seats }, currency);
       window.location.href = res.url;
     } catch (error) {
-      console.error('Error creating checkout session:', error);
+      toast.error(error.message);
     } finally {
       setIsRequesting(false); // Reset the state after the request is complete.
     }
@@ -125,8 +125,8 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial })
           <PricingToggle frequency={frequency} setFrequency={setFrequency} />
         </div>
         <div className="mx-auto mt-4 grid max-w-sm grid-cols-1 gap-6 sm:mt-8 lg:max-w-5xl lg:grid-cols-3 animate-delay-200 fade-in-up-1000">
-          <PricingCards frequency={frequency} tiers={tiers} compact={false} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_onboarding_click"} />
-          <TeamPricingCard frequency={frequency} tier={teamTier} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_teams_onboarding_click"} />
+          <PricingCards currency={currency} frequency={frequency} tiers={tiers} compact={false} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_onboarding_click"} />
+          <TeamPricingCard currency={currency} frequency={frequency} tier={teamTier} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_teams_onboarding_click"} />
         </div>
         <div className="mt-8">
           <IndieStatement compact />

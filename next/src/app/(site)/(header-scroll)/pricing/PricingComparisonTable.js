@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
-import NumberFlow from "@number-flow/react"
+import PriceNumber from "@/components/elements/PriceNumber"
 import { Check, Sparkles, X } from "lucide-react"
 import { toast } from "sonner"
 
@@ -20,7 +20,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { PLANS } from "@/lib/pricing"
+import { PLANS, getMonthlyPrice, getPriceAmount } from "@/lib/pricing"
+import { formatPrice } from "@/lib/billingCurrency"
 import { sendEvent } from "@/lib/client/umami"
 import { API_URL, changeSubscription, changeSubscriptionPreview, createCheckoutSession } from "@/lib/client/Api"
 import { cn, sleep } from "@/lib/utils"
@@ -215,9 +216,8 @@ function getCtaConfig({ user, planId }) {
   return { kind: "downgrade", tier: planId, label: "Downgrade" }
 }
 
-function getDisplayPrice(planId, frequency) {
-  const plan = PLANS[planId]
-  const amount = plan.price[frequency]
+function getDisplayPrice(planId, frequency, currency) {
+  const amount = getMonthlyPrice(planId, frequency, currency)
   const suffix = planId === "teams" ? "/user/mo" : "/mo"
   return { amount, suffix }
 }
@@ -232,9 +232,9 @@ function ValueCell({ value }) {
   return <span className="text-sm text-gray-700">{value}</span>
 }
 
-function PlanHeader({ planId, frequency, featured, layout, stuck, user, onAction, busy }) {
+function PlanHeader({ planId, frequency, currency, featured, layout, stuck, user, onAction, busy }) {
   const plan = PLANS[planId]
-  const { amount, suffix } = getDisplayPrice(planId, frequency)
+  const { amount, suffix } = getDisplayPrice(planId, frequency, currency)
   const isCompact = layout === "desktop"
   const cta = getCtaConfig({ user, planId })
   const isCurrent = cta.kind === "manage"
@@ -266,14 +266,14 @@ function PlanHeader({ planId, frequency, featured, layout, stuck, user, onAction
       </div>
       <div className="flex items-baseline gap-1">
         <span className={cn("font-bold tracking-tight", isCompact ? "text-3xl" : "text-4xl", featured ? "text-primary-700" : "text-gray-900")}>
-          <NumberFlow value={amount} prefix="$" />
+          <PriceNumber value={amount} currency={currency} />
         </span>
         {suffix && <span className="text-sm text-gray-500">{suffix}</span>}
       </div>
       {!stuck && (
         <p className="text-xs text-gray-500 min-h-4">
           {planId === "teams" && (frequency === "yearly" ? "Minimum 2 users, billed annually" : "Minimum 2 users")}
-          {frequency === "yearly" && planId !== "teams" && `Billed annually as $${PLANS[planId].price.yearly * 12}/year`}
+          {frequency === "yearly" && planId !== "teams" && `Billed annually as ${formatPrice(getPriceAmount(planId, "yearly", currency), currency)}/year`}
         </p>
       )}
       {cta.kind === "link" ? (
@@ -306,12 +306,7 @@ function PlanHeader({ planId, frequency, featured, layout, stuck, user, onAction
   )
 }
 
-function parseDollar(cents) {
-  const amount = Math.abs(cents / 100).toFixed(2)
-  return `${cents < 0 ? "-" : ""}$${amount}`
-}
-
-export default function PricingComparisonTable({ authCta, user }) {
+export default function PricingComparisonTable({ authCta, user, currency }) {
   // Upgrades keep the current sub's interval, so paying users should see prices in that interval
   const isPaying = user && user.plan !== "free"
   const [frequency, setFrequency] = useState(isPaying && user.planInterval === "month" ? "monthly" : "yearly")
@@ -342,7 +337,7 @@ export default function PricingComparisonTable({ authCta, user }) {
     if (cta.kind === "checkout") {
       setBusyPlan(planId)
       try {
-        const res = await createCheckoutSession(cta.tier, frequency, {})
+        const res = await createCheckoutSession(cta.tier, frequency, {}, currency)
         window.location.href = res.url
       } catch (err) {
         toast.error(err.message)
@@ -449,7 +444,7 @@ export default function PricingComparisonTable({ authCta, user }) {
                             featured ? "bg-primary-50 before:bg-primary-50" : "bg-white before:bg-white"
                           )}
                         >
-                          <PlanHeader planId={planId} frequency={frequency} featured={featured} layout="desktop" stuck={isStuck} user={user} onAction={handleAction} busy={busyPlan === planId} />
+                          <PlanHeader currency={currency} planId={planId} frequency={frequency} featured={featured} layout="desktop" stuck={isStuck} user={user} onAction={handleAction} busy={busyPlan === planId} />
                         </th>
                       )
                     })}
@@ -502,7 +497,7 @@ export default function PricingComparisonTable({ authCta, user }) {
                       : "bg-white ring-1 ring-gray-200"
                   )}
                 >
-                  <PlanHeader planId={planId} frequency={frequency} featured={featured} layout="card" user={user} onAction={handleAction} busy={busyPlan === planId} />
+                  <PlanHeader currency={currency} planId={planId} frequency={frequency} featured={featured} layout="card" user={user} onAction={handleAction} busy={busyPlan === planId} />
                   <div className="mt-8 space-y-6">
                     {SECTIONS.map((section) => (
                       <div key={section.name}>
@@ -533,7 +528,7 @@ export default function PricingComparisonTable({ authCta, user }) {
           </div>
 
           <p className="mt-10 text-center text-sm text-gray-500">
-            All individual plans include a 7-day free trial. $0 due today. Cancel anytime.
+            All individual plans include a 7-day free trial. {formatPrice(0, currency)} due today. Cancel anytime.
           </p>
         </div>
       </div>
@@ -559,13 +554,13 @@ export default function PricingComparisonTable({ authCta, user }) {
                           {line.amount < 0 ? "Refunded for unused remaining time." : `Billed ${user?.planInterval || "month"}ly, starting today.`}
                         </p>
                       </div>
-                      <span className={cn("font-bold whitespace-nowrap", line.amount < 0 ? "text-green-600" : "text-gray-800")}>{parseDollar(line.amount)}</span>
+                      <span className={cn("font-bold whitespace-nowrap", line.amount < 0 ? "text-green-600" : "text-gray-800")}>{formatPrice(line.amount, upgradeInvoice.currency)}</span>
                     </li>
                   ))}
                 <hr className="my-2" />
                 <li className="flex justify-between">
                   <span className="text-gray-800">Total due today</span>
-                  <span className="font-bold text-gray-800">{parseDollar(upgradeInvoice.total)}</span>
+                  <span className="font-bold text-gray-800">{formatPrice(upgradeInvoice.total, upgradeInvoice.currency)}</span>
                 </li>
               </ul>
             ) : (

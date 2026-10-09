@@ -2,7 +2,8 @@
 
 import { englishLandingText } from "@/lib/landing/en";
 
-import pricing, { PLANS } from "@/lib/pricing"
+import pricing, { PLANS, getMonthlyPrice } from "@/lib/pricing"
+import { formatPrice } from "@/lib/billingCurrency"
 import { CheckIcon, XIcon } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
@@ -11,7 +12,7 @@ import PricingToggle from "./PricingToggle"
 import SectionHeading from "./SectionHeading"
 import TeamPricingCard from "./TeamPricingCard"
 
-export default function Pricing({ text = englishLandingText.pricing, toggleText, cardText, teamText, planText }) {
+export default function Pricing({ currency, text = englishLandingText.pricing, toggleText, cardText, teamText, planText }) {
   const features = [
     { name: text.quick, good: true },
     { name: text.noAccount, good: true },
@@ -31,7 +32,7 @@ export default function Pricing({ text = englishLandingText.pricing, toggleText,
       <SectionHeading
         eyebrow={text.eyebrow}
         title={text.title}
-        description={text.description.replace("{price}", PLANS.starter.price.yearly)}
+        description={text.description.replace("{price}", formatPrice(getMonthlyPrice(PLANS.starter.id, "yearly", currency) * 100, currency))}
       />
 
       <div className="mt-12 sm:mt-16">
@@ -39,8 +40,9 @@ export default function Pricing({ text = englishLandingText.pricing, toggleText,
       </div>
 
       <div className="mx-auto mt-8 grid max-w-sm grid-cols-1 gap-6 lg:max-w-5xl lg:grid-cols-3">
-        <PricingCards frequency={frequency} tiers={planText ? tiers.map(tier => ({ ...tier, ...planText[tier.id] })) : tiers} text={cardText} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_landing_click"} />
+        <PricingCards currency={currency} frequency={frequency} tiers={planText ? tiers.map(tier => ({ ...tier, ...planText[tier.id] })) : tiers} text={cardText} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_landing_click"} />
         <TeamPricingCard
+          currency={currency}
           frequency={frequency}
           tier={planText ? { ...teamTier, ...planText[teamTier.id] } : teamTier}
           text={teamText}
@@ -52,7 +54,7 @@ export default function Pricing({ text = englishLandingText.pricing, toggleText,
       <div className="mx-auto mt-6 max-w-sm rounded-[2rem] bg-gray-50 p-8 sm:p-10 lg:flex lg:max-w-5xl lg:items-center lg:justify-between lg:gap-12">
         <div className="max-w-md">
           <p className="text-base/7 font-semibold text-primary">{text.free}</p>
-          <p className="mt-2 text-5xl font-semibold tracking-tight text-gray-900">$0</p>
+          <p className="mt-2 text-5xl font-semibold tracking-tight text-gray-900">{formatPrice(0, currency)}</p>
           <p className="mt-4 text-base/7 text-gray-600">
             {text.freeDescription}
           </p>

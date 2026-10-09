@@ -15,7 +15,7 @@ export const FREE_PLAN = {
   id: "free",
   name: "Free",
   description: "Transfer.zip can be used without an account, but without storing files for very long.",
-  price: { monthly: 0, yearly: 0 },
+  price: { usd: { monthly: 0, yearly: 0 }, sek: { monthly: 0, yearly: 0 } },
   features: {
     [FEATURE.CUSTOM_BRANDING]: false,
   },
@@ -33,12 +33,18 @@ export const PLANS = {
     enabled: true,
     featured: false,
     description: "For personal use and quick file sharing.",
-    price: { monthly: 9, yearly: 6 },
+    price: { usd: { monthly: 900, yearly: 7200 }, sek: { monthly: 9900, yearly: 82800 } },
     stripe: {
       productId: process.env.STRIPE_SUB_STARTER_ID,
       prices: {
-        monthly: process.env.STRIPE_SUB_STARTER_PRICE_ID,
-        yearly: process.env.STRIPE_SUB_STARTER_PRICE_YEARLY_ID,
+        usd: {
+          monthly: process.env.STRIPE_SUB_STARTER_PRICE_ID,
+          yearly: process.env.STRIPE_SUB_STARTER_PRICE_YEARLY_ID,
+        },
+        sek: {
+          monthly: process.env.STRIPE_SUB_STARTER_PRICE_SEK_ID,
+          yearly: process.env.STRIPE_SUB_STARTER_PRICE_YEARLY_SEK_ID,
+        },
       },
     },
     features: {
@@ -62,12 +68,18 @@ export const PLANS = {
     enabled: true,
     featured: true,
     description: "For power users & professionals.",
-    price: { monthly: 19, yearly: 12.5 },
+    price: { usd: { monthly: 1900, yearly: 15000 }, sek: { monthly: 19900, yearly: 154800 } },
     stripe: {
       productId: process.env.STRIPE_SUB_PRO_ID,
       prices: {
-        monthly: process.env.STRIPE_SUB_PRO_PRICE_ID,
-        yearly: process.env.STRIPE_SUB_PRO_PRICE_YEARLY_ID,
+        usd: {
+          monthly: process.env.STRIPE_SUB_PRO_PRICE_ID,
+          yearly: process.env.STRIPE_SUB_PRO_PRICE_YEARLY_ID,
+        },
+        sek: {
+          monthly: process.env.STRIPE_SUB_PRO_PRICE_SEK_ID,
+          yearly: process.env.STRIPE_SUB_PRO_PRICE_YEARLY_SEK_ID,
+        },
       },
     },
     features: {
@@ -94,14 +106,20 @@ export const PLANS = {
     featured: false,
     isTeamPlan: true,
     description: "For teams and companies sharing files together.",
-    price: { monthly: 15, yearly: 10 }, // per seat
+    price: { usd: { monthly: 1500, yearly: 12000 }, sek: { monthly: 14900, yearly: 118800 } },
     minSeats: 2,
     maxSeats: 25,
     stripe: {
       productId: process.env.STRIPE_SUB_TEAMS_ID,
       prices: {
-        monthly: process.env.STRIPE_SUB_TEAMS_PRICE_ID,
-        yearly: process.env.STRIPE_SUB_TEAMS_PRICE_YEARLY_ID,
+        usd: {
+          monthly: process.env.STRIPE_SUB_TEAMS_PRICE_ID,
+          yearly: process.env.STRIPE_SUB_TEAMS_PRICE_YEARLY_ID,
+        },
+        sek: {
+          monthly: process.env.STRIPE_SUB_TEAMS_PRICE_SEK_ID,
+          yearly: process.env.STRIPE_SUB_TEAMS_PRICE_YEARLY_SEK_ID,
+        },
       },
     },
     features: {
@@ -134,23 +152,31 @@ export const getPlanById = (id) => ALL_PLANS[id] || null
 export const getPlanIds = () => Object.keys(PLANS)
 
 export const getPaidPlans = () =>
-  Object.values(PLANS).filter((p) => p.price.monthly > 0)
+  Object.values(PLANS).filter((p) => p.price.usd.monthly > 0)
 
 export const getIndividualPlans = () =>
   Object.values(PLANS).filter((p) => !p.isTeamPlan)
 
 export const getPlanByStripeProductId = (productId) =>
-  Object.values(PLANS).find((p) => p.stripe?.productId === productId) || null
+  productId ? Object.values(PLANS).find((p) => p.stripe.productId === productId) || null : null
 
 export const getPlanByStripePriceId = (priceId) =>
-  Object.values(PLANS).find(
-    (p) =>
-      p.stripe?.prices?.monthly === priceId ||
-      p.stripe?.prices?.yearly === priceId
-  ) || null
+  priceId ? Object.values(PLANS).find(p =>
+    Object.values(p.stripe.prices).some(prices => Object.values(prices).includes(priceId))
+  ) || null : null
 
-export const getStripePriceId = (planId, interval) =>
-  PLANS[planId]?.stripe?.prices?.[interval] || null
+export const getStripePriceId = (planId, interval, currency) =>
+  PLANS[planId]?.stripe.prices[currency]?.[interval] || null
+
+// Amounts are the full billing-period charge in cents/ore, per seat for Teams.
+export const getPriceAmount = (planId, interval, currency) =>
+  ALL_PLANS[planId].price[currency][interval]
+
+export const getMonthlyPrice = (planId, interval, currency) =>
+  getPriceAmount(planId, interval, currency) / (interval === "yearly" ? 1200 : 100)
+
+export const getAnnualSavings = (planId, currency) =>
+  getPriceAmount(planId, "monthly", currency) * 12 - getPriceAmount(planId, "yearly", currency)
 
 export const hasFeature = (planId, feature) =>
   ALL_PLANS[planId]?.features?.[feature] ?? false

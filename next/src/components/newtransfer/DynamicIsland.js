@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import { Transition } from "@headlessui/react"
 import Link from "next/link"
 
-export default function ({ dragging, expand, quickLinkHref, quickLinkContent, showQuickLink, startOverlay, showStartOverlay, endOverlay, showEndOverlay, leftSectionContent, leftSectionLowerBar, rightSection, dropLabel }) {
+export default function ({ dragging, expand, quickLinkHref, quickLinkContent, showQuickLink, startOverlay, showStartOverlay, endOverlay, showEndOverlay, leftSectionContent, leftSectionLowerBar, rightSection, dropLabel, autoHeight = false }) {
 
   return (
     <div className="relative mx-auto">
@@ -20,8 +20,7 @@ export default function ({ dragging, expand, quickLinkHref, quickLinkContent, sh
       </Transition>
       <div className={cn(
         `w-full bg-white border shadow-xs relative overflow-clip rounded-xl ${!expand ? "max-w-xs" : "max-w-2xl"} transition-all duration-700 relative`,
-        expand ? "h-128" : "h-96", 
-        "md:h-96"
+        expand && autoHeight ? "min-h-96" : expand ? "h-128 md:h-96" : "h-96"
       )}>
         <Transition show={showEndOverlay}>
           <div className="z-20 bg-white absolute left-0 top-0 w-full h-full flex flex-col items-center justify-center group transition data-[closed]:opacity-0">
@@ -35,8 +34,9 @@ export default function ({ dragging, expand, quickLinkHref, quickLinkContent, sh
         <div className="grid grid-cols-1 md:grid-cols-5 h-full">
           {(leftSectionContent || leftSectionLowerBar) && (
             <div className={cn(
-              rightSection ? "order-2 md:order-1 border-t md:border-0 col-span-2" : "col-span-5",
-              "flex flex-col overflow-hidden relative max-h-72 md:max-h-none"
+              rightSection ? `order-2 md:order-1 border-t md:border-0 ${autoHeight ? "col-span-full md:col-span-2" : "col-span-2"}` : "col-span-5",
+              "flex flex-col overflow-hidden relative",
+              autoHeight ? "min-h-48 md:min-h-96" : "max-h-72 md:max-h-none"
             )}>
               <div className="flex-1 py-2 px-1 overflow-y-auto">
                 {leftSectionContent}
@@ -48,8 +48,9 @@ export default function ({ dragging, expand, quickLinkHref, quickLinkContent, sh
           )}
           {rightSection && (
             <div className={cn(
-              (leftSectionContent || leftSectionLowerBar) ? "order-1 md:order-2 col-span-3" : "col-span-5",
-              "grid overflow-hidden min-w-80"
+              (leftSectionContent || leftSectionLowerBar) ? `order-1 md:order-2 ${autoHeight ? "col-span-full md:col-span-3" : "col-span-3"}` : "col-span-5",
+              "grid overflow-hidden",
+              autoHeight ? "min-w-0" : "min-w-80"
             )}>
               {rightSection}
             </div>

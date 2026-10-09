@@ -5,15 +5,16 @@ import { formatCount, groupFilesByFolder, humanFileSize, humanFileType } from "@
 import { ArrowRightIcon, FileIcon, FolderIcon, FolderPlusIcon, PlusIcon, RotateCcwIcon, XIcon } from "lucide-react";
 import { useContext, useMemo, useRef, useState } from "react";
 import { Button } from "../ui/button";
+import { Input } from "../ui/input"
+import { Label } from "../ui/label"
+import { Textarea } from "../ui/textarea"
 
 import { newTransfer } from "@/lib/client/Api";
 import { prepareTransferFiles, uploadFiles } from "@/lib/client/uploader";
-import { useRouter } from "next/navigation";
 import Progress from "../elements/Progress";
 
 import ErrorDialog from "@/components/ErrorDialog";
 import { FileContext } from "@/context/FileProvider";
-import { GlobalContext } from "@/context/GlobalContext";
 import { useFileDrop } from "@/hooks/client/useFileDrop";
 import DynamicIsland from "./DynamicIsland";
 
@@ -21,10 +22,7 @@ const FILE_ROWS_LISTED = 100
 
 export default function ({ brandProfile, transferRequest }) {
 
-  const router = useRouter()
-
   const { files, setFiles } = useContext(FileContext)
-  const { openSignupDialog } = useContext(GlobalContext)
 
   const [uploadProgressMap, setUploadProgressMap] = useState(null)
   const [finished, setFinished] = useState(false)
@@ -46,9 +44,6 @@ export default function ({ brandProfile, transferRequest }) {
   const fileInputRef = useRef()
   const folderInputRef = useRef()
 
-  const emailRef = useRef(null)
-  const [emailRecipients, setEmailRecipients] = useState([])
-
   const [errorMessage, setErrorMessage] = useState(null)
   const [showErrorMessage, setShowErrorMessage] = useState(false)
 
@@ -57,15 +52,9 @@ export default function ({ brandProfile, transferRequest }) {
     setShowErrorMessage(true)
   }
 
-  // track what exiry time is selected, to change to quick transfer
   const [failed, setFailed] = useState(false)
 
   const small = useMemo(() => uploadingFiles, [uploadingFiles])
-  // useEffect(() => {
-  //   setTimeout(() => setUploadingFiles(true), 1000)
-  // }, [])
-
-  const [transfer, setTransfer] = useState(null)
 
   const handleSubmit = async e => {
     e.preventDefault()
@@ -77,23 +66,25 @@ export default function ({ brandProfile, transferRequest }) {
 
     if (files.length === 0)
       return displayErrorMessage({
-        title: "Oops.",
-        body: "Add some files first ;)"
+        title: "Add files",
+        body: "Choose the files you want to upload."
       })
 
-    setFilesToUpload(files) // Just to be safe
+    setFilesToUpload(files)
     setUploadingFiles(true)
 
     const formData = new FormData(form)
-    const name = formData.get("name")
-    const description = formData.get("description")
+    const submission = {
+      name: formData.get("name").trim(),
+      email: formData.get("email").trim(),
+      message: formData.get("message").trim(),
+    }
 
     const transferFiles = prepareTransferFiles(files)
-    // response: { idMap: [{ tmpId, id }, ...] } - what your API returned
-
     try {
       const { transfer, idMap } = await newTransfer({
         files: transferFiles,
+        submission,
         transferRequestSecretCode: transferRequest.secretCode
       })
 
@@ -109,7 +100,7 @@ export default function ({ brandProfile, transferRequest }) {
           console.error(err)
         }
       )
-      setTransfer(transfer)
+      setFailed(!success)
     }
     catch (err) {
       setFailed(true)
@@ -194,15 +185,6 @@ export default function ({ brandProfile, transferRequest }) {
     setFiles(files.filter(file => !removed.has(file)))
   }
 
-  const handleViewTransferClick = e => {
-    if (user) {
-      router.push(`/app/sent/${transfer.id}`)
-    }
-    else {
-      openSignupDialog()
-    }
-  }
-
   const PickFiles = (
     <div type="button" onClick={handlePickFiles} className="z-10 bg-white absolute left-0 top-0 w-full h-full flex flex-col justify-center items-center group transition duration-300 data-leave:delay-500 data-closed:opacity-0 hover:cursor-pointer">
       <div className="text-white rounded-full bg-primary w-12 h-12 flex items-center justify-center group-hover:bg-primary-light">
@@ -257,10 +239,13 @@ export default function ({ brandProfile, transferRequest }) {
         {
           failed ?
             <>
-              {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Reload Page <RotateCcwIcon size={12} /></Button>}
-              {/* {<Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Send more files</Button>} */}
+              <Button size="sm" variant="outline" onClick={() => {
+                setUploadingFiles(false)
+                setFinished(false)
+                setFailed(false)
+                setUploadProgressMap(null)
+              }}>Back to upload <RotateCcwIcon size={12} /></Button>
             </> : <>
-              {/* {finished && <Button size={"sm"} onClick={handleViewTransferClick}>View transfer <ArrowRightIcon size={12} /></Button>} */}
               {finished && <Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Send more files</Button>}
             </>
         }
@@ -270,16 +255,26 @@ export default function ({ brandProfile, transferRequest }) {
 
   const rightSection = (
     <form onSubmit={handleSubmit} className={`border-l flex flex-col overflow-hidden bg-white`}>
-      <div className={`flex-1 overflow-y-auto p-4 space-y-2 animate-fade-in`}>
-        {/* <div className="p-4 ring-1 ring-inset text-gray-800 ring-gray-200 rounded-lg w-0 min-w-full"> */}
-          <p className="font-semibold">{transferRequest.name}</p>
-          <p className="mt-1 text-sm text-gray-600">
-            {transferRequest.description}
-          </p>
-        {/* </div> */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 animate-fade-in">
+        <div>
+          <p className="font-semibold break-words">{transferRequest.name}</p>
+          {transferRequest.description && <p className="mt-1 whitespace-pre-wrap break-words text-sm text-gray-600">{transferRequest.description}</p>}
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="uploader-name">Name{!transferRequest.requireIdentification && " (optional)"}</Label>
+          <Input id="uploader-name" name="name" autoComplete="name" maxLength={100} required={transferRequest.requireIdentification} />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="uploader-email">Email{!transferRequest.requireIdentification && " (optional)"}</Label>
+          <Input id="uploader-email" name="email" type="email" autoComplete="email" maxLength={254} required={transferRequest.requireIdentification} />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="uploader-message">Message (optional)</Label>
+          <Textarea id="uploader-message" name="message" rows={2} maxLength={2000} />
+        </div>
       </div>
       <div className="flex-none p-2 flex flex-row-reverse items-center gap-2 --border-t">
-        <Button size={"sm"}>Upload <ArrowRightIcon /></Button>
+        <Button size="sm" disabled={uploadingFiles}>Upload <ArrowRightIcon /></Button>
       </div>
     </form>
   )
@@ -292,6 +287,7 @@ export default function ({ brandProfile, transferRequest }) {
         <input ref={folderInputRef} onChange={handleFileInputChange} type="file" aria-hidden="true" webkitdirectory="true"></input>
       </form>
       <DynamicIsland
+        autoHeight
         dragging={dragging && !uploadingFiles}
         expand={!small}
         leftSectionContent={leftSectionContent}

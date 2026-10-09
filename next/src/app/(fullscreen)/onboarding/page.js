@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { doesUserHaveFreeTrial } from "@/lib/server/serverUtils";
 import { cookies } from "next/headers";
 import { ROLES } from "@/lib/roles";
+import { getBillingCurrency } from "@/lib/server/billingCurrency";
 
 export default async function () {
   const auth = await useServerAuth()
@@ -31,5 +32,6 @@ export default async function () {
 
   let hasFreeTrial = await doesUserHaveFreeTrial(auth.user, await cookies())
 
-  return <OnboardingPage user={auth.user.toJsonAsClient()} hasStripeAccount={!!auth.user.stripe_customer_id} hasFreeTrial={hasFreeTrial} />
+  const currency = await getBillingCurrency(auth.user)
+  return <OnboardingPage user={auth.user.toJsonAsClient()} currency={currency} hasStripeAccount={!!auth.user.stripe_customer_id} hasFreeTrial={hasFreeTrial} />
 }

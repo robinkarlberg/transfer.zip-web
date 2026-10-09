@@ -12,6 +12,7 @@ const EmailSharedWith = new mongoose.Schema({
 
 const TransferRequestSchema = new mongoose.Schema({
     active: { type: Boolean, default: true },
+    requireIdentification: { type: Boolean, default: false },
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true, required: true },
     // Set once at creation from author.team if the author is on a team.
     // Never updated - mirrors Transfer.team so that a request stays
@@ -36,6 +37,7 @@ TransferRequestSchema.methods.toJsonAsOwner = async function () {
     return {
         id: _id.toString(),
         active,
+        requireIdentification: this.requireIdentification,
         name: name || "Untitled Request",
         description,
         secretCode,
@@ -57,6 +59,7 @@ TransferRequestSchema.methods.toJsonAsTeamAdmin = async function () {
     return {
         id: _id.toString(),
         active,
+        requireIdentification: this.requireIdentification,
         name: name || "Untitled Request",
         description,
         secretCode,
@@ -76,6 +79,8 @@ TransferRequestSchema.methods.toJsonAsUploader = async function () {
     return {
         id: _id.toString(),
         name: name || "Untitled Request",
+        active: this.active,
+        requireIdentification: this.requireIdentification,
         description,
         secretCode,
         uploadUrl: await this.getUploadLink(),

@@ -211,8 +211,8 @@ export async function doVerification(email, token) {
 
 // stripe
 
-export async function createCheckoutSession(tier, frequency, teamInfo) {
-    return await post(`/stripe/create-checkout-session`, { tier, frequency, teamInfo })
+export async function createCheckoutSession(tier, frequency, teamInfo, displayCurrency) {
+    return await post(`/stripe/create-checkout-session`, { tier, frequency, teamInfo, displayCurrency })
 }
 
 export async function changeSubscription(tier) {
@@ -274,6 +274,18 @@ export async function getTransferRequestList({ active, skip = 0, limit = 20 } = 
 
 export async function newTransferRequest(data) {
     return await post(`/transferrequest/new`, data)
+}
+
+export async function putTransferRequest(transferRequestId, data) {
+    return await put(`/transferrequest/${transferRequestId}`, data)
+}
+
+export async function getRequestSubmissions(transferRequestId, before) {
+    return await get(`/transferrequest/${transferRequestId}/submissions?${new URLSearchParams({ before })}`)
+}
+
+export async function reviewRequestSubmission(transferRequestId, submissionId, reviewed) {
+    return await put(`/transferrequest/${transferRequestId}/submissions/${submissionId}`, { reviewed })
 }
 
 export async function sendTransferRequestByEmail(transferRequestId, emails) {

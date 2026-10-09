@@ -7,7 +7,17 @@ import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import SentEmail from "@/lib/server/mongoose/models/SentEmail";
 import { EMAILS_PER_DAY_LIMIT, getMaxRecipientsForPlan } from "@/lib/getMaxRecipientsForPlan";
+import { z } from "zod"
 
+const requestSchema = z.object({
+  name: z.string().trim().max(200).optional().nullable(),
+  description: z.string().trim().max(2000).optional().nullable(),
+  emails: z.array(z.string().email()).default([]),
+  brandProfileId: z.string().optional().nullable(),
+  requireIdentification: z.boolean().default(false),
+})
+
+/** @param {import("next/server").NextRequest} req */
 export async function POST(req) {
   const auth = await useServerAuth()
   if (!auth) {
@@ -15,11 +25,11 @@ export async function POST(req) {
   }
   const { user } = auth
 
-  const { name, description, emails, brandProfileId } = await req.json()
-
-  if ((name != null && typeof name !== "string") || (description != null && typeof description !== "string")) {
-    return NextResponse.json(resp("name and description must be strings"), { status: 400 })
+  const parsed = requestSchema.safeParse(await req.json())
+  if (!parsed.success) {
+    return NextResponse.json(resp(parsed.error.issues[0].message), { status: 400 })
   }
+  const { name, description, emails, brandProfileId, requireIdentification } = parsed.data
 
   let brandProfile
   if (brandProfileId) {
@@ -41,6 +51,7 @@ export async function POST(req) {
     team: user.team ? user.team._id : undefined,
     name,
     description,
+    requireIdentification,
     brandProfile: brandProfile ? brandProfile._id : undefined,
   })
 

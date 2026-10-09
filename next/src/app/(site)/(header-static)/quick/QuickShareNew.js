@@ -11,37 +11,12 @@ import { useContext, useEffect, useState } from "react"
 import Flight from "@/components/quick/Flight"
 import HowItWorks from "@/components/quick/HowItWorks"
 import QuickFilePicker from "@/components/quick/QuickFilePicker"
+import { Tabs } from "@/components/quick/TransferParts"
 
 const TABS = [
   { id: "send", label: "Send" },
   { id: "receive", label: "Receive" },
 ]
-
-function Tabs({ tab, onChange }) {
-  return (
-    <div role="tablist" className="relative mb-2 grid grid-cols-2 rounded-2xl bg-gray-100 p-1">
-      <div
-        aria-hidden="true"
-        className={cn(
-          "absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-xl bg-white shadow-sm transition-transform duration-300 ease-out",
-          tab === "receive" && "translate-x-full"
-        )}
-      />
-      {TABS.map(({ id, label }) => (
-        <button
-          key={id}
-          type="button"
-          role="tab"
-          aria-selected={tab === id}
-          onClick={() => onChange(id)}
-          className={cn("relative h-10 text-sm font-semibold transition-colors", tab === id ? "text-gray-900" : "text-gray-500 hover:text-gray-900")}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
-  )
-}
 
 function ReceivePanel({ onCreate }) {
   return (
@@ -151,7 +126,7 @@ export default function QuickShareNew({ stars }) {
 
         <div className="mt-10 w-full max-w-md">
           <div className="animate-poof-in rounded-3xl bg-white p-2 shadow-2xl animate-delay-150 motion-reduce:animate-none">
-            {!hasBeenSentLink && <Tabs tab={tab} onChange={setTab} />}
+            {!hasBeenSentLink && <div className="mb-2"><Tabs tabs={TABS} value={tab} onChange={setTab} /></div>}
             {/* Stays mounted on the Receive tab so a file dragged onto the page still lands here */}
             <div className={cn(tab === "send" ? "animate-poof-in" : "hidden")}>
               <QuickFilePicker

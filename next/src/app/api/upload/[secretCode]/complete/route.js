@@ -32,6 +32,7 @@ export async function POST(req, { params }) {
   const filesList = transfer.files.map(file => file.toJsonAsClient())
 
   await workerUploadComplete(transfer.nodeUrl, transfer._id.toString(), filesList)
+  transfer.uploadedAt = new Date()
 
   if (!transfer.transferRequest && transfer.emailsSharedWith?.length) {
     const unique = [...new Set(transfer.emailsSharedWith.map(e => e.email))];
@@ -60,7 +61,7 @@ export async function POST(req, { params }) {
     if (request && request.author && request.author.notificationSettings?.transferReceived !== false) {
       await sendTransferRequestReceived(request.author.email, {
         name: request.name || 'Untitled Request',
-        link: `${process.env.SITE_URL}/app/received`,
+        link: `${process.env.SITE_URL}/app/requests/${request._id}?submission=${transfer._id}`,
         brand: request.brandProfile ? request.brandProfile.toJsonAsClient() : undefined,
       });
     }

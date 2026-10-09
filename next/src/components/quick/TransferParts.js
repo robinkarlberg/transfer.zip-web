@@ -1,7 +1,7 @@
 "use client"
 
 import { formatQuickCode } from "@/lib/client/quickcode"
-import { tryCopyToClipboard } from "@/lib/utils"
+import { cn, tryCopyToClipboard } from "@/lib/utils"
 import { CheckIcon, CopyIcon, LinkIcon, ShareIcon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -60,6 +60,33 @@ export function StormCloud() {
       haze={6}
       className="mx-auto w-36 animate-bob"
     />
+  )
+}
+
+/** Two-way switch with a sliding thumb. `tabs` is a pair of `{ id, label }`. */
+export function Tabs({ tabs, value, onChange }) {
+  return (
+    <div role="tablist" className="relative grid grid-cols-2 rounded-2xl bg-gray-100 p-1">
+      <div
+        aria-hidden="true"
+        className={cn(
+          "absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-xl bg-white shadow-sm transition-transform duration-300 ease-out",
+          value === tabs[1].id && "translate-x-full"
+        )}
+      />
+      {tabs.map(({ id, label }) => (
+        <button
+          key={id}
+          type="button"
+          role="tab"
+          aria-selected={value === id}
+          onClick={() => onChange(id)}
+          className={cn("relative h-10 text-sm font-semibold transition-colors", value === id ? "text-gray-900" : "text-gray-500 hover:text-gray-900")}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
   )
 }
 

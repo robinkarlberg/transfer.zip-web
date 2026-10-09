@@ -154,7 +154,7 @@ export const englishLandingText = {
     }
   },
   "pricingToggle": {
-    "save": "SAVE 33%",
+    "save": "Save",
     "label": "Payment frequency",
     "yearly": "Yearly",
     "monthly": "Monthly"
@@ -165,9 +165,10 @@ export const englishLandingText = {
     "bestValue": "Best Value",
     "once": "once",
     "month": "/month",
-    "due": "$0 due today. Cancel anytime.",
+    "due": "{price} due today. Cancel anytime.",
     "save": "Save",
     "year": "/year",
+    "billedYearly": "Billed annually at {price}.",
     "locale": "en-US"
   },
   "teamPricing": {
@@ -177,6 +178,7 @@ export const englishLandingText = {
     "seat": "/seat",
     "save": "Save",
     "year": "/year",
+    "billedYearly": "Billed annually at {price}.",
     "seatsLabel": "Number of users",
     "locale": "en-US"
   },
@@ -191,7 +193,7 @@ export const englishLandingText = {
     "free": "Free",
     "freeDescription": "Send files without size limits, with end-to-end encryption. No account needed, but files are only available while your browser tab is open.",
     "quickButton": "Try a Quick Transfer",
-    "description": "Plans start at ${price} a month, and you can try any of them free for 7 days. We're independent with no shareholders to pay, so we don't need to charge what the big names do."
+    "description": "Plans start at {price} a month when billed annually. Try Starter or Pro free for 7 days. We're independent with no shareholders to pay, so we don't need to charge what the big names do."
   },
   "comparison": {
     "starterPlan": "Starter plan",
@@ -208,10 +210,10 @@ export const englishLandingText = {
     "ownFootnote": "*Quick Transfers are free, unlimited, and offer E2E. We don't bill extra for VAT.",
     "viewPlans": "View & compare plans",
     "wetransferTrackers": "Loads googletagmanager.com, doubleclick.net, googlesyndication.com, google.com, bat.bing.com and DataHog.",
-    "wetransferFootnote": "*Starter capped at 300 GB total transfer per month. Price includes 20% VAT.",
+    "wetransferFootnote": "*Starter capped at 300 GB total transfer per month. Price includes {vat}% VAT.",
     "fullComparison": "Full comparison",
     "smashTrackers": "Loads googletagmanager.com (Google Analytics). Your visit and webpage actions are reported to Google when you use the site.",
-    "smashFootnote": "*Files over 2 GB queue during peak hours on free. Price includes 20% VAT.",
+    "smashFootnote": "*Files over 2 GB queue during peak hours on free. Price includes {vat}% VAT.",
     "eyebrow": "How we compare",
     "title": "How does Transfer.zip compare?",
     "description": "We built Transfer.zip because the popular options were either expensive, restrictive, or quietly training AI on your files.",

@@ -5,13 +5,15 @@ import { englishLandingText } from "@/lib/landing/en";
 import { useState } from "react"
 import Link from "next/link"
 import BIcon from "./BIcon"
-import NumberFlow from '@number-flow/react'
+import PriceNumber from "./elements/PriceNumber"
+import { getAnnualSavings, getMonthlyPrice, getPriceAmount } from "@/lib/pricing"
+import { formatPrice } from "@/lib/billingCurrency"
 import { sendEvent } from "@/lib/client/umami"
 
-export default function TeamPricingCard({ frequency, tier, onTierSelected, eventName, compact, text = englishLandingText.teamPricing }) {
+export default function TeamPricingCard({ frequency, tier, currency, onTierSelected, eventName, compact, text = englishLandingText.teamPricing }) {
   const [seats, setSeats] = useState(tier.minSeats || 2)
 
-  const pricePerSeat = tier.price[frequency]
+  const pricePerSeat = getMonthlyPrice(tier.id, frequency, currency)
   const totalPrice = pricePerSeat * seats
 
   const _buttonText = text.button
@@ -31,26 +33,24 @@ export default function TeamPricingCard({ frequency, tier, onTierSelected, event
       <div className="mt-4 flex items-baseline gap-x-2">
         <div className="text-gray-900 text-5xl font-semibold tracking-tight">
           <div className="-my-3">
-            <NumberFlow
-              value={totalPrice}
-              prefix="$"
-              locales={text.locale}
-              continuous={false}
-            />
+            <PriceNumber value={totalPrice} currency={currency} />
           </div>
         </div>
         <span className="text-gray-500 text-base">{text.month}</span>
       </div>
 
       <p className="text-gray-500 text-sm mt-2">
-        ${pricePerSeat}{text.seat}
+        {formatPrice(pricePerSeat * 100, currency)}{text.seat}
       </p>
 
       {frequency === "yearly" && (
         <div className="mt-3">
           <span className="badge-bling relative overflow-hidden inline-block px-2.5 py-0.5 border rounded-full text-xs text-amber-600 border-amber-500 bg-amber-50">
-            {text.save} ${(tier.price.monthly - tier.price.yearly) * seats * 12}{text.year}
+            {text.save} {formatPrice(getAnnualSavings(tier.id, currency) * seats, currency)}{text.year}
           </span>
+          <p className="mt-2 text-xs text-gray-500">
+            {text.billedYearly.replace("{price}", formatPrice(getPriceAmount(tier.id, "yearly", currency) * seats, currency))}
+          </p>
         </div>
       )}
 

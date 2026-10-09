@@ -41,7 +41,14 @@ File.methods.toJsonAsClient = function () {
 }
 
 const TransferSchema = new mongoose.Schema({
-    transferRequest: { type: mongoose.Schema.Types.ObjectId, ref: "TransferRequest" },
+    transferRequest: { type: mongoose.Schema.Types.ObjectId, ref: "TransferRequest", index: true },
+    submission: {
+        name: String,
+        email: String,
+        message: String,
+    },
+    uploadedAt: Date,
+    reviewedAt: Date,
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true },
     // Set once at creation from author.team if the author is on a team.
     // Never updated - if a user later leaves the team, their existing
@@ -148,12 +155,31 @@ TransferSchema.methods.toJsonAsOwner = async function () {
         files: this.files.map(file => file.toJsonAsClient()),
         size,
         createdAt,
+        uploadedAt: this.uploadedAt || null,
         hasName: !!name,
         hasTransferRequest: !!this.transferRequest,
+        transferRequestId: this.transferRequest ? this.transferRequest._id.toString() : null,
         finishedUploading: this.finishedUploading,
         nodeUrl: this.nodeUrl,
         brandProfileId: this.brandProfile ? this.brandProfile.toString() : undefined,
         brandProfile: (this.brandProfile && typeof this.brandProfile.toJsonAsClient === 'function') ? this.brandProfile.toJsonAsClient() : undefined
+    }
+}
+
+TransferSchema.methods.toJsonAsRequestOwner = function () {
+    return {
+        id: this._id.toString(),
+        secretCode: this.secretCode,
+        submission: {
+            name: this.submission.name || "",
+            email: this.submission.email || "",
+            message: this.submission.message || "",
+        },
+        receivedAt: this.uploadedAt || this.createdAt,
+        expiresAt: this.expiresAt || null,
+        reviewedAt: this.reviewedAt || null,
+        size: this.size,
+        files: this.files.map(file => file.toJsonAsClient()),
     }
 }
 

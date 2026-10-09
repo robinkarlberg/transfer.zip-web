@@ -11,6 +11,7 @@ import { ROLES } from '@/lib/roles';
 import { isValidPlanId, hasFeature as planHasFeature, getLimit as planGetLimit, FEATURE, LIMIT } from '@/lib/pricing';
 
 import Team from './Team';
+import { BILLING_CURRENCIES } from "@/lib/billingCurrency";
 
 const NotificationSettingsSchema = new mongoose.Schema({
     transferDownloaded: { type: Boolean, default: true },
@@ -55,6 +56,7 @@ const UserSchema = new mongoose.Schema({
     planStatus: { type: String, default: "inactive" },
     planCancelling: { type: Boolean, default: false },
     planInterval: { type: String, default: "month" },
+    planCurrency: { type: String, enum: BILLING_CURRENCIES, default: "usd" },
     usedFreeTrial: { type: Boolean, default: false },
 
     // verified: { type: Boolean, default: false },
@@ -102,7 +104,8 @@ UserSchema.methods.toJsonAsClient = function () {
         verified: this.verified,
         planValidUntil: this.planValidUntil,
         planCancelling: this.planCancelling,
-        planInterval: this.planInterval,
+        planInterval: this.team ? this.team.planInterval : this.planInterval,
+        planCurrency: this.team ? this.team.planCurrency : this.planCurrency,
         isTrial: this.planStatus == "trialing",
         onboarded: this.onboarded,
         notificationSettings: this.notificationSettings.toJsonAsClient(),
@@ -151,7 +154,7 @@ UserSchema.methods.getLimit = function (limitKey) {
     return planGetLimit(this.getPlan(), limitKey)
 }
 
-UserSchema.methods.updateSubscription = function ({ plan, status, validUntil, cancelling, interval }) {
+UserSchema.methods.updateSubscription = function ({ plan, status, validUntil, cancelling, interval, currency }) {
     if (plan !== undefined) {
         if (!isValidPlanId(plan)) {
             throw new Error("plan " + plan + " is invalid!");
@@ -176,6 +179,10 @@ UserSchema.methods.updateSubscription = function ({ plan, status, validUntil, ca
 
     if (interval !== undefined) {
         this.planInterval = interval
+    }
+    if (currency !== undefined) {
+        if (!BILLING_CURRENCIES.includes(currency)) throw new Error("Unsupported billing currency: " + currency)
+        this.planCurrency = currency
     }
 }
 // If user is in waitlist and user is less than 30 days old, it has early offer

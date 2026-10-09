@@ -21,7 +21,7 @@ export default function TeamPausedPage({ user, team, isOwner, previousSeats }) {
     if (isRequesting) return
     setIsRequesting(true)
     try {
-      const res = await createCheckoutSession(tier, frequency, { seats })
+      const res = await createCheckoutSession(tier, frequency, { seats }, team.planCurrency)
       window.location.href = res.url
     } catch (err) {
       toast.error(err.message)
@@ -54,6 +54,7 @@ export default function TeamPausedPage({ user, team, isOwner, previousSeats }) {
               </div>
               <div className="max-w-sm mx-auto">
                 <TeamPricingCard
+                  currency={team.planCurrency}
                   frequency={frequency}
                   tier={teamTier}
                   onTierSelected={handleReactivate}

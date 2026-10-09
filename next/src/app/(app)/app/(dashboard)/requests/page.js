@@ -3,6 +3,9 @@ import TransferRequestList from "@/components/dashboard/TransferRequestList"
 import TransferRequest from "@/lib/server/mongoose/models/TransferRequest"
 import { enrichTransferRequests, INACTIVE_PAGE_SIZE } from "@/lib/server/mongoose/helpers/transferRequests"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
+import Link from "next/link"
+import { PlusIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export default async function () {
   const { user } = await useServerAuth()
@@ -23,7 +26,7 @@ export default async function () {
   ])
 
   return (
-    <GenericPage title={"Requests"}>
+    <GenericPage title="Requests" side={<Button asChild variant="white"><Link href="/app/receive"><PlusIcon /> New request</Link></Button>}>
       <TransferRequestList
         activeRequests={activeRequests}
         initialInactiveRequests={initialInactiveRequests}

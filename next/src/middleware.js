@@ -4,6 +4,7 @@ import { AB_TESTS } from "./lib/abtests"
 import { abTest } from "./lib/server/abtestServer"
 import { isOwnHost } from "./lib/hostUtils"
 import { getLandingLanguage, LANDING_LANGUAGE_HEADER } from "./lib/landing/routes"
+import { SWEDISH_PRICING_COOKIE } from "./lib/billingCurrency"
 
 const selfHostBlacklist = [
   "/api/stripe"
@@ -127,7 +128,17 @@ export function middleware(req) {
   }
   const requestHeaders = new Headers(req.headers)
   requestHeaders.set(LANDING_LANGUAGE_HEADER, getLandingLanguage(pathname))
-  return applyAbTests(req, NextResponse.next({ request: { headers: requestHeaders } }))
+  const response = NextResponse.next({ request: { headers: requestHeaders } })
+  if (!IS_SELFHOST && getLandingLanguage(pathname) === "sv" && !req.headers.has("next-router-prefetch")) {
+    response.cookies.set(SWEDISH_PRICING_COOKIE, "1", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    })
+  }
+  return applyAbTests(req, response)
 }
 
 export const config = {

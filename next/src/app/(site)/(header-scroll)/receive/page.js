@@ -1,13 +1,4 @@
-import CTA from "@/components/CTA";
-import FAQ from "@/components/FAQ";
-import Features1 from "@/components/Features1";
-import FeaturesBento from "@/components/FeaturesBento";
-import HashInterceptor from "@/components/HashInterceptor";
-import FounderNote from "@/components/FounderNote";
-import LandingComparison from "@/components/LandingComparison";
-import Pricing from "@/components/Pricing";
-import TestimonialCloud from "@/components/TestimonialCloud";
-import LandingNew from "../LandingNew";
+import LandingPage from "../LandingPage";
 import { RECEIVE_ALTERNATES, RECEIVE_PATHS } from "@/lib/landing/routes";
 
 export const metadata = {
@@ -44,19 +35,6 @@ export const metadata = {
   },
 };
 
-export default function () {
-  return (
-    <div>
-      <HashInterceptor />
-      <LandingNew mode={"receive"} />
-      <Features1 />
-      <TestimonialCloud />
-      <FeaturesBento />
-      <LandingComparison />
-      <FounderNote />
-      <Pricing />
-      <FAQ />
-      <CTA />
-    </div>
-  )
+export default function ReceivePage() {
+  return <LandingPage mode="receive" />
 }

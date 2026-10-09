@@ -15,7 +15,7 @@ export default function GenericPage({ title, titleComponent, children, category,
                 </div>
             )}
             <div className="flex justify-between items-center mb-4 flex-wrap gap-x-4">
-                <div className="fade-in-up-fast">
+                <div className="fade-in-up-fast min-w-0">
                     {titleComponent || <DashH2>{title}</DashH2>}
                 </div>
                 <div className="fade-in-up-slow text-white">

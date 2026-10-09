@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { isValidPlanId, hasFeature as planHasFeature, getLimit as planGetLimit, FEATURE, LIMIT } from '@/lib/pricing';
 
 import User from './User';
+import { BILLING_CURRENCIES } from "@/lib/billingCurrency";
 
 const TeamSchema = new mongoose.Schema({
     users: { type: [{ type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" }] },
@@ -13,6 +14,7 @@ const TeamSchema = new mongoose.Schema({
     planStatus: { type: String, default: "inactive" },
     planCancelling: { type: Boolean, default: false },
     planInterval: { type: String, default: "month" },
+    planCurrency: { type: String, enum: BILLING_CURRENCIES, default: "usd" },
 
     stripe_customer_id: String,
 
@@ -61,7 +63,7 @@ TeamSchema.methods.getLimit = function (limitKey) {
     return planGetLimit(this.getPlan(), limitKey)
 }
 
-TeamSchema.methods.updateSubscription = function ({ plan, status, validUntil, cancelling, interval }) {
+TeamSchema.methods.updateSubscription = function ({ plan, status, validUntil, cancelling, interval, currency }) {
     if (plan !== undefined) {
         if (!isValidPlanId(plan)) {
             throw new Error("plan " + plan + " is invalid!");
@@ -84,6 +86,10 @@ TeamSchema.methods.updateSubscription = function ({ plan, status, validUntil, ca
     if (interval !== undefined) {
         this.planInterval = interval
     }
+    if (currency !== undefined) {
+        if (!BILLING_CURRENCIES.includes(currency)) throw new Error("Unsupported billing currency: " + currency)
+        this.planCurrency = currency
+    }
 }
 
 TeamSchema.methods.toJsonAsClient = function () {
@@ -95,6 +101,7 @@ TeamSchema.methods.toJsonAsClient = function () {
         planStatus: this.planStatus,
         planCancelling: this.planCancelling,
         planInterval: this.planInterval,
+        planCurrency: this.planCurrency,
         onboarded: this.onboarded,
     }
 }

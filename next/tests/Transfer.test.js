@@ -106,3 +106,52 @@ describe("existing transfer compatibility", () => {
     expect(owner.files).toEqual([{ id: "000000000000000000000002", name: "video.mp4", relativePath: "video.mp4", type: "video/mp4", size: 42 }]);
   });
 });
+
+describe("request submission serialization", () => {
+  it("gives the requester the provided identity, message, files, and review state", () => {
+    const uploadedAt = new Date("2026-10-05T10:00:00Z");
+    const reviewedAt = new Date("2026-10-05T11:00:00Z");
+    const transfer = new Transfer({
+      submission: { name: "Alice", email: "alice@example.test", message: "Updated logo attached" },
+      uploadedAt,
+      reviewedAt,
+      expiresAt: new Date("2026-10-19T10:00:00Z"),
+      files: [{ name: "logo.svg", size: 123, relativePath: "assets/logo.svg" }],
+      encryptionKey: Buffer.from("private-key"),
+      encryptionIV: Buffer.from("private-iv"),
+      emailsSharedWith: [{ email: "private@example.test" }],
+    });
+    transfer.setPassword("private-password");
+    const result = transfer.toJsonAsRequestOwner();
+    expect(result.submission).toEqual({ name: "Alice", email: "alice@example.test", message: "Updated logo attached" });
+    expect(result.receivedAt).toEqual(uploadedAt);
+    expect(result.reviewedAt).toEqual(reviewedAt);
+    expect(result.files[0].relativePath).toBe("assets/logo.svg");
+    expect(result.size).toBe(123);
+    for (const field of ["encryptionKey", "encryptionIV", "password", "encryptedPassword", "emailsSharedWith", "author"]) {
+      expect(result).not.toHaveProperty(field);
+    }
+  });
+
+  it("keeps existing anonymous submissions readable without changing their timestamps", () => {
+    const createdAt = new Date("2025-01-01T10:00:00Z");
+    const transfer = Transfer.hydrate({ _id: "000000000000000000000001", createdAt, files: [] });
+    expect(transfer.toJsonAsRequestOwner()).toMatchObject({
+      submission: { name: "", email: "", message: "" },
+      receivedAt: createdAt,
+      reviewedAt: null,
+      expiresAt: null,
+    });
+  });
+
+  it("links a received transfer to its request without exposing submission details in the general serializer", async () => {
+    const transfer = new Transfer({
+      transferRequest: "000000000000000000000001",
+      submission: { name: "Alice", email: "alice@example.test", message: "Private message" },
+    });
+    const result = await transfer.toJsonAsOwner();
+    expect(result.transferRequestId).toBe("000000000000000000000001");
+    expect(result).not.toHaveProperty("submission");
+    expect(result).not.toHaveProperty("reviewedAt");
+  });
+});

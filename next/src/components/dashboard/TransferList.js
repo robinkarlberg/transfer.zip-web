@@ -1,6 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import EmptySpace from "../elements/EmptySpace"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "sonner"
@@ -16,9 +17,10 @@ const Entry = ({ transfer }) => {
 
   const { id, name, files, expiresAt, createdAt, hasTransferRequest, finishedUploading, secretCode } = transfer
   const expiryDate = parseTransferExpiryDate(expiresAt)
-  const receivedAt = createdAt ? new Date(createdAt) : null
+  const receivedAt = transfer.uploadedAt || createdAt ? new Date(transfer.uploadedAt || createdAt) : null
 
-  const disabled = !finishedUploading || hasTransferRequest
+  const disabled = !finishedUploading
+  const detailUrl = hasTransferRequest ? `/app/requests/${transfer.transferRequestId}?submission=${id}` : `/app/sent/${id}`
 
   const handleCopy = async e => {
     if (await tryCopyToClipboard(transferLink)) {
@@ -45,7 +47,7 @@ const Entry = ({ transfer }) => {
 
   const handleClicked = async e => {
     if (disabled) return
-    router.push(hasTransferRequest ? `/app/received/${id}` : `/app/sent/${id}`)
+    router.push(detailUrl)
   }
 
   const expiresSoon = expiryDate && (expiryDate - new Date() <= 2 * 24 * 60 * 60 * 1000)
@@ -96,7 +98,7 @@ const Entry = ({ transfer }) => {
         </div>
         <div>
           <div className="flex">
-            <h3 className="text-lg font-bold mb-0.5 me-1 text-nowrap text-gray-800">{name}</h3>
+            <h3 className="text-lg font-bold mb-0.5 me-1 text-nowrap text-gray-800">{disabled ? name : <Link href={detailUrl} onClick={e => e.stopPropagation()}>{name}</Link>}</h3>
             {hasTransferRequest && <div className="ms-1">
               <span className="text-xs bg-gray-400 text-white font-semibold rounded-full px-1.5 py-0.5">
                 {receivedAt ? `Received ${humanTimeSince(receivedAt)} ago` : "Received"}

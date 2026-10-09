@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import {
   markUserOnboarded,
   newBrandProfile,
@@ -65,20 +66,20 @@ function NameStep({ initialName, total, onNext, onFinishSolo }) {
 
   const isFinal = total === 1
 
-  const submit = async () => {
+  const submit = async (saveName) => {
     const trimmed = name.trim()
-    if (!trimmed) {
+    if (saveName && !trimmed) {
       setError("Please enter your name")
       return
     }
     setSaving(true)
     setError("")
     try {
-      await putUserSettings({ fullName: trimmed })
+      if (saveName) await putUserSettings({ fullName: trimmed })
       if (isFinal) {
         await onFinishSolo()
       } else {
-        onNext(trimmed)
+        onNext(saveName ? trimmed : initialName)
       }
     } catch (err) {
       setError(err.message)
@@ -91,7 +92,7 @@ function NameStep({ initialName, total, onNext, onFinishSolo }) {
       step={1}
       total={total}
       title="What should we call you?"
-      subtitle="Your name appears on outgoing transfers and emails."
+      subtitle="Optional. Your name appears on outgoing transfers and emails."
     >
       <div className="space-y-4">
         <div>
@@ -103,7 +104,7 @@ function NameStep({ initialName, total, onNext, onFinishSolo }) {
             maxLength={NAME_MAX}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") submit()
+              if (e.key === "Enter") submit(true)
             }}
             placeholder="Jane Doe"
             className="mt-2"
@@ -111,8 +112,11 @@ function NameStep({ initialName, total, onNext, onFinishSolo }) {
           />
           {error && <p className="text-xs text-red-500 mt-2">{error}</p>}
         </div>
-        <div className="flex justify-end">
-          <Button onClick={submit} disabled={saving || !name.trim()}>
+        <div className="flex justify-end gap-2">
+          <Button variant="ghost" onClick={() => submit(false)} disabled={saving}>
+            {isFinal ? "Skip & finish" : "Skip"}
+          </Button>
+          <Button onClick={() => submit(true)} disabled={saving || !name.trim()}>
             {saving && <Loader2 className="animate-spin" size={14} />}
             {isFinal ? "Finish" : "Next"}
           </Button>
@@ -267,7 +271,7 @@ function BrandStep({ defaultName, total, onBack, onFinish }) {
           Back
         </Button>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={handleSkip} disabled={saving}>
+          <Button variant="ghost" onClick={handleSkip} disabled={saving}>
             Skip & finish
           </Button>
           <Button onClick={handleFinish} disabled={saving}>
@@ -281,21 +285,17 @@ function BrandStep({ defaultName, total, onBack, onFinish }) {
 }
 
 export default function OnboardingProPage({ user, canBrand }) {
+  const router = useRouter()
   const total = canBrand ? 2 : 1
   const [step, setStep] = useState(1)
   const [name, setName] = useState(user.fullName || "")
 
   const goFinish = () => {
-    window.location.href = "/app"
+    router.replace("/app")
   }
 
   const finishSolo = async () => {
-    try {
-      await markUserOnboarded()
-    } catch (err) {
-      toast.error(err.message)
-      return
-    }
+    await markUserOnboarded()
     goFinish()
   }
 

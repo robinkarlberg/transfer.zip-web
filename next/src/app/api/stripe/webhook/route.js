@@ -70,19 +70,19 @@ const handleSubscription = async object => {
 
   if (result) {
     const { type, subscriber } = result
-    const { plan } = object
-
-    const item = object.items?.data?.[0];
-    const price = item?.price || item?.plan;
+    const item = object.items.data[0]
+    const price = item.price
 
     const seats = item.quantity
 
+    // Basil moved billing periods onto subscription items; older webhook versions use the subscription.
     subscriber.updateSubscription({
-      plan: getPlanByStripeProductId(plan.product)?.id,
+      plan: getPlanByStripeProductId(price.product).id,
       status: object.status,
-      validUntil: object.current_period_end,
+      validUntil: item.current_period_end || object.current_period_end,
       cancelling: !!object.cancel_at,
-      interval: price?.recurring?.interval || item?.plan?.interval
+      interval: price.recurring.interval,
+      currency: object.currency,
     });
 
     let seatDownChange = null
@@ -158,11 +158,11 @@ const handleSubscriptionCreated = async object => {
     }
   }
 
-  handleSubscription(object)
+  await handleSubscription(object)
 }
 
 const handleSubscriptionUpdated = async object => {
-  handleSubscription(object)
+  await handleSubscription(object)
 }
 
 const handleSubscriptionDeleted = async object => {

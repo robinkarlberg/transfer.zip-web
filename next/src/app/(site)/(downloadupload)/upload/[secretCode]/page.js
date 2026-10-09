@@ -12,6 +12,7 @@ import { headers } from "next/headers";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import BrandHeader from "../../BrandHeader";
+import clouds from "@/img/download-clouds.png";
 
 export async function generateMetadata({ params }) {
   const { secretCode } = await params
@@ -58,17 +59,31 @@ export default async function ({ params }) {
 
   return (
     <>
-      <div className="grid min-h-[100vh] place-items-center ">
+      <div className="relative isolate grid min-h-svh grid-cols-1 place-items-center px-4 pt-28 pb-16">
         {brandProfile ? <BrandHeader brandProfile={brandProfile} /> : !isCustomDomain && <Header />}
-        {brandProfile && brandProfile.backgroundUrl && (
+        {brandProfile && brandProfile.backgroundUrl ? (
           <Image
             fill
             alt="Branding Background Image"
             className="object-center object-cover pointer-events-none"
             src={brandProfile.backgroundUrl}
           />
+        ) : (
+          <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden bg-linear-to-b from-primary-600 to-primary-300">
+            <div className="absolute inset-x-0 top-0 h-[115%] sm:h-[135%]">
+              <Image fill priority alt="" src={clouds} className="object-cover object-bottom" />
+            </div>
+            <div className="absolute inset-x-0 bottom-0 h-1/5 bg-linear-to-b from-transparent to-white" />
+          </div>
         )}
-        <NewTransferFileUploadForRequest brandProfile={brandProfile?.toJsonAsClient()} transferRequest={await transferRequest.toJsonAsUploader()} />
+        {transferRequest.active ? (
+          <NewTransferFileUploadForRequest brandProfile={brandProfile?.toJsonAsClient()} transferRequest={await transferRequest.toJsonAsUploader()} />
+        ) : (
+          <div className="relative mx-4 max-w-md rounded-xl bg-white p-5 sm:p-6">
+            <h1 className="text-xl font-semibold text-gray-900">This file request is closed</h1>
+            <p className="mt-2 text-gray-600">Contact the person who requested your files to reopen it.</p>
+          </div>
+        )}
       </div>
       {(!IS_SELFHOST && !brandProfile && !isCustomDomain) && (
         <>
