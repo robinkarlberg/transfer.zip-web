@@ -1,3 +1,4 @@
+import { getTranslations } from "@/lib/server/language"
 import { NextResponse } from "next/server"
 import Transfer from "@/lib/server/mongoose/models/Transfer"
 import { resp } from "@/lib/server/serverUtils"
@@ -35,7 +36,8 @@ export async function PUT(req, { params }) {
     const maxExpiry = new Date(transfer.createdAt)
     maxExpiry.setDate(maxExpiry.getDate() + maxDays)
     if (expiresAtDate > maxExpiry) {
-      return NextResponse.json(resp(`expiresAt cannot be more than ${maxDays} days from transfer creation`), { status: 400 })
+      const t = await getTranslations()
+      return NextResponse.json(resp(t("expiresAt cannot be more than {days} days from transfer creation", { days: maxDays })), { status: 400 })
     }
 
     transfer.expiresAt = expiresAtDate

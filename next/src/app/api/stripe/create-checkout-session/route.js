@@ -1,3 +1,4 @@
+import { getLanguage, getTranslations } from "@/lib/server/language"
 import { doesUserHaveFreeTrial, resp } from "@/lib/server/serverUtils"
 import { getStripe } from "@/lib/server/stripe"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
@@ -29,7 +30,8 @@ export async function POST(req) {
   const plan = getPlanById(tier)
 
   if (plan.isTeamPlan && (!teamInfo.seats || teamInfo.seats < plan.minSeats || teamInfo.seats > plan.maxSeats)) {
-    return NextResponse.json(resp(`Seats must be between ${plan.minSeats} and ${plan.maxSeats}`), { status: 400 })
+    const t = await getTranslations()
+    return NextResponse.json(resp(t("Seats must be between {min} and {max}", { min: plan.minSeats, max: plan.maxSeats })), { status: 400 })
   }
   if (user.hasTeam && (!plan.isTeamPlan || user.role !== ROLES.OWNER)) {
     return NextResponse.json(resp("Only the team owner can manage the team's subscription."), { status: 403 })
@@ -74,6 +76,7 @@ export async function POST(req) {
       line_items: [{ price: priceId, quantity: plan.isTeamPlan ? teamInfo.seats : 1 }],
       mode: "subscription",
       currency,
+      locale: user.language || await getLanguage(),
       adaptive_pricing: { enabled: false },
       allow_promotion_codes: true,
       success_url: `${process.env.SITE_URL}/poll-subscription`,

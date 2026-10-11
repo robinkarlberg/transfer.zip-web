@@ -1,5 +1,7 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import BIcon from "@/components/BIcon"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
@@ -22,13 +24,15 @@ import PrivacyDataSection from "./PrivacyDataSection"
 import TeamSection from "./TeamSection"
 
 function CurrentPlanCard({ plan, isTrial, planCancelling, planValidUntil }) {
+  const { t, language, landingText , locale } = useLanguage()
   const tier = getPlanById(plan) || FREE_PLAN
-  const { name, displayFeatures } = tier
+  const { name } = tier
+  const { displayFeatures } = landingText.plans?.[plan] || tier
 
-  const timeLeft = planValidUntil ? humanTimeUntil(planValidUntil) : null
+  const timeLeft = planValidUntil ? humanTimeUntil(planValidUntil, language) : null
   const statusLabel = planCancelling
-    ? `Cancelling${timeLeft ? ` - ${timeLeft} left` : ""}`
-    : (isTrial ? `Trial${timeLeft ? ` - ${timeLeft} left` : ""}` : "Active")
+    ? `${t("Cancelling")}${timeLeft ? ` - ${t("{time} left", { time: timeLeft })}` : ""}`
+    : (isTrial ? `${t("Trial")}${timeLeft ? ` - ${t("{time} left", { time: timeLeft })}` : ""}` : t("Active"))
   const statusColor = planCancelling ? "bg-amber-100 text-amber-700" : "bg-primary-100 text-primary-700"
 
   return (
@@ -48,24 +52,22 @@ function CurrentPlanCard({ plan, isTrial, planCancelling, planValidUntil }) {
         ))}
       </ul>
       <form method="POST" className="mt-4 flex flex-row-reverse" action={API_URL + "/stripe/create-customer-portal-session"}>
-        <Button variant="secondary" className={"w-full sm:w-fit"}>Cancel or Manage Billing</Button>
+        <Button variant="secondary" className={"w-full sm:w-fit"}>{t("Cancel or Manage Billing")}</Button>
       </form>
       <hr className="my-4" />
       <div className="flex flex-wrap gap-4 items-center justify-between">
         <div>
-          <p className="font-medium text-gray-900">Looking for more?</p>
+          <p className="font-medium text-gray-900">{t("Looking for more?")}</p>
           {name == PLANS.teams.name ?
-            <p className="text-sm text-gray-500">Switch plans to share bigger transfers with your team</p>
-            : <p className="text-sm text-gray-500">Switch plans to share bigger ideas with more features</p>
+            <p className="text-sm text-gray-500">{t("Switch plans to share bigger transfers with your team")}</p>
+            : <p className="text-sm text-gray-500">{t("Switch plans to share bigger ideas with more features")}</p>
           }
         </div>
         <Button asChild>
           <Link
-            href="/pricing"
+            href={language === "sv" ? "/sv#pricing" : "/pricing"}
             className="w-full sm:w-fit"
-          >
-            Compare all plans
-          </Link>
+          >{t("Compare all plans")}</Link>
         </Button>
       </div>
     </div>
@@ -73,6 +75,7 @@ function CurrentPlanCard({ plan, isTrial, planCancelling, planValidUntil }) {
 }
 
 export default function ({ user, storage, team }) {
+  const { t, language, landingText } = useLanguage()
 
   const router = useRouter()
 
@@ -90,6 +93,19 @@ export default function ({ user, storage, team }) {
     router.refresh()
   }
 
+  const [savingLanguage, setSavingLanguage] = useState(false)
+  const changeLanguage = async nextLanguage => {
+    setSavingLanguage(true)
+    try {
+      await putUserSettings({ language: nextLanguage })
+      router.refresh()
+    } catch (err) {
+      toast.error(err.message)
+    } finally {
+      setSavingLanguage(false)
+    }
+  }
+
   const [editingName, setEditingName] = useState(false)
   const [nameDraft, setNameDraft] = useState(user.fullName || "")
   const [savingName, setSavingName] = useState(false)
@@ -103,7 +119,7 @@ export default function ({ user, storage, team }) {
     setSavingName(true)
     try {
       await putUserSettings({ fullName: trimmed })
-      toast.success(trimmed ? "Name updated" : "Name cleared")
+      toast.success(trimmed ? t("Name updated") : t("Name cleared"))
       setEditingName(false)
       router.refresh()
     } catch (err) {
@@ -136,16 +152,16 @@ export default function ({ user, storage, team }) {
                         setEditingName(false)
                       }
                     }}
-                    placeholder="Your name"
+                    placeholder={t("Your name")}
                     maxLength={80}
                     disabled={savingName}
                     className="max-w-xs"
                   />
-                  <Button size="sm" onClick={handleSaveName} disabled={savingName}>Save</Button>
+                  <Button size="sm" onClick={handleSaveName} disabled={savingName}>{t("Save")}</Button>
                   <Button size="sm" variant="ghost" onClick={() => {
                     setNameDraft(user.fullName || "")
                     setEditingName(false)
-                  }} disabled={savingName}>Cancel</Button>
+                  }} disabled={savingName}>{t("Cancel")}</Button>
                 </div>
               ) : (
                 <>
@@ -158,7 +174,7 @@ export default function ({ user, storage, team }) {
                       onClick={() => setEditingName(true)}
                       className="text-sm text-primary hover:underline"
                     >
-                      {user.fullName ? "Edit" : "Add name"}
+                      {user.fullName ? t("Edit") : t("Add name")}
                     </button>
                   </div>
                   {user.fullName && <span className="text-gray-600 text-sm truncate">{user.email}</span>}
@@ -168,28 +184,24 @@ export default function ({ user, storage, team }) {
           </div>
         </div>
         <div className="sm:col-span-1">
-          <h2 className="text-lg font-semibold text-gray-900 ">Notifications</h2>
+          <h2 className="text-lg font-semibold text-gray-900 ">{t("Notifications")}</h2>
           <div className="space-y-4 mt-4">
             <div className="flex items-center space-x-3">
               <Checkbox id="transferDownloaded" defaultChecked={notificationSettings.transferDownloaded} onCheckedChange={handleCheckedChange("transferDownloaded")} />
-              <Label htmlFor="transferDownloaded" className="cursor-pointer">
-                User Downloaded your Files
-              </Label>
+              <Label htmlFor="transferDownloaded" className="cursor-pointer">{t("User Downloaded your Files")}</Label>
             </div>
             <div className="flex items-center space-x-3">
               <Checkbox id="transferReceived" defaultChecked={notificationSettings.transferReceived} onCheckedChange={handleCheckedChange("transferReceived")} />
-              <Label htmlFor="transferReceived" className="cursor-pointer">
-                Files Received from Transfer Request
-              </Label>
+              <Label htmlFor="transferReceived" className="cursor-pointer">{t("Files Received from Transfer Request")}</Label>
             </div>
           </div>
         </div>
         <div className="sm:col-span-1">
-          <h2 className="text-lg font-semibold text-gray-900">Storage</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t("Storage")}</h2>
           {storage && (
             <div className="mt-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-600">{storage.storagePercent}% used</span>
+                <span className="text-sm text-gray-600">{storage.storagePercent}{t("% used")}</span>
                 <span className="text-sm text-gray-600">
                   {humanFileSize(storage.usedStorageBytes, true)} / {humanFileSize(storage.maxStorageBytes, true)}
                 </span>
@@ -197,6 +209,18 @@ export default function ({ user, storage, team }) {
               <Progress className="h-2" value={storage.storagePercent} />
             </div>
           )}
+        </div>
+        <div>
+          <Label htmlFor="account-language">{t("Language")}</Label>
+          <div className="mt-3 max-w-xs">
+            <Select value={language} onValueChange={changeLanguage} disabled={savingLanguage}>
+              <SelectTrigger id="account-language"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="sv">Svenska</SelectItem>
+                <SelectItem value="en">English</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         {!IS_SELFHOST && !user.hasTeam && (
           <div className="sm:col-span-full">
@@ -214,9 +238,7 @@ export default function ({ user, storage, team }) {
       </div>
       <div className="mt-4 sm:col-span-full text-primary font-bold">
         <button className="text-sm inline-flex items-center gap-1" onClick={handleLogout}>
-          <ArrowLeftIcon className="w-4 h-4" />
-          Log out of my account
-        </button>
+          <ArrowLeftIcon className="w-4 h-4" />{t("Log out of my account")}</button>
       </div>
     </div>
     {user.hasTeam && user.role !== ROLES.OWNER && team && (

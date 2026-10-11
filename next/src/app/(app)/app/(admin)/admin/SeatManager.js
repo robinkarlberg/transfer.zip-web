@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -16,8 +17,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { previewTeamSeatPurchase, updateTeamSeats } from "@/lib/client/Api"
 
-function formatMoney(amount, currency) {
-  const formatter = new Intl.NumberFormat(typeof navigator !== "undefined" ? navigator.language || "en-US" : "en-US", {
+function formatMoney(amount, currency, locale) {
+  const formatter = new Intl.NumberFormat(locale, {
     style: "currency",
     currency: (currency || "usd").toUpperCase(),
   })
@@ -31,6 +32,7 @@ export default function SeatManager({
   minSeats,
   maxSeats,
 }) {
+  const { t, locale } = useLanguage()
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [target, setTarget] = useState(currentSeats)
@@ -83,8 +85,8 @@ export default function SeatManager({
       await updateTeamSeats(target)
       toast.success(
         delta > 0
-          ? `Added ${delta} ${delta === 1 ? "seat" : "seats"}`
-          : `Reduced to ${target} seats`
+          ? t("Added {0} {1}", { "0": delta, "1": delta === 1 ? "seat" : "seats" })
+          : t("Reduced to {0} seats", { "0": target })
       )
       setOpen(false)
       router.refresh()
@@ -101,14 +103,12 @@ export default function SeatManager({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="secondary">Manage seats</Button>
+        <Button variant="secondary">{t("Manage seats")}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Manage seats</DialogTitle>
-          <DialogDescription>
-            Adjust how many paid seats your subscription covers.
-          </DialogDescription>
+          <DialogTitle>{t("Manage seats")}</DialogTitle>
+          <DialogDescription>{t("Adjust how many paid seats your subscription covers.")}</DialogDescription>
         </DialogHeader>
         <div className="py-2 space-y-4">
           <div className="flex items-center justify-center gap-3">
@@ -116,7 +116,7 @@ export default function SeatManager({
               type="button"
               variant="outline"
               size="icon"
-              onClick={() => setTarget(t => Math.max(t - 1, floor))}
+              onClick={() => setTarget(entry => Math.max(entry - 1, floor))}
               disabled={!canDecrement || saving}
             >
               <MinusIcon size={16} />
@@ -126,7 +126,7 @@ export default function SeatManager({
               type="button"
               variant="outline"
               size="icon"
-              onClick={() => setTarget(t => Math.min(t + 1, ceiling))}
+              onClick={() => setTarget(entry => Math.min(entry + 1, ceiling))}
               disabled={!canIncrement || saving}
             >
               <PlusIcon size={16} />
@@ -134,25 +134,23 @@ export default function SeatManager({
           </div>
 
           <div className="text-center text-sm text-gray-500">
-            {occupied} {occupied === 1 ? "seat" : "seats"} in use
-            {pendingInvites > 0 && ` (${memberCount} members + ${pendingInvites} pending)`}
+            {occupied} {occupied === 1 ? t("seat") : t("seats")} {t("in use")}{pendingInvites > 0 && t(" ({0} members + {1} pending)", { "0": memberCount, "1": pendingInvites })}
           </div>
 
           {delta > 0 && (
             <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm">
               {loadingPreview || !preview ? (
                 <div className="flex items-center gap-2 text-gray-500">
-                  <Loader2 className="animate-spin" size={16} /> Calculating prorated cost...
-                </div>
+                  <Loader2 className="animate-spin" size={16} /> {t("Calculating prorated cost...")}</div>
               ) : (
                 <>
                   <div className="flex justify-between text-gray-600">
-                    <span>{delta} additional {delta === 1 ? "seat" : "seats"} ({preview.interval === "year" ? "yearly" : "monthly"})</span>
-                    <span>{formatMoney(preview.unitAmount * delta, preview.currency)}</span>
+                    <span>{delta} {t("additional")} {delta === 1 ? t("seat") : t("seats")} ({preview.interval === "year" ? t("yearly") : t("monthly")})</span>
+                    <span>{formatMoney(preview.unitAmount * delta, preview.currency, locale)}</span>
                   </div>
                   <div className="mt-2 flex justify-between font-semibold text-gray-900">
-                    <span>Due now (prorated)</span>
-                    <span>{formatMoney(preview.amountDue, preview.currency)}</span>
+                    <span>{t("Due now (prorated)")}</span>
+                    <span>{formatMoney(preview.amountDue, preview.currency, locale)}</span>
                   </div>
                 </>
               )}
@@ -161,20 +159,18 @@ export default function SeatManager({
           )}
 
           {delta < 0 && (
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">
-              Removing {Math.abs(delta)} {Math.abs(delta) === 1 ? "seat" : "seats"}. A prorated credit will be applied to your next invoice.
-            </div>
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-sm text-gray-700">{t("Removing")} {Math.abs(delta)} {Math.abs(delta) === 1 ? t("seat") : t("seats")}{t(". A prorated credit will be applied to your next invoice.")}</div>
           )}
 
           {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => handleOpenChange(false)} disabled={saving}>Cancel</Button>
+          <Button variant="outline" onClick={() => handleOpenChange(false)} disabled={saving}>{t("Cancel")}</Button>
           <Button
             onClick={handleSave}
             disabled={saving || delta === 0 || (delta > 0 && (loadingPreview || !preview))}
           >
-            {saving ? <><Loader2 className="animate-spin" size={16} /> Saving...</> : (delta === 0 ? "No change" : "Confirm")}
+            {saving ? <><Loader2 className="animate-spin" size={16} /> {t("Saving...")}</> : (delta === 0 ? t("No change") : t("Confirm"))}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useMemo, useState } from "react";
 import { Loader2 } from "lucide-react";
@@ -15,30 +16,30 @@ function dayKey(iso) {
   return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 }
 
-function dayLabel(iso) {
+function dayLabel(iso, t, locale) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const date = new Date(iso);
   date.setHours(0, 0, 0, 0);
   const diffDays = Math.round((today - date) / 86400000);
-  if (diffDays === 0) return "Today";
-  if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return date.toLocaleDateString(undefined, { weekday: "long" });
+  if (diffDays === 0) return t("Today");
+  if (diffDays === 1) return t("Yesterday");
+  if (diffDays < 7) return date.toLocaleDateString(locale, { weekday: "long" });
   const sameYear = today.getFullYear() === date.getFullYear();
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString(locale, {
     month: "short",
     day: "numeric",
     year: sameYear ? undefined : "numeric",
   });
 }
 
-function groupByDay(events) {
+function groupByDay(events, t, locale) {
   const groups = [];
   let current = null;
   for (const ev of events) {
     const key = dayKey(ev.createdAt);
     if (!current || current.key !== key) {
-      current = { key, label: dayLabel(ev.createdAt), events: [] };
+      current = { key, label: dayLabel(ev.createdAt, t, locale), events: [] };
       groups.push(current);
     }
     current.events.push(ev);
@@ -47,6 +48,7 @@ function groupByDay(events) {
 }
 
 function FilterChips({ active, onChange, disabled }) {
+  const { t } = useLanguage()
   return (
     <div className="flex flex-wrap gap-1.5">
       {ACTIVITY_FILTERS.map(f => {
@@ -60,7 +62,7 @@ function FilterChips({ active, onChange, disabled }) {
             disabled={disabled}
             className={isActive ? "" : "bg-primary-800 text-white hover:bg-primary-900"}
           >
-            {f.label}
+            {t(f.label)}
           </Button>
         );
       })}
@@ -69,13 +71,14 @@ function FilterChips({ active, onChange, disabled }) {
 }
 
 export default function ActivityClient({ initialEvents, initialHasMore, currentUserId }) {
+  const { t, locale } = useLanguage()
   const [events, setEvents] = useState(initialEvents);
   const [hasMore, setHasMore] = useState(initialHasMore);
   const [filter, setFilter] = useState("all");
   const [filterLoading, setFilterLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  const groups = useMemo(() => groupByDay(events), [events]);
+  const groups = useMemo(() => groupByDay(events, t, locale), [events, t, locale]);
 
   const changeFilter = async (next) => {
     if (next === filter || filterLoading) return;
@@ -111,7 +114,7 @@ export default function ActivityClient({ initialEvents, initialHasMore, currentU
 
   return (
     <GenericPage
-      title="Activity"
+      title={t("Activity")}
       side={<FilterChips active={filter} onChange={changeFilter} disabled={busy} />}
     >
       <AdminCard>
@@ -120,9 +123,7 @@ export default function ActivityClient({ initialEvents, initialHasMore, currentU
             <Loader2 className="animate-spin text-gray-400" size={20} />
           </div>
         ) : events.length === 0 ? (
-          <div className="py-12 text-center text-sm text-gray-500">
-            No events match this filter.
-          </div>
+          <div className="py-12 text-center text-sm text-gray-500">{t("No events match this filter.")}</div>
         ) : (
           <div className="flex flex-col gap-5">
             {groups.map(group => (
@@ -138,11 +139,9 @@ export default function ActivityClient({ initialEvents, initialHasMore, currentU
                 <Button variant="outline" size="sm" onClick={loadMore} disabled={loadingMore}>
                   {loadingMore ? (
                     <>
-                      <Loader2 className="animate-spin" size={14} />
-                      Loading
-                    </>
+                      <Loader2 className="animate-spin" size={14} />{t("Loading")}</>
                   ) : (
-                    "Load more"
+                    t("Load more")
                   )}
                 </Button>
               </div>

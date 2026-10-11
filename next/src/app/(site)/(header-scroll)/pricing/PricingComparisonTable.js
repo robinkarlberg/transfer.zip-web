@@ -1,4 +1,5 @@
 "use client"
+import { EVENTS } from "@/lib/analytics"
 
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
@@ -279,7 +280,7 @@ function PlanHeader({ planId, frequency, currency, featured, layout, stuck, user
       {cta.kind === "link" ? (
         <Link
           href={cta.href}
-          onClick={() => sendEvent("pricing_table_cta_click", { plan: planId, frequency })}
+          onClick={() => sendEvent(EVENTS.PLAN, { plan: planId, interval: frequency, placement: "comparison" })}
           className={ctaClasses}
         >
           {cta.label}
@@ -293,7 +294,7 @@ function PlanHeader({ planId, frequency, currency, featured, layout, stuck, user
           type="button"
           disabled={busy}
           onClick={() => {
-            sendEvent("pricing_table_cta_click", { plan: planId, frequency })
+            sendEvent(EVENTS.PLAN, { plan: planId, interval: frequency, placement: "comparison" })
             onAction(cta, planId)
           }}
           className={cn(ctaClasses, "w-full disabled:opacity-60 disabled:cursor-not-allowed")}

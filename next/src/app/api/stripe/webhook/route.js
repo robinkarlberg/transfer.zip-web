@@ -123,7 +123,7 @@ const handleSubscription = async object => {
         // the human needs to choose.
         const owner = await User.findOne({ team: subscriber._id, role: ROLES.OWNER })
         if (owner?.email) {
-          sendTeamOverCapacity(owner.email, {
+          sendTeamOverCapacity(owner.email, { language: owner.language,
             teamName: subscriber.name,
             memberCount,
             seats: seatDownChange.to,

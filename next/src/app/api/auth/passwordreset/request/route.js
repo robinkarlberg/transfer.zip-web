@@ -20,7 +20,7 @@ const doer = async (email) => {
     const resetToken = await createResetToken(user)
     const params = Buffer.from(`${user.email} ${resetToken.token}`).toString("base64url")
 
-    await sendPasswordReset(email, { link: `${process.env.SITE_URL}/change-password#${params}` })
+    await sendPasswordReset(email, { language: user.language, link: `${process.env.SITE_URL}/change-password#${params}` })
   }
 }
 

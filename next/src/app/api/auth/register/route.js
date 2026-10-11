@@ -1,3 +1,5 @@
+import { getLanguage } from "@/lib/server/language"
+import { completeSignIn, setLanguageCookie } from "@/lib/server/completeSignIn"
 import dbConnect from '@/lib/server/mongoose/db';
 import Session from '@/lib/server/mongoose/models/Session';
 import User from '@/lib/server/mongoose/models/User';
@@ -9,7 +11,7 @@ import is_ip_private from 'private-ip'
 
 export async function POST(req, res) {
   if (!IS_SELFHOST) return NextResponse.json(resp("This signup api is not supported anymore."), { status: 409 })
-    
+
   const data = await req.json()
   const { email, password: pass } = data;
 
@@ -29,7 +31,7 @@ export async function POST(req, res) {
     return NextResponse.json(resp("Signup not allowed: users already exist in self-hosted mode"), { status: 409 })
   }
 
-  const user = new User({ email })
+  const user = new User({ email, language: await getLanguage() })
   user.setPassword(pass)
 
   if (IS_SELFHOST) {
@@ -50,7 +52,9 @@ export async function POST(req, res) {
   const session = new Session({ user })
   await session.save()
 
-  const response = NextResponse.json(resp({}), { status: 200 })
+  const signIn = await completeSignIn(user, await getLanguage())
+  const response = NextResponse.json(resp(signIn), { status: 200 })
+  setLanguageCookie(response, signIn.language)
   response.cookies.set('token', session.token, createCookieParams())
   return response
 }

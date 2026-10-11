@@ -1,3 +1,4 @@
+import { getLanguage } from "@/lib/server/language"
 import { sendTransferRequestReceived, sendTransferRequestShare, sendTransferShare } from "@/lib/server/mail/mail";
 import TransferRequest from "@/lib/server/mongoose/models/TransferRequest";
 import { findUsableBrandProfile } from "@/lib/server/mongoose/helpers/brandProfiles";
@@ -43,6 +44,7 @@ export async function POST(req) {
   }
 
   const transferRequest = new TransferRequest({
+    language: user.language || await getLanguage(),
     author: user._id,
     // Tag with the author's current team (if any) so the request surfaces
     // in that team's admin view. Mirrors how Transfer.team is set, except
@@ -70,8 +72,8 @@ export async function POST(req) {
         to: [email]
       })
       await sentEmail.save()
-      await sendTransferRequestShare(email, {
-        name: name || "Untitled Transfer Request",
+      await sendTransferRequestShare(email, { language: transferRequest.language,
+        name: name,
         description: description,
         link: await transferRequest.getUploadLink(),
         brand: brandProfile ? brandProfile.toJsonAsClient() : undefined

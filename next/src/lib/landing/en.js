@@ -127,6 +127,7 @@ export const englishLandingText = {
     "android": "Android to PC",
     "resources": "Resources",
     "support": "Support / Contact",
+    "about": "About us",
     "receive": "Receive Files",
     "send": "Send Files",
     "selfHosting": "Self Hosting",

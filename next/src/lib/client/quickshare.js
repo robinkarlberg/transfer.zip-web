@@ -1,3 +1,6 @@
+import { localizedLink } from "../i18n/language"
+import { sendEvent } from "./umami"
+import { EVENTS } from "../analytics"
 // UI-facing orchestrator for Quick Transfers. One QuickShareSession per page:
 // it owns the relay connection, key handling, the file protocol and the
 // receive-side save pipeline (StreamSaver / zip), and reports everything the
@@ -140,7 +143,7 @@ export class QuickShareSession {
 				}, CODE_ROTATE_INTERVAL);
 				this.#update({
 					status: QuickShareStatus.WAITING_FOR_PEER,
-					link: `${window.location.origin}/quick#${k},${this.#sessionId},${directionForPeer}`,
+					link: localizedLink(`${window.location.origin}/quick#${k},${this.#sessionId},${directionForPeer}`, document.documentElement.lang),
 					code,
 				});
 			} else if (this.#code) {
@@ -446,7 +449,12 @@ export class QuickShareSession {
 
 	/** Structural changes emit immediately; byte counters go through #noteProgress. */
 	#update(patch) {
+		const previousStatus = this.#snapshot.status;
 		Object.assign(this.#snapshot, patch);
+		if (patch.status && patch.status !== previousStatus) {
+			const event = { [QuickShareStatus.TRANSFERRING]: EVENTS.QUICK_STARTED, [QuickShareStatus.FINISHED]: EVENTS.QUICK_COMPLETED, [QuickShareStatus.FAILED]: EVENTS.QUICK_FAILED }[patch.status];
+			if (event) sendEvent(event, { mode: this.#snapshot.mode });
+		}
 		if (this.#snapshot.status === QuickShareStatus.TRANSFERRING) this.#wakeLock.start();
 		if (this.#snapshot.status === QuickShareStatus.FINISHED || this.#snapshot.status === QuickShareStatus.FAILED) {
 			this.#wakeLock.stop();

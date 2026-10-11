@@ -10,7 +10,6 @@ import Spinner from "./elements/Spinner"
 import { sleep } from "@/lib/utils"
 import { register } from "@/lib/client/Api"
 import QuestionCircle from "./elements/QuestionCircle"
-import { sendEvent } from "@/lib/client/umami"
 
 const features = [
   <span>Make your files available for <b>a year</b></span>,
@@ -45,7 +44,7 @@ export default function SignUpModal({ show, onShowChange }) {
       if (!validateEmail(email)) throw { message: "Invalid email" }
       if (password.length < 6) throw { message: "Password too short (minimum 8 characters)" }
 
-      sendEvent("signup_modal_event")
+
 
       const res = await register(email, password)
       if (res.success) {

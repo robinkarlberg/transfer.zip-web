@@ -40,14 +40,14 @@ export default function Pricing({ currency, text = englishLandingText.pricing, t
       </div>
 
       <div className="mx-auto mt-8 grid max-w-sm grid-cols-1 gap-6 lg:max-w-5xl lg:grid-cols-3">
-        <PricingCards currency={currency} frequency={frequency} tiers={planText ? tiers.map(tier => ({ ...tier, ...planText[tier.id] })) : tiers} text={cardText} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_landing_click"} />
+        <PricingCards currency={currency} frequency={frequency} tiers={planText ? tiers.map(tier => ({ ...tier, ...planText[tier.id] })) : tiers} text={cardText} hasFreeTrial={hasFreeTrial} placement="landing" />
         <TeamPricingCard
           currency={currency}
           frequency={frequency}
           tier={planText ? { ...teamTier, ...planText[teamTier.id] } : teamTier}
           text={teamText}
           hasFreeTrial={hasFreeTrial}
-          eventName={"pricing_card_teams_landing_click"}
+          placement="landing"
         />
       </div>
 

@@ -1,3 +1,10 @@
+import { sendEvent } from "./umami"
+import { EVENTS } from "../analytics"
+import { getTranslator } from "@/lib/i18n/translate"
+import { LANGUAGE_HEADER } from "@/lib/i18n/language"
+
+const clientLanguage = () => typeof document === "undefined" ? "en" : document.documentElement.lang
+
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000"
 
 // Throw an Error matching the server's response body. Carries `code` and
@@ -5,7 +12,7 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000
 // while still getting a sensible default message in toast/UI surfaces.
 class ApiError extends Error {
     constructor(message, { code, status } = {}) {
-        super(message)
+        super(getTranslator(clientLanguage())(message))
         this.name = "ApiError"
         this.code = code
         this.status = status
@@ -32,7 +39,7 @@ const parseResponse = async (res) => {
 const get = async (endpoint, extraHeaders, omitCredentials) => {
     const res = await fetch(API_URL + endpoint, {
         credentials: (omitCredentials ? "omit" : "include"),
-        headers: extraHeaders,
+        headers: { ...extraHeaders, [LANGUAGE_HEADER]: clientLanguage() },
     })
     return parseResponse(res)
 }
@@ -43,7 +50,8 @@ const withBody = async (verb, endpoint, payload) => {
         method: verb,
         body: JSON.stringify(payload),
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            [LANGUAGE_HEADER]: clientLanguage()
         }
     })
     return parseResponse(res)
@@ -64,7 +72,9 @@ export async function getUser() {
 }
 
 export async function markUserOnboarded() {
-    return await post("/user/onboard", {})
+    const result = await post("/user/onboard", {})
+    sendEvent(EVENTS.ONBOARDING, { mode: "solo" })
+    return result
 }
 
 export async function getUserStorage() {
@@ -104,15 +114,19 @@ export async function doPasswordReset(email, token, newPass) {
 }
 
 export function getGoogleLink() {
-    return `${API_URL}/auth/google`
+    return `${API_URL}/auth/google?lang=${clientLanguage()}`
 }
 
 export async function requestMagicLink(email) {
-    return await post("/auth/magic-link", { email })
+    const result = await post("/auth/magic-link", { email })
+    sendEvent(EVENTS.EMAIL, { method: "email" })
+    return result
 }
 
 export async function useMagicLink(token) {
-    return await post(`/auth/magic-link/${token}`)
+    const result = await post(`/auth/magic-link/${token}`)
+    if (result.consumed) await sendEvent(result.authEvent, { method: "email" })
+    return result
 }
 
 export async function pollMagicLinkStatus(requestId) {
@@ -120,7 +134,9 @@ export async function pollMagicLinkStatus(requestId) {
 }
 
 export async function verifyMagicLinkCode(requestId, code) {
-    return await post(`/auth/magic-link/by-request/${requestId}/verify`, { code })
+    const result = await post(`/auth/magic-link/by-request/${requestId}/verify`, { code })
+    await sendEvent(result.authEvent, { method: "email_code" })
+    return result
 }
 
 // team
@@ -130,7 +146,9 @@ export async function updateTeam(payload) {
 }
 
 export async function markTeamOnboarded() {
-    return await post("/team/onboard", {})
+    const result = await post("/team/onboard", {})
+    sendEvent(EVENTS.ONBOARDING, { mode: "team" })
+    return result
 }
 
 // team invite
@@ -156,7 +174,9 @@ export async function getInvite(token) {
 }
 
 export async function redeemInvite(token, fullName) {
-    return await post(`/invite/${token}`, { fullName })
+    const result = await post(`/invite/${token}`, { fullName })
+    await sendEvent(result.authEvent, { method: "invite" })
+    return result
 }
 
 export async function deleteUser(userId) {
@@ -212,7 +232,14 @@ export async function doVerification(email, token) {
 // stripe
 
 export async function createCheckoutSession(tier, frequency, teamInfo, displayCurrency) {
-    return await post(`/stripe/create-checkout-session`, { tier, frequency, teamInfo, displayCurrency })
+    try {
+        const result = await post(`/stripe/create-checkout-session`, { tier, frequency, teamInfo, displayCurrency })
+        await sendEvent(EVENTS.CHECKOUT, { plan: tier, interval: frequency, currency: displayCurrency, seats: teamInfo.seats || 1 })
+        return result
+    } catch (err) {
+        sendEvent(EVENTS.CHECKOUT_FAILED, { plan: tier, interval: frequency, currency: displayCurrency })
+        throw err
+    }
 }
 
 export async function changeSubscription(tier) {
@@ -273,7 +300,9 @@ export async function getTransferRequestList({ active, skip = 0, limit = 20 } = 
 }
 
 export async function newTransferRequest(data) {
-    return await post(`/transferrequest/new`, data)
+    const result = await post(`/transferrequest/new`, data)
+    sendEvent(EVENTS.REQUEST, { method: data.emails?.length ? "email" : "link" })
+    return result
 }
 
 export async function putTransferRequest(transferRequestId, data) {
@@ -343,7 +372,9 @@ export async function markTransferComplete(secretCode) {
 // download
 
 export async function registerTransferDownloaded(secretCode) {
-    return await post(`/download/${secretCode}/downloaded`)
+    const result = await post(`/download/${secretCode}/downloaded`)
+    sendEvent(EVENTS.DOWNLOAD, { mode: "stored" })
+    return result
 }
 
 // sign
@@ -358,8 +389,11 @@ export async function getDownloadToken(secretCode) {
 
 // geo
 
-export async function getGeoRegion() {
-    return await get("/geo")
+let geoRegionRequest
+
+export function getGeoRegion() {
+    if (!geoRegionRequest) geoRegionRequest = get("/geo")
+    return geoRegionRequest
 }
 
 // errors

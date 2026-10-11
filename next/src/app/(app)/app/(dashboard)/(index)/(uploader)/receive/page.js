@@ -1,19 +1,21 @@
+
+import { getTranslations } from "@/lib/server/language"
 import { listBrandProfilesForUser } from "@/lib/server/mongoose/helpers/brandProfiles";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 
 import NewTransferFileRequest from "@/components/newtransfer/NewTransferFileRequest";
 
 export default async function () {
+  const t = await getTranslations()
   const { user } = await useServerAuth()
   const storage = await user.getStorage()
   const brandProfiles = await listBrandProfilesForUser(user)
   return (
     <div className="mb-16">
       <div className="mx-auto max-w-xl mb-4 sm:mb-16 px-4">
-        <h1 className="mx-auto text-center max-w-2xl text-4xl font-bold tracking-tight text-white mb-20">
-          Let's{" "}
+        <h1 className="mx-auto text-center max-w-2xl text-4xl font-bold tracking-tight text-white mb-20">{t("Let's")}{" "}
           <span className="relative">
-            <span className="relative z-10">request</span>
+            <span className="relative z-10">{t("request")}</span>
             <svg
               className="absolute left-0 bottom-[0.08em] w-full text-primary-100"
               style={{ height: "0.15em" }}
@@ -32,8 +34,7 @@ export default async function () {
               />
             </svg>
           </span>
-          {" "}some files.
-        </h1>
+          {" "}{t("some files.")}</h1>
       </div>
       <div className="flex">
         <NewTransferFileRequest isDashboard={true} loaded={true} user={user.toJsonAsClient()} storage={storage} brandProfiles={brandProfiles.map(x => x.toJsonAsClient())} />

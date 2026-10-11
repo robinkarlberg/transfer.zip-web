@@ -1,3 +1,5 @@
+
+import { getTranslations } from "@/lib/server/language"
 import GenericPage from "@/components/dashboard/GenericPage"
 import TransferRequestList from "@/components/dashboard/TransferRequestList"
 import TransferRequest from "@/lib/server/mongoose/models/TransferRequest"
@@ -8,6 +10,7 @@ import { PlusIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export default async function () {
+  const t = await getTranslations()
   const { user } = await useServerAuth()
 
   // Active links are always rendered in full - there shouldn't be many.
@@ -26,7 +29,7 @@ export default async function () {
   ])
 
   return (
-    <GenericPage title="Requests" side={<Button asChild variant="white"><Link href="/app/receive"><PlusIcon /> New request</Link></Button>}>
+    <GenericPage title={t("Requests")} side={<Button asChild variant="white"><Link href="/app/receive"><PlusIcon /> {t("New request")}</Link></Button>}>
       <TransferRequestList
         activeRequests={activeRequests}
         initialInactiveRequests={initialInactiveRequests}

@@ -3,6 +3,7 @@ import { NextRequest } from "next/server"
 import { getLandingMetadata } from "@/lib/landing/metadata"
 import { LANDING_LANGUAGE_HEADER } from "@/lib/landing/routes"
 import { SWEDISH_PRICING_COOKIE } from "@/lib/billingCurrency"
+import { shouldSuggestSwedish } from "@/lib/landing/languageSuggestion"
 
 vi.mock("@/lib/server/content", () => ({
   getAllSlugs: async () => ["comparison/wetransfer"],
@@ -13,6 +14,23 @@ afterEach(() => {
   vi.resetModules()
   vi.unstubAllEnvs()
   vi.doUnmock("@/lib/isSelfHosted")
+})
+
+describe("Swedish language suggestion", () => {
+  it.each([
+    [["sv-SE", "en"], null, false, true],
+    [["en-US", "sv"], "SE", false, true],
+    [["en-US", "sv"], "EU", false, false],
+    [["de-DE", "sv", "en"], "OTHER", false, true],
+    [["SV-se"], "OTHER", false, true],
+    [["en-US"], null, false, false],
+    [[], "SE", false, true],
+    [[], null, false, false],
+    [["sv-SE"], "SE", true, false],
+    [["en-US"], "SE", true, false],
+  ])("uses languages %j, region %s and dismissal %s: %s", (languages, region, dismissed, expected) => {
+    expect(shouldSuggestSwedish(languages, region, dismissed)).toBe(expected)
+  })
 })
 
 describe("landing metadata", () => {
@@ -60,7 +78,9 @@ describe("request language", () => {
     ["/", "en"],
     ["/sv", "sv"],
     ["/sv/ta-emot", "sv"],
+    ["/sv/om-oss", "sv"],
     ["/receive", "en"],
+    ["/about-us", "en"],
     ["/pricing", "en"],
     ["/sverige", "en"],
     ["/transfer/secret", "en"],
@@ -123,6 +143,14 @@ describe("landing sitemap", () => {
       "x-default": "https://transfer.zip/receive",
     })
     expect(englishReceive.alternates).toEqual(swedishReceive.alternates)
+    const englishAbout = entries.find(entry => entry.url === "https://transfer.zip/about-us")
+    const swedishAbout = entries.find(entry => entry.url === "https://transfer.zip/sv/om-oss")
+    expect(swedishAbout.alternates.languages).toEqual({
+      en: "https://transfer.zip/about-us",
+      sv: "https://transfer.zip/sv/om-oss",
+      "x-default": "https://transfer.zip/about-us",
+    })
+    expect(englishAbout.alternates).toEqual(swedishAbout.alternates)
     expect(entries.find(entry => entry.url === "https://transfer.zip/pricing").alternates).toBeUndefined()
   })
 

@@ -1,3 +1,4 @@
+import { getTranslations } from "@/lib/server/language"
 import GenericPage from "@/components/dashboard/GenericPage";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 import TeamEvent from "@/lib/server/mongoose/models/TeamEvent";
@@ -6,7 +7,10 @@ import { ROLES } from "@/lib/roles";
 import OverviewSection from "./sections/OverviewSection";
 import TeamNameEditor from "./TeamNameEditor";
 
-export const metadata = { title: "Overview" };
+export async function generateMetadata() {
+  const t = await getTranslations()
+  return { title: t("Overview") }
+}
 
 export default async function TeamOverviewPage() {
   // Layout already gated this - auth + admin role guaranteed.

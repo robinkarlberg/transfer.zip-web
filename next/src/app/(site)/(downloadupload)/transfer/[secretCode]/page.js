@@ -1,3 +1,5 @@
+
+import { getTranslations, getLandingText, getLanguage } from "@/lib/server/language"
 import Transfer from "@/lib/server/mongoose/models/Transfer";
 import DownloadArea from "./DownloadArea";
 import { notFound } from "next/navigation";
@@ -21,7 +23,6 @@ import clouds from "@/img/download-clouds.png";
 
 const ENTRIES_LISTED = 50
 
-
 const iconFor = type => {
   if (!type) return FileIcon
   if (type.startsWith("image/")) return ImageIcon
@@ -31,6 +32,9 @@ const iconFor = type => {
 }
 
 export async function generateMetadata({ params }) {
+  const language = await getLanguage()
+  const locale = language === "sv" ? "sv-SE" : "en-US"
+  const t = await getTranslations()
   const { secretCode } = await params
 
   await dbConnect()
@@ -42,8 +46,8 @@ export async function generateMetadata({ params }) {
 
   const { brandProfile } = transfer
   const brandName = brandProfile?.name || "Transfer.zip"
-  const title = "Download " + formatCount(transfer.fileCount, "file") + " | " + brandName
-  const description = "You've got files waiting for you."
+  const title = t("Download ") + formatCount(transfer.fileCount, t("file"), t("files"), locale) + " | " + brandName
+  const description = t("You've got files waiting for you.")
   const ogImage = brandProfile?.backgroundUrl || "https://cdn.transfer.zip/og.png"
 
   return {
@@ -64,6 +68,10 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function ({ params }) {
+  const locale = await getLanguage() === "sv" ? "sv-SE" : "en-US"
+  const landingText = await getLandingText()
+  const language = await getLanguage()
+  const t = await getTranslations()
   const { secretCode } = await params
 
   await dbConnect()
@@ -96,11 +104,11 @@ export default async function ({ params }) {
   return (
     <>
       <div className="relative isolate grid min-h-svh grid-cols-1 place-items-center px-4 pt-28 pb-16">
-        {brandProfile ? <BrandHeader brandProfile={brandProfile} /> : !isCustomDomain && <Header />}
+        {brandProfile ? <BrandHeader brandProfile={brandProfile} /> : !isCustomDomain && <Header text={landingText.header} homeHref={language === "sv" ? "/sv" : "/"} pricingHref={language === "sv" ? "/sv#pricing" : "/pricing"} />}
         {brandProfile && brandProfile.backgroundUrl ? (
           <Image
             fill
-            alt="Branding Background Image"
+            alt={t("Branding Background Image")}
             className="object-center object-cover pointer-events-none"
             src={brandProfile.backgroundUrl}
           />
@@ -116,7 +124,7 @@ export default async function ({ params }) {
         {/* Radius is the pill buttons' 24px plus the padding, so the corners stay concentric */}
         <div className="w-full max-w-md animate-poof-in rounded-[32px] bg-white p-2 shadow-2xl motion-reduce:animate-none sm:rounded-[36px] sm:p-3">
           <div className="px-2 pt-3 pb-1 sm:pt-4">
-            <h1 className="text-2xl font-bold tracking-tight break-words text-gray-900 sm:text-3xl">{transfer.name || "You've got files"}</h1>
+            <h1 className="text-2xl font-bold tracking-tight break-words text-gray-900 sm:text-3xl">{transfer.name || t("You've got files")}</h1>
             {transfer.description && <p className="mt-2 whitespace-pre-line break-words text-gray-500">{transfer.description}</p>}
           </div>
           <ul className="mt-2 max-h-72 overflow-y-auto">
@@ -130,27 +138,27 @@ export default async function ({ params }) {
                   <div className="min-w-0 grow">
                     <p className="truncate text-sm font-medium text-gray-900">{entry.name}</p>
                     <p className="text-xs text-gray-500">
-                      {entry.folder && `${formatCount(entry.count, "file")} · `}{humanFileSize(entry.size, true, 1)}
+                      {entry.folder && `${formatCount(entry.count, t("file"), t("files"), locale)} · `}{humanFileSize(entry.size, true, 1)}
                     </p>
                   </div>
                 </li>
               )
             })}
-            {unlistedCount > 0 && <li className="px-2 py-2 text-sm text-gray-500">and {formatCount(unlistedCount, "more file")}</li>}
+            {unlistedCount > 0 && <li className="px-2 py-2 text-sm text-gray-500">{t("and")} {t("{count} more files", { count: unlistedCount })}</li>}
           </ul>
           <div className="mt-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-gray-100 px-2 pt-3 text-sm text-gray-500">
-            <span>{formatCount(fileCount, "file")} · {humanFileSize(transfer.size, true, 1)}</span>
-            {expiryDate && <span>Expires in {humanTimeUntil(expiryDate)}</span>}
+            <span>{formatCount(fileCount, t("file"), t("files"), locale)} · {humanFileSize(transfer.size, true, 1)}</span>
+            {expiryDate && <span>{t("Expires in")} {humanTimeUntil(expiryDate, language)}</span>}
           </div>
           <DownloadArea secretCode={secretCode} />
         </div>
       </div>
       {(!IS_SELFHOST && !brandProfile && !isCustomDomain) && (
         <>
-          <Features1 />
-          <TestimonialCloud />
-          <FAQ />
-          <Footer />
+          <Features1 text={landingText.features} />
+          <TestimonialCloud text={landingText.testimonials} />
+          <FAQ text={landingText.faq} items={landingText.faqItems} />
+          <Footer text={landingText.footer} homeHref={language === "sv" ? "/sv" : "/"} />
         </>
       )}
     </>

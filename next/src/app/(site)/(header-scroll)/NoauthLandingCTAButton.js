@@ -1,17 +1,17 @@
 "use client"
 
+import { useLanguage } from "@/context/LanguageContext"
 import { GlobalContext } from "@/context/GlobalContext"
-import { sendEvent } from "@/lib/client/umami"
 import Link from "next/link"
 import { useContext } from "react"
 
 export default function () {
+  const { landingText } = useLanguage()
   const { openSignupDialog } = useContext(GlobalContext)
 
   const handleCtaLinkNavigate = e => {
-    sendEvent("landing_cta_click", { is_logged_in: false })
     e.preventDefault()
-    openSignupDialog()
+    openSignupDialog(undefined, "footer")
   }
 
   return (
@@ -20,7 +20,7 @@ export default function () {
       href="/signin"
       className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     >
-      <span>Create Account</span>
+      <span>{landingText.account.createAccount}</span>
       {" "}&rarr;
     </Link>
   )

@@ -1,3 +1,4 @@
+import { getLanguage } from "@/lib/server/language"
 import { resp } from "@/lib/server/serverUtils";
 import { getStripe } from "@/lib/server/stripe";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
@@ -27,6 +28,7 @@ export async function POST() {
   try {
     const session = await getStripe().billingPortal.sessions.create({
       customer: stripe_customer_id,
+      locale: user.language || await getLanguage(),
       configuration: user.hasTeam ? process.env.STRIPE_PORTAL_TEAMS_CONFIGURATION_ID : process.env.STRIPE_PORTAL_INDIVIDUAL_CONFIGURATION_ID,
       return_url: `${process.env.SITE_URL}/app/settings`
     })

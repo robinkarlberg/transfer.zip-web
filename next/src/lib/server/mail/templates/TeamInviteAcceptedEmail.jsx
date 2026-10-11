@@ -1,14 +1,16 @@
+import { getTranslator } from "@/lib/i18n/translate"
 import { Button, Heading, Hr, Text } from '@react-email/components';
 import EmailLayout from './EmailLayout.jsx';
 
-export default function TeamInviteAcceptedEmail({ teamName, memberEmail, link }) {
+export default function TeamInviteAcceptedEmail({ language = "en", teamName, memberEmail, link }) {
+  const t = getTranslator(language)
   return (
-    <EmailLayout>
-      <Heading style={h1}>{memberEmail} joined your team</Heading>
+    <EmailLayout language={language}>
+      <Heading style={h1}>{memberEmail} {t("joined your team")}</Heading>
       <Text style={text}>
-        {memberEmail} accepted your invitation and is now a member of "{teamName}".
+        {memberEmail} {t("accepted your invitation and is now a member of \"")}{teamName}".
       </Text>
-      <Button style={button} href={link}>Manage Team</Button>
+      <Button style={button} href={link}>{t("Manage Team")}</Button>
       <Hr style={{ marginTop: '24px' }} />
       <Text style={{ color: '#2563eb', textDecoration: 'underline' }}>
         <a href={link}>{link}</a>

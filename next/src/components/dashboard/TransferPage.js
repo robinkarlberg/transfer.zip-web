@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { toast } from "sonner"
 import { deleteTransfer, putTransfer, sendTransferByEmail } from "@/lib/client/Api"
@@ -48,7 +49,7 @@ const iconFor = type => {
   return FileIcon
 }
 
-const formatDate = date => date.toLocaleDateString(undefined, {
+const formatDate = (date, locale) => date.toLocaleDateString(locale, {
   month: "short",
   day: "numeric",
   year: date.getFullYear() === new Date().getFullYear() ? undefined : "numeric",
@@ -81,6 +82,7 @@ function ValueButton({ Icon, children, ...props }) {
 }
 
 export default function ({ user, transfer, brandProfiles }) {
+  const { t, language, locale } = useLanguage()
   const router = useRouter()
 
   const transferLink = transfer.downloadUrl
@@ -117,7 +119,7 @@ export default function ({ user, transfer, brandProfiles }) {
       return toast.error(err.message)
     }
     setEditingExpiry(false)
-    toast.success("Expiration Changed", { description: `The expiration date was successfully changed to ${expiresAt.toLocaleDateString()}` })
+    toast.success(t("Expiration Changed"), { description: t("The expiration date was successfully changed to {0}", { "0": expiresAt.toLocaleDateString(locale) }) })
     router.refresh()
   }
 
@@ -160,11 +162,11 @@ export default function ({ user, transfer, brandProfiles }) {
     e.preventDefault()
 
     if (user.plan == "starter" && shared.length >= 25) {
-      toast.error("Limit reached", { description: "With the Starter plan, you can only send a file transfer to up to 25 email recipients at once. Upgrade to Pro to send up to 200 emails per transfer." })
+      toast.error(t("Limit reached"), { description: t("With the Starter plan, you can only send a file transfer to up to 25 email recipients at once. Upgrade to Pro to send up to 200 emails per transfer.") })
       return
     }
     if (user.plan == "pro" && shared.length >= 200) {
-      toast.error("Limit reached", { description: "With the Pro plan, you can only send a file transfer to up to 200 email recipients at once." })
+      toast.error(t("Limit reached"), { description: t("With the Pro plan, you can only send a file transfer to up to 200 email recipients at once.") })
       return
     }
 
@@ -181,7 +183,7 @@ export default function ({ user, transfer, brandProfiles }) {
       setSending(false)
     }
 
-    toast.success("Email sent", { description: `The Transfer link was successfully sent to ${email}!` })
+    toast.success(t("Email sent"), { description: t("The Transfer link was successfully sent to {0}!", { "0": email }) })
     setShowForwardTransfer(false)
     router.refresh()
   }
@@ -194,24 +196,24 @@ export default function ({ user, transfer, brandProfiles }) {
 
   const metadata = transfer.files.length > 0 &&
     <div className="flex items-end">
-      <span>{transfer.files.length} File{transfer.files.length > 1 ? "s" : ""}</span>
+      <span>{transfer.files.length} {t(transfer.files.length === 1 ? "file" : "files")}</span>
       <DotIcon name={"dot"} />
       <span>{humanFileSize(transfer.size, true)}</span>
       <DotIcon name={"dot"} />
-      <span>Created {new Date(transfer.createdAt).toLocaleDateString()}</span>
+      <span>{t("Created")} {new Date(transfer.createdAt).toLocaleDateString(locale)}</span>
     </div>
 
   const title = (
     editingTitle ?
       <div className="flex items-center justify-between">
         <div className="flex gap-2">
-          <input className="rounded-xl border-0 ring-0" ref={titleRef} defaultValue={transfer.name}></input>
+          <input className="rounded-xl border-0 ring-0" ref={titleRef} defaultValue={transfer.hasName ? transfer.name : ""}></input>
           <YesNo dark onYes={handleSaveTitle} onNo={() => setEditingTitle(false)} />
         </div>
       </div >
       :
       <DashH2>
-        {transfer.name} <button onClick={() => setEditingTitle(true)} className="ms-1 text-2xl hover:text-gray-200"><PencilIcon /></button>
+        {transfer.hasName ? transfer.name : t("Untitled Transfer")} <button onClick={() => setEditingTitle(true)} className="ms-1 text-2xl hover:text-gray-200"><PencilIcon /></button>
       </DashH2>
   )
 
@@ -228,7 +230,7 @@ export default function ({ user, transfer, brandProfiles }) {
 
   return (
     <>
-      <GenericPage category={"Sent"} title={transfer.name} titleComponent={title} side={metadata}>
+      <GenericPage category={"Sent"} title={transfer.hasName ? transfer.name : t("Untitled Transfer")} titleComponent={title} side={metadata}>
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row">
             <div className="ticket-cut-b sm:ticket-cut-r flex min-w-0 flex-1 flex-col rounded-t-xl bg-white p-5 sm:rounded-tr-none sm:rounded-bl-xl sm:p-6">
@@ -249,7 +251,7 @@ export default function ({ user, transfer, brandProfiles }) {
                         </DropdownMenuRadioItem>
                       ))}
                       <DropdownMenuSeparator />
-                      <DropdownMenuRadioItem value="none">No brand profile</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="none">{t("No brand profile")}</DropdownMenuRadioItem>
                     </DropdownMenuRadioGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -257,17 +259,17 @@ export default function ({ user, transfer, brandProfiles }) {
 
               <div className="mt-8 grid grid-cols-2">
                 <Field
-                  label="Expires"
-                  sub={expiryDate && (expiryDate > new Date() ? `in ${humanTimeUntil(expiryDate)}` : "Expired")}
+                  label={t("Expires")}
+                  sub={expiryDate && (expiryDate > new Date() ? t("in {0}", { "0": humanTimeUntil(expiryDate, language) }) : t("Expired"))}
                   className="border-r border-b pr-5 pb-6"
                 >
                   <Popover open={editingExpiry} onOpenChange={setEditingExpiry}>
                     <PopoverTrigger asChild>
-                      <ValueButton Icon={PencilIcon}>{expiryDate ? formatDate(expiryDate) : "Never"}</ValueButton>
+                      <ValueButton Icon={PencilIcon}>{expiryDate ? formatDate(expiryDate, locale) : t("Never")}</ValueButton>
                     </PopoverTrigger>
                     <PopoverContent align="start">
                       <form onSubmit={handleExpirySubmit}>
-                        <Label htmlFor="expiresAt">Expiry date</Label>
+                        <Label htmlFor="expiresAt">{t("Expiry date")}</Label>
                         <div className="mt-2 flex gap-2">
                           <Input
                             id="expiresAt"
@@ -278,21 +280,21 @@ export default function ({ user, transfer, brandProfiles }) {
                             min={toDateInputValue(minExpiryDate)}
                             max={toDateInputValue(maxExpiryDate)}
                           />
-                          <Button type="submit">Save</Button>
+                          <Button type="submit">{t("Save")}</Button>
                         </div>
                       </form>
                     </PopoverContent>
                   </Popover>
                 </Field>
-                <Field label="Downloads" className="border-b pb-6 pl-5">
+                <Field label={t("Downloads")} className="border-b pb-6 pl-5">
                   {downloads}
                 </Field>
-                <Field label={shared.length > 0 ? "Sent to" : "Shared via"} className="border-r pt-6 pr-5">
+                <Field label={shared.length > 0 ? t("Sent to") : t("Shared via")} className="border-r pt-6 pr-5">
                   {shared.length > 0
                     ? <ValueButton Icon={ChevronRightIcon} onClick={() => setShowEmailList(true)}>{shared.length == 1 ? shared[0].email : `${shared.length} people`}</ValueButton>
-                    : "Link"}
+                    : t("Link")}
                 </Field>
-                <Field label="Views" className="pt-6 pl-5">
+                <Field label={t("Views")} className="pt-6 pl-5">
                   {views}
                 </Field>
               </div>
@@ -308,12 +310,10 @@ export default function ({ user, transfer, brandProfiles }) {
                 <div className="grid gap-2">
                   <Button onClick={handleCopy}>
                     {copied ? <CheckIcon /> : <CopyIcon />}
-                    {copied ? "Copied" : "Copy link"}
+                    {copied ? t("Copied") : t("Copy link")}
                   </Button>
                   <Button variant="outline" onClick={() => setShowForwardTransfer(true)}>
-                    <MailIcon />
-                    Send by email
-                  </Button>
+                    <MailIcon />{t("Send by email")}</Button>
                 </div>
               </div>
             </div>
@@ -321,31 +321,29 @@ export default function ({ user, transfer, brandProfiles }) {
 
           <div className="rounded-xl bg-white p-5 sm:p-6">
             <div className="flex items-center justify-between gap-4">
-              <h2 className="text-lg font-semibold text-gray-900">Message</h2>
+              <h2 className="text-lg font-semibold text-gray-900">{t("Message")}</h2>
               {!editingMessage && (
-                <button type="button" onClick={() => setEditingMessage(true)} className="text-sm font-medium text-primary hover:text-primary-light">
-                  Edit
-                </button>
+                <button type="button" onClick={() => setEditingMessage(true)} className="text-sm font-medium text-primary hover:text-primary-light">{t("Edit")}</button>
               )}
             </div>
             {editingMessage ? (
               <form onSubmit={handleSaveMessage} className="mt-3">
-                <Textarea autoFocus name="description" rows={3} defaultValue={transfer.description} placeholder="Add a message for the recipients" />
+                <Textarea autoFocus name="description" rows={3} defaultValue={transfer.description} placeholder={t("Add a message for the recipients")} />
                 <div className="mt-2 flex justify-end gap-2">
-                  <Button type="button" size="sm" variant="ghost" onClick={() => setEditingMessage(false)}>Cancel</Button>
-                  <Button size="sm">Save</Button>
+                  <Button type="button" size="sm" variant="ghost" onClick={() => setEditingMessage(false)}>{t("Cancel")}</Button>
+                  <Button size="sm">{t("Save")}</Button>
                 </div>
               </form>
             ) : (
               <p className={`mt-2 text-sm break-words whitespace-pre-line ${transfer.description ? "text-gray-700" : "text-gray-400"}`}>
-                {transfer.description || "No message"}
+                {transfer.description || t("No message")}
               </p>
             )}
           </div>
 
           {transfer.files.length > 0 && (
             <div className="rounded-xl bg-white p-5 sm:p-6">
-              <h2 className="text-lg font-semibold text-gray-900">Files</h2>
+              <h2 className="text-lg font-semibold text-gray-900">{t("Files")}</h2>
               <ul className="mt-3 divide-y divide-gray-100">
                 {visibleFiles.map(file => {
                   const Icon = iconFor(file.type)
@@ -362,7 +360,7 @@ export default function ({ user, transfer, brandProfiles }) {
               </ul>
               {transfer.files.length > FILES_SHOWN && (
                 <button type="button" onClick={() => setShowAllFiles(!showAllFiles)} className="mt-2 text-sm font-medium text-primary hover:text-primary-light">
-                  {showAllFiles ? "Show less" : `+ ${transfer.files.length - FILES_SHOWN} more`}
+                  {showAllFiles ? t("Show less") : `+ ${transfer.files.length - FILES_SHOWN} more`}
                 </button>
               )}
             </div>
@@ -370,9 +368,7 @@ export default function ({ user, transfer, brandProfiles }) {
 
           <div className="flex justify-end">
             <button type="button" onClick={() => setShowDeleteConfirm(true)} className="inline-flex items-center gap-1.5 text-sm font-medium text-white hover:underline">
-              <Trash2Icon size={14} />
-              Delete transfer
-            </button>
+              <Trash2Icon size={14} />{t("Delete transfer")}</button>
           </div>
         </div>
       </GenericPage>
@@ -380,14 +376,14 @@ export default function ({ user, transfer, brandProfiles }) {
       <Dialog open={showEmailList} onOpenChange={setShowEmailList}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Sent to {shared.length} {shared.length == 1 ? "person" : "people"}</DialogTitle>
-            <DialogDescription>Everyone who got this transfer by email.</DialogDescription>
+            <DialogTitle>{t("Sent to")} {shared.length} {shared.length == 1 ? "person" : "people"}</DialogTitle>
+            <DialogDescription>{t("Everyone who got this transfer by email.")}</DialogDescription>
           </DialogHeader>
           <ul className="max-h-80 divide-y divide-gray-100 overflow-y-auto text-sm">
             {shared.map((entry, index) => (
               <li key={index} className="flex items-center justify-between gap-4 py-2.5">
                 <span className="truncate text-gray-900">{entry.email}</span>
-                <span className="shrink-0 text-gray-500">{formatDate(new Date(entry.time))}</span>
+                <span className="shrink-0 text-gray-500">{formatDate(new Date(entry.time), locale)}</span>
               </li>
             ))}
           </ul>
@@ -397,15 +393,15 @@ export default function ({ user, transfer, brandProfiles }) {
       <Dialog open={showForwardTransfer} onOpenChange={setShowForwardTransfer}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Send by email</DialogTitle>
-            <DialogDescription>They'll get the download link along with the title and message.</DialogDescription>
+            <DialogTitle>{t("Send by email")}</DialogTitle>
+            <DialogDescription>{t("They'll get the download link along with the title and message.")}</DialogDescription>
           </DialogHeader>
           <form id="sendByEmailForm" onSubmit={handleSendByEmailFormSubmit}>
             <Input autoFocus name="email" type="email" required autoComplete="off" placeholder="name@example.com" />
           </form>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowForwardTransfer(false)}>Cancel</Button>
-            <Button type="submit" form="sendByEmailForm" disabled={sending}>Send</Button>
+            <Button variant="outline" onClick={() => setShowForwardTransfer(false)}>{t("Cancel")}</Button>
+            <Button type="submit" form="sendByEmailForm" disabled={sending}>{t("Send")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -413,14 +409,12 @@ export default function ({ user, transfer, brandProfiles }) {
       <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
         <DialogContent>
           <DialogHeader variant="destructive">
-            <DialogTitle>Delete Transfer</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this transfer? This action cannot be undone.
-            </DialogDescription>
+            <DialogTitle>{t("Delete Transfer")}</DialogTitle>
+            <DialogDescription>{t("Are you sure you want to delete this transfer? This action cannot be undone.")}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>{t("Cancel")}</Button>
+            <Button variant="destructive" onClick={handleDelete}>{t("Delete")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

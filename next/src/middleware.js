@@ -4,6 +4,7 @@ import { AB_TESTS } from "./lib/abtests"
 import { abTest } from "./lib/server/abtestServer"
 import { isOwnHost } from "./lib/hostUtils"
 import { getLandingLanguage, LANDING_LANGUAGE_HEADER } from "./lib/landing/routes"
+import { LANGUAGE_COOKIE, PATH_HEADER, isLanguage, fixedLanguage, browserLanguage, languageCookieOptions } from "./lib/i18n/language"
 import { SWEDISH_PRICING_COOKIE } from "./lib/billingCurrency"
 
 const selfHostBlacklist = [
@@ -45,6 +46,12 @@ function applyAbTests(req, res) {
 
 export function middleware(req) {
   const { pathname } = req.nextUrl
+  const requestHeaders = new Headers(req.headers)
+  const explicitLanguage = req.nextUrl.searchParams.get("lang") || (pathname.startsWith("/api/") ? req.headers.get(LANDING_LANGUAGE_HEADER) : null)
+  const savedLanguage = req.cookies.get(LANGUAGE_COOKIE)?.value
+  const language = fixedLanguage(pathname) || (isLanguage(explicitLanguage) ? explicitLanguage : isLanguage(savedLanguage) ? savedLanguage : browserLanguage(req.headers.get("accept-language")))
+  requestHeaders.set(LANDING_LANGUAGE_HEADER, language)
+  requestHeaders.set(PATH_HEADER, pathname)
 
   const hostHeader = req.headers.get("host") ?? ""
   const isExternalHost = !isOwnHost(hostHeader) && process.env.NODE_ENV !== "development"
@@ -60,16 +67,16 @@ export function middleware(req) {
         headers: {
           'Access-Control-Allow-Origin': origin,
           'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-transferzip-language',
           'Access-Control-Max-Age': '86400',
         },
       })
     }
 
-    const response = NextResponse.next()
+    const response = NextResponse.next({ request: { headers: requestHeaders } })
     response.headers.set('Access-Control-Allow-Origin', origin)
     response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-transferzip-language')
     return response
   }
 
@@ -84,7 +91,8 @@ export function middleware(req) {
     if (match) {
       const newUrl = req.nextUrl.clone()
       newUrl.pathname = `/transfer/${match[1]}`
-      return NextResponse.rewrite(newUrl)
+      requestHeaders.set(PATH_HEADER, newUrl.pathname)
+      return NextResponse.rewrite(newUrl, { request: { headers: requestHeaders } })
     }
 
     if (customDomainWhitelist.every((prefix) => !pathname.startsWith(prefix))) {
@@ -126,9 +134,10 @@ export function middleware(req) {
       return NextResponse.redirect(newUrl, { status: 301 })
     }
   }
-  const requestHeaders = new Headers(req.headers)
-  requestHeaders.set(LANDING_LANGUAGE_HEADER, getLandingLanguage(pathname))
   const response = NextResponse.next({ request: { headers: requestHeaders } })
+  if (!req.headers.has("next-router-prefetch") && (fixedLanguage(pathname) || isLanguage(explicitLanguage))) {
+    response.cookies.set(LANGUAGE_COOKIE, language, languageCookieOptions)
+  }
   if (!IS_SELFHOST && getLandingLanguage(pathname) === "sv" && !req.headers.has("next-router-prefetch")) {
     response.cookies.set(SWEDISH_PRICING_COOKIE, "1", {
       httpOnly: true,

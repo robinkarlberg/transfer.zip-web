@@ -127,6 +127,7 @@ export const swedishLandingText = {
     "android": "Android till PC",
     "resources": "Resurser",
     "support": "Support / Kontakt",
+    "about": "Om oss",
     "receive": "Ta emot filer",
     "send": "Skicka filer",
     "selfHosting": "Egen drift",

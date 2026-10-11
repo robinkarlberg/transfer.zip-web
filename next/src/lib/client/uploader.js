@@ -1,3 +1,5 @@
+import { sendEvent } from "./umami"
+import { EVENTS, fileSizeBucket } from "../analytics"
 import { getUploadToken, markTransferComplete } from "./Api";
 import { generateUUID } from "./clientUtils";
 import { trackError } from "./errorTracking";
@@ -18,6 +20,20 @@ export function prepareTransferFiles(files) {
 }
 
 export async function uploadFiles(files, idMap, transfer, onProgress, onFatalError, onError) {
+  const started = Date.now()
+  const data = { mode: transfer.hasTransferRequest ? "request" : "stored", files: files.length, size: fileSizeBucket(files.reduce((sum, file) => sum + file.size, 0)) }
+  sendEvent(EVENTS.UPLOAD_STARTED, data)
+  try {
+    const completed = await performUpload(files, idMap, transfer, onProgress, onFatalError, onError)
+    sendEvent(completed ? EVENTS.UPLOAD_COMPLETED : EVENTS.UPLOAD_FAILED, { ...data, duration_seconds: Math.round((Date.now() - started) / 1000) })
+    return completed
+  } catch (err) {
+    sendEvent(EVENTS.UPLOAD_FAILED, data)
+    throw err
+  }
+}
+
+async function performUpload(files, idMap, transfer, onProgress, onFatalError, onError) {
   // We need to give each local file its given id from the server so that we can
   // upload the right file to the right place, based on its id
 
@@ -89,7 +105,8 @@ export async function uploadFiles(files, idMap, transfer, onProgress, onFatalErr
   });
 
   try {
-    await uppy.upload()
+    const result = await uppy.upload()
+    if (!result || result.successful.length !== files.length) return false
   }
   catch(err) {
     onFatalError && onFatalError(err)

@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/context/LanguageContext"
 
 import Link from "next/link";
 import { classNames } from "@/lib/utils";
@@ -21,6 +22,7 @@ import Image from "next/image";
 import logo from "@/img/icon.png";
 
 export default function FloatingBar({ user }) {
+  const { language, t } = useLanguage()
   const prepend = "/app";
   const pathname = usePathname();
   const inAdmin = pathname.startsWith("/app/admin");
@@ -30,13 +32,13 @@ export default function FloatingBar({ user }) {
   const showBrandingInDashboard = !user?.hasTeam;
 
   const navigation = [
-    { name: "Sent", href: "/sent" },
-    { name: "Received", href: "/received" },
-    { name: "Requests", href: "/requests" },
-    ...(showBrandingInDashboard ? [{ name: "Branding", href: "/branding" }] : []),
-    { name: "Account", href: "/settings" },
-    ...(canSeeAdmin ? [{ name: "Admin", href: "/admin" }] : []),
-    { name: "Transfer", href: "" },
+    { id: "Sent", name: t("Sent"), href: "/sent" },
+    { id: "Received", name: t("Received"), href: "/received" },
+    { id: "Requests", name: t("Requests"), href: "/requests" },
+    ...(showBrandingInDashboard ? [{ id: "Branding", name: t("Branding"), href: "/branding" }] : []),
+    { id: "Account", name: t("Account"), href: "/settings" },
+    ...(canSeeAdmin ? [{ id: "Admin", name: t("Admin"), href: "/admin" }] : []),
+    { id: "Transfer", name: t("Transfer"), href: "" },
   ].map((item) => ({ ...item, href: prepend + item.href }));
 
   const icons = {
@@ -54,14 +56,14 @@ export default function FloatingBar({ user }) {
   // In admin mode the bar becomes the section nav for the panel.
   if (inAdmin) {
     const adminNav = [
-      { name: "Overview", href: "/app/admin", icon: LayoutDashboardIcon },
-      { name: "Members", href: "/app/admin/members", icon: UsersIcon },
-      { name: "Transfers", href: "/app/admin/transfers", icon: ArrowUpIcon },
-      { name: "Requests", href: "/app/admin/requests", icon: MailIcon },
-      { name: "Branding", href: "/app/admin/branding", icon: PaintbrushIcon },
-      { name: "Activity", href: "/app/admin/activity", icon: ActivityIcon },
+      { name: t("Overview"), href: "/app/admin", icon: LayoutDashboardIcon },
+      { name: t("Members"), href: "/app/admin/members", icon: UsersIcon },
+      { name: t("Transfers"), href: "/app/admin/transfers", icon: ArrowUpIcon },
+      { id: "Requests", name: t("Requests"), href: "/app/admin/requests", icon: MailIcon },
+      { id: "Branding", name: t("Branding"), href: "/app/admin/branding", icon: PaintbrushIcon },
+      { name: t("Activity"), href: "/app/admin/activity", icon: ActivityIcon },
       ...(user?.role === "owner"
-        ? [{ name: "Billing", href: "/app/admin/billing", icon: CreditCardIcon }]
+        ? [{ name: t("Billing"), href: "/app/admin/billing", icon: CreditCardIcon }]
         : []),
     ];
 
@@ -76,7 +78,7 @@ export default function FloatingBar({ user }) {
             className="flex items-center gap-2 rounded-full px-3 sm:px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
           >
             <ArrowLeftIcon size={16} />
-            <span className="hidden sm:inline">Back</span>
+            <span className="hidden sm:inline">{t("Back")}</span>
           </Link>
 
           {adminNav.map((item) => {
@@ -107,7 +109,7 @@ export default function FloatingBar({ user }) {
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-20 fade-in-up">
       <div className="flex items-center gap-0.5 sm:gap-1 bg-gray-900 rounded-full px-2 sm:px-3 py-2 shadow-2xl">
         {/* Logo */}
-        <Link href="/" className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 mr-1 sm:mr-2">
+        <Link href={language === "sv" ? "/sv" : "/"} className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 mr-1 sm:mr-2">
           <Image alt="logo" src={logo} className="w-6 h-6 sm:w-8 sm:h-8" />
         </Link>
 
@@ -122,14 +124,14 @@ export default function FloatingBar({ user }) {
           )}
         >
           <SendIcon size={16} />
-          <span className="hidden sm:inline">Transfer</span>
+          <span className="hidden sm:inline">{t("Transfer")}</span>
         </Link>
 
         {/* Navigation Items */}
         {navigation.slice(0, -1).map((item) => {
-          const Icon = icons[item.name];
+          const Icon = icons[item.id];
           const active = linkIsActive(item.href);
-          const isAdmin = item.name === "Admin";
+          const isAdmin = item.id === "Admin";
 
           return (
             <Link

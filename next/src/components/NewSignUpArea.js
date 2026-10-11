@@ -1,6 +1,6 @@
 "use client"
-
-import { englishLandingText } from "@/lib/landing/en";
+import { EVENTS } from "@/lib/analytics"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useState } from "react"
 import SignInWithGoogleButton from "./SignInWithGoogleButton"
@@ -12,7 +12,10 @@ import { requestMagicLink } from "@/lib/client/Api"
 import MagicLinkSentArea from "./MagicLinkSentArea"
 import { cn } from "@/lib/utils"
 
-export default function ({ onGoogleLogin, onEmailLogin, onReset, newtab, pill, text = englishLandingText.signup.area }) {
+export default function ({ onGoogleLogin, onEmailLogin, onReset, newtab, pill, text }) {
+  const { landingText } = useLanguage()
+  text = text || landingText.signup.area
+
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(null) // { requestId, email } once the link is sent
@@ -27,7 +30,7 @@ export default function ({ onGoogleLogin, onEmailLogin, onReset, newtab, pill, t
 
     try {
       const res = await requestMagicLink(email)
-      sendEvent(newtab ? "signup_modal_event" : "signup_event")
+
       onEmailLogin && onEmailLogin()
       setSent({ requestId: res.requestId, email: res.email || email })
     }
@@ -40,7 +43,7 @@ export default function ({ onGoogleLogin, onEmailLogin, onReset, newtab, pill, t
   }
 
   const handleGoogleLogin = e => {
-    sendEvent(newtab ? "signup_modal_google_event" : "signup_google_event")
+    sendEvent(EVENTS.GOOGLE, { method: "google", placement: newtab ? "dialog" : "signin" })
     onGoogleLogin && onGoogleLogin()
   }
 

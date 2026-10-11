@@ -1,16 +1,16 @@
+import Analytics from "@/components/Analytics";
 import { FileProvider } from "@/context/FileProvider";
 import GlobalProvider from "@/context/GlobalContext";
 import { IS_SELFHOST } from "@/lib/isSelfHosted";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Fraunces, Inter } from "next/font/google";
 import { headers } from "next/headers";
-import Head from "next/head";
 import Script from "next/script";
 import "./globals.css";
 import { IS_DEV } from "@/lib/server/serverUtils";
 import { Toaster } from "sonner";
-import DocumentLanguage from "@/components/DocumentLanguage";
-import { LANDING_LANGUAGE_HEADER } from "@/lib/landing/routes";
+import { LanguageProvider } from "@/context/LanguageContext";
+import { getLanguage } from "@/lib/server/language";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -59,7 +59,7 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   const headersList = await headers();
-  const language = headersList.get(LANDING_LANGUAGE_HEADER) === "sv" ? "sv" : "en";
+  const language = await getLanguage();
   const ua = headersList.get("user-agent") || "";
   const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
 
@@ -69,15 +69,17 @@ export default async function RootLayout({ children }) {
       <Script src="/lib/ponyfill.min.js"></Script>
       {/* </Head> */}
       {/* {!IS_SELFHOST && !IS_DEV && process.env.MEGADESK_PUB && <Script defer src="https://getmegadesk.com/embed.js" data-pub={process.env.MEGADESK_PUB}></Script>} */}
-      {!IS_SELFHOST && process.env.UMAMI_ANALYTICS_WEBSITE_ID && process.env.UMAMI_ANALYTICS_WEBSITE_ID.length == "36" ? <Script defer src="https://umami.rkt.dev/script.js" data-website-id={process.env.UMAMI_ANALYTICS_WEBSITE_ID} data-exclude-hash="true"></Script> : <></>}
+
       {!IS_SELFHOST && !IS_DEV && process.env.SIGMA_SEO_SITE_ID && <Script defer src="https://unhidden.so/seo.js" data-website-id={process.env.SIGMA_SEO_SITE_ID}></Script>}
       <body className="font-sans antialiased">
-        <DocumentLanguage />
+        <LanguageProvider language={language}>
+        {!IS_SELFHOST && !IS_DEV && process.env.UMAMI_ANALYTICS_WEBSITE_ID?.length === 36 && <Analytics websiteId={process.env.UMAMI_ANALYTICS_WEBSITE_ID} />}
         <GlobalProvider isSafari={isSafari}>
           <FileProvider>
             {children}
           </FileProvider>
         </GlobalProvider>
+        </LanguageProvider>
         <Toaster richColors position="bottom-right" />
       </body>
     </html>

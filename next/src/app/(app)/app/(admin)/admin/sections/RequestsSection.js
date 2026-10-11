@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -48,10 +49,11 @@ import EmptySpace from "@/components/elements/EmptySpace";
 import AdminCard from "../AdminCard";
 
 function Row({ request, canManage, busy, onCopy, onToggleActive, onDelete }) {
+  const { t } = useLanguage()
   const author = request.author;
   const handleCopy = async () => {
     if (await tryCopyToClipboard(request.uploadUrl)) {
-      toast.success("Copied link");
+      toast.success(t("Copied link"));
     }
     onCopy?.(request);
   };
@@ -63,9 +65,9 @@ function Row({ request, canManage, busy, onCopy, onToggleActive, onDelete }) {
           {request.active ? <LinkIcon size={16} /> : <Link2OffIcon size={16} />}
         </div>
         <div className="min-w-0">
-          <div className="text-sm font-medium text-gray-900 truncate">{request.name}</div>
+          <div className="text-sm font-medium text-gray-900 truncate">{request.hasName ? request.name : t("Untitled Request")}</div>
           <div className="text-xs text-gray-500 mt-0.5 truncate">
-            {request.active ? "Active link" : "Inactive"}
+            {request.active ? t("Active link") : t("Inactive")}
           </div>
         </div>
       </div>
@@ -79,7 +81,7 @@ function Row({ request, canManage, busy, onCopy, onToggleActive, onDelete }) {
             </div>
           </>
         ) : (
-          <div className="text-xs text-gray-500">Unknown</div>
+          <div className="text-xs text-gray-500">{t("Unknown")}</div>
         )}
       </div>
 
@@ -92,33 +94,31 @@ function Row({ request, canManage, busy, onCopy, onToggleActive, onDelete }) {
 
       <div className="col-span-2 sm:col-span-1 text-xs text-gray-600">
         {request.active ? (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-100 text-primary-700">Active</span>
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-100 text-primary-700">{t("Active")}</span>
         ) : (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">Inactive</span>
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{t("Inactive")}</span>
         )}
       </div>
 
       <div className="col-span-1 flex justify-end">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" title="Actions" disabled={busy}>
+            <Button variant="ghost" size="icon" title={t("Actions")} disabled={busy}>
               <EllipsisVerticalIcon className="w-4 h-4 text-gray-600" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={handleCopy}>
-              <CopyIcon size={14} /> Copy link
-            </DropdownMenuItem>
+              <CopyIcon size={14} /> {t("Copy link")}</DropdownMenuItem>
             {canManage && (
               <>
                 <DropdownMenuItem onClick={() => onToggleActive(request)}>
                   {request.active ? <Link2OffIcon size={14} /> : <LinkIcon size={14} />}
-                  {request.active ? "Deactivate link" : "Reactivate link"}
+                  {request.active ? t("Deactivate link") : t("Reactivate link")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive" onClick={() => onDelete(request)}>
-                  <Trash2Icon size={14} /> Delete
-                </DropdownMenuItem>
+                  <Trash2Icon size={14} /> {t("Delete")}</DropdownMenuItem>
               </>
             )}
           </DropdownMenuContent>
@@ -129,6 +129,7 @@ function Row({ request, canManage, busy, onCopy, onToggleActive, onDelete }) {
 }
 
 export default function RequestsSection({ requests, role }) {
+  const { t } = useLanguage()
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialAuthor = searchParams.get("author") || "all";
@@ -171,7 +172,7 @@ export default function RequestsSection({ requests, role }) {
     try {
       if (request.active) await deactivateTeamTransferRequest(request.id);
       else await activateTeamTransferRequest(request.id);
-      toast.success(request.active ? "Link deactivated" : "Link reactivated");
+      toast.success(request.active ? t("Link deactivated") : t("Link reactivated"));
       router.refresh();
     } catch (err) {
       toast.error(err.message);
@@ -186,10 +187,10 @@ export default function RequestsSection({ requests, role }) {
     try {
       const result = await deleteTeamTransferRequest(deleteTarget.id);
       const n = result.deletedTransfersCount || 0;
-      toast.success("Request deleted", {
+      toast.success(t("Request deleted"), {
         description: n > 0
-          ? `Deleted the link and ${n} received transfer${n === 1 ? "" : "s"}.`
-          : "The request link was deleted.",
+          ? t("Deleted the link and {0} received transfer{1}.", { "0": n, "1": n === 1 ? "" : "s" })
+          : t("The request link was deleted."),
       });
       setDeleteTarget(null);
       router.refresh();
@@ -207,21 +208,21 @@ export default function RequestsSection({ requests, role }) {
   const side = hasRequests ? (
     <div className="flex items-center gap-3 flex-wrap">
       <div className="text-white whitespace-nowrap">
-        {filtered.length} of {requests.length}
+        {filtered.length} {t("of")} {requests.length}
       </div>
       <Input
         variant="white"
         value={query}
         onChange={e => setQuery(e.target.value)}
-        placeholder="Search any..."
+        placeholder={t("Search any...")}
         className="w-44"
       />
       <Select value={authorFilter} onValueChange={setAuthorFilter}>
         <SelectTrigger variant="white" className="w-48">
-          <SelectValue placeholder="All members" />
+          <SelectValue placeholder={t("All members")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All members</SelectItem>
+          <SelectItem value="all">{t("All members")}</SelectItem>
           {authors.map(a => (
             <SelectItem key={a.id} value={a.id}>
               {a.fullName || a.email}
@@ -231,38 +232,36 @@ export default function RequestsSection({ requests, role }) {
       </Select>
       <Select value={statusFilter} onValueChange={setStatusFilter}>
         <SelectTrigger variant="white" className="w-36">
-          <SelectValue placeholder="Status" />
+          <SelectValue placeholder={t("Status")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All statuses</SelectItem>
-          <SelectItem value="active">Active</SelectItem>
-          <SelectItem value="inactive">Inactive</SelectItem>
+          <SelectItem value="all">{t("All statuses")}</SelectItem>
+          <SelectItem value="active">{t("Active")}</SelectItem>
+          <SelectItem value="inactive">{t("Inactive")}</SelectItem>
         </SelectContent>
       </Select>
     </div>
   ) : null;
 
   return (
-    <GenericPage title="Requests" side={side}>
+    <GenericPage title={t("Requests")} side={side}>
       <div className="space-y-3">
         {!hasRequests ? (
           <EmptySpace
-            title="See Every Request Link Your Team Creates"
-            subtitle="Once members start creating request links, you'll see every one here with received transfer counts and the option to deactivate or remove them."
+            title={t("See Every Request Link Your Team Creates")}
+            subtitle={t("Once members start creating request links, you'll see every one here with received transfer counts and the option to deactivate or remove them.")}
           />
         ) : (
           <AdminCard>
             {filtered.length === 0 ? (
-              <div className="py-12 text-center text-sm text-gray-500">
-                No requests match your filters.
-              </div>
+              <div className="py-12 text-center text-sm text-gray-500">{t("No requests match your filters.")}</div>
             ) : (
               <div className="rounded-lg border overflow-hidden">
                 <div className="hidden sm:grid grid-cols-12 gap-3 px-4 py-2 text-xs uppercase tracking-wider text-gray-500 bg-gray-50 border-b">
-                  <div className="col-span-5">Request</div>
-                  <div className="col-span-3">Created by</div>
-                  <div className="col-span-2">Received</div>
-                  <div className="col-span-1">Status</div>
+                  <div className="col-span-5">{t("Request")}</div>
+                  <div className="col-span-3">{t("Created by")}</div>
+                  <div className="col-span-2">{t("Received")}</div>
+                  <div className="col-span-1">{t("Status")}</div>
                   <div className="col-span-1" />
                 </div>
                 {filtered.map(r => (
@@ -281,48 +280,44 @@ export default function RequestsSection({ requests, role }) {
         )}
 
         {!canManage && hasRequests && (
-          <p className="text-xs text-white px-1">
-            Only the Owner can deactivate or delete other members' request links.
-          </p>
+          <p className="text-xs text-white px-1">{t("Only the Owner can deactivate or delete other members' request links.")}</p>
         )}
 
         <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader variant="destructive">
-              <DialogTitle>Delete request{deleteTarget?.name ? ` "${deleteTarget.name}"` : ""}?</DialogTitle>
+              <DialogTitle>{t("Delete request")}{deleteTarget?.name ? ` "${deleteTarget.name}"` : ""}?</DialogTitle>
               <DialogDescription>
                 {deleteTarget && deleteTarget.receivedTransfersCount === 0
-                  ? `The request link by ${deleteTarget.author?.email || "an unknown member"} will be permanently deleted.`
+                  ? t("The request link by {0} will be permanently deleted.", { "0": deleteTarget.author?.email || "an unknown member" })
                   : deleteTarget
-                    ? `This will permanently delete the request link and the ${deleteTarget.receivedTransfersCount} received transfer${deleteTarget.receivedTransfersCount === 1 ? "" : "s"} listed below.`
+                    ? t("This will permanently delete the request link and the {0} received transfer{1} listed below.", { "0": deleteTarget.receivedTransfersCount, "1": deleteTarget.receivedTransfersCount === 1 ? "" : "s" })
                     : ""}
               </DialogDescription>
             </DialogHeader>
             {deleteTarget && deleteTarget.receivedTransfersCount > 0 && (
               <div className="mt-2 rounded-lg border border-gray-200 bg-gray-50 max-h-56 overflow-y-auto">
                 <ul className="divide-y divide-gray-200">
-                  {previewTransfers.map(t => (
-                    <li key={t.id} className="px-3 py-2 flex items-center justify-between gap-3 text-sm">
-                      <span className="text-gray-900 truncate">{t.name}</span>
-                      <span className="text-gray-500 shrink-0">{t.fileCount} file{t.fileCount === 1 ? "" : "s"}</span>
+                  {previewTransfers.map(entry => (
+                    <li key={entry.id} className="px-3 py-2 flex items-center justify-between gap-3 text-sm">
+                      <span className="text-gray-900 truncate">{entry.hasName ? entry.name : t("Untitled Request")}</span>
+                      <span className="text-gray-500 shrink-0">{entry.fileCount} {t(entry.fileCount === 1 ? "file" : "files")}</span>
                     </li>
                   ))}
                   {extraTransfers > 0 && (
-                    <li className="px-3 py-2 text-sm text-gray-500">
-                      and {extraTransfers} more
-                    </li>
+                    <li className="px-3 py-2 text-sm text-gray-500">{t("and")} {extraTransfers} {t("more")}</li>
                   )}
                 </ul>
               </div>
             )}
             <DialogFooter>
-              <Button variant="outline" onClick={() => setDeleteTarget(null)} disabled={deleting}>Cancel</Button>
+              <Button variant="outline" onClick={() => setDeleteTarget(null)} disabled={deleting}>{t("Cancel")}</Button>
               <Button
                 className="bg-red-600 text-white hover:bg-red-700"
                 onClick={handleDelete}
                 disabled={deleting}
               >
-                {deleting ? "Deleting" : "Delete"}
+                {deleting ? t("Deleting") : t("Delete")}
               </Button>
             </DialogFooter>
           </DialogContent>

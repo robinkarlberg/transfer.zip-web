@@ -1,3 +1,5 @@
+import { getTranslator } from "@/lib/i18n/translate"
+import { localizedLink } from "@/lib/i18n/language"
 import { Resend } from 'resend';
 import { render } from '@react-email/render';
 import TransferDownloadedEmail from './templates/TransferDownloadedEmail.jsx';
@@ -31,93 +33,118 @@ async function sendMail(reactElement, { from, to, subject }) {
   }
 }
 
-export async function sendTransferDownloaded(email, { name, link, brand }) {
-  await sendMail(TransferDownloadedEmail({ name, link, brand }), {
+export async function sendTransferDownloaded(email, { name, link, brand, language = "en" }) {
+  const t = getTranslator(language)
+  link = localizedLink(link, language)
+  await sendMail(TransferDownloadedEmail({ language, name, link, brand }), {
     to: email,
-    subject: `Transfer downloaded - ${brand?.name || process.env.NEXT_PUBLIC_SITE_NAME} | ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`,
+    subject: `${t("Transfer downloaded")} - ${brand?.name || process.env.NEXT_PUBLIC_SITE_NAME} | ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`,
   });
 }
 
-export async function sendTransferRequestReceived(email, { name, link, brand }) {
-  await sendMail(TransferRequestReceivedEmail({ name, link, brand }), {
+export async function sendTransferRequestReceived(email, { name, link, brand, language = "en" }) {
+  const t = getTranslator(language)
+  link = localizedLink(link, language)
+  await sendMail(TransferRequestReceivedEmail({ language, name, link, brand }), {
     to: email,
-    subject: `Files received - ${brand?.name || process.env.NEXT_PUBLIC_SITE_NAME} | ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`,
+    subject: `${t("Files received")} - ${brand?.name || process.env.NEXT_PUBLIC_SITE_NAME} | ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`,
   });
 }
 
-export async function sendTransferRequestShare(email, { name, description, link, brand }) {
-  await sendMail(TransferRequestShareEmail({ name, description, link, brand }), {
+export async function sendTransferRequestShare(email, { name, description, link, brand, language = "en" }) {
+  const t = getTranslator(language)
+  link = localizedLink(link, language)
+  await sendMail(TransferRequestShareEmail({ language, name, description, link, brand }), {
     to: email,
-    subject: `Transfer request - ${brand?.name || process.env.NEXT_PUBLIC_SITE_NAME}`,
+    subject: `${t("Transfer request")} - ${brand?.name || process.env.NEXT_PUBLIC_SITE_NAME}`,
   });
 }
 
-export async function sendTransferShare(email, { name, description, link, brand }) {
-  await sendMail(TransferShareEmail({ name, description, link, brand }), {
+export async function sendTransferShare(email, { name, description, link, brand, language = "en" }) {
+  const t = getTranslator(language)
+  link = localizedLink(link, language)
+  await sendMail(TransferShareEmail({ language, name, description, link, brand }), {
     to: email,
-    subject: `Files available - ${brand?.name || process.env.NEXT_PUBLIC_SITE_NAME}`,
+    subject: `${t("Files available")} - ${brand?.name || process.env.NEXT_PUBLIC_SITE_NAME}`,
   });
 }
 
-export async function sendPasswordReset(email, { link }) {
-  await sendMail(PasswordResetEmail({ link }), {
+export async function sendPasswordReset(email, { link, language = "en" }) {
+  const t = getTranslator(language)
+  link = localizedLink(link, language)
+  await sendMail(PasswordResetEmail({ language, link }), {
     to: email,
-    subject: `Reset your password - ${process.env.NEXT_PUBLIC_SITE_NAME} | ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`,
+    subject: `${t("Reset your password")} - ${process.env.NEXT_PUBLIC_SITE_NAME} | ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`,
   });
 }
 
-export async function sendMagicLink(email, { link }) {
-  await sendMail(MagicLinkEmail({ link }), {
+export async function sendMagicLink(email, { link, language = "en" }) {
+  const t = getTranslator(language)
+  link = localizedLink(link, language)
+  await sendMail(MagicLinkEmail({ language, link }), {
     to: email,
-    subject: `Log In - ${process.env.NEXT_PUBLIC_SITE_NAME} | ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`,
+    subject: `${t("Log In")} - ${process.env.NEXT_PUBLIC_SITE_NAME} | ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`,
   });
 }
 
-export async function sendTeamInvite(email, { teamName, inviterName, link }) {
-  await sendMail(TeamInviteEmail({ teamName, inviterName, link }), {
+export async function sendTeamInvite(email, { teamName, inviterName, link, language = "en" }) {
+  const t = getTranslator(language)
+  link = localizedLink(link, language)
+  await sendMail(TeamInviteEmail({ language, teamName, inviterName, link }), {
     to: email,
-    subject: `You've been invited to join ${teamName} - ${process.env.NEXT_PUBLIC_SITE_NAME} | ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`,
+    subject: `${t("You've been invited to join {teamName}", { teamName })} - ${process.env.NEXT_PUBLIC_SITE_NAME} | ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`,
   });
 }
 
-export async function sendTeamInviteAccepted(email, { teamName, memberEmail, link }) {
-  await sendMail(TeamInviteAcceptedEmail({ teamName, memberEmail, link }), {
+export async function sendTeamInviteAccepted(email, { teamName, memberEmail, link, language = "en" }) {
+  const t = getTranslator(language)
+  link = localizedLink(link, language)
+  await sendMail(TeamInviteAcceptedEmail({ language, teamName, memberEmail, link }), {
     to: email,
-    subject: `${memberEmail} joined ${teamName} - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
+    subject: `${t("{memberEmail} joined {teamName}", { memberEmail, teamName })} - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
   });
 }
 
-export async function sendTeamMemberRemoved(email, { teamName }) {
-  await sendMail(TeamMemberRemovedEmail({ teamName }), {
+export async function sendTeamMemberRemoved(email, { teamName, language = "en" }) {
+  const t = getTranslator(language)
+  await sendMail(TeamMemberRemovedEmail({ language, teamName }), {
     to: email,
-    subject: `You've been removed from ${teamName} - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
+    subject: `${t("You've been removed from {teamName}", { teamName })} - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
   });
 }
 
-export async function sendTeamRoleChanged(email, { teamName, role, link }) {
-  await sendMail(TeamRoleChangedEmail({ teamName, role, link }), {
+export async function sendTeamRoleChanged(email, { teamName, role, link, language = "en" }) {
+  const t = getTranslator(language)
+  link = localizedLink(link, language)
+  await sendMail(TeamRoleChangedEmail({ language, teamName, role, link }), {
     to: email,
-    subject: `Your role in ${teamName} has changed - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
+    subject: `${t("Your role in {teamName} has changed", { teamName })} - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
   });
 }
 
-export async function sendTeamSeatCapacityReached(email, { teamName, seats, link }) {
-  await sendMail(TeamSeatCapacityReachedEmail({ teamName, seats, link }), {
+export async function sendTeamSeatCapacityReached(email, { teamName, seats, link, language = "en" }) {
+  const t = getTranslator(language)
+  link = localizedLink(link, language)
+  await sendMail(TeamSeatCapacityReachedEmail({ language, teamName, seats, link }), {
     to: email,
-    subject: `${teamName} has reached its seat limit - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
+    subject: `${t("{teamName} has reached its seat limit", { teamName })} - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
   });
 }
 
-export async function sendTeamOverCapacity(email, { teamName, memberCount, seats, link }) {
-  await sendMail(TeamOverCapacityEmail({ teamName, memberCount, seats, link }), {
+export async function sendTeamOverCapacity(email, { teamName, memberCount, seats, link, language = "en" }) {
+  const t = getTranslator(language)
+  link = localizedLink(link, language)
+  await sendMail(TeamOverCapacityEmail({ language, teamName, memberCount, seats, link }), {
     to: email,
-    subject: `${teamName} is over its seat limit - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
+    subject: `${t("{teamName} is over its seat limit", { teamName })} - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
   });
 }
 
-export async function sendCustomDomainConnected(email, { domain, link }) {
-  await sendMail(CustomDomainConnectedEmail({ domain, link }), {
+export async function sendCustomDomainConnected(email, { domain, link, language = "en" }) {
+  const t = getTranslator(language)
+  link = localizedLink(link, language)
+  await sendMail(CustomDomainConnectedEmail({ language, domain, link }), {
     to: email,
-    subject: `Custom domain ${domain} is live - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
+    subject: `${t("Custom domain {domain} is live", { domain })} - ${process.env.NEXT_PUBLIC_SITE_NAME}`,
   });
 }

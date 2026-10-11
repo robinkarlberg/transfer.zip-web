@@ -1,3 +1,4 @@
+import { localizedLink } from "@/lib/i18n/language"
 import mongoose from 'mongoose';
 import crypto from "crypto"
 
@@ -22,6 +23,7 @@ const TransferRequestSchema = new mongoose.Schema({
     brandProfile: { type: mongoose.Schema.Types.ObjectId, ref: "BrandProfile" },
     name: String,
     description: String,
+    language: { type: String, enum: ["en", "sv"] },
     secretCode: { type: String, default: () => crypto.randomUUID(), required: true, index: true },
 
     emailsSharedWith: [EmailSharedWith]
@@ -92,9 +94,9 @@ TransferRequestSchema.methods.toJsonAsUploader = async function () {
 TransferRequestSchema.methods.getUploadLink = async function () {
     const customDomain = await getDownloadDomainFor({ team: this.team, user: this.author?._id || this.author })
     if (customDomain) {
-        return `https://${customDomain}/upload/${this.secretCode}`
+        return this.language ? localizedLink(`https://${customDomain}/upload/${this.secretCode}`, this.language) : `https://${customDomain}/upload/${this.secretCode}`
     }
-    return `${process.env.SITE_URL}/upload/${this.secretCode}`
+    return this.language ? localizedLink(`${process.env.SITE_URL}/upload/${this.secretCode}`, this.language) : `${process.env.SITE_URL}/upload/${this.secretCode}`
 }
 
 export default mongoose.models.TransferRequest || mongoose.model("TransferRequest", TransferRequestSchema)

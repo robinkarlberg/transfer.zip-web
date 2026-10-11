@@ -1,13 +1,13 @@
 /**
  * https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
- * 
+ *
  * Format bytes as human-readable text.
- * 
+ *
  * @param bytes Number of bytes.
- * @param si True to use metric (SI) units, aka powers of 1000. False to use 
+ * @param si True to use metric (SI) units, aka powers of 1000. False to use
  *           binary (IEC), aka powers of 1024.
  * @param dp Number of decimal places to display.
- * 
+ *
  * @return Formatted string.
  */
 export function humanFileSize(bytes, si = false, dp = 0) {
@@ -88,7 +88,7 @@ export const groupFilesByFolder = (files, pathOf = file => file.relativePath || 
 }
 
 /** "1 file", "25,081 files" */
-export const formatCount = (count, noun) => `${count.toLocaleString("en-US")} ${noun}${count === 1 ? "" : "s"}`
+export const formatCount = (count, noun, plural = `${noun}s`, locale = "en-US") => `${count.toLocaleString(locale)} ${count === 1 ? noun : plural}`
 
 const textEnc = new TextEncoder()
 const textDec = new TextDecoder()

@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useContext, useState } from "react";
 import { login, register, requestPasswordReset } from "@/lib/client/Api";
@@ -19,7 +20,7 @@ import { Button } from "@/components/ui/button";
 
 /*
   This example requires some changes to your config:
-  
+
   ```
   // tailwind.config.js
   module.exports = {
@@ -32,6 +33,7 @@ import { Button } from "@/components/ui/button";
   ```
 */
 export default function SignInPage(params) {
+  const { t } = useLanguage()
   const { displayGenericModal, displaySuccessModal, displayErrorModal } = useContext(ApplicationContext)
   const [message, setMessage] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -57,8 +59,8 @@ export default function SignInPage(params) {
     setLoading(true)
 
     try {
-      if (!validateEmail(email)) throw { message: "Invalid email" }
-      if (password.length < 6) throw { message: "Password too short (min 6 characters" }
+      if (!validateEmail(email)) throw { message: t("Invalid email") }
+      if (password.length < 6) throw { message: t("Password too short (min 6 characters") }
 
       const res = await login(email, password)
       if (res.success) {
@@ -86,7 +88,7 @@ export default function SignInPage(params) {
       const res = await requestPasswordReset(email)
 
       setShowForgotPasswordModal(false)
-      displaySuccessModal("Reset link sent!", "Check your email for further instructions.")
+      displaySuccessModal(t("Reset link sent!"), t("Check your email for further instructions."))
     }
     catch (err) {
       displayErrorModal(err.message)
@@ -99,14 +101,12 @@ export default function SignInPage(params) {
 
   return (
     <>
-      <Modal loading={loadingForgotPassword} show={showForgotPasswordModal} title="Forgot Password?" buttons={[
-        { title: "Ok", form: "forgotPasswordForm" },
-        { title: "Cancel", onClick: () => setShowForgotPasswordModal(false) },
+      <Modal loading={loadingForgotPassword} show={showForgotPasswordModal} title={t("Forgot Password?")} buttons={[
+        { title: t("OK"), form: "forgotPasswordForm" },
+        { title: t("Cancel"), onClick: () => setShowForgotPasswordModal(false) },
       ]}>
         <div>
-          <p className="text-sm text-gray-500">
-            Enter your email. You will receive a reset link.
-          </p>
+          <p className="text-sm text-gray-500">{t("Enter your email. You will receive a reset link.")}</p>
           <form id="forgotPasswordForm" onSubmit={handleForgotPasswordSubmit}>
             <div className="mt-2">
               <input
@@ -121,7 +121,7 @@ export default function SignInPage(params) {
       </Modal>
       <div className="relative isolate grid min-h-svh lg:grid-cols-2">
         <div className="relative grid place-items-center px-4 py-20">
-          <button className="absolute top-6 left-6 text-sm font-medium text-white hover:text-primary-100 lg:text-gray-600 lg:hover:text-gray-900" onClick={() => window.history.back()}>&larr; Back</button>
+          <button className="absolute top-6 left-6 text-sm font-medium text-white hover:text-primary-100 lg:text-gray-600 lg:hover:text-gray-900" onClick={() => window.history.back()}>{t("← Back")}</button>
           {/* A floating card over the sky on small screens, flat on the white column once the sky moves beside it */}
           <div className="w-full max-w-sm rounded-[32px] bg-white p-7 shadow-2xl sm:p-8 lg:p-0 lg:shadow-none">
             <Image
@@ -133,10 +133,8 @@ export default function SignInPage(params) {
             {/* Once the magic link is sent, NewSignUpArea shows its own heading for each stage */}
             {!emailSent && (
               <>
-                <h1 className="mt-4 text-center text-3xl font-bold tracking-tight text-gray-900">
-                  Welcome!
-                </h1>
-                {!IS_SELFHOST && <p className="mt-2 text-center text-gray-500">Sign in or create an account.</p>}
+                <h1 className="mt-4 text-center text-3xl font-bold tracking-tight text-gray-900">{t("Welcome!")}</h1>
+                {!IS_SELFHOST && <p className="mt-2 text-center text-gray-500">{t("Sign in or create an account.")}</p>}
               </>
             )}
 
@@ -144,9 +142,7 @@ export default function SignInPage(params) {
               {
                 IS_SELFHOST ?
                   <form onSubmit={handleSubmit} action="#" method="POST">
-                    <label htmlFor="email" className="block px-1 text-sm font-medium text-gray-900">
-                      Email address
-                    </label>
+                    <label htmlFor="email" className="block px-1 text-sm font-medium text-gray-900">{t("Email address")}</label>
                     <div className="mt-2">
                       <Input
                         id="email"
@@ -159,12 +155,8 @@ export default function SignInPage(params) {
                       />
                     </div>
                     <div className="mt-5 flex items-center justify-between px-1">
-                      <label htmlFor="password" className="block text-sm font-medium text-gray-900">
-                        Password
-                      </label>
-                      <button type="button" onClick={() => setShowForgotPasswordModal(true)} className="text-sm font-semibold text-primary hover:text-primary-light">
-                        Forgot password?
-                      </button>
+                      <label htmlFor="password" className="block text-sm font-medium text-gray-900">{t("Password")}</label>
+                      <button type="button" onClick={() => setShowForgotPasswordModal(true)} className="text-sm font-semibold text-primary hover:text-primary-light">{t("Forgot password?")}</button>
                     </div>
                     <div className="mt-2">
                       <Input
@@ -178,8 +170,7 @@ export default function SignInPage(params) {
                     </div>
                     {message && <p className="mt-3 text-center text-sm text-red-600">{message}</p>}
                     <Button disabled={loading} className="mt-5 h-12 w-full rounded-full font-semibold">
-                      {loading && <Spinner />} Sign in
-                    </Button>
+                      {loading && <Spinner />} {t("Sign in")}</Button>
                   </form>
                   :
                   <NewSignUpArea pill onEmailLogin={() => setEmailSent(true)} onReset={() => setEmailSent(false)} />
@@ -187,18 +178,14 @@ export default function SignInPage(params) {
             </div>
 
             {IS_SELFHOST ?
-              <p className="mt-6 text-center text-sm text-gray-500">
-                Self-managed instance of{' '}
+              <p className="mt-6 text-center text-sm text-gray-500">{t("Self-managed instance of")}{' '}
                 <Link href="https://transfer.zip/" className="font-semibold text-primary hover:text-primary-light">
                   Transfer.zip
                 </Link>
               </p>
               : (
-                <p className="mt-6 text-center text-sm text-gray-500">
-                  Having trouble?{' '}
-                  <Link href="mailto:support@transfer.zip" className="font-semibold text-primary hover:text-primary-light">
-                    Contact Us
-                  </Link>
+                <p className="mt-6 text-center text-sm text-gray-500">{t("Having trouble?")}{' '}
+                  <Link href="mailto:support@transfer.zip" className="font-semibold text-primary hover:text-primary-light">{t("Contact Us")}</Link>
                 </p>
               )}
           </div>

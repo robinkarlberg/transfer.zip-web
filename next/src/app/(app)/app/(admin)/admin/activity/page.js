@@ -1,3 +1,5 @@
+
+import { getTranslations } from "@/lib/server/language"
 import GenericPage from "@/components/dashboard/GenericPage";
 import EmptySpace from "@/components/elements/EmptySpace";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
@@ -5,9 +7,13 @@ import TeamEvent from "@/lib/server/mongoose/models/TeamEvent";
 import { ACTIVITY_PAGE_SIZE } from "@/lib/activityFilters";
 import ActivityClient from "./ActivityClient";
 
-export const metadata = { title: "Activity" };
+export async function generateMetadata() {
+  const t = await getTranslations()
+  return { title: t("Activity") }
+}
 
 export default async function TeamActivityPage() {
+  const t = await getTranslations()
   const { user, team } = await useServerAuth();
 
   const rows = await TeamEvent.find({ team: team._id })
@@ -20,10 +26,10 @@ export default async function TeamActivityPage() {
 
   if (events.length === 0) {
     return (
-      <GenericPage title="Activity">
+      <GenericPage title={t("Activity")}>
         <EmptySpace
-          title="Keep Track of Every Team Action"
-          subtitle="Invites, role changes, member removals, and billing updates will show up here so you always know what's happening across your team."
+          title={t("Keep Track of Every Team Action")}
+          subtitle={t("Invites, role changes, member removals, and billing updates will show up here so you always know what's happening across your team.")}
         />
       </GenericPage>
     );

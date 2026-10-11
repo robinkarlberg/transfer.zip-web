@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { getGoogleLink } from "@/lib/client/Api"
 import BIcon from "./BIcon"
@@ -15,7 +16,10 @@ function GoogleMark() {
   )
 }
 
-export default function SignInWithGoogleButton({ disabled, newtab, onClick, pill, text = "Sign In with Google" }) {
+export default function SignInWithGoogleButton({ disabled, newtab, onClick, pill, text }) {
+
+  const { t } = useLanguage()
+  text = text || t("Sign In with Google")
 
   const handleGoogleLogin = async e => {
     onClick && onClick()

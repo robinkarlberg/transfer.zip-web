@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { IS_SELFHOST } from "@/lib/isSelfHosted"
 import { useContext, useEffect, useState } from "react"
@@ -14,6 +15,7 @@ import { sleep } from "@/lib/utils";
 import { doPasswordReset } from "@/lib/client/Api";
 
 export default function () {
+  const { t } = useLanguage()
   const { displaySuccessModal } = useContext(ApplicationContext)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState(null)
@@ -38,16 +40,16 @@ export default function () {
       const confirmPassword = formData.get("confirmPassword")
       const [email, token] = atob(encodedToken).split(" ")
       if (newPassword.length < 8) {
-        throw new Error("Password needs to be at least 8 characters long!")
+        throw new Error(t("Password needs to be at least 8 characters long!"))
       }
       if (newPassword !== confirmPassword) {
-        throw new Error("Passwords do not match!")
+        throw new Error(t("Passwords do not match!"))
       }
       await sleep(700)
       const res = await doPasswordReset(email, token, newPassword)
       if (res.success) {
         setSuccess(true)
-        displaySuccessModal("Success", "Your password was reset successfully.")
+        displaySuccessModal(t("Success"), t("Your password was reset successfully."))
         router.replace("/signin")
       }
     }
@@ -73,22 +75,18 @@ export default function () {
         {/* {!IS_SELFHOST && <button className="absolute top-8 text-xl me-1 text-primary hover:text-primary-light" onClick={() => window.history.back()}>&larr; Back</button>} */}
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <Image
-            alt="Your Company"
+            alt={t("Your Company")}
             src={logo}
             className="mx-auto h-10 w-auto"
           />
-          <h2 className="mt-10 text-center text-3xl/9 font-bold tracking-tight text-gray-900">
-            Change password
-          </h2>
+          <h2 className="mt-10 text-center text-3xl/9 font-bold tracking-tight text-gray-900">{t("Change password")}</h2>
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form onSubmit={handleSubmit} action="#" method="POST" className="space-y-6">
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-                  New Password
-                </label>
+                <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">{t("New Password")}</label>
               </div>
               <div className="mt-2">
                 <input
@@ -103,9 +101,7 @@ export default function () {
 
             <div>
               <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-                  Confirm Password
-                </label>
+                <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">{t("Confirm Password")}</label>
               </div>
               <div className="mt-2">
                 <input
@@ -128,17 +124,13 @@ export default function () {
                 disabled={loading}
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-primary px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              >
-                Change {loading && <Spinner className={"ms-2"} />}
+              >{t("Change")} {loading && <Spinner className={"ms-2"} />}
               </button>
             </div>
           </form>
 
-          <p className="mt-10 text-center text-sm/6 text-gray-500">
-            Have you changed your mind?{' '}
-            <Link href="/login" className="font-semibold text-primary hover:text-primary-light">
-              Sign in
-            </Link>
+          <p className="mt-10 text-center text-sm/6 text-gray-500">{t("Have you changed your mind?")}{' '}
+            <Link href="/login" className="font-semibold text-primary hover:text-primary-light">{t("Sign in")}</Link>
           </p>
         </div>
       </div>

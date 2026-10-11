@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import ErrorDialog from "@/components/ErrorDialog"
 import Modal from "@/components/elements/Modal"
@@ -9,6 +10,7 @@ import { createContext, useState } from "react"
 export const ApplicationContext = createContext({})
 
 export default function ApplicationProvider({ children }) {
+  const { t } = useLanguage()
 
     const [showWaitlistModal, setShowWaitlistModal] = useState(false)
     const [showGenericModal, setShowGenericModal] = useState(false)
@@ -31,7 +33,7 @@ export default function ApplicationProvider({ children }) {
 
     const displaySuccessModal = (title, description) => {
         displayGenericModal({
-            title, style: "success", buttons: [{ title: "Ok!", onClick: () => displayGenericModal(false) }],
+            title, style: "success", buttons: [{ title: t("Ok!"), onClick: () => displayGenericModal(false) }],
             children: <p className="text-sm text-gray-500">{description}</p>
         })
     }

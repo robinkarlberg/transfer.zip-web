@@ -1,21 +1,21 @@
 "use client"
 
+import { sendEvent } from "@/lib/client/umami"
+import { EVENTS } from "@/lib/analytics"
 import NewSignUpDialog from "@/components/NewSignUpDialog"
+import { useLanguage } from "@/context/LanguageContext"
 import { createContext, useState } from "react"
-import { usePathname } from "next/navigation"
-import { getLandingLanguage } from "@/lib/landing/routes"
-import { englishLandingText } from "@/lib/landing/en"
-import { swedishLandingText } from "@/lib/landing/sv"
 
 export const GlobalContext = createContext({})
 
 export default function GlobalProvider({ children, isSafari = false }) {
-    const language = getLandingLanguage(usePathname())
-    const text = language === "sv" ? swedishLandingText.signup : englishLandingText.signup
+    const { landingText } = useLanguage()
+    const text = landingText.signup
 
     const [_showSignupDialog, setShowSignupDialog] = useState(false)
     const [files, setFiles] = useState(null)
-    const openSignupDialog = (files, transfer) => {
+    const openSignupDialog = (files, placement = "transfer_form") => {
+        sendEvent(EVENTS.CTA, { placement })
         setFiles(files)
         setShowSignupDialog(true)
     }

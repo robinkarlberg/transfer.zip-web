@@ -1,3 +1,5 @@
+import { getLanguage } from "@/lib/server/language"
+import { setLanguageCookie } from "@/lib/server/completeSignIn"
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -12,7 +14,9 @@ export async function GET() {
     access_type: "offline",
     prompt: "select_account",
   });
-  return NextResponse.redirect(
+  const response = NextResponse.redirect(
     "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString()
   );
+  setLanguageCookie(response, await getLanguage())
+  return response;
 }

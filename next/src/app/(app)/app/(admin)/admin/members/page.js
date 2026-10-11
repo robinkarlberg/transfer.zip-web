@@ -1,3 +1,5 @@
+
+import { getTranslations } from "@/lib/server/language"
 import GenericPage from "@/components/dashboard/GenericPage";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 import TeamInvite from "@/lib/server/mongoose/models/TeamInvite";
@@ -6,9 +8,13 @@ import { ROLES } from "@/lib/roles";
 import MembersSection from "../sections/MembersSection";
 import AddUserButton from "../AddUserButton";
 
-export const metadata = { title: "Members" };
+export async function generateMetadata() {
+  const t = await getTranslations()
+  return { title: t("Members") }
+}
 
 export default async function TeamMembersPage() {
+  const t = await getTranslations()
   const { user, team } = await useServerAuth();
 
   await team.populate({ path: "users", populate: { path: "team" } });
@@ -38,15 +44,14 @@ export default async function TeamMembersPage() {
   const side = (
     <div className="flex items-center gap-3">
       <span>
-        {occupied}/{team.seats} seats used
-        {invites.length > 0 && ` (${invites.length} pending)`}
+        {occupied}/{team.seats} {t("seats used")}{invites.length > 0 && ` (${invites.length} pending)`}
       </span>
       <AddUserButton atCapacity={atCapacity} />
     </div>
   );
 
   return (
-    <GenericPage title="Members" side={side}>
+    <GenericPage title={t("Members")} side={side}>
       <MembersSection
         currentUser={user.toJsonAsClient()}
         teamUsers={teamUsers}

@@ -8,7 +8,6 @@ import QuickFilePicker from "@/components/quick/QuickFilePicker"
 import { CodeDisplay, FlightScene, PILL_BUTTON, ShareLink, Status, StormCloud } from "@/components/quick/TransferParts"
 import { useFileDrop } from "@/hooks/client/useFileDrop"
 import { QuickShareSession, QuickShareStatus } from "@/lib/client/quickshare"
-import { sendEvent } from "@/lib/client/umami"
 import { humanFileSize } from "@/lib/transferUtils"
 import { cn } from "@/lib/utils"
 
@@ -52,14 +51,7 @@ export default function TransferPairWidget({ slug, fromKey, fromName, toKey, toN
       files: files || [],
       transferDirection: role === "send" ? "S" : "R",
     })
-    let previousStatus = null
-    session.onstate = (snapshot) => {
-      setSnap(snapshot)
-      if (snapshot.status !== previousStatus) {
-        sendEvent("transfer_guide_status", { slug, role, status: snapshot.status, design: "guide_v2" })
-        previousStatus = snapshot.status
-      }
-    }
+    session.onstate = setSnap
     session.start()
     return () => {
       session.stop()
@@ -69,7 +61,6 @@ export default function TransferPairWidget({ slug, fromKey, fromName, toKey, toN
 
   const pickRole = (newRole) => {
     setRole(newRole)
-    sendEvent("transfer_guide_role", { slug, role: newRole, design: "guide_v2" })
   }
 
   // Dropping files before picking a side means sending them. The picker takes over drops once it mounts.
@@ -88,7 +79,6 @@ export default function TransferPairWidget({ slug, fromKey, fromName, toKey, toN
   /** @param {File[]} selectedFiles */
   const startSending = (selectedFiles) => {
     setFiles(selectedFiles)
-    sendEvent("transfer_guide_files", { slug, role: "send", design: "guide_v2" })
   }
 
   const status = snap ? snap.status : QuickShareStatus.CONNECTING

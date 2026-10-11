@@ -1,6 +1,6 @@
 import LanguageSwitch from "./LanguageSwitch";
 import { englishLandingText } from "@/lib/landing/en";
-import { RECEIVE_PATHS } from "@/lib/landing/routes";
+import { ABOUT_PATHS, RECEIVE_PATHS } from "@/lib/landing/routes";
 import Link from "next/link";
 
 import logo from "@/img/icon.png";
@@ -53,6 +53,9 @@ export default function Footer({ homeHref = "/", text = englishLandingText.foote
               <ul className="text-gray-500 --dark:text-gray-400 font-medium">
                 <li className="mb-4">
                   <a href={`/contact`} className="hover:underline">{text.support}</a>
+                </li>
+                <li className="mb-4">
+                  <a href={ABOUT_PATHS[homeHref === "/sv" ? "sv" : "en"]} className="hover:underline">{text.about}</a>
                 </li>
                 <li className="mb-4">
                   <h3><a href={RECEIVE_PATHS[homeHref === "/sv" ? "sv" : "en"]} className="hover:underline">{text.receive}</a></h3>

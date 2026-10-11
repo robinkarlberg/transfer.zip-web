@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { cn } from "@/lib/utils"
 import { LinkIcon } from "lucide-react"
@@ -72,6 +73,7 @@ export default function HowItWorks({ heading = "How it works", steps = STEPS, fr
   const sender = DEVICES[from]
   const receiver = DEVICES[to]
   const sceneRef = useRef(null)
+  const { t } = useLanguage()
   const [scene, setScene] = useState(0)
   const [flight, setFlight] = useState(0)
   const [inView, setInView] = useState(false)
@@ -121,7 +123,7 @@ export default function HowItWorks({ heading = "How it works", steps = STEPS, fr
       {/* The sky ends here: it sinks into the clouds behind the card and comes out white */}
       <CloudBank className="absolute inset-x-0 bottom-0 -z-10 h-[576px] w-full sm:h-[max(720px,37vw)]" />
       <div className="mx-auto max-w-4xl">
-        <h2 className="text-center text-4xl font-bold tracking-tight text-white text-shadow-sm sm:text-5xl">{heading}</h2>
+        <h2 className="text-center text-4xl font-bold tracking-tight text-white text-shadow-sm sm:text-5xl">{t(heading)}</h2>
         <div className="mt-10 rounded-3xl bg-white p-2 shadow-xl sm:p-3">
           <div ref={sceneRef} className="overflow-hidden rounded-2xl bg-linear-to-b from-primary-100 to-primary-50">
             <svg viewBox="0 0 720 236" className="block w-full" aria-hidden="true">
@@ -178,8 +180,8 @@ export default function HowItWorks({ heading = "How it works", steps = STEPS, fr
                   {i + 1}
                 </span>
                 <div>
-                  <p className={cn("font-semibold transition-colors duration-500", activeStep === i ? "text-gray-900" : "text-gray-500")}>{title}</p>
-                  <p className="mt-0.5 text-sm text-gray-500">{text}</p>
+                  <p className={cn("font-semibold transition-colors duration-500", activeStep === i ? "text-gray-900" : "text-gray-500")}>{t(title)}</p>
+                  <p className="mt-0.5 text-sm text-gray-500">{t(text)}</p>
                 </div>
               </li>
             ))}

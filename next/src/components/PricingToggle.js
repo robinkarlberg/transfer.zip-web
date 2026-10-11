@@ -1,10 +1,12 @@
 "use client"
-
-import { englishLandingText } from "@/lib/landing/en";
+import { useLanguage } from "@/context/LanguageContext"
 
 import { Radio, RadioGroup } from "@headlessui/react"
 
-export default function ({ frequency, setFrequency, text = englishLandingText.pricingToggle }) {
+export default function ({ frequency, setFrequency, text }) {
+  const { landingText } = useLanguage()
+  text = text || landingText.pricingToggle
+
   return (
     <div className="flex justify-center">
       <fieldset aria-label={text.label}>

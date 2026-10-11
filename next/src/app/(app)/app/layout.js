@@ -1,3 +1,5 @@
+import { LanguageSync } from "@/context/LanguageContext"
+import { getLanguage, getTranslations } from "@/lib/server/language"
 import DashboardProvider from "@/context/DashboardContext";
 import { redirect } from "next/navigation";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
@@ -5,12 +7,15 @@ import ApplicationProvider from "@/context/ApplicationContext";
 import FloatingBar from "./FloatingBar";
 import { ROLES } from "@/lib/roles";
 
-export const metadata = {
+export async function generateMetadata() {
+  const t = await getTranslations()
+  return {
   title: {
-    template: "%s | Dashboard",
-    default: "Dashboard",
+    template: t("%s | Dashboard"),
+    default: t("Dashboard"),
   },
-};
+}
+}
 
 export default async function DashboardLayout({ children }) {
   const auth = await useServerAuth();
@@ -42,6 +47,7 @@ export default async function DashboardLayout({ children }) {
 
   return (
     <div className="h-screen flex flex-col overflow-auto relative">
+      <LanguageSync language={await getLanguage()} />
       <ApplicationProvider>
         <DashboardProvider>
           {children}

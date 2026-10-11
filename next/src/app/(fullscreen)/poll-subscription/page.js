@@ -1,6 +1,9 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
-import { useEffect, useState } from "react"
+import { sendEvent } from "@/lib/client/umami"
+import { EVENTS } from "@/lib/analytics"
+import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { getUser } from "@/lib/client/Api"
 import Spinner from "@/components/elements/Spinner"
@@ -11,6 +14,8 @@ import Link from "next/link"
 import Image from "next/image"
 
 export default function PollSubscriptionPage() {
+  const { t } = useLanguage()
+  const reported = useRef(false)
   const router = useRouter()
   const [showDelayMessage, setShowDelayMessage] = useState(false)
 
@@ -22,6 +27,10 @@ export default function PollSubscriptionPage() {
         try {
           const res = await getUser()
           if (res.user?.plan && res.user.plan !== "free") {
+            if (!reported.current) {
+              reported.current = true
+              sendEvent(EVENTS.SUBSCRIPTION, { plan: res.user.plan, trial: res.user.isTrial, currency: res.user.planCurrency })
+            }
             router.replace("/app")
             return
           }
@@ -50,7 +59,7 @@ export default function PollSubscriptionPage() {
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5 flex items-center gap-x-1">
             <Image
-              alt="Logo"
+              alt={t("Logo")}
               src={logo}
               className="h-8 w-auto"
             />
@@ -59,12 +68,10 @@ export default function PollSubscriptionPage() {
         </div>
       </div>
       <Spinner sizeClassName="h-10 w-10" />
-      <p className="mt-4 text-lg text-gray-600 fade-in-up-slow">Setting up your subscription...</p>
+      <p className="mt-4 text-lg text-gray-600 fade-in-up-slow">{t("Setting up your subscription...")}</p>
       {showDelayMessage && (
         <>
-          <p className="mt-4 text-sm text-gray-500 fade-in-up-slow text-center">
-            This is taking longer than expected. Please contact support if your subscription isn't active in a few minutes.
-          </p>
+          <p className="mt-4 text-sm text-gray-500 fade-in-up-slow text-center">{t("This is taking longer than expected. Please contact support if your subscription isn't active in a few minutes.")}</p>
           <Button size={"sm"} className={"mt-8 fade-in-up-slow"} onClick={() => {
             if (window.megadeskSendText) {
               window.megadeskSendText("I paid for my subscription, but it didn't get activated. Please open a support ticket so they can take a look.")
@@ -72,7 +79,7 @@ export default function PollSubscriptionPage() {
             else {
               window.location.href = `/contact`
             }
-          }}>Contact Support</Button>
+          }}>{t("Contact Support")}</Button>
         </>
       )}
     </div>

@@ -1,6 +1,6 @@
 "use client"
-
-import { englishLandingText } from "@/lib/landing/en";
+import { EVENTS } from "@/lib/analytics"
+import { useLanguage } from "@/context/LanguageContext"
 
 import Link from "next/link"
 import BIcon from "./BIcon"
@@ -13,7 +13,10 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function PricingCards({ frequency, tiers, currency, compact, onTierSelected, hasFreeTrial, eventName, text = englishLandingText.pricingCards }) {
+export default function PricingCards({ frequency, tiers, currency, compact, onTierSelected, hasFreeTrial, placement = "pricing", text }) {
+  const { landingText } = useLanguage()
+  text = text || landingText.pricingCards
+
   const _buttonText = hasFreeTrial ? text.trial : text.subscribe
   return tiers.map((tier, tierIdx) => (
     <div
@@ -67,7 +70,7 @@ export default function PricingCards({ frequency, tiers, currency, compact, onTi
         </div>
       )}
       {!compact && (<p className={classNames(tier.featured ? 'text-gray-300' : 'text-gray-600', 'mt-4 text-sm/6')}>
-        {tier.description}
+        {(landingText.plans?.[tier.id] || tier).description}
       </p>)}
       <ul
         role="list"
@@ -76,7 +79,7 @@ export default function PricingCards({ frequency, tiers, currency, compact, onTi
           'mt-6 space-y-3 text-sm/6 flex-1',
         )}
       >
-        {tier.displayFeatures.map((feature, index) => (
+        {(landingText.plans?.[tier.id] || tier).displayFeatures.map((feature, index) => (
           <li key={index} className="flex gap-x-3">
             <BIcon
               name={"check-lg"}
@@ -89,9 +92,7 @@ export default function PricingCards({ frequency, tiers, currency, compact, onTi
       </ul>
       <Link
         onClick={e => {
-          if(eventName) {
-            sendEvent(eventName, { tier: tier.id, is_trial: hasFreeTrial })
-          }
+          sendEvent(EVENTS.PLAN, { plan: tier.id, interval: frequency, currency, trial: !!hasFreeTrial, placement })
           if (!!onTierSelected) {
             e.preventDefault()
             onTierSelected(tier.id)

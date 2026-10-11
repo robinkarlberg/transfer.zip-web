@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -27,6 +28,7 @@ import {
 const INACTIVE_PAGE_SIZE = 10
 
 const Entry = ({ transferRequest, onLocalUpdate }) => {
+  const { t } = useLanguage()
   const router = useRouter()
   const uploadLink = transferRequest.uploadUrl
   const { active, id, name } = transferRequest
@@ -39,7 +41,7 @@ const Entry = ({ transferRequest, onLocalUpdate }) => {
 
   const handleCopy = async () => {
     if (await tryCopyToClipboard(uploadLink)) {
-      toast.success("Copied Link", { description: "The request link was successfully copied to the clipboard!" })
+      toast.success(t("Copied Link"), { description: t("The request link was successfully copied to the clipboard!") })
     }
   }
 
@@ -89,10 +91,10 @@ const Entry = ({ transferRequest, onLocalUpdate }) => {
     setDeleting(true)
     try {
       await deleteTransferRequest(id)
-      toast.success("Request deleted", {
+      toast.success(t("Request deleted"), {
         description: receivedTransfers.length > 0
-          ? `Deleted the request and ${receivedTransfers.length} received transfer${receivedTransfers.length === 1 ? "" : "s"}.`
-          : "The request link was deleted.",
+          ? t("Deleted the request and {0} received transfer{1}.", { "0": receivedTransfers.length, "1": receivedTransfers.length === 1 ? "" : "s" })
+          : t("The request link was deleted."),
       })
       setShowDeleteConfirm(false)
       onLocalUpdate(id, null)
@@ -127,23 +129,23 @@ const Entry = ({ transferRequest, onLocalUpdate }) => {
                   active ?
                     (
                       transferRequest.receivedTransfersCount == 0 ?
-                        <>Request link is active</>
+                        <>{t("Request link is active")}</>
                         :
-                        <><BIcon name={"arrow-down"} /> {transferRequest.receivedTransfersCount} transfer{transferRequest.receivedTransfersCount != 1 && "s"} received</>
+                        <><BIcon name={"arrow-down"} /> {transferRequest.receivedTransfersCount} {t(transferRequest.receivedTransfersCount === 1 ? "transfer" : "transfers")} {t("received")}</>
                     )
                     :
-                    <><BIcon name={"stop-fill"} /> Inactive</>
+                    <><BIcon name={"stop-fill"} /> {t("Inactive")}</>
                 }
               </span>
             </div>
             <div className="text-sm text-gray-600 font-medium hidden group-hover:block group-has-[:focus-visible]:block">
-              <button onClick={handleCopyLinkClicked} className="underline hover:text-primary">Copy Link</button>
+              <button onClick={handleCopyLinkClicked} className="underline hover:text-primary">{t("Copy Link")}</button>
               <DotIcon size={16} className="inline" />
               <button onClick={active ? handleDeactivate : handleActivate} disabled={busy} className={`underline ${active ? "hover:text-red-600" : "hover:text-primary"} disabled:opacity-60`}>
-                {active ? "Close Request" : "Reopen Request"}
+                {active ? t("Close Request") : t("Reopen Request")}
               </button>
               <DotIcon size={16} className="inline" />
-              <button onClick={handleDeleteClicked} className="underline hover:text-red-600">Delete</button>
+              <button onClick={handleDeleteClicked} className="underline hover:text-red-600">{t("Delete")}</button>
             </div>
           </div>
         </div>
@@ -152,34 +154,32 @@ const Entry = ({ transferRequest, onLocalUpdate }) => {
       <Dialog open={showDeleteConfirm} onOpenChange={open => !deleting && setShowDeleteConfirm(open)}>
         <DialogContent>
           <DialogHeader variant="destructive">
-            <DialogTitle>Delete request{name ? ` "${name}"` : ""}?</DialogTitle>
+            <DialogTitle>{t("Delete request")}{name ? ` "${name}"` : ""}?</DialogTitle>
             <DialogDescription>
               {receivedTransfers.length === 0
-                ? "This request link will be permanently deleted. This action cannot be undone."
-                : `This will permanently delete the request link and the ${receivedTransfers.length} received transfer${receivedTransfers.length === 1 ? "" : "s"} listed below. This action cannot be undone.`}
+                ? t("This request link will be permanently deleted. This action cannot be undone.")
+                : t("This will permanently delete the request link and the {0} received transfer{1} listed below. This action cannot be undone.", { "0": receivedTransfers.length, "1": receivedTransfers.length === 1 ? "" : "s" })}
             </DialogDescription>
           </DialogHeader>
           {receivedTransfers.length > 0 && (
             <div className="mt-2 rounded-lg border border-gray-200 bg-gray-50 max-h-56 overflow-y-auto">
               <ul className="divide-y divide-gray-200">
-                {previewTransfers.map(t => (
-                  <li key={t.id} className="px-3 py-2 flex items-center justify-between gap-3 text-sm">
-                    <span className="text-gray-900 truncate">{t.name}</span>
-                    <span className="text-gray-500 shrink-0">{t.fileCount} file{t.fileCount === 1 ? "" : "s"}</span>
+                {previewTransfers.map(entry => (
+                  <li key={entry.id} className="px-3 py-2 flex items-center justify-between gap-3 text-sm">
+                    <span className="text-gray-900 truncate">{entry.hasName ? entry.name : t("Untitled Request")}</span>
+                    <span className="text-gray-500 shrink-0">{entry.fileCount} {t(entry.fileCount === 1 ? "file" : "files")}</span>
                   </li>
                 ))}
                 {extraTransfers > 0 && (
-                  <li className="px-3 py-2 text-sm text-gray-500">
-                    and {extraTransfers} more
-                  </li>
+                  <li className="px-3 py-2 text-sm text-gray-500">{t("and")} {extraTransfers} {t("more")}</li>
                 )}
               </ul>
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)} disabled={deleting}>Cancel</Button>
+            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)} disabled={deleting}>{t("Cancel")}</Button>
             <Button variant="destructive" onClick={handleConfirmDelete} disabled={deleting}>
-              {deleting ? "Deleting..." : "Delete"}
+              {deleting ? t("Deleting...") : t("Delete")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -189,6 +189,7 @@ const Entry = ({ transferRequest, onLocalUpdate }) => {
 }
 
 export default function TransferRequestList({ activeRequests, initialInactiveRequests, hasMoreInactive }) {
+  const { t } = useLanguage()
   const router = useRouter()
 
   // Single source of truth seeded from server props on mount, then
@@ -250,14 +251,14 @@ export default function TransferRequestList({ activeRequests, initialInactiveReq
   return (
     <div className="">
       {isEmpty && (
-        <EmptySpace onClick={() => router.push("/app/receive")} buttonText={"Create Request Link"} title={"Your request links will appear here"} subtitle={"You can view or revoke individual links."} />
+        <EmptySpace onClick={() => router.push("/app/receive")} buttonText={t("Create Request Link")} title={t("Your request links will appear here")} subtitle={t("You can view or revoke individual links.")} />
       )}
       <div className={`grid grid-cols-1 gap-3 mb-2`}>
         {visibleActive.map(transferRequest => (
           <Entry key={transferRequest.id} transferRequest={transferRequest} onLocalUpdate={handleLocalUpdate} />
         ))}
       </div>
-      {visibleInactive.length > 0 && <h3 className="font-semibold mb-1 text-white">Inactive Links</h3>}
+      {visibleInactive.length > 0 && <h3 className="font-semibold mb-1 text-white">{t("Inactive Links")}</h3>}
       <div className={`grid grid-cols-1 gap-3`}>
         {visibleInactive.map(transferRequest => (
           <Entry key={transferRequest.id} transferRequest={transferRequest} onLocalUpdate={handleLocalUpdate} />
@@ -270,7 +271,7 @@ export default function TransferRequestList({ activeRequests, initialInactiveReq
             disabled={loadingMore}
             className="text-sm font-medium text-white underline disabled:opacity-60 hover:opacity-80"
           >
-            {loadingMore ? "Loading..." : "Load more"}
+            {loadingMore ? t("Loading...") : t("Load more")}
           </button>
         </div>
       )}

@@ -1,16 +1,14 @@
+import { getTranslator } from "@/lib/i18n/translate"
 import { Heading, Hr, Text } from '@react-email/components';
 import EmailLayout from './EmailLayout.jsx';
 
-export default function TeamMemberRemovedEmail({ teamName }) {
+export default function TeamMemberRemovedEmail({ language = "en", teamName }) {
+  const t = getTranslator(language)
   return (
-    <EmailLayout>
-      <Heading style={h1}>You've been removed from {teamName}</Heading>
-      <Text style={text}>
-        You no longer have access to "{teamName}". Your account is still active, but you've been signed out of all sessions.
-      </Text>
-      <Text style={text}>
-        If you believe this was a mistake, please contact the team owner directly.
-      </Text>
+    <EmailLayout language={language}>
+      <Heading style={h1}>{t("You've been removed from")} {teamName}</Heading>
+      <Text style={text}>{t("You no longer have access to \"")}{teamName}{t("\". Your account is still active, but you've been signed out of all sessions.")}</Text>
+      <Text style={text}>{t("If you believe this was a mistake, please contact the team owner directly.")}</Text>
       <Hr style={{ marginTop: '24px' }} />
     </EmailLayout>
   );

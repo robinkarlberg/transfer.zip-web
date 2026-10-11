@@ -82,7 +82,7 @@ export async function POST(req) {
 
   const baseUrl = process.env.SITE_URL
   const link = `${baseUrl}/invite/${token}`
-  await sendTeamInvite(email, {
+  await sendTeamInvite(email, { language: auth.user.language,
     teamName: team.name,
     inviterName: auth.user.fullName || auth.user.email,
     link

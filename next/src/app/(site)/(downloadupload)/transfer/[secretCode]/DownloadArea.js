@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { getDownloadToken, registerTransferDownloaded } from "@/lib/client/Api"
 import { sleep } from "@/lib/utils"
@@ -7,6 +8,7 @@ import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 
 export default function DownloadArea({ secretCode }) {
+  const { t } = useLanguage()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState(undefined)
   const formRef = useRef(null)
@@ -47,8 +49,7 @@ export default function DownloadArea({ secretCode }) {
       </form>
       <div className="mt-4 flex gap-2">
         <button disabled type="button" className="inline-flex h-12 items-center gap-2 rounded-full px-5 font-semibold text-gray-400 ring-1 ring-gray-200">
-          <EyeIcon size={18} /> Preview
-        </button>
+          <EyeIcon size={18} /> {t("Preview")}</button>
         <button
           type="button"
           disabled={loading}
@@ -56,7 +57,7 @@ export default function DownloadArea({ secretCode }) {
           className="inline-flex h-12 grow items-center justify-center gap-2 rounded-full bg-primary font-semibold text-white transition hover:bg-primary-light active:scale-[0.99] disabled:bg-primary-light"
         >
           {loading ? <Loader2 size={18} className="animate-spin" /> : <ArrowDownIcon size={18} />}
-          {loading ? "Starting download" : "Download"}
+          {loading ? t("Starting download") : t("Download")}
         </button>
       </div>
     </>

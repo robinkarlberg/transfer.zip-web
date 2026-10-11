@@ -1,9 +1,13 @@
+import { getTranslations } from "@/lib/server/language"
 import { redirect } from "next/navigation"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
 import { ROLES } from "@/lib/roles"
 import TeamPausedPage from "./TeamPausedPage"
 
-export const metadata = { title: "Team paused" }
+export async function generateMetadata() {
+  const t = await getTranslations()
+  return { title: t("Team paused") }
+}
 
 export default async function () {
   const auth = await useServerAuth()

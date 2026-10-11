@@ -1,3 +1,4 @@
+import { getLanguage } from "@/lib/server/language"
 import Transfer from "@/lib/server/mongoose/models/Transfer"
 import TransferRequest from '@/lib/server/mongoose/models/TransferRequest'
 import { findUsableBrandProfile } from "@/lib/server/mongoose/helpers/brandProfiles"
@@ -116,8 +117,8 @@ const validateAndAuthorize = async (body, auth) => {
 }
 
 /**
- * 
- * @param {*} conn 
+ *
+ * @param {*} conn
  * @returns {RateLimiterMongo}
  */
 const getRateLimiter = (conn) => {
@@ -195,6 +196,7 @@ export async function POST(req) {
     const teamTag = (auth && !transferRequest) ? auth.user.team?._id : undefined
 
     const transfer = new Transfer({
+      language: transferRequest ? transferRequest.language : auth.user.language || await getLanguage(),
       transferRequest: transferRequest ? transferRequest._id : undefined,
       submission: transferRequest ? data.submission : undefined,
       author: auth ? auth.user._id : undefined,

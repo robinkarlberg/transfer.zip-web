@@ -1,3 +1,4 @@
+import { getLanguage } from "@/lib/server/language"
 import crypto from "crypto"
 import mongoose from "mongoose"
 import { sendMagicLink } from '@/lib/server/mail/mail'
@@ -9,6 +10,7 @@ import { getMagicLinkRequestRateLimiter } from '@/lib/server/rate-limits/rateLim
 import { NextResponse } from 'next/server'
 
 export async function POST(req) {
+  const language = await getLanguage()
   const data = await req.json()
   const email = typeof data.email === "string" ? data.email.trim().toLowerCase() : ""
 
@@ -29,7 +31,7 @@ export async function POST(req) {
   const existingUser = await User.findOne({ email: { $eq: email } })
   let user = existingUser
   if (!user) {
-    user = new User({ email, onboarded: false })
+    user = new User({ email, onboarded: false, registrationPending: true, language })
     try {
       await user.save()
     } catch (err) {
@@ -47,10 +49,11 @@ export async function POST(req) {
     token,
     code,
     requestSecret,
+    language,
   })
   await magicLink.save()
 
-  sendMagicLink(user.email, { link: `${process.env.SITE_URL}/magic-link/${magicLink.token}` })
+  await sendMagicLink(user.email, { language, link: `${process.env.SITE_URL}/magic-link/${magicLink.token}?lang=${language}` })
 
   const response = NextResponse.json(resp({ requestId: magicLink._id.toString(), email }))
   // The requestSecret cookie binds the request to this browser. Scoped to the

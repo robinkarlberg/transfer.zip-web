@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useRef, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -9,6 +10,7 @@ import { YesNo } from "@/components/dashboard/YesNo"
 import { updateTeam } from "@/lib/client/Api"
 
 export default function TeamNameEditor({ teamName, canEdit }) {
+  const { t } = useLanguage()
   const router = useRouter()
   const nameRef = useRef(null)
   const [editing, setEditing] = useState(false)
@@ -20,7 +22,7 @@ export default function TeamNameEditor({ teamName, canEdit }) {
   const handleSave = async () => {
     const trimmed = nameRef.current.value.trim()
     if (!trimmed) {
-      toast.error("Team name cannot be empty")
+      toast.error(t("Team name cannot be empty"))
       return
     }
     setEditing(false)

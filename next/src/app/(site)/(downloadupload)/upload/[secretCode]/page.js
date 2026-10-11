@@ -1,3 +1,5 @@
+
+import { getTranslations, getLandingText, getLanguage } from "@/lib/server/language"
 import FAQ from "@/components/FAQ";
 import Features1 from "@/components/Features1";
 import Header from "@/components/Header";
@@ -15,6 +17,7 @@ import BrandHeader from "../../BrandHeader";
 import clouds from "@/img/download-clouds.png";
 
 export async function generateMetadata({ params }) {
+  const t = await getTranslations()
   const { secretCode } = await params
 
   await dbConnect()
@@ -26,8 +29,8 @@ export async function generateMetadata({ params }) {
 
   const { brandProfile } = transferRequest
   const brandName = brandProfile?.name || "Transfer.zip"
-  const title = "Upload files | " + brandName
-  const description = "You have a file request waiting."
+  const title = t("Upload files | ") + brandName
+  const description = t("You have a file request waiting.")
   const ogImage = brandProfile?.backgroundUrl || "https://cdn.transfer.zip/og.png"
 
   return {
@@ -42,6 +45,9 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function ({ params }) {
+  const landingText = await getLandingText()
+  const language = await getLanguage()
+  const t = await getTranslations()
   const { secretCode } = await params
 
   await dbConnect()
@@ -60,11 +66,11 @@ export default async function ({ params }) {
   return (
     <>
       <div className="relative isolate grid min-h-svh grid-cols-1 place-items-center px-4 pt-28 pb-16">
-        {brandProfile ? <BrandHeader brandProfile={brandProfile} /> : !isCustomDomain && <Header />}
+        {brandProfile ? <BrandHeader brandProfile={brandProfile} /> : !isCustomDomain && <Header text={landingText.header} homeHref={language === "sv" ? "/sv" : "/"} pricingHref={language === "sv" ? "/sv#pricing" : "/pricing"} />}
         {brandProfile && brandProfile.backgroundUrl ? (
           <Image
             fill
-            alt="Branding Background Image"
+            alt={t("Branding Background Image")}
             className="object-center object-cover pointer-events-none"
             src={brandProfile.backgroundUrl}
           />
@@ -80,15 +86,15 @@ export default async function ({ params }) {
           <NewTransferFileUploadForRequest brandProfile={brandProfile?.toJsonAsClient()} transferRequest={await transferRequest.toJsonAsUploader()} />
         ) : (
           <div className="relative mx-4 max-w-md rounded-xl bg-white p-5 sm:p-6">
-            <h1 className="text-xl font-semibold text-gray-900">This file request is closed</h1>
-            <p className="mt-2 text-gray-600">Contact the person who requested your files to reopen it.</p>
+            <h1 className="text-xl font-semibold text-gray-900">{t("This file request is closed")}</h1>
+            <p className="mt-2 text-gray-600">{t("Contact the person who requested your files to reopen it.")}</p>
           </div>
         )}
       </div>
       {(!IS_SELFHOST && !brandProfile && !isCustomDomain) && (
         <>
-          <Features1 />
-          <TestimonialCloud />
+          <Features1 text={landingText.features} />
+          <TestimonialCloud text={landingText.testimonials} />
           {/* <div className="relative">
             <div className="w-full h-screen overflow-hidden absolute grain bg-linear-to-b from-primary-600 to-primary-300" />
             <div className="py-24 px-2 sm:px-8 relative">
@@ -98,7 +104,7 @@ export default async function ({ params }) {
               <IndieStatement compact />
             </div>
           </div> */}
-          <FAQ />
+          <FAQ text={landingText.faq} items={landingText.faqItems} />
         </>
       )}
     </>

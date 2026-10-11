@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { formatQuickCode } from "@/lib/client/quickcode"
 import { cn, tryCopyToClipboard } from "@/lib/utils"
@@ -104,10 +105,11 @@ export function Status({ children }) {
 
 /** Six-digit pairing code. Animates in again whenever the code rotates. */
 export function CodeDisplay({ code }) {
+  const { t } = useLanguage()
   return (
     <p
       key={code}
-      aria-label={`Code ${code.split("").join(" ")}`}
+      aria-label={t("Code {0}", { "0": code.split("").join(" ") })}
       className="font-heading text-4xl font-bold tracking-wider whitespace-nowrap text-gray-900 tabular-nums animate-in fade-in slide-in-from-bottom-1 duration-300 sm:text-5xl"
     >
       {formatQuickCode(code)}
@@ -116,6 +118,7 @@ export function CodeDisplay({ code }) {
 }
 
 export function ShareLink({ link }) {
+  const { t } = useLanguage()
   const [copied, setCopied] = useState(false)
   const [canShare, setCanShare] = useState(false)
 
@@ -146,14 +149,14 @@ export function ShareLink({ link }) {
         className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-white px-4 text-sm font-semibold text-gray-900 shadow-sm transition hover:bg-gray-50 active:scale-[0.97]"
       >
         {copied ? <CheckIcon size={15} className="text-primary-600" /> : <CopyIcon size={15} />}
-        {copied ? "Copied" : "Copy"}
+        {copied ? t("Copied") : t("Copy")}
       </button>
       {canShare && (
         <button
           type="button"
           disabled={!link}
           onClick={handleShare}
-          aria-label="Share"
+          aria-label={t("Share")}
           className="grid size-9 shrink-0 place-items-center rounded-full bg-white text-gray-900 shadow-sm transition hover:bg-gray-50 active:scale-[0.97]"
         >
           <ShareIcon size={15} />

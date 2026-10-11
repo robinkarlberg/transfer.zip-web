@@ -54,7 +54,7 @@ export async function POST(req, { params }) {
         to: [email]
       })
       await sentEmail.save()
-      await sendTransferShare(email, {
+      await sendTransferShare(email, { language: transfer.language,
         name: transfer.name || 'Untitled Transfer',
         description: transfer.description,
         link: await transfer.getDownloadLink(),

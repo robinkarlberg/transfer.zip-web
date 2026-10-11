@@ -1,3 +1,4 @@
+import ProductLanguageSwitch from "@/components/ProductLanguageSwitch"
 export default function ({ children }) {
   return (
     <div>
@@ -27,6 +28,7 @@ export default function ({ children }) {
           <rect fill="url(#83fd4e5a-9d52-42fc-97b6-718e5d7ee527)" width="100%" height="100%" strokeWidth={0} />
         </svg>
         {children}
+        <div className="flex justify-center py-4"><ProductLanguageSwitch /></div>
       </main>
     </div>
   )

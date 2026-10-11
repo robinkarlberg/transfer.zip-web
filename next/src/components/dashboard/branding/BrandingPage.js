@@ -1,3 +1,5 @@
+
+import { getTranslations } from "@/lib/server/language"
 import Link from "next/link";
 import GenericPage from "@/components/dashboard/GenericPage";
 import EmptySpace from "@/components/elements/EmptySpace";
@@ -10,6 +12,7 @@ import BrandProfilesSection from "./BrandProfilesSection";
 import CustomDomainSection from "./CustomDomainSection";
 
 export default async function BrandingPage() {
+  const t = await getTranslations()
   const { user } = await useServerAuth();
 
   const [profiles, customDomains] = await Promise.all([
@@ -25,7 +28,7 @@ export default async function BrandingPage() {
   const canManageDomains = canManageCustomDomains(user);
 
   return (
-    <GenericPage title="Branding">
+    <GenericPage title={t("Branding")}>
       {
         hasFeature ? (
           <div className="space-y-4">
@@ -42,12 +45,12 @@ export default async function BrandingPage() {
           </div>
         ) : (
           <EmptySpace
-            title="Brand your transfers"
-            subtitle="Add your own logo, customize backgrounds, and show your branding in emails and on download pages."
+            title={t("Brand your transfers")}
+            subtitle={t("Add your own logo, customize backgrounds, and show your branding in emails and on download pages.")}
           >
             {!isTeam && (
               <Button asChild>
-                <Link className="mt-4" href="/pricing">Upgrade to Pro &rarr;</Link>
+                <Link className="mt-4" href="/pricing">{t("Upgrade to Pro →")}</Link>
               </Button>
             )}
           </EmptySpace>

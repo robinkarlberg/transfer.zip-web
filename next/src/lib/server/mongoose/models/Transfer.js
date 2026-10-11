@@ -1,3 +1,4 @@
+import { localizedLink } from "@/lib/i18n/language"
 import mongoose from 'mongoose';
 import crypto from "crypto"
 
@@ -56,6 +57,7 @@ const TransferSchema = new mongoose.Schema({
     team: { type: mongoose.Schema.Types.ObjectId, ref: "Team", index: true },
     name: String,
     description: String,
+    language: { type: String, enum: ["en", "sv"] },
     expiresAt: { type: Date },
     secretCode: { type: String, default: () => crypto.randomUUID(), required: true, index: true },
 
@@ -237,12 +239,12 @@ TransferSchema.methods.toJsonAsTeamAdmin = async function () {
 TransferSchema.methods.getDownloadLink = async function () {
     const customDomain = await getDownloadDomainFor({ team: this.team, user: this.author?._id || this.author })
     if (customDomain) {
-        return `https://${customDomain}/${this.secretCode}`
+        return this.language ? localizedLink(`https://${customDomain}/${this.secretCode}`, this.language) : `https://${customDomain}/${this.secretCode}`
     }
     if (process.env.NEXT_PUBLIC_DL_DOMAIN) {
-        return `https://${process.env.NEXT_PUBLIC_DL_DOMAIN}/${this.secretCode}`
+        return this.language ? localizedLink(`https://${process.env.NEXT_PUBLIC_DL_DOMAIN}/${this.secretCode}`, this.language) : `https://${process.env.NEXT_PUBLIC_DL_DOMAIN}/${this.secretCode}`
     }
-    return `${process.env.SITE_URL}/transfer/${this.secretCode}`
+    return this.language ? localizedLink(`${process.env.SITE_URL}/transfer/${this.secretCode}`, this.language) : `${process.env.SITE_URL}/transfer/${this.secretCode}`
 }
 
 // Add a virtual field for transfer.size

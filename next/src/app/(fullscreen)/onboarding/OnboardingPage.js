@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import BIcon from "@/components/BIcon"
 import PricingCards from "@/components/PricingCards"
@@ -42,6 +43,7 @@ const testimonials = [
 ]
 
 export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial, currency }) {
+  const { t } = useLanguage()
   const router = useRouter()
 
   const [isRequesting, setIsRequesting] = useState(false);
@@ -98,7 +100,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial, c
     <>
       <div className="w-full h-screen overflow-hidden absolute grain bg-linear-to-b from-primary-700 to-primary-300 -z-10 rounded-b-4xl" />
       <div className="flex min-h-[100vh] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-        <Link href={"/"} className="absolute top-8 text-xl me-1 text-white hover:underline fade-in-up-1000">&larr; Back</Link>
+        <Link href={"/"} className="absolute top-8 text-xl me-1 text-white hover:underline fade-in-up-1000">{t("← Back")}</Link>
         <div className="sm:mx-auto sm:w-full sm:max-w-xl text-center">
           {/* <Image
             alt="Transfer.zip logo"
@@ -106,18 +108,14 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial, c
             className="mx-auto h-10 w-auto"
           /> */}
           <h1 className={`text-4xl ${hasStripeAccount ? "sm:text-6xl" : "sm:text-7xl"} font-bold mt-8 sm:mt-12 tracking-tight text-white fade-in-up-600`}>
-            {hasStripeAccount ? "Welcome back :)" : "Welcome :)"}
+            {hasStripeAccount ? t("Welcome back :)") : t("Welcome :)")}
           </h1>
           <p className="text-white mt-4 text-base sm:text-xl animate-delay-100 fade-in-up-600">
             {
               hasFreeTrial ?
-                <>
-                  We offer a <b>7-day free trial</b> on the Pro and Starter plans. You can cancel anytime during your trial, and you won't be charged a penny.
-                </>
+                <>{t("We offer a")} <b>{t("7-day free trial")}</b> {t("on the Pro and Starter plans. You can cancel anytime during your trial, and you won't be charged a penny.")}</>
                 :
-                <>
-                  Pick the perfect plan for you. Starting sharing files in seconds.
-                </>
+                <>{t("Pick the perfect plan for you. Starting sharing files in seconds.")}</>
             }
           </p>
         </div>
@@ -125,8 +123,8 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial, c
           <PricingToggle frequency={frequency} setFrequency={setFrequency} />
         </div>
         <div className="mx-auto mt-4 grid max-w-sm grid-cols-1 gap-6 sm:mt-8 lg:max-w-5xl lg:grid-cols-3 animate-delay-200 fade-in-up-1000">
-          <PricingCards currency={currency} frequency={frequency} tiers={tiers} compact={false} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_onboarding_click"} />
-          <TeamPricingCard currency={currency} frequency={frequency} tier={teamTier} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} eventName={"pricing_card_teams_onboarding_click"} />
+          <PricingCards currency={currency} frequency={frequency} tiers={tiers} compact={false} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} placement="onboarding" />
+          <TeamPricingCard currency={currency} frequency={frequency} tier={teamTier} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} placement="onboarding" />
         </div>
         <div className="mt-8">
           <IndieStatement compact />
@@ -145,7 +143,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial, c
                     <div className="text-blue-500 mb-2">{[1, 2, 3, 4, 5].map(i => <BIcon key={i} name={"star-fill"} />)}</div>
                     <div className="text-gray-600 mb-2 hover:underline"><a target="_blank" href={testimonial.proof}><BIcon name={"quote"} /> {testimonial.quote}</a></div>
                     {/* <div className="font-bold text-gray-700">
-                      
+
                       <a className="hover:underline" target="_blank" href={testimonial.proof}>{testimonial.author}</a>
                     </div> */}
                   </div>
@@ -159,16 +157,14 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial, c
         </p> */}
         <div className="mt-16 rounded-lg shadow-lg p-2 px-4 border mx-auto">
           <div className="text-xs">
-            <p className="text-center text-gray-500">
-              You are logged in as {user?.email}{" "}
+            <p className="text-center text-gray-500">{t("You are logged in as")} {user?.email}{" "}
             </p>
           </div>
           {hasStripeAccount && (
             <div className="mt-1 text-xs">
               <form method="POST" action={API_URL + "/stripe/create-customer-portal-session"}>
                 <p className="text-center text-gray-500">
-                  <button type="submit" className="font-semibold text-primary-dark text-nowrap hover:underline">
-                    Cancel / Manage Subscription <BIcon name={"box-arrow-up-right"} />
+                  <button type="submit" className="font-semibold text-primary-dark text-nowrap hover:underline">{t("Cancel / Manage Subscription")} <BIcon name={"box-arrow-up-right"} />
                   </button>
                 </p>
               </form>
@@ -177,32 +173,22 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial, c
           <div className="mt-1 text-xs">
             <p className="text-center text-gray-500">
               <button onClick={handleLogout} className="font-semibold text-primary-dark text-nowrap hover:underline">
-                {/* <BIcon name={"box-arrow-left"} className={"me-1"} /> */}
-                Log out
-              </button>
+                {/* <BIcon name={"box-arrow-left"} className={"me-1"} /> */}{t("Log out")}</button>
               {" · "}
-              <button onClick={openDeleteModal} className="font-semibold text-red-600 text-nowrap hover:underline">
-                Delete my account
-              </button>
+              <button onClick={openDeleteModal} className="font-semibold text-red-600 text-nowrap hover:underline">{t("Delete my account")}</button>
             </p>
           </div>
         </div>
-        <p className="text-xs text-center mt-8 text-gray-500">
-          Secure payments via Stripe. <Link className="text-primary-dark" target="_blank" href={"/legal/terms-and-conditions"}>Terms</Link> and <Link className="text-primary-dark" target="_blank" href={"/legal/privacy-policy"}>Privacy</Link> apply.
-        </p>
+        <p className="text-xs text-center mt-8 text-gray-500">{t("Secure payments via Stripe.")} <Link className="text-primary-dark" target="_blank" href={"/legal/terms-and-conditions"}>{t("Terms")}</Link> {t("and")} <Link className="text-primary-dark" target="_blank" href={"/legal/privacy-policy"}>{t("Privacy")}</Link> {t("apply.")}</p>
       </div>
       <Dialog open={showDeleteModal} onOpenChange={open => { if (!deleting) setShowDeleteModal(open) }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader variant="destructive">
-            <DialogTitle>Delete your account?</DialogTitle>
-            <DialogDescription>
-              This will permanently delete your account and all associated transfers, transfer requests, and brand profiles. Any active subscription will be cancelled immediately, with no refund for unused time. This cannot be undone.
-            </DialogDescription>
+            <DialogTitle>{t("Delete your account?")}</DialogTitle>
+            <DialogDescription>{t("This will permanently delete your account and all associated transfers, transfer requests, and brand profiles. Any active subscription will be cancelled immediately, with no refund for unused time. This cannot be undone.")}</DialogDescription>
           </DialogHeader>
           <div className="mt-2">
-            <Label htmlFor="email-confirm" className="text-sm text-gray-700">
-              Type <span className="font-mono text-gray-900">{user.email}</span> to confirm
-            </Label>
+            <Label htmlFor="email-confirm" className="text-sm text-gray-700">{t("Type")} <span className="font-mono text-gray-900">{user.email}</span> {t("to confirm")}</Label>
             <Input
               id="email-confirm"
               autoFocus
@@ -214,11 +200,9 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial, c
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDeleteModal(false)} disabled={deleting}>
-              Cancel
-            </Button>
+            <Button variant="outline" onClick={() => setShowDeleteModal(false)} disabled={deleting}>{t("Cancel")}</Button>
             <Button variant="destructive" disabled={!canConfirmDelete} onClick={handleDelete}>
-              {deleting ? "Deleting…" : "Delete account"}
+              {deleting ? t("Deleting…") : t("Delete account")}
             </Button>
           </DialogFooter>
         </DialogContent>

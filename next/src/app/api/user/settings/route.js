@@ -1,3 +1,5 @@
+import { isLanguage } from "@/lib/i18n/language"
+import { setLanguageCookie } from "@/lib/server/completeSignIn"
 import User from "@/lib/server/mongoose/models/User";
 import { resp } from "@/lib/server/serverUtils";
 import { useServerAuth } from "@/lib/server/wrappers/auth";
@@ -9,9 +11,13 @@ export async function PUT(req) {
     return NextResponse.json(resp("Unauthorized"), { status: 401 })
   }
 
-  const { notificationSettings, fullName } = await req.json()
+  const { notificationSettings, fullName, language } = await req.json()
 
+  if (language !== undefined && !isLanguage(language)) {
+    return NextResponse.json(resp("Unsupported language"), { status: 400 })
+  }
   const $set = {}
+  if (language !== undefined) $set.language = language
   const $unset = {}
 
   if (notificationSettings) {
@@ -43,5 +49,7 @@ export async function PUT(req) {
     await User.updateOne({ _id: auth.user._id }, op)
   }
 
-  return NextResponse.json(resp({}))
+  const response = NextResponse.json(resp({}))
+  if (language !== undefined) setLanguageCookie(response, language)
+  return response
 }

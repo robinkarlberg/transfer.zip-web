@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/context/LanguageContext"
 
 import Link from "next/link";
 import { classNames } from "@/lib/utils";
@@ -8,6 +9,7 @@ import { humanFileSize } from "@/lib/transferUtils";
 import { ArrowDownIcon, ArrowUpIcon, BoltIcon, HouseIcon, MailIcon, MailQuestionIcon, PaintbrushIcon, PlusIcon, SendIcon, UserIcon } from "lucide-react";
 
 export default function Sidebar({ user, storage }) {
+  const { t } = useLanguage()
   const prepend = "/app";
   const pathname = usePathname();
 
@@ -46,7 +48,7 @@ export default function Sidebar({ user, storage }) {
           )}
         >
           <Icon className="mt-1" size={20} />
-          <span className="text-center">{item.name}</span>
+          <span className="text-center">{t(item.name)}</span>
         </Link>
       </li>
     );
@@ -60,15 +62,13 @@ export default function Sidebar({ user, storage }) {
         <Link
           href="/onboarding"
           className="block rounded-md border border-purple-200/70 bg-purple-50 px-2 py-2 text-center text-[11px] font-semibold text-purple-700 transition hover:border-purple-200 hover:bg-white"
-        >
-          Upgrade Plan
-        </Link>
+        >{t("Upgrade Plan")}</Link>
       );
     }
 
     return (
       <div className="rounded-md border border-white/10 bg-white/5 px-2 py-2">
-        <div className="text-[11px] font-semibold text-stone-100">{storage.storagePercent}% used</div>
+        <div className="text-[11px] font-semibold text-stone-100">{storage.storagePercent}{t("% used")}</div>
         <div className="text-[10px] text-stone-100">
           {humanFileSize(storage.usedStorageBytes, true)}
         </div>

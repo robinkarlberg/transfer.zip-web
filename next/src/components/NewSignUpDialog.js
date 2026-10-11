@@ -1,6 +1,5 @@
 "use client"
-
-import { englishLandingText } from "@/lib/landing/en";
+import { useLanguage } from "@/context/LanguageContext"
 
 import {
   Dialog,
@@ -21,7 +20,9 @@ const STATE_GMAIL_TAB = "gmail_tab"
 const STATE_CHECK_EMAIL = "check_email"
 const STATE_NOT_PAID = "not_paid"
 
-export default function ({ open, setOpen, files, transfer, text = englishLandingText.signup }) {
+export default function ({ open, setOpen, files, transfer, text }) {
+  const { landingText } = useLanguage()
+  text = text || landingText.signup
 
   const [state, setState] = useState(STATE_START)
 

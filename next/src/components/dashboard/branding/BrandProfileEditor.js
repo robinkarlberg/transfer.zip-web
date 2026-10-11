@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import BIcon from "@/components/BIcon"
 import GenericPage from "@/components/dashboard/GenericPage"
@@ -18,6 +19,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { ImageIcon, SaveIcon, XIcon } from "lucide-react"
 
 export default function ({ initialProfile, isNew, backHref = "/app/branding" }) {
+  const { t } = useLanguage()
   const [profile, setProfile] = useState(initialProfile)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -87,13 +89,9 @@ export default function ({ initialProfile, isNew, backHref = "/app/branding" }) 
   }
 
   const side = <div className="flex gap-2">
-    <Button className={"text-white text-shadow-xs"} variant={"link"} onClick={() => router.push(".")} disabled={loading}>
-      Cancel
-    </Button>
+    <Button className={"text-white text-shadow-xs"} variant={"link"} onClick={() => router.push(".")} disabled={loading}>{t("Cancel")}</Button>
     <Button variant={"white"} onClick={handleSave} disabled={loading}>
-      {/* <SaveIcon /> */}
-      Save
-      {saving && <Spinner />}
+      {/* <SaveIcon /> */}{t("Save")}{saving && <Spinner />}
     </Button>
   </div>
 
@@ -105,12 +103,12 @@ export default function ({ initialProfile, isNew, backHref = "/app/branding" }) 
       <form className="hidden">
         <input onChange={handleBackgroundFiles} ref={backgroundFileInputRef} type="file" />
       </form>
-      <GenericPage category={"Branding"} title={isNew ? "New Brand Profile" : profile.name} side={side}>
+      <GenericPage category={"Branding"} title={isNew ? t("New Brand Profile") : profile.name} side={side}>
         <div className="p-5 sm:p-6 bg-white rounded-xl">
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-8">
             <div className="sm:col-span-2">
-              <h2 className="text-lg font-semibold text-gray-900 ">Icon & Brand name</h2>
-              <p className="mt-1 text-gray-600 text-sm/6">Choose an icon and a name for your brand. Could be your company logo and name.</p>
+              <h2 className="text-lg font-semibold text-gray-900 ">{t("Icon & Brand name")}</h2>
+              <p className="mt-1 text-gray-600 text-sm/6">{t("Choose an icon and a name for your brand. Could be your company logo and name.")}</p>
               <div className="mt-4">
                 <span className="-m-1.5 p-1.5 flex items-center gap-x-1">
                   <Tooltip>
@@ -119,7 +117,7 @@ export default function ({ initialProfile, isNew, backHref = "/app/branding" }) 
                         {iconImageUrl ?
                           <Image
                             className="rounded-md"
-                            alt="Brand Profile Logo"
+                            alt={t("Brand Profile Logo")}
                             width={32}
                             height={32}
                             src={iconImageUrl}
@@ -131,15 +129,13 @@ export default function ({ initialProfile, isNew, backHref = "/app/branding" }) 
                         }
                       </button>
                     </TooltipTrigger>
-                    <TooltipContent side={"bottom"}>
-                      Click to change icon
-                    </TooltipContent>
+                    <TooltipContent side={"bottom"}>{t("Click to change icon")}</TooltipContent>
                   </Tooltip>
                   {
                     editingName ?
                       <div className="flex gap-2">
                         <Input
-                          placeholder="Your Company Name"
+                          placeholder={t("Your Company Name")}
                           className="h-8 w-40"
                           ref={nameRef}
                           defaultValue={profile.name}
@@ -156,12 +152,10 @@ export default function ({ initialProfile, isNew, backHref = "/app/branding" }) 
                         <Tooltip>
                           <TooltipTrigger onClick={() => setEditingName(true)}>
                             {/* <button> */}
-                            <span className='ms-0.5 font-bold'>{profile.name || "Your Company Name"}</span>
+                            <span className='ms-0.5 font-bold'>{profile.name || t("Your Company Name")}</span>
                             {/* </button> */}
                           </TooltipTrigger>
-                          <TooltipContent side={"bottom"}>
-                            Click to change company name
-                          </TooltipContent>
+                          <TooltipContent side={"bottom"}>{t("Click to change company name")}</TooltipContent>
                         </Tooltip>
                       </div>
                   }
@@ -169,15 +163,15 @@ export default function ({ initialProfile, isNew, backHref = "/app/branding" }) 
               </div>
             </div>
             <div className="sm:col-span-2">
-              <h2 className="text-lg font-semibold text-gray-900 ">Background Image</h2>
-              <p className="mt-1 text-gray-600 text-sm/6">The background image will be displayed on your download/upload pages.</p>
+              <h2 className="text-lg font-semibold text-gray-900 ">{t("Background Image")}</h2>
+              <p className="mt-1 text-gray-600 text-sm/6">{t("The background image will be displayed on your download/upload pages.")}</p>
               <div className="mt-4 w-full">
                 <button onClick={handleChooseBackground} className="relative w-96 h-60 block">
                   {backgroundImageUrl ?
                     (
                       <Image
                         fill
-                        alt="Branding Background Image"
+                        alt={t("Branding Background Image")}
                         className="rounded-md object-cover"
                         src={backgroundImageUrl}
                       />
@@ -185,11 +179,11 @@ export default function ({ initialProfile, isNew, backHref = "/app/branding" }) 
                     : (
                       <div className="w-full flex flex-col gap-2 items-center justify-center bg-gray-50 text-gray-600 h-60 transition-colors hover:bg-gray-100 rounded-md">
                         <ImageIcon />
-                        <span>Pick image</span>
+                        <span>{t("Pick image")}</span>
                       </div>
                     )}
                 </button>
-                {backgroundImageUrl != null && <Button size={"sm"} variant={"ghost"} className={"text-gray-700 mt-2"} onClick={() => setBackgroundImageUrl(null)}>Remove background</Button>}
+                {backgroundImageUrl != null && <Button size={"sm"} variant={"ghost"} className={"text-gray-700 mt-2"} onClick={() => setBackgroundImageUrl(null)}>{t("Remove background")}</Button>}
               </div>
             </div>
           </div>
@@ -206,27 +200,23 @@ export default function ({ initialProfile, isNew, backHref = "/app/branding" }) 
           <Dialog>
             <DialogTrigger asChild>
               <Button className={"text-white text-shadow-xs"} variant="link" disabled={loading}>
-                {deleting && <Spinner />} Delete
-              </Button>
+                {deleting && <Spinner />} {t("Delete")}</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader variant="destructive">
-                <DialogTitle>Delete Brand Profile</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to delete this brand profile? This action cannot be undone.
-                </DialogDescription>
+                <DialogTitle>{t("Delete Brand Profile")}</DialogTitle>
+                <DialogDescription>{t("Are you sure you want to delete this brand profile? This action cannot be undone.")}</DialogDescription>
               </DialogHeader>
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">{t("Cancel")}</Button>
                 </DialogClose>
                 <Button
                   variant="destructive"
                   disabled={loading}
                   onClick={handleDelete}
                 >
-                  {deleting && <Spinner />} Delete
-                </Button>
+                  {deleting && <Spinner />} {t("Delete")}</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>

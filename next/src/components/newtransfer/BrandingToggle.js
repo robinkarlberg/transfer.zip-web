@@ -1,13 +1,16 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
-import { englishLandingText } from "@/lib/landing/en";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { HexagonIcon, PaintbrushIcon } from "lucide-react";
 import Image from "next/image";
 import { useId } from "react";
 
-export default function ({ brandProfiles, brandProfileId, setBrandProfileId, disabled = false, text = englishLandingText.upload.brandProfile }) {
+export default function ({ brandProfiles, brandProfileId, setBrandProfileId, disabled = false, text }) {
+  const { landingText } = useLanguage()
+  text = text || landingText.upload.brandProfile
+
   const id = useId()
 
   const brandProfile = brandProfiles && brandProfiles.find(profile => profile.id === brandProfileId)

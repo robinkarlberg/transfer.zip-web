@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { LANDING_PATHS } from "@/lib/landing/routes"
 import { cn } from "@/lib/utils"
+import { dismissLanguageSuggestion } from "@/lib/client/languageSuggestion"
 
 const LANGUAGES = [
   { id: "en", name: "English" },
   { id: "sv", name: "Svenska" },
 ]
 
-export default function LanguageSwitch({ language, light = false }) {
+export default function LanguageSwitch({ language, light = false, stayOnPage = false, onLanguageChange }) {
   const [open, setOpen] = useState(false)
   const label = language === "sv" ? "Välj språk" : "Choose language"
   const title = language === "sv" ? "Språk" : "Language"
@@ -40,7 +41,7 @@ export default function LanguageSwitch({ language, light = false }) {
           {LANGUAGES.map(item => (
             <a
               key={item.id}
-              href={LANDING_PATHS[item.id]}
+              href={stayOnPage ? `?lang=${item.id}` : LANDING_PATHS[item.id]}
               hrefLang={item.id}
               lang={item.id}
               aria-current={item.id === language ? "page" : undefined}
@@ -48,7 +49,15 @@ export default function LanguageSwitch({ language, light = false }) {
                 "flex items-center justify-between rounded-full px-5 py-3.5 font-semibold transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                 item.id === language ? "bg-primary text-white hover:bg-primary-light" : "bg-gray-100 text-gray-900 hover:bg-gray-200"
               )}
-              onClick={e => {
+              onClick={async e => {
+                dismissLanguageSuggestion()
+                if (stayOnPage && item.id !== language) {
+                  e.preventDefault()
+                  if (onLanguageChange && !await onLanguageChange(item.id)) return
+                  const url = new URL(window.location.href)
+                  url.searchParams.set("lang", item.id)
+                  window.location.assign(url)
+                }
                 if (item.id === language) {
                   e.preventDefault()
                   setOpen(false)

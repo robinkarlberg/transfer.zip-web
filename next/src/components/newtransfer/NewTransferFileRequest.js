@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { ArrowRightIcon, CopyIcon, LinkIcon, PlusIcon, RotateCcwIcon, ZapIcon } from "lucide-react";
 import { useContext, useRef, useState } from "react";
@@ -23,8 +24,10 @@ import RequestIdentificationSetting from "./RequestIdentificationSetting"
 
 const defaultText = { ...englishLandingText.upload, ...englishLandingText.request }
 
-export default function ({ isDashboard, loaded, user, storage, brandProfiles, initialTab, text = defaultText, homeHref = "/" }) {
+export default function ({ isDashboard, loaded, user, storage, brandProfiles, initialTab, text, homeHref = "/" }) {
 
+  const { landingText } = useLanguage()
+  text = text || { ...landingText.upload, ...landingText.request }
   const router = useRouter()
 
   const { openSignupDialog } = useContext(GlobalContext)
@@ -126,8 +129,6 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
         return
       }
     }
-
-
 
     // Basic email validation regex pattern
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -269,7 +270,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
             </p>
           </div>
           {!payingUser && (
-            <button onClick={() => openSignupDialog()} type="button" className="text-start w-full bg-purple-50 text-purple-600 rounded-lg p-3 px-4 hover:bg-purple-100">
+            <button onClick={() => openSignupDialog(undefined, "request_form")} type="button" className="text-start w-full bg-purple-50 text-purple-600 rounded-lg p-3 px-4 hover:bg-purple-100">
               <div className="flex justify-between">
                 <div className="flex items-center gap-2">{text.keepLinks}</div>
                 <span>&rarr;</span>

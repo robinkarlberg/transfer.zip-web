@@ -47,7 +47,7 @@ export async function POST(req, { params }) {
         to: [email]
       })
       await sentEmail.save()
-      await sendTransferShare(email, {
+      await sendTransferShare(email, { language: transfer.language,
         name: transfer.name || 'Untitled Transfer',
         description: transfer.description,
         link: await transfer.getDownloadLink(),
@@ -59,7 +59,7 @@ export async function POST(req, { params }) {
   if (transfer.transferRequest) {
     const request = await TransferRequest.findById(transfer.transferRequest).populate('author').populate('brandProfile');
     if (request && request.author && request.author.notificationSettings?.transferReceived !== false) {
-      await sendTransferRequestReceived(request.author.email, {
+      await sendTransferRequestReceived(request.author.email, { language: request.author.language,
         name: request.name || 'Untitled Request',
         link: `${process.env.SITE_URL}/app/requests/${request._id}?submission=${transfer._id}`,
         brand: request.brandProfile ? request.brandProfile.toJsonAsClient() : undefined,

@@ -1,7 +1,11 @@
+import { getTranslations } from "@/lib/server/language"
 import BrandProfile from "@/lib/server/mongoose/models/BrandProfile";
 import BrandProfileEditor from "@/components/dashboard/branding/BrandProfileEditor";
 
-export const metadata = { title: "New brand profile" };
+export async function generateMetadata() {
+  const t = await getTranslations()
+  return { title: t("New brand profile") }
+}
 
 export default async function () {
   const brandProfile = new BrandProfile();

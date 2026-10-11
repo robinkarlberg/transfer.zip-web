@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useRef, useState } from "react"
 import { toast } from "sonner"
@@ -70,6 +71,7 @@ function StepShell({ step, title, subtitle, children }) {
 }
 
 function NameStep({ initialName, onNext }) {
+  const { t } = useLanguage()
   const [name, setName] = useState(initialName || "")
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState("")
@@ -77,7 +79,7 @@ function NameStep({ initialName, onNext }) {
   const handleNext = async () => {
     const trimmed = name.trim()
     if (!trimmed) {
-      setError("Team name is required")
+      setError(t("Team name is required"))
       return
     }
     setSaving(true)
@@ -95,12 +97,12 @@ function NameStep({ initialName, onNext }) {
   return (
     <StepShell
       step={1}
-      title="What's your team called?"
-      subtitle="You can change this later."
+      title={t("What's your team called?")}
+      subtitle={t("You can change this later.")}
     >
       <div className="space-y-4">
         <div>
-          <Label htmlFor="team-name">Team name</Label>
+          <Label htmlFor="team-name">{t("Team name")}</Label>
           <Input
             id="team-name"
             autoFocus
@@ -110,7 +112,7 @@ function NameStep({ initialName, onNext }) {
             onKeyDown={(e) => {
               if (e.key === "Enter") handleNext()
             }}
-            placeholder="Acme Inc."
+            placeholder={t("Acme Inc.")}
             className="mt-2"
             disabled={saving}
           />
@@ -118,9 +120,7 @@ function NameStep({ initialName, onNext }) {
         </div>
         <div className="flex justify-end">
           <Button onClick={handleNext} disabled={saving || !name.trim()}>
-            {saving && <Loader2 className="animate-spin" size={14} />}
-            Next
-          </Button>
+            {saving && <Loader2 className="animate-spin" size={14} />}{t("Next")}</Button>
         </div>
       </div>
     </StepShell>
@@ -128,6 +128,7 @@ function NameStep({ initialName, onNext }) {
 }
 
 function InviteStep({ availableSeats, onNext, onBack }) {
+  const { t } = useLanguage()
   const [rows, setRows] = useState(() => {
     const initial = Math.min(2, availableSeats)
     return Array.from({ length: Math.max(1, initial) }, () => ({ email: "", role: ROLES.MEMBER }))
@@ -164,7 +165,7 @@ function InviteStep({ availableSeats, onNext, onBack }) {
     const seen = new Set()
     const dupErrors = {}
     for (const r of filled) {
-      if (seen.has(r.email)) dupErrors[r.i] = "Duplicate email"
+      if (seen.has(r.email)) dupErrors[r.i] = t("Duplicate email")
       seen.add(r.email)
     }
     if (Object.keys(dupErrors).length) {
@@ -192,21 +193,21 @@ function InviteStep({ availableSeats, onNext, onBack }) {
     if (Object.keys(nextErrors).length) {
       setErrors(nextErrors)
       const okCount = results.filter((r) => r.ok).length
-      if (okCount > 0) toast.success(`${okCount} invite${okCount === 1 ? "" : "s"} sent`)
+      if (okCount > 0) toast.success(t(okCount === 1 ? "1 invitation sent" : "{count} invitations sent", { count: okCount }))
       return
     }
-    toast.success(`${results.length} invite${results.length === 1 ? "" : "s"} sent`)
+    toast.success(t(results.length === 1 ? "1 invitation sent" : "{count} invitations sent", { count: results.length }))
     onNext()
   }
 
   return (
     <StepShell
       step={2}
-      title="Invite your teammates"
+      title={t("Invite your teammates")}
       subtitle={
         availableSeats > 0
-          ? `You have ${availableSeats} seat${availableSeats === 1 ? "" : "s"} available. Skip if you'd rather invite people later.`
-          : "No seats left, you can add more later from billing."
+          ? t(availableSeats === 1 ? "You have 1 seat available. Skip if you'd rather invite people later." : "You have {count} seats available. Skip if you'd rather invite people later.", { count: availableSeats })
+          : t("No seats left, you can add more later from billing.")
       }
     >
       <div className="space-y-3">
@@ -232,7 +233,7 @@ function InviteStep({ availableSeats, onNext, onBack }) {
                 <SelectContent>
                   {ROLE_OPTIONS.map((r) => (
                     <SelectItem key={r.id} value={r.id}>
-                      {r.label}
+                      {t(r.label)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -243,7 +244,7 @@ function InviteStep({ availableSeats, onNext, onBack }) {
                 size="icon"
                 onClick={() => removeRow(i)}
                 disabled={sending || (rows.length === 1 && !row.email)}
-                aria-label="Remove row"
+                aria-label={t("Remove row")}
               >
                 <XIcon size={16} />
               </Button>
@@ -260,29 +261,21 @@ function InviteStep({ availableSeats, onNext, onBack }) {
             disabled={!canAddMore || sending}
             className="text-primary"
           >
-            <PlusIcon size={14} /> Add another
-          </Button>
+            <PlusIcon size={14} /> {t("Add another")}</Button>
           {!canAddMore && availableSeats > 0 && (
-            <p className="text-xs text-gray-500 mt-1">
-              You've reached your seat capacity. Add more from billing later.
-            </p>
+            <p className="text-xs text-gray-500 mt-1">{t("You've reached your seat capacity. Add more from billing later.")}</p>
           )}
         </div>
       </div>
 
       <div className="flex justify-between mt-6">
-        <Button variant="ghost" onClick={onBack} disabled={sending}>
-          Back
-        </Button>
+        <Button variant="ghost" onClick={onBack} disabled={sending}>{t("Back")}</Button>
         {filledCount > 0 ? (
           <Button onClick={handleSend} disabled={sending}>
-            {sending && <Loader2 className="animate-spin" size={14} />}
-            Send {filledCount} invite{filledCount === 1 ? "" : "s"}
+            {sending && <Loader2 className="animate-spin" size={14} />}{t("Send")} {filledCount} {t(filledCount === 1 ? "invite" : "invites")}
           </Button>
         ) : (
-          <Button variant="outline" onClick={onNext} disabled={sending}>
-            Skip
-          </Button>
+          <Button variant="outline" onClick={onNext} disabled={sending}>{t("Skip")}</Button>
         )}
       </div>
     </StepShell>
@@ -290,6 +283,7 @@ function InviteStep({ availableSeats, onNext, onBack }) {
 }
 
 function BrandStep({ defaultName, onBack, onFinish }) {
+  const { t } = useLanguage()
   const [name, setName] = useState(defaultName || "")
   const [iconUrl, setIconUrl] = useState(null)
   const [backgroundUrl, setBackgroundUrl] = useState(null)
@@ -324,7 +318,7 @@ function BrandStep({ defaultName, onBack, onFinish }) {
       try {
         await newBrandProfile({ name: name.trim(), iconUrl, backgroundUrl })
       } catch (err) {
-        toast.error(`Couldn't save your brand profile: ${err.message}. You can set it up later from Admin → Branding.`)
+        toast.error(t("Couldn't save your brand profile: {0}. You can set it up later from Admin → Branding.", { "0": err.message }))
       }
     }
     onFinish()
@@ -333,7 +327,7 @@ function BrandStep({ defaultName, onBack, onFinish }) {
   const handleFinish = () => {
     const hasAny = name.trim() || iconUrl || backgroundUrl
     if (hasAny && !name.trim()) {
-      setError("Add a brand name or skip this step")
+      setError(t("Add a brand name or skip this step"))
       return
     }
     finalize({ withProfile: !!name.trim() })
@@ -344,8 +338,8 @@ function BrandStep({ defaultName, onBack, onFinish }) {
   return (
     <StepShell
       step={3}
-      title="Brand your transfers"
-      subtitle="Optional. Show your logo and a background on share pages."
+      title={t("Brand your transfers")}
+      subtitle={t("Optional. Show your logo and a background on share pages.")}
     >
       <form className="hidden">
         <input ref={iconInputRef} type="file" accept="image/*" onChange={handleImageFile(setIconUrl)} />
@@ -356,13 +350,13 @@ function BrandStep({ defaultName, onBack, onFinish }) {
 
       <div className="space-y-5">
         <div>
-          <Label htmlFor="brand-name">Brand name</Label>
+          <Label htmlFor="brand-name">{t("Brand name")}</Label>
           <Input
             id="brand-name"
             value={name}
             maxLength={NAME_MAX}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Acme Inc."
+            placeholder={t("Acme Inc.")}
             disabled={saving}
             className="mt-2"
           />
@@ -370,7 +364,7 @@ function BrandStep({ defaultName, onBack, onFinish }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           <div>
-            <Label>Icon</Label>
+            <Label>{t("Icon")}</Label>
             <div className="mt-2 flex items-center gap-3">
               <button
                 type="button"
@@ -379,21 +373,19 @@ function BrandStep({ defaultName, onBack, onFinish }) {
                 className="w-14 h-14 rounded-md border border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:bg-gray-50 overflow-hidden"
               >
                 {iconUrl ? (
-                  <Image alt="Icon" width={56} height={56} src={iconUrl} className="object-cover" />
+                  <Image alt={t("Icon")} width={56} height={56} src={iconUrl} className="object-cover" />
                 ) : (
                   <ImageIcon size={20} />
                 )}
               </button>
               {iconUrl && (
-                <Button type="button" variant="ghost" size="sm" onClick={() => setIconUrl(null)} disabled={saving}>
-                  Remove
-                </Button>
+                <Button type="button" variant="ghost" size="sm" onClick={() => setIconUrl(null)} disabled={saving}>{t("Remove")}</Button>
               )}
             </div>
           </div>
 
           <div>
-            <Label>Background</Label>
+            <Label>{t("Background")}</Label>
             <div className="mt-2">
               <button
                 type="button"
@@ -402,11 +394,10 @@ function BrandStep({ defaultName, onBack, onFinish }) {
                 className="relative w-full h-24 rounded-md border border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:bg-gray-50 overflow-hidden"
               >
                 {backgroundUrl ? (
-                  <Image alt="Background" fill src={backgroundUrl} className="object-cover" />
+                  <Image alt={t("Background")} fill src={backgroundUrl} className="object-cover" />
                 ) : (
                   <span className="flex items-center gap-2 text-sm">
-                    <ImageIcon size={16} /> Pick image
-                  </span>
+                    <ImageIcon size={16} /> {t("Pick image")}</span>
                 )}
               </button>
               {backgroundUrl && (
@@ -417,9 +408,7 @@ function BrandStep({ defaultName, onBack, onFinish }) {
                   onClick={() => setBackgroundUrl(null)}
                   disabled={saving}
                   className="mt-1"
-                >
-                  Remove
-                </Button>
+                >{t("Remove")}</Button>
               )}
             </div>
           </div>
@@ -429,17 +418,11 @@ function BrandStep({ defaultName, onBack, onFinish }) {
       </div>
 
       <div className="flex justify-between mt-6">
-        <Button variant="ghost" onClick={onBack} disabled={saving}>
-          Back
-        </Button>
+        <Button variant="ghost" onClick={onBack} disabled={saving}>{t("Back")}</Button>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={handleSkip} disabled={saving}>
-            Skip & finish
-          </Button>
+          <Button variant="outline" onClick={handleSkip} disabled={saving}>{t("Skip & finish")}</Button>
           <Button onClick={handleFinish} disabled={saving}>
-            {saving && <Loader2 className="animate-spin" size={14} />}
-            Finish
-          </Button>
+            {saving && <Loader2 className="animate-spin" size={14} />}{t("Finish")}</Button>
         </div>
       </div>
     </StepShell>

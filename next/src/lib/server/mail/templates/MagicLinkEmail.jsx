@@ -1,14 +1,14 @@
+import { getTranslator } from "@/lib/i18n/translate"
 import { Button, Heading, Hr, Text } from '@react-email/components';
 import EmailLayout from './EmailLayout.jsx';
 
-export default function MagicLinkEmail({ link }) {
+export default function MagicLinkEmail({ language = "en", link }) {
+  const t = getTranslator(language)
   return (
-    <EmailLayout>
-      <Heading style={h1}>Sign in to Transfer.zip</Heading>
-      <Text style={text}>
-        Click the button below to sign in to your acount.
-      </Text>
-      <Button style={button} href={link}>Sign In</Button>
+    <EmailLayout language={language}>
+      <Heading style={h1}>{t("Sign in to Transfer.zip")}</Heading>
+      <Text style={text}>{t("Click the button below to sign in to your acount.")}</Text>
+      <Button style={button} href={link}>{t("Sign In")}</Button>
       <Hr style={{ marginTop: '24px' }} />
       <Text style={{ color: '#2563eb', textDecoration: 'underline' }}>
         <a href={link}>{link}</a>

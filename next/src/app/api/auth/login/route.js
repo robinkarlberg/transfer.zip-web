@@ -1,3 +1,5 @@
+import { getLanguage } from "@/lib/server/language"
+import { completeSignIn, setLanguageCookie } from "@/lib/server/completeSignIn"
 import { NextResponse } from 'next/server'
 import { createCookieParams, resp } from '@/lib/server/serverUtils'
 import dbConnect from '@/lib/server/mongoose/db';
@@ -17,7 +19,9 @@ export async function POST(req) {
   const session = new Session({ user })
   await session.save()
 
-  const response = NextResponse.json(resp({}), { status: 200 })
+  const signIn = await completeSignIn(user, await getLanguage())
+  const response = NextResponse.json(resp(signIn), { status: 200 })
+  setLanguageCookie(response, signIn.language)
   response.cookies.set('token', session.token, createCookieParams())
   return response
 }

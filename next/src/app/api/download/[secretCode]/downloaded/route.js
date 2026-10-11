@@ -31,7 +31,7 @@ export async function POST(req, { params }) {
     (!transfer.lastDownloadEmailSentAt || now - transfer.lastDownloadEmailSentAt > DOWNLOAD_EMAIL_COOLDOWN_MS)
   ) {
     const brand = transfer.brandProfile ? transfer.brandProfile.toJsonAsClient() : undefined;
-    await sendTransferDownloaded(author.email, {
+    await sendTransferDownloaded(author.email, { language: author.language,
       name: transfer.name || 'Untitled Transfer',
       link: `${process.env.SITE_URL}/app/sent/${transfer._id.toString()}`,
       brand,

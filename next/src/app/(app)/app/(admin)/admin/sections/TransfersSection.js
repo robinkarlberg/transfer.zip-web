@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -66,22 +67,23 @@ function clampExtension(transfer, addDays, maxExpiryDays) {
 }
 
 function Row({ transfer, canManage, onDelete, onExtend, maxExpiryDays }) {
+  const { t, language, locale } = useLanguage()
   const author = transfer.author;
   const expiresAt = transfer.expiresAt ? new Date(transfer.expiresAt) : null;
   const expired = expiresAt && expiresAt <= new Date();
 
   const handleCopy = async () => {
     if (await tryCopyToClipboard(transfer.downloadUrl)) {
-      toast.success("Copied link");
+      toast.success(t("Copied link"));
     }
   };
 
   return (
     <div className="grid grid-cols-12 gap-3 items-center px-4 py-3 border-b last:border-b-0 hover:bg-gray-50 transition">
       <div className="col-span-12 sm:col-span-5 min-w-0">
-        <div className="text-sm font-medium text-gray-900 truncate">{transfer.name}</div>
+        <div className="text-sm font-medium text-gray-900 truncate">{transfer.hasName ? transfer.name : t("Untitled Transfer")}</div>
         <div className="text-xs text-gray-500 mt-0.5">
-          {transfer.files.length} file{transfer.files.length === 1 ? "" : "s"} · {humanFileSize(transfer.size, true)}
+          {transfer.files.length} {t(transfer.files.length === 1 ? "file" : "files")} · {humanFileSize(transfer.size, true)}
         </div>
       </div>
 
@@ -94,7 +96,7 @@ function Row({ transfer, canManage, onDelete, onExtend, maxExpiryDays }) {
             </div>
           </>
         ) : (
-          <div className="text-xs text-gray-500">Unknown</div>
+          <div className="text-xs text-gray-500">{t("Unknown")}</div>
         )}
       </div>
 
@@ -111,9 +113,9 @@ function Row({ transfer, canManage, onDelete, onExtend, maxExpiryDays }) {
 
       <div className="col-span-2 sm:col-span-1 text-xs text-gray-600">
         {expired ? (
-          <span className="text-amber-600">Expired</span>
+          <span className="text-amber-600">{t("Expired")}</span>
         ) : expiresAt ? (
-          `${humanTimeUntil(expiresAt)} left`
+          t("{time} left", { time: humanTimeUntil(expiresAt, language) })
         ) : (
           "-"
         )}
@@ -122,23 +124,20 @@ function Row({ transfer, canManage, onDelete, onExtend, maxExpiryDays }) {
       <div className="col-span-1 flex justify-end">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" title="Actions">
+            <Button variant="ghost" size="icon" title={t("Actions")}>
               <EllipsisVerticalIcon className="w-4 h-4 text-gray-600" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={handleCopy}>
-              <CopyIcon size={14} /> Copy link
-            </DropdownMenuItem>
+              <CopyIcon size={14} /> {t("Copy link")}</DropdownMenuItem>
             {canManage && (
               <>
                 <DropdownMenuItem onClick={() => onExtend(transfer)}>
-                  <CalendarPlusIcon size={14} /> Extend expiry
-                </DropdownMenuItem>
+                  <CalendarPlusIcon size={14} /> {t("Extend expiry")}</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive" onClick={() => onDelete(transfer)}>
-                  <Trash2Icon size={14} /> Delete
-                </DropdownMenuItem>
+                  <Trash2Icon size={14} /> {t("Delete")}</DropdownMenuItem>
               </>
             )}
           </DropdownMenuContent>
@@ -149,6 +148,7 @@ function Row({ transfer, canManage, onDelete, onExtend, maxExpiryDays }) {
 }
 
 function ExtendDialog({ transfer, maxExpiryDays, onClose, onSaved }) {
+  const { t, language, locale } = useLanguage()
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -164,7 +164,7 @@ function ExtendDialog({ transfer, maxExpiryDays, onClose, onSaved }) {
     setError("");
     try {
       await extendTeamTransfer(transfer.id, newDate.toISOString());
-      toast.success("Expiry extended");
+      toast.success(t("Expiry extended"));
       onSaved();
     } catch (err) {
       setError(err.message);
@@ -176,7 +176,7 @@ function ExtendDialog({ transfer, maxExpiryDays, onClose, onSaved }) {
   const handleQuickExtend = (days) => {
     const next = clampExtension(transfer, days, maxExpiryDays);
     if (next <= new Date()) {
-      setError(`Maximum expiry is ${maxExpiryDays} days from creation`);
+      setError(t("Maximum expiry is {0} days from creation", { "0": maxExpiryDays }));
       return;
     }
     return applyExpiry(next);
@@ -184,7 +184,7 @@ function ExtendDialog({ transfer, maxExpiryDays, onClose, onSaved }) {
 
   const handleSetToMax = () => {
     if (ceiling <= new Date()) {
-      setError(`Maximum expiry (${ceilingISO}) has already passed for this transfer`);
+      setError(t("Maximum expiry ({0}) has already passed for this transfer", { "0": ceilingISO }));
       return;
     }
     return applyExpiry(ceiling);
@@ -197,15 +197,15 @@ function ExtendDialog({ transfer, maxExpiryDays, onClose, onSaved }) {
     if (!value) return;
     const date = new Date(`${value}T23:59:59`);
     if (Number.isNaN(date.getTime())) {
-      setError("Invalid date");
+      setError(t("Invalid date"));
       return;
     }
     if (date <= new Date()) {
-      setError("Date must be in the future");
+      setError(t("Date must be in the future"));
       return;
     }
     if (date > ceiling) {
-      setError(`Date cannot be later than ${ceilingISO}`);
+      setError(t("Date cannot be later than {0}", { "0": ceilingISO }));
       return;
     }
     await applyExpiry(date);
@@ -215,12 +215,12 @@ function ExtendDialog({ transfer, maxExpiryDays, onClose, onSaved }) {
     <Dialog open={!!transfer} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Extend expiry</DialogTitle>
+          <DialogTitle>{t("Extend expiry")}</DialogTitle>
           <DialogDescription>
-            "{transfer.name}" currently {currentExpiry
-              ? `expires ${currentExpiry.toLocaleDateString()}`
-              : "has no expiry"
-            }. Maximum allowed by plan: {ceilingISO}.
+            "{transfer.hasName ? transfer.name : t("Untitled Transfer")}{t("\" currently")} {currentExpiry
+              ? t("expires {0}", { "0": currentExpiry.toLocaleDateString(locale) })
+              : t("has no expiry")
+            }{t(". Maximum allowed by plan:")} {ceilingISO}.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3 py-2">
@@ -236,13 +236,11 @@ function ExtendDialog({ transfer, maxExpiryDays, onClose, onSaved }) {
                 {label}
               </Button>
             ))}
-            <Button variant="outline" size="sm" disabled={saving} onClick={handleSetToMax}>
-              Set to max
-            </Button>
+            <Button variant="outline" size="sm" disabled={saving} onClick={handleSetToMax}>{t("Set to max")}</Button>
           </div>
           <form onSubmit={handleCustom} className="flex items-end gap-2">
             <div className="flex-1">
-              <label className="text-xs text-gray-500" htmlFor="expiresAt">Custom date</label>
+              <label className="text-xs text-gray-500" htmlFor="expiresAt">{t("Custom date")}</label>
               <Input
                 id="expiresAt"
                 name="expiresAt"
@@ -254,13 +252,13 @@ function ExtendDialog({ transfer, maxExpiryDays, onClose, onSaved }) {
               />
             </div>
             <Button type="submit" disabled={saving}>
-              {saving ? <><Loader2 className="animate-spin" size={16} /> Saving...</> : "Set date"}
+              {saving ? <><Loader2 className="animate-spin" size={16} /> {t("Saving...")}</> : t("Set date")}
             </Button>
           </form>
           {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={onClose} disabled={saving}>Close</Button>
+          <Button variant="ghost" onClick={onClose} disabled={saving}>{t("Close")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -268,6 +266,7 @@ function ExtendDialog({ transfer, maxExpiryDays, onClose, onSaved }) {
 }
 
 export default function TransfersSection({ transfers, role, maxExpiryDays }) {
+  const { t } = useLanguage()
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialAuthor = searchParams.get("author") || "all";
@@ -281,20 +280,20 @@ export default function TransfersSection({ transfers, role, maxExpiryDays }) {
 
   const authors = useMemo(() => {
     const seen = new Map();
-    transfers.forEach(t => {
-      if (t.author && !seen.has(t.author.id)) {
-        seen.set(t.author.id, t.author);
+    transfers.forEach(entry => {
+      if (entry.author && !seen.has(entry.author.id)) {
+        seen.set(entry.author.id, entry.author);
       }
     });
     return Array.from(seen.values());
   }, [transfers]);
 
   const filtered = useMemo(() => {
-    return transfers.filter(t => {
-      if (authorFilter !== "all" && t.author?.id !== authorFilter) return false;
+    return transfers.filter(entry => {
+      if (authorFilter !== "all" && entry.author?.id !== authorFilter) return false;
       if (query) {
         const q = query.toLowerCase();
-        const hay = `${t.name} ${t.author?.email || ""} ${t.author?.fullName || ""}`.toLowerCase();
+        const hay = `${entry.name} ${entry.author?.email || ""} ${entry.author?.fullName || ""}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -306,7 +305,7 @@ export default function TransfersSection({ transfers, role, maxExpiryDays }) {
     setDeleting(true);
     try {
       await deleteTeamTransfer(deleteTarget.id);
-      toast.success("Transfer deleted");
+      toast.success(t("Transfer deleted"));
       setDeleteTarget(null);
       router.refresh();
     } catch (err) {
@@ -321,21 +320,21 @@ export default function TransfersSection({ transfers, role, maxExpiryDays }) {
   const side = hasTransfers ? (
     <div className="flex items-center gap-3 flex-wrap">
       <div className="text-white whitespace-nowrap">
-        {filtered.length} of {transfers.length}
+        {filtered.length} {t("of")} {transfers.length}
       </div>
       <Input
         variant="white"
         value={query}
         onChange={e => setQuery(e.target.value)}
-        placeholder="Search any..."
+        placeholder={t("Search any...")}
         className="w-44"
       />
       <Select value={authorFilter} onValueChange={setAuthorFilter}>
         <SelectTrigger variant="white" className="w-48">
-          <SelectValue placeholder="All members" />
+          <SelectValue placeholder={t("All members")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All members</SelectItem>
+          <SelectItem value="all">{t("All members")}</SelectItem>
           {authors.map(a => (
             <SelectItem key={a.id} value={a.id}>
               {a.fullName || a.email}
@@ -347,32 +346,30 @@ export default function TransfersSection({ transfers, role, maxExpiryDays }) {
   ) : null;
 
   return (
-    <GenericPage title="Transfers" side={side}>
+    <GenericPage title={t("Transfers")} side={side}>
       <div className="space-y-3">
         {!hasTransfers ? (
           <EmptySpace
-            title="See Every Transfer Your Team Sends"
-            subtitle="Once members start sharing files, you'll see every transfer here with downloads, views, and the option to extend or remove them."
+            title={t("See Every Transfer Your Team Sends")}
+            subtitle={t("Once members start sharing files, you'll see every transfer here with downloads, views, and the option to extend or remove them.")}
           />
         ) : (
           <AdminCard>
             {filtered.length === 0 ? (
-              <div className="py-12 text-center text-sm text-gray-500">
-                No transfers match your filters.
-              </div>
+              <div className="py-12 text-center text-sm text-gray-500">{t("No transfers match your filters.")}</div>
             ) : (
               <div className="rounded-lg border overflow-hidden">
                 <div className="hidden sm:grid grid-cols-12 gap-3 px-4 py-2 text-xs uppercase tracking-wider text-gray-500 bg-gray-50 border-b">
-                  <div className="col-span-5">Transfer</div>
-                  <div className="col-span-3">Uploaded by</div>
-                  <div className="col-span-2">Activity</div>
-                  <div className="col-span-1">Expires</div>
+                  <div className="col-span-5">{t("Transfer")}</div>
+                  <div className="col-span-3">{t("Uploaded by")}</div>
+                  <div className="col-span-2">{t("Activity")}</div>
+                  <div className="col-span-1">{t("Expires")}</div>
                   <div className="col-span-1" />
                 </div>
-                {filtered.map(t => (
+                {filtered.map(entry => (
                   <Row
-                    key={t.id}
-                    transfer={t}
+                    key={entry.id}
+                    transfer={entry}
                     canManage={canManage}
                     onDelete={setDeleteTarget}
                     onExtend={setExtendTarget}
@@ -385,27 +382,25 @@ export default function TransfersSection({ transfers, role, maxExpiryDays }) {
         )}
 
         {!canManage && hasTransfers && (
-          <p className="text-xs text-white px-1">
-            Only the Owner can modify or delete other members' transfers.
-          </p>
+          <p className="text-xs text-white px-1">{t("Only the Owner can modify or delete other members' transfers.")}</p>
         )}
 
         <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader variant="destructive">
-              <DialogTitle>Delete transfer</DialogTitle>
+              <DialogTitle>{t("Delete transfer")}</DialogTitle>
               <DialogDescription>
-                {deleteTarget ? `"${deleteTarget.name}" by ${deleteTarget.author?.email || "unknown member"} will be permanently deleted.` : ""}
+                {deleteTarget ? t("\"{0}\" by {1} will be permanently deleted.", { "0": deleteTarget.name, "1": deleteTarget.author?.email || "unknown member" }) : ""}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setDeleteTarget(null)} disabled={deleting}>Cancel</Button>
+              <Button variant="outline" onClick={() => setDeleteTarget(null)} disabled={deleting}>{t("Cancel")}</Button>
               <Button
                 className="bg-red-600 text-white hover:bg-red-700"
                 onClick={handleDelete}
                 disabled={deleting}
               >
-                {deleting ? "Deleting" : "Delete"}
+                {deleting ? t("Deleting") : t("Delete")}
               </Button>
             </DialogFooter>
           </DialogContent>

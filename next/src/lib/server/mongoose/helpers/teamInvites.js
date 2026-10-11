@@ -84,14 +84,14 @@ export async function redeemTeamInviteForUser(invite, user) {
   const owner = await User.findOne({ _id: { $in: team.users }, role: ROLES.OWNER })
   if (owner) {
     const manageLink = `${process.env.SITE_URL}/app/admin/members`
-    sendTeamInviteAccepted(owner.email, {
+    sendTeamInviteAccepted(owner.email, { language: owner.language,
       teamName: team.name,
       memberEmail: user.email,
       link: manageLink,
     }).catch(err => logError(err).forRoute("teamInvites.redeemTeamInviteForUser"))
 
     if (team.users.length >= (team.seats || 0)) {
-      sendTeamSeatCapacityReached(owner.email, {
+      sendTeamSeatCapacityReached(owner.email, { language: owner.language,
         teamName: team.name,
         seats: team.seats || 0,
         link: manageLink,

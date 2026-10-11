@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import BIcon from "@/components/BIcon";
 import FileUpload from "@/components/elements/FileUpload";
@@ -21,6 +22,7 @@ import { getMaxRecipientsForPlan } from "../../lib/getMaxRecipientsForPlan";
 import AddedEmailField from "../newtransfer/AddedEmailField";
 
 export default function ({ user, storage, brandProfiles }) {
+  const { t } = useLanguage()
 
   const { files, setFiles } = useContext(FileContext)
 
@@ -124,11 +126,11 @@ export default function ({ user, storage, brandProfiles }) {
 
   const handleEmailAdd = () => {
     if (user.plan == "starter" && emailRecipients.length >= 25) {
-      displayErrorModal("With the Starter plan, you can only send a file transfer to up to 25 email recipients at once. Upgrade to Pro to send up to 200 emails per transfer.")
+      displayErrorModal(t("With the Starter plan, you can only send a file transfer to up to 25 email recipients at once. Upgrade to Pro to send up to 200 emails per transfer."))
       return
     }
     if (user.plan == "pro" && emailRecipients.length >= 200) {
-      displayErrorModal("With the Pro plan, you can only send a file transfer to up to 200 email recipients at once.")
+      displayErrorModal(t("With the Pro plan, you can only send a file transfer to up to 200 email recipients at once."))
       return
     }
 
@@ -171,9 +173,8 @@ export default function ({ user, storage, brandProfiles }) {
         {tooLittleStorage && direction == "send" && (
           <div className="w-full pt-4 px-4">
             <button onClick={() => router.push("/pricing")} className="w-full shadow-sm text-start rounded-lg text-white bg-red-500 px-4 py-3 group transition-colors hover:bg-red-600">
-              <h5 className="font-bold text-sm mb-1"><span className="group-hover:underline">Hey big sender...</span></h5>
-              <p className="font-medium text-sm">
-                Your storage is too full. Upgrade your subscription now to send bigger files. <span className="group-hover:ms-1 transition-all">&rarr;</span>
+              <h5 className="font-bold text-sm mb-1"><span className="group-hover:underline">{t("Hey big sender...")}</span></h5>
+              <p className="font-medium text-sm">{t("Your storage is too full. Upgrade your subscription now to send bigger files.")} <span className="group-hover:ms-1 transition-all">&rarr;</span>
               </p>
             </button>
           </div>
@@ -181,7 +182,7 @@ export default function ({ user, storage, brandProfiles }) {
         <div className="px-6">
           <div className="relative flex justify-center mt-2 sm:mt-4 ">
             <div>
-              <fieldset aria-label="Transfer direction">
+              <fieldset aria-label={t("Transfer direction")}>
                 <RadioGroup
                   value={direction}
                   onChange={value => {
@@ -193,16 +194,12 @@ export default function ({ user, storage, brandProfiles }) {
                     key={"send"}
                     value={"send"}
                     className="cursor-pointer rounded-full px-2.5 py-1 text-gray-500 data-[checked]:bg-primary data-[checked]:text-white"
-                  >
-                    Send
-                  </Radio>
+                  >{t("Send")}</Radio>
                   <Radio
                     key={"receive"}
                     value={"receive"}
                     className="cursor-pointer rounded-full px-2.5 py-1 text-gray-500 data-[checked]:bg-primary data-[checked]:text-white"
-                  >
-                    Request
-                  </Radio>
+                  >{t("Request")}</Radio>
                 </RadioGroup>
               </fieldset>
             </div>
@@ -212,7 +209,7 @@ export default function ({ user, storage, brandProfiles }) {
                   {
                     brandProfile ?
                       <div className="absolute">
-                        <Image alt="Brand Profile Icon" className="w-6 h-6" width={24} height={24} src={brandProfile.iconUrl} />
+                        <Image alt={t("Brand Profile Icon")} className="w-6 h-6" width={24} height={24} src={brandProfile.iconUrl} />
                       </div>
                       :
                       <BIcon className={"text-gray-400"} center name={"slash-lg"} />
@@ -226,12 +223,12 @@ export default function ({ user, storage, brandProfiles }) {
                     <SelectItem
                       key={profile.id}
                       value={profile.id}>
-                      <Image alt="Brand Profile Icon" width={24} height={24} src={profile.iconUrl} />
+                      <Image alt={t("Brand Profile Icon")} width={24} height={24} src={profile.iconUrl} />
                       <span className="text-sm text-gray-700">{profile.name}</span>
                     </SelectItem>)
-                  ), <SelectItem key={"nonee"} value={null}>No brand profile</SelectItem>]
+                  ), <SelectItem key={"nonee"} value={null}>{t("No brand profile")}</SelectItem>]
                   :
-                  <SelectItem key={"none"} value={"none"} disabled>No brand profiles.</SelectItem>
+                  <SelectItem key={"none"} value={"none"} disabled>{t("No brand profiles.")}</SelectItem>
                 }
               </SelectContent>
             </Select>
@@ -242,31 +239,27 @@ export default function ({ user, storage, brandProfiles }) {
             <div className="col-span-full">
               <Alert>
                 {/* <InfoIcon /> */}
-                <AlertTitle>
-                  Transfer Requests
-                </AlertTitle>
-                <AlertDescription>
-                  This creates a link where people can send you files. Received files will be counted to your storage quota.
-                </AlertDescription>
+                <AlertTitle>{t("Transfer Requests")}</AlertTitle>
+                <AlertDescription>{t("This creates a link where people can send you files. Received files will be counted to your storage quota.")}</AlertDescription>
               </Alert>
             </div>
           )}
           <div className="col-span-full grid grid-cols-5 gap-x-2">
             <div className="col-span-3 gap-y-2 grid">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">{t("Name")}</Label>
               <Input
                 id="name"
                 name="name"
                 type={"text"}
                 required
-                placeholder={direction == "send" ? "Untitled Transfer" : "Send Me Files"}
+                placeholder={direction == "send" ? t("Untitled Transfer") : t("Send Me Files")}
               />
             </div>
             {direction == "send" && <div className="col-span-2 grid gap-2">
-              <Label htmlFor="expiresInDays">Expires</Label>
+              <Label htmlFor="expiresInDays">{t("Expires")}</Label>
               <Select id="expiresInDays" name="expiresInDays" defaultValue={EXPIRATION_TIMES[0].days}>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Expires" />
+                  <SelectValue placeholder={t("Expires")} />
                 </SelectTrigger>
                 <SelectContent>
                   {EXPIRATION_TIMES.map(item => (
@@ -282,7 +275,7 @@ export default function ({ user, storage, brandProfiles }) {
             </div>}
           </div>
           <div className="col-span-full grid gap-2">
-            <Label htmlFor="email">Recipients <span className="text-gray-400 font-normal text-xs leading-0">{emailRecipients.length > 0 ? (emailRecipients.length + " / " + getMaxRecipientsForPlan(user.plan)) : ""}</span></Label>
+            <Label htmlFor="email">{t("Recipients")} <span className="text-gray-400 font-normal text-xs leading-0">{emailRecipients.length > 0 ? (emailRecipients.length + " / " + getMaxRecipientsForPlan(user.plan)) : ""}</span></Label>
             <div className="relative flex items-center">
               <Input
                 ref={emailRef}
@@ -295,8 +288,7 @@ export default function ({ user, storage, brandProfiles }) {
               />
               <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
                 <button type="button" onClick={handleEmailAdd} className="inline-flex items-center rounded border border-gray-200 px-1 pe-1.5 font-sans text-xs text-primary font-medium bg-white hover:bg-gray-50">
-                  <BIcon name={"plus-lg"} className={"mr-1 ms-1"} />Add
-                </button>
+                  <BIcon name={"plus-lg"} className={"mr-1 ms-1"} />{t("Add")}</button>
               </div>
             </div>
             {emailRecipients.length > 0 && (
@@ -306,10 +298,10 @@ export default function ({ user, storage, brandProfiles }) {
             )}
           </div>
           <div className={`col-span-full grid gap-2 ${emailRecipients.length > 0 ? "-mt-6" : ""}`}>
-            <Label htmlFor="description">Message</Label>
+            <Label htmlFor="description">{t("Message")}</Label>
             <Textarea
               id="description"
-              placeholder="Here..."
+              placeholder={t("Here...")}
               name="description"
               type="text"
               className={"resize-none"}
@@ -321,7 +313,7 @@ export default function ({ user, storage, brandProfiles }) {
         </div>
         {direction == "receive" && <div className="col-span-full">
           <div className="pb-4 flex px-6 mt-4">
-            <button onClick={handleCreateLinkClicked} type="button" className="ms-auto text-white px-2 py-1 rounded-lg shadow bg-primary hover:bg-primary-light disabled:bg-primary-lighter">Create Link &rarr;</button>
+            <button onClick={handleCreateLinkClicked} type="button" className="ms-auto text-white px-2 py-1 rounded-lg shadow bg-primary hover:bg-primary-light disabled:bg-primary-lighter">{t("Create Link →")}</button>
           </div>
         </div>}
       </div>

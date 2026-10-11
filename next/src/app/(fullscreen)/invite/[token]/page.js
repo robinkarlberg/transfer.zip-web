@@ -1,3 +1,5 @@
+
+import { getTranslations } from "@/lib/server/language"
 import dbConnect from "@/lib/server/mongoose/db"
 import TeamInvite from "@/lib/server/mongoose/models/TeamInvite"
 import Team from "@/lib/server/mongoose/models/Team"
@@ -9,14 +11,15 @@ import { Button } from "@/components/ui/button"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
 
 export default async function InviteAcceptPage({ params }) {
+  const t = await getTranslations()
   const { token } = await params
 
   if (!token || typeof token !== "string") {
     return (
-      <InviteLayout title="Invalid invite" message="This invite link is invalid or expired.">
+      <InviteLayout title={t("Invalid invite")} message={t("This invite link is invalid or expired.")}>
         <div className="w-full flex justify-center -mb-6">
           <Button asChild>
-            <Link href={"/"}>Go back home</Link>
+            <Link href={"/"}>{t("Go back home")}</Link>
           </Button>
         </div>
       </InviteLayout>
@@ -28,10 +31,10 @@ export default async function InviteAcceptPage({ params }) {
   const invite = await TeamInvite.findOne({ token: { $eq: token } })
   if (!invite) {
     return (
-      <InviteLayout title="Invalid invite" message="This invite link is invalid or expired.">
+      <InviteLayout title={t("Invalid invite")} message={t("This invite link is invalid or expired.")}>
         <div className="w-full flex justify-center -mb-6">
           <Button asChild>
-            <Link href={"/"}>Go back home</Link>
+            <Link href={"/"}>{t("Go back home")}</Link>
           </Button>
         </div>
       </InviteLayout>
@@ -41,10 +44,10 @@ export default async function InviteAcceptPage({ params }) {
   const team = await Team.findById(invite.team)
   if (!team) {
     return (
-      <InviteLayout title="Invalid invite" message="This invite link is invalid or expired.">
+      <InviteLayout title={t("Invalid invite")} message={t("This invite link is invalid or expired.")}>
         <div className="w-full flex justify-center -mb-6">
           <Button asChild>
-            <Link href={"/"}>Go back home</Link>
+            <Link href={"/"}>{t("Go back home")}</Link>
           </Button>
         </div>
       </InviteLayout>
@@ -57,8 +60,8 @@ export default async function InviteAcceptPage({ params }) {
 
   return (
     <InviteLayout
-      title="Join your team"
-      description={`You've been invited to join ${team.name}.`}
+      title={t("Join your team")}
+      description={t("You've been invited to join {0}.", { "0": team.name })}
     >
       <InviteAcceptForm
         invite={invite.toJsonAsClient()}
@@ -70,7 +73,8 @@ export default async function InviteAcceptPage({ params }) {
   )
 }
 
-function InviteLayout({ title, description, message, children }) {
+async function InviteLayout({ title, description, message, children }) {
+  const t = await getTranslations()
   return (
     <div className="flex min-h-[100vh] flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -92,11 +96,8 @@ function InviteLayout({ title, description, message, children }) {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         {children}
-        <p className="mt-10 text-center text-sm/6 text-gray-500">
-          Having trouble?{' '}
-          <Link href="mailto:support@transfer.zip" className="font-semibold text-primary hover:text-primary-light">
-            Contact Us
-          </Link>
+        <p className="mt-10 text-center text-sm/6 text-gray-500">{t("Having trouble?")}{' '}
+          <Link href="mailto:support@transfer.zip" className="font-semibold text-primary hover:text-primary-light">{t("Contact Us")}</Link>
         </p>
       </div>
     </div>

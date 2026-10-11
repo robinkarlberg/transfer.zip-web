@@ -89,7 +89,7 @@ export async function DELETE(req, { params }) {
   })
 
   if (user?.email) {
-    sendTeamMemberRemoved(user.email, {
+    sendTeamMemberRemoved(user.email, { language: user.language,
       teamName: team.name,
     }).catch(err => logError(err).forRoute("api/team/users/[userId]/DELETE"))
   }
@@ -168,7 +168,7 @@ export async function PUT(req, { params }) {
       },
     })
 
-    sendTeamRoleChanged(user.email, {
+    sendTeamRoleChanged(user.email, { language: user.language,
       teamName: team.name,
       role,
       link: `${process.env.SITE_URL}/app`,

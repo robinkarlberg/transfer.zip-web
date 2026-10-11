@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import BIcon from "../BIcon"
@@ -18,8 +19,9 @@ import {
 import { PopoverClose } from "@radix-ui/react-popover"
 
 export default function FileUpload({ initialFiles, onFilesChange, onFiles, onReceiveClicked, progressElement, showProgress, buttonText, singleFile, disabled, accept, headless, className, children }) {
+  const { t } = useLanguage()
 
-  const _buttonText = buttonText ?? "Transfer"
+  const _buttonText = buttonText ?? t("Transfer")
 
   const [files, setFiles] = useState(initialFiles || [])
 
@@ -51,11 +53,9 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
     catch (err) {
       setError(
         <>
-          <p>
-            We can't send multiple files with the same name! Try again.
-          </p>
+          <p>{t("We can't send multiple files with the same name! Try again.")}</p>
           <p className="text-gray-500 text-sm mt-2">
-            <span className="font-medium">Name:</span> <span className="font-mono break-all">{err.message}</span>
+            <span className="font-medium">{t("Name:")}</span> <span className="font-mono break-all">{err.message}</span>
           </p>
         </>
       )
@@ -134,7 +134,7 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
             <button className="absolute right-4"><BIcon name={"x-lg"} center /></button>
           </PopoverClose>
           <div className="pe-5">
-            <p className="font-semibold text-gray-800">Whoops!</p>
+            <p className="font-semibold text-gray-800">{t("Whoops!")}</p>
           </div>
           <div className="text-gray-600 mt-1">
             {error}
@@ -148,8 +148,7 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
         {onReceiveClicked && (
           <div className="absolute w-full flex">
             <button type="button" onClick={onReceiveClicked} className="text-sm font-medium text-gray-500 relative mx-auto bg-white border py-1 px-10 rounded-t-lg transition-all h-7 -top-7 hover:h-8 hover:-top-8 hover:text-primary">
-              <BIcon name={"file-earmark-arrow-down"} /> Receive files
-            </button>
+              <BIcon name={"file-earmark-arrow-down"} /> {t("Receive files")}</button>
           </div>
         )}
         <Transition show={files.length == 0}>
@@ -157,11 +156,9 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
             <div className="text-white rounded-full bg-primary w-12 h-12 flex group-hover:bg-primary-light">
               <BIcon name={"plus"} center className={"flex-grow text-3xl"} />
             </div>
-            <span className="font-medium mt-2 text-lg">{singleFile ? "Pick a file" : "Pick files"}</span>
+            <span className="font-medium mt-2 text-lg">{singleFile ? t("Pick a file") : t("Pick files")}</span>
             {!singleFile && (
-              <button onClick={handleSelectFolder} className="text-gray-500 text-sm font-medium mt-2 underline hover:text-primary">
-                or select a folder
-              </button>
+              <button onClick={handleSelectFolder} className="text-gray-500 text-sm font-medium mt-2 underline hover:text-primary">{t("or select a folder")}</button>
             )}
           </div>
         </Transition>
@@ -183,8 +180,8 @@ export default function FileUpload({ initialFiles, onFilesChange, onFiles, onRec
             <div className="w-full flex justify-between">
               <div className="flex gap-2">
                 {!singleFile && <>
-                  <button type="button" className="text-sm pe-3 px-2 rounded-lg border shadow hover:bg-gray-100" onClick={handlePickFiles}><BIcon name={"plus"} /> Files</button>
-                  <button type="button" className="text-sm px-2 rounded-lg border shadow hover:bg-gray-100" onClick={handleSelectFolder}><BIcon name={"folder-plus"} />{!compact && " Folder"}</button>
+                  <button type="button" className="text-sm pe-3 px-2 rounded-lg border shadow hover:bg-gray-100" onClick={handlePickFiles}><BIcon name={"plus"} /> {t("Files")}</button>
+                  <button type="button" className="text-sm px-2 rounded-lg border shadow hover:bg-gray-100" onClick={handleSelectFolder}><BIcon name={"folder-plus"} />{!compact && t(" Folder")}</button>
                 </>}
               </div>
               <div>

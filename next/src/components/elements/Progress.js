@@ -1,4 +1,6 @@
-import { englishLandingText } from "@/lib/landing/en";
+
+"use client"
+import { useLanguage } from "@/context/LanguageContext"
 import { useMemo } from "react"
 import { buildStyles, CircularProgressbar, CircularProgressbarWithChildren } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -8,13 +10,16 @@ import { humanFileSizePair, humanFileSizeWithUnit } from "@/lib/transferUtils";
 import Spinner from "./Spinner";
 import Cross from "../Cross";
 
-export default function Progress({ now, max, showUnits, autoFinish, finished, finishedText, failed, text = englishLandingText.upload.progress }) {
+export default function Progress({ now, max, showUnits, autoFinish, finished, finishedText, failed, text }) {
+  const { landingText } = useLanguage()
+  text = text || landingText.upload.progress
+
   const percent = useMemo(() => !max ? 0 : Math.floor(now / max * 100), [now, max])
 
   const humanMax = humanFileSizePair(max, true)
   const humanNowAmount = humanFileSizeWithUnit(now, humanMax.unit, true, 1)
 
-  // const showCheckmark = 
+  // const showCheckmark =
   return (
     <div className={`w-full h-full relative ${failed ? "text-red-500" : "text-primary"}`}>
       {

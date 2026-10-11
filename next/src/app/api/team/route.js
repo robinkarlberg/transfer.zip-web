@@ -1,3 +1,4 @@
+import { getTranslations } from "@/lib/server/language"
 import { NextResponse } from "next/server"
 import dbConnect from "@/lib/server/mongoose/db"
 import Team from "@/lib/server/mongoose/models/Team"
@@ -20,7 +21,8 @@ export async function PUT(req) {
     return NextResponse.json(resp("name is required"), { status: 400 })
   }
   if (name.length < NAME_MIN || name.length > NAME_MAX) {
-    return NextResponse.json(resp(`Team name must be ${NAME_MIN}-${NAME_MAX} characters`), { status: 400 })
+    const t = await getTranslations()
+    return NextResponse.json(resp(t("Team name must be {min}-{max} characters", { min: NAME_MIN, max: NAME_MAX })), { status: 400 })
   }
 
   const team = await Team.findById(admin.team._id)

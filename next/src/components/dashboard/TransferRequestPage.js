@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
@@ -16,7 +17,7 @@ import { formatCount, humanFileSize } from "@/lib/transferUtils"
 // Same trick as DialogContent: every Button inside becomes a pill
 const PILLS = "[&_[data-slot=button]]:rounded-full [&_[data-slot=button]]:font-semibold"
 
-const dateTime = value => new Date(value).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })
+const dateTime = (value, locale) => new Date(value).toLocaleString(locale, { dateStyle: "medium", timeStyle: "short" })
 
 const iconFor = type => {
   if (!type) return FileIcon
@@ -27,6 +28,7 @@ const iconFor = type => {
 }
 
 function Submission({ requestId, transfer, selected, initiallyOpen, onReviewed }) {
+  const { t, language, locale } = useLanguage()
   const [expanded, setExpanded] = useState(initiallyOpen || selected)
   const [fileLimit, setFileLimit] = useState(100)
   const [reviewing, setReviewing] = useState(false)
@@ -82,26 +84,24 @@ function Submission({ requestId, transfer, selected, initiallyOpen, onReviewed }
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="font-semibold text-gray-900">{formatCount(transfer.files.length, "file")} <span className="font-normal text-gray-500">· {humanFileSize(transfer.size, true)}</span></p>
+            <p className="font-semibold text-gray-900">{formatCount(transfer.files.length, t("file"), t("files"), locale)} <span className="font-normal text-gray-500">· {humanFileSize(transfer.size, true)}</span></p>
             <span className={cn("rounded-full px-2 py-0.5 text-xs font-medium", transfer.reviewedAt ? "bg-gray-100 text-gray-600" : "bg-primary-100 text-primary-700")}>
-              {transfer.reviewedAt ? "Reviewed" : "New"}
+              {transfer.reviewedAt ? t("Reviewed") : t("New")}
             </span>
           </div>
-          <p className="mt-0.5 text-sm text-balance text-gray-500">
-            Uploaded {dateTime(transfer.receivedAt)}{expiryDate && (expired ? " · Expired" : ` · Expires in ${humanTimeUntil(expiryDate)}`)}
+          <p className="mt-0.5 text-sm text-balance text-gray-500">{t("Uploaded")} {dateTime(transfer.receivedAt, locale)}{expiryDate && (expired ? t(" · Expired") : t(" · Expires in {0}", { "0": humanTimeUntil(expiryDate, language) }))}
           </p>
         </div>
         {/* Own row on phones, led by the filled button so the row starts flush with the text above */}
         <div className="order-last flex w-full flex-wrap items-center gap-1.5 sm:order-none sm:w-auto sm:flex-row-reverse">
           <Button onClick={handleDownload} disabled={downloading || !!expired}>
-            {downloading ? <Loader2 className="animate-spin" /> : <ArrowDownIcon />} Download
-          </Button>
+            {downloading ? <Loader2 className="animate-spin" /> : <ArrowDownIcon />} {t("Download")}</Button>
           <Button variant="ghost" onClick={handleReview} disabled={reviewing} aria-pressed={!!transfer.reviewedAt}>
             {transfer.reviewedAt ? <RotateCcwIcon /> : <CheckIcon />}
-            {transfer.reviewedAt ? "Mark unreviewed" : "Mark reviewed"}
+            {transfer.reviewedAt ? t("Mark unreviewed") : t("Mark reviewed")}
           </Button>
         </div>
-        <Button variant="ghost" size="icon" onClick={() => setExpanded(value => !value)} aria-expanded={expanded} aria-controls={fileListId} aria-label={expanded ? "Hide files and message" : "Show files and message"}>
+        <Button variant="ghost" size="icon" onClick={() => setExpanded(value => !value)} aria-expanded={expanded} aria-controls={fileListId} aria-label={expanded ? t("Hide files and message") : t("Show files and message")}>
           <ChevronDownIcon className={cn("transition-transform", expanded && "rotate-180")} />
         </Button>
       </div>
@@ -125,7 +125,7 @@ function Submission({ requestId, transfer, selected, initiallyOpen, onReviewed }
             )
           })}
         </ul>
-        {transfer.files.length > fileLimit && <Button variant="ghost" size="sm" onClick={() => setFileLimit(limit => limit + 100)}>Show more files</Button>}
+        {transfer.files.length > fileLimit && <Button variant="ghost" size="sm" onClick={() => setFileLimit(limit => limit + 100)}>{t("Show more files")}</Button>}
       </div>}
     </article>
   )
@@ -142,6 +142,7 @@ function Empty({ scene, title, children }) {
 }
 
 export default function TransferRequestPage({ transferRequest, brandProfiles, initialData, selectedId, missingSubmission }) {
+  const { t } = useLanguage()
   const router = useRouter()
   const [request, setRequest] = useState(transferRequest)
   const [submissions, setSubmissions] = useState(initialData.submissions)
@@ -177,7 +178,7 @@ export default function TransferRequestPage({ transferRequest, brandProfiles, in
     try {
       const { transferRequest: updated } = await putTransferRequest(request.id, { requireIdentification })
       setRequest(updated)
-      toast.success("Upload requirements updated")
+      toast.success(t("Upload requirements updated"))
     } catch (err) {
       toast.error(err.message)
     } finally {
@@ -203,7 +204,7 @@ export default function TransferRequestPage({ transferRequest, brandProfiles, in
     try {
       const { transferRequest: updated } = await putTransferRequest(request.id, { brandProfileId })
       setRequest(updated)
-      toast.success("Brand profile updated")
+      toast.success(t("Brand profile updated"))
     } catch (err) {
       toast.error(err.message)
     } finally {
@@ -237,25 +238,24 @@ export default function TransferRequestPage({ transferRequest, brandProfiles, in
 
   const count = value => <span className="font-normal text-gray-500 tabular-nums">{value}</span>
   const tabs = [
-    { id: "all", label: <>All {count(initialData.total)}</> },
-    { id: "unreviewed", label: <>Unreviewed {count(unreviewed)}</> },
+    { id: "all", label: <>{t("All")} {count(initialData.total)}</> },
+    { id: "unreviewed", label: <>{t("Unreviewed")} {count(unreviewed)}</> },
   ]
 
   return (
-    <GenericPage category="Requests" title={request.name}>
+    <GenericPage category="Requests" title={request.hasName ? request.name : t("Untitled Request")}>
       <div className={cn("space-y-4", PILLS)}>
         <div className="rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            {request.active ? <Status>Open</Status> : (
+            {request.active ? <Status>{t("Open")}</Status> : (
               <div className="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-600">
-                <Link2OffIcon size={14} /> Closed
-              </div>
+                <Link2OffIcon size={14} /> {t("Closed")}</div>
             )}
             <div className="flex items-center gap-2 sm:flex-row-reverse">
               <Button variant="outline" onClick={handleStatus} disabled={changingStatus || saving}>
-                {request.active ? <Link2OffIcon /> : <LinkIcon />}{request.active ? "Close request" : "Reopen request"}
+                {request.active ? <Link2OffIcon /> : <LinkIcon />}{request.active ? t("Close request") : t("Reopen request")}
               </Button>
-              <Button asChild variant="ghost"><a href={request.uploadUrl} target="_blank" rel="noreferrer"><EyeIcon /> Preview</a></Button>
+              <Button asChild variant="ghost"><a href={request.uploadUrl} target="_blank" rel="noreferrer"><EyeIcon /> {t("Preview")}</a></Button>
             </div>
           </div>
           {request.description && <p className="mt-5 whitespace-pre-wrap break-words text-gray-500">{request.description}</p>}
@@ -274,10 +274,10 @@ export default function TransferRequestPage({ transferRequest, brandProfiles, in
               <Tabs tabs={tabs} value={onlyUnreviewed ? "unreviewed" : "all"} onChange={id => setOnlyUnreviewed(id === "unreviewed")} />
             </div>
             <div className="pr-1.5">
-              <Button variant="ghost" size="icon" onClick={() => startRefresh(() => router.refresh())} disabled={refreshing} aria-label="Refresh submissions"><RotateCcwIcon /></Button>
+              <Button variant="ghost" size="icon" onClick={() => startRefresh(() => router.refresh())} disabled={refreshing} aria-label={t("Refresh submissions")}><RotateCcwIcon /></Button>
             </div>
           </div>
-          {missingSubmission && <p role="status" className="mt-2 rounded-2xl bg-gray-100 px-4 py-3 text-sm text-gray-600">That submission is no longer available.</p>}
+          {missingSubmission && <p role="status" className="mt-2 rounded-2xl bg-gray-100 px-4 py-3 text-sm text-gray-600">{t("That submission is no longer available.")}</p>}
           <div className="divide-y divide-gray-100">
             {groups.map(group => (
               <section key={group.key} className="py-3">
@@ -286,7 +286,7 @@ export default function TransferRequestPage({ transferRequest, brandProfiles, in
                     {group.name || group.email ? (group.name || group.email)[0].toUpperCase() : <UserIcon size={18} />}
                   </div>
                   <div className="min-w-0">
-                    <h2 className="break-words text-lg font-bold tracking-tight text-gray-900">{group.name || group.email || "Anonymous uploader"}</h2>
+                    <h2 className="break-words text-lg font-bold tracking-tight text-gray-900">{group.name || group.email || t("Anonymous uploader")}</h2>
                     {group.name && group.email && <p className="break-all text-sm text-gray-500">{group.email}</p>}
                   </div>
                 </div>
@@ -304,13 +304,13 @@ export default function TransferRequestPage({ transferRequest, brandProfiles, in
             ))}
           </div>
           {groups.length === 0 && (
-            initialData.total === 0 ? <Empty scene={<FlightScene progress={0} hovering />} title="No submissions yet">Share the request link to receive files.</Empty>
-              : nextCursor ? <Empty title="No unreviewed submissions on this page">Load more to continue.</Empty>
-                : <Empty scene={<FlightScene progress={1} landed />} title="All submissions have been reviewed" />
+            initialData.total === 0 ? <Empty scene={<FlightScene progress={0} hovering />} title={t("No submissions yet")}>{t("Share the request link to receive files.")}</Empty>
+              : nextCursor ? <Empty title={t("No unreviewed submissions on this page")}>{t("Load more to continue.")}</Empty>
+                : <Empty scene={<FlightScene progress={1} landed />} title={t("All submissions have been reviewed")} />
           )}
           {nextCursor && (
             <div className="flex justify-center p-3">
-              <Button variant="outline" onClick={handleLoadMore} disabled={loadingMore}>{loadingMore ? "Loading..." : "Load more submissions"}</Button>
+              <Button variant="outline" onClick={handleLoadMore} disabled={loadingMore}>{loadingMore ? t("Loading...") : t("Load more submissions")}</Button>
             </div>
           )}
         </div>

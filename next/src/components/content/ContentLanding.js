@@ -2,31 +2,36 @@ import Image from "next/image"
 import Link from "next/link"
 import { ChevronRightIcon } from "lucide-react"
 
-function Breadcrumbs({ slugPath }) {
+function slugBreadcrumbs(slugPath) {
   const segments = slugPath.split("/")
+  return [
+    { label: "Home", href: "/" },
+    ...segments.map((segment, i) => ({
+      label: segment.replace(/[-_]/g, " ").replace(/\b\w/g, c => c.toUpperCase()),
+      href: "/" + segments.slice(0, i + 1).join("/"),
+    })),
+  ]
+}
+
+function Breadcrumbs({ items }) {
   return (
     <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-sm font-medium text-gray-500">
-      <Link href="/" className="transition-colors hover:text-gray-900">Home</Link>
-      {segments.map((segment, i) => {
-        const href = "/" + segments.slice(0, i + 1).join("/")
-        const label = segment.replace(/[-_]/g, " ").replace(/\b\w/g, c => c.toUpperCase())
-        return (
-          <span key={href} className="flex items-center gap-1.5">
-            <ChevronRightIcon size={14} aria-hidden="true" className="text-gray-400" />
-            {i === segments.length - 1
-              ? <span className="text-primary">{label}</span>
-              : <Link href={href} className="transition-colors hover:text-gray-900">{label}</Link>}
-          </span>
-        )
-      })}
+      {items.map(({ label, href }, i) => (
+        <span key={href} className="flex items-center gap-1.5">
+          {i > 0 && <ChevronRightIcon size={14} aria-hidden="true" className="text-gray-400" />}
+          {i > 0 && i === items.length - 1
+            ? <span className="text-primary">{label}</span>
+            : <Link href={href} className="transition-colors hover:text-gray-900">{label}</Link>}
+        </span>
+      ))}
     </nav>
   )
 }
 
-export default function ContentLanding({ title, description, slugPath, imgSrc, imgAlt }) {
+export default function ContentLanding({ title, description, slugPath, imgSrc, imgAlt, breadcrumbs = slugBreadcrumbs(slugPath) }) {
   return (
     <header className="mx-auto max-w-2xl px-4 pt-36 pb-4 sm:pt-44 lg:px-6">
-      <Breadcrumbs slugPath={slugPath} />
+      <Breadcrumbs items={breadcrumbs} />
       <h1 className="mt-4 text-3xl font-bold tracking-tight text-balance text-gray-900 sm:text-4xl">
         {title}
       </h1>

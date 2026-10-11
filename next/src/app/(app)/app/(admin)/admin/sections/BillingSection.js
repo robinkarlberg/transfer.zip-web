@@ -1,3 +1,6 @@
+
+"use client"
+import { useLanguage } from "@/context/LanguageContext"
 import Link from "next/link";
 import BIcon from "@/components/BIcon";
 import { Button } from "@/components/ui/button";
@@ -8,14 +11,16 @@ import AdminCard from "../AdminCard";
 import SeatManager from "../SeatManager";
 
 export default function BillingSection({ team, memberCount, pendingInvites }) {
+  const { t, landingText , language, locale } = useLanguage()
   const tier = pricing.teamTier;
-  const { name, displayFeatures } = tier;
+  const { name } = tier;
+  const { displayFeatures } = landingText.plans?.[tier.id] || tier;
   const { seats, planCancelling, planValidUntil } = team;
 
-  const timeLeft = planValidUntil ? humanTimeUntil(new Date(planValidUntil)) : null;
+  const timeLeft = planValidUntil ? humanTimeUntil(new Date(planValidUntil), language) : null;
   const statusLabel = planCancelling
-    ? `Cancelling - ${timeLeft} left`
-    : "Active";
+    ? t("Cancelling - {0} left", { "0": timeLeft })
+    : t("Active");
   const statusColor = planCancelling ? "bg-amber-100 text-amber-700" : "bg-primary-100 text-primary-700";
 
   return (
@@ -27,8 +32,7 @@ export default function BillingSection({ team, memberCount, pendingInvites }) {
             {statusLabel}
           </span>
           <span className="ml-auto text-sm text-gray-500">
-            {memberCount + pendingInvites} of {seats} seats used
-          </span>
+            {memberCount + pendingInvites} {t("of")} {seats} {t("seats used")}</span>
         </div>
         <ul className="mt-4 space-y-2 text-sm text-gray-700 sm:grid grid-cols-2">
           {displayFeatures.map((feature, i) => (
@@ -39,15 +43,14 @@ export default function BillingSection({ team, memberCount, pendingInvites }) {
           ))}
         </ul>
         <form method="POST" className="mt-4 flex flex-row-reverse" action={API_URL + "/stripe/create-customer-portal-session"}>
-          <Button variant="secondary" className="w-full sm:w-fit">Cancel or Manage Billing</Button>
+          <Button variant="secondary" className="w-full sm:w-fit">{t("Cancel or Manage Billing")}</Button>
         </form>
         <hr className="my-4" />
         <div className="flex flex-wrap gap-4 items-center justify-between">
           <div>
-            <p className="font-medium text-gray-900">Seats</p>
+            <p className="font-medium text-gray-900">{t("Seats")}</p>
             <p className="text-sm text-gray-500">
-              {seats} paid {seats === 1 ? "seat" : "seats"} on your subscription.
-              {pendingInvites > 0 && ` ${pendingInvites} pending ${pendingInvites === 1 ? "invite" : "invites"}.`}
+              {seats} {t("paid")} {seats === 1 ? t("seat") : t("seats")} {t("on your subscription.")}{pendingInvites > 0 && t(" {0} pending {1}.", { "0": pendingInvites, "1": pendingInvites === 1 ? "invite" : "invites" })}
             </p>
           </div>
           <SeatManager
@@ -61,12 +64,12 @@ export default function BillingSection({ team, memberCount, pendingInvites }) {
         <hr className="my-4" />
         <div className="flex flex-wrap gap-4 items-center justify-between">
           <div>
-            <p className="font-medium text-gray-900">Looking for something else?</p>
-            <p className="text-sm text-gray-500">Need custom seats, volume pricing, or enterprise terms?</p>
+            <p className="font-medium text-gray-900">{t("Looking for something else?")}</p>
+            <p className="text-sm text-gray-500">{t("Need custom seats, volume pricing, or enterprise terms?")}</p>
           </div>
           <Button asChild variant="default">
             {/* /contact is live on the production branch, it will work once we merge */}
-            <Link href={`/contact`} target="_blank" className="w-full sm:w-fit">Talk to sales</Link>
+            <Link href={`/contact`} target="_blank" className="w-full sm:w-fit">{t("Talk to sales")}</Link>
           </Button>
         </div>
       </div>

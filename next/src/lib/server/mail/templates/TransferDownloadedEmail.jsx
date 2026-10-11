@@ -1,14 +1,14 @@
+import { getTranslator } from "@/lib/i18n/translate"
 import { Button, Heading, Hr, Text } from '@react-email/components';
 import EmailLayout from './EmailLayout.jsx';
 
-export default function TransferDownloadedEmail({ name, link, brand }) {
+export default function TransferDownloadedEmail({ language = "en", name, link, brand }) {
+  const t = getTranslator(language)
   return (
-    <EmailLayout brand={brand}>
-      <Heading style={h1}>Your transfer was downloaded</Heading>
-      <Text style={text}>
-        The transfer "{name}" has been downloaded. You can view it here:
-      </Text>
-      <Button style={button} href={link}>View Transfer</Button>
+    <EmailLayout language={language} brand={brand}>
+      <Heading style={h1}>{t("Your transfer was downloaded")}</Heading>
+      <Text style={text}>{t("The transfer \"")}{name || t("Untitled Transfer")}{t("\" has been downloaded. You can view it here:")}</Text>
+      <Button style={button} href={link}>{t("View Transfer")}</Button>
       <Hr style={{ marginTop: "24px" }}/>
       <Text style={{ color: "#2563eb", textDecoration: "underline" }}><a href={link}>{link}</a></Text>
     </EmailLayout>

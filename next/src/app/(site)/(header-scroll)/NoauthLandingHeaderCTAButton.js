@@ -3,7 +3,6 @@
 import { englishLandingText } from "@/lib/landing/en";
 
 import { GlobalContext } from "@/context/GlobalContext"
-import { sendEvent } from "@/lib/client/umami"
 import { ZapIcon } from "lucide-react"
 import Link from "next/link"
 import { useContext } from "react"
@@ -12,9 +11,8 @@ export default function ({ text = englishLandingText.account }) {
   const { openSignupDialog } = useContext(GlobalContext)
 
   const handleCtaLinkNavigate = e => {
-    sendEvent("landing_cta_click", { is_logged_in: false })
     e.preventDefault()
-    openSignupDialog()
+    openSignupDialog(undefined, "hero")
   }
 
   return (

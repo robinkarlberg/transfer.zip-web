@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useState } from "react"
 import Spinner from "@/components/elements/Spinner"
@@ -8,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { redeemInvite } from "@/lib/client/Api"
 
 export default function InviteAcceptForm({ invite, token, isLoggedInAsInvitee, currentUserEmail }) {
+  const { t } = useLanguage()
   const [message, setMessage] = useState("")
   const [loading, setLoading] = useState(false)
   const [fullName, setFullName] = useState("")
@@ -28,13 +30,10 @@ export default function InviteAcceptForm({ invite, token, isLoggedInAsInvitee, c
   if (isLoggedInAsInvitee) {
     return (
       <div className="space-y-4">
-        <p className="text-sm text-gray-700">
-          Signed in as <span className="font-medium">{invite.email}</span>. Click below to join the team.
-        </p>
+        <p className="text-sm text-gray-700">{t("Signed in as")} <span className="font-medium">{invite.email}</span>{t(". Click below to join the team.")}</p>
         {message && <span className="text-red-600 text-sm block">{message}</span>}
         <Button onClick={() => handleAccept()} disabled={loading} className="w-full">
-          {loading && <Spinner className="me-2" />} Accept invite
-        </Button>
+          {loading && <Spinner className="me-2" />} {t("Accept invite")}</Button>
       </div>
     )
   }
@@ -42,7 +41,7 @@ export default function InviteAcceptForm({ invite, token, isLoggedInAsInvitee, c
   return (
     <form onSubmit={handleAccept} className="space-y-5">
       <div className="grid gap-2">
-        <Label htmlFor="invite-email">Email</Label>
+        <Label htmlFor="invite-email">{t("Email")}</Label>
         <Input
           id="invite-email"
           type="email"
@@ -53,36 +52,31 @@ export default function InviteAcceptForm({ invite, token, isLoggedInAsInvitee, c
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="invite-name">
-          Full name <span className="text-gray-400 font-normal">(optional)</span>
+        <Label htmlFor="invite-name">{t("Full name")} <span className="text-gray-400 font-normal">{t("(optional)")}</span>
         </Label>
         <Input
           id="invite-name"
           type="text"
           autoComplete="name"
-          placeholder="Jane Doe"
+          placeholder={t("Jane Doe")}
           value={fullName}
           onChange={e => setFullName(e.target.value)}
           maxLength={80}
         />
       </div>
 
-      <p className="text-xs text-gray-500">
-        No password needed. Next time, sign in by clicking a link we email to{" "}
+      <p className="text-xs text-gray-500">{t("No password needed. Next time, sign in by clicking a link we email to")}{" "}
         <span className="font-medium">{invite.email}</span>.
       </p>
 
       {currentUserEmail && currentUserEmail !== invite.email && (
-        <p className="text-xs text-gray-500">
-          You're currently signed in as {currentUserEmail}. Accepting will sign you in as {invite.email} on this device.
-        </p>
+        <p className="text-xs text-gray-500">{t("You're currently signed in as")} {currentUserEmail}{t(". Accepting will sign you in as")} {invite.email} {t("on this device.")}</p>
       )}
 
       {message && <p className="text-red-600 text-sm">{message}</p>}
 
       <Button type="submit" disabled={loading} className="w-full">
-        {loading && <Spinner className="me-2" />} Accept invite
-      </Button>
+        {loading && <Spinner className="me-2" />} {t("Accept invite")}</Button>
     </form>
   )
 }

@@ -1,3 +1,5 @@
+import { getLanguage } from "@/lib/server/language"
+import { completeSignIn, setLanguageCookie } from "@/lib/server/completeSignIn"
 import { NextResponse } from "next/server"
 import { createCookieParams, resp } from "@/lib/server/serverUtils"
 import dbConnect from "@/lib/server/mongoose/db"
@@ -73,7 +75,7 @@ export async function POST(req, { params }) {
         await existingUser.save()
       }
     } else {
-      user = new User({ email: invite.email })
+      user = new User({ email: invite.email, language: await getLanguage(), registrationPending: true })
       if (fullName) user.fullName = fullName
       await user.save()
     }
@@ -89,7 +91,9 @@ export async function POST(req, { params }) {
     throw err
   }
 
-  const response = NextResponse.json(resp({}), { status: 200 })
+  const signIn = await completeSignIn(user, await getLanguage())
+  const response = NextResponse.json(resp(signIn), { status: 200 })
+  setLanguageCookie(response, signIn.language)
   if (mintNewSession) {
     const session = new Session({ user: user._id })
     await session.save()

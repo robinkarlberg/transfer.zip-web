@@ -1,3 +1,5 @@
+import { getLanguage } from "@/lib/server/language"
+import { completeSignIn, setLanguageCookie } from "@/lib/server/completeSignIn"
 import { OAuth2Client } from "google-auth-library";
 import { NextResponse } from "next/server";
 import User from "@/lib/server/mongoose/models/User";
@@ -26,14 +28,17 @@ export async function GET(req) {
   });
   const { sub: googleId, email } = ticket.getPayload();
 
+  const language = await getLanguage()
   let user = await User.findOne({ googleId });
-  if (!user) user = await User.create({ googleId, email, onboarded: false });
+  if (!user) user = await User.create({ googleId, email, onboarded: false, registrationPending: true, language });
 
   const session = await Session.create({ user });
 
+  const signIn = await completeSignIn(user, language)
   const res = NextResponse.redirect(
-    new URL("/app", process.env.SITE_URL)
+    new URL(`/auth-complete?result=${signIn.authEvent === "Account created" ? "created" : "signed-in"}&lang=${signIn.language}`, process.env.SITE_URL)
   );
+  setLanguageCookie(res, signIn.language)
   res.cookies.set("token", session.token, createCookieParams());
   return res;
 }

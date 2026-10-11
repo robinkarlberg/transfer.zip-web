@@ -1,15 +1,17 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import Link from "next/link"
 import DashH2 from "./DashH2"
 import { ChevronRightIcon } from "lucide-react"
 
 export default function GenericPage({ title, titleComponent, children, category, side }) {
+    const { t } = useLanguage()
     return (
         <div className="flex-1 w-full">
             {category && (
                 <div className="flex items-center text-gray-200 gap-1 font-medium">
-                    <Link href={"."} className="hover:underline">{category}</Link>
+                    <Link href={"."} className="hover:underline">{t(category)}</Link>
                     <ChevronRightIcon size={16} />
                     <p className="">{title}</p>
                 </div>

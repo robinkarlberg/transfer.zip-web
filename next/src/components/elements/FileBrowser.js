@@ -1,9 +1,14 @@
+
+"use client"
+
+import { useLanguage } from "@/context/LanguageContext"
 import { useCallback, useMemo, useState } from "react";
 import BIcon from "../BIcon";
 import { humanFileSize } from "@/lib/transferUtils";
 import { buildNestedStructure } from "@/lib/utils";
 
 const FileBrowserEntry = ({ richFile, isOpen, onClick }) => {
+  const { t } = useLanguage()
   return (
     <div>
       <button className="text-sm w-full text-start px-3.5 py-1.5 relative hover:bg-gray-100" onClick={onClick}>
@@ -18,7 +23,7 @@ const FileBrowserEntry = ({ richFile, isOpen, onClick }) => {
         </span>
         <span className="ms-2 text-xs text-gray-500">
           {richFile.isDirectory ?
-            <span>{richFile.info.size} items</span>
+            <span>{richFile.info.size} {t("items")}</span>
             :
             <span>{humanFileSize(richFile.info.size)}</span>
           }

@@ -232,7 +232,8 @@ export function createRichFileObject(file) {
 }
 
 // ChatGPT ;)
-export function humanTimeUntil(targetDate) {
+export function humanTimeUntil(targetDate, language = "en") {
+    if (language === "sv") return swedishDuration(humanTimeUntil(targetDate))
     const now = new Date();
 
     // Calculate the difference in milliseconds
@@ -281,7 +282,8 @@ export function humanTimeUntil(targetDate) {
     return `${seconds}s`;
 }
 
-export function humanTimeSince(pastDate) {
+export function humanTimeSince(pastDate, language = "en") {
+    if (language === "sv") return swedishDuration(humanTimeSince(pastDate))
     const now = new Date();
     let diff = now - pastDate;
 
@@ -354,4 +356,9 @@ export const readFileTillEnd = async (file, cbData) => {
 
 export const addMilliscondsToCurrentTime = (add) => {
     return Math.floor(new Date().getTime()) + add
+}
+function swedishDuration(value) {
+    if (value === "now") return "nu"
+    const units = { y: "år", d: "d", h: "tim", m: "min", s: "s" }
+    return value.replace(/(\d+)([ydhms])$/, (_, count, unit) => `${count} ${units[unit]}`)
 }

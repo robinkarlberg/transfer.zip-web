@@ -1,9 +1,13 @@
+import { getTranslations } from "@/lib/server/language"
 import { useServerAuth } from "@/lib/server/wrappers/auth";
 import { listTransfersForTeam } from "@/lib/server/serverUtils";
 import { LIMIT } from "@/lib/pricing";
 import TransfersSection from "../sections/TransfersSection";
 
-export const metadata = { title: "Transfers" };
+export async function generateMetadata() {
+  const t = await getTranslations()
+  return { title: t("Transfers") }
+}
 
 export default async function TeamTransfersPage() {
   const { user, team } = await useServerAuth();

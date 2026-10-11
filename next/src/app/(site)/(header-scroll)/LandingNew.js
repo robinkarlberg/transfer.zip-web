@@ -41,7 +41,7 @@ export default async function ({ mode, text = englishLandingText.hero, navText, 
             <AuthConditional
               noauth={<NoauthLandingHeaderCTAButton text={accountText} />}
               auth={
-                <Link data-umami-event="landing_header_cta_click" data-umami-event-is_logged_in="true" href={"/app/sent"} className="flex items-center text-sm font-semibold text-gray-800 rounded-xl bg-white px-5 h-12 hover:bg-primary-50">
+                <Link href={"/app/sent"} className="flex items-center text-sm font-semibold text-gray-800 rounded-xl bg-white px-5 h-12 hover:bg-primary-50">
                   {text.myTransfers} <span aria-hidden="true">&rarr;</span>
                 </Link>
               }

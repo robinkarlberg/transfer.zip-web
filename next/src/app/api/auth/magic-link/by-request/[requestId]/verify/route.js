@@ -1,3 +1,4 @@
+import { completeSignIn, setLanguageCookie } from "@/lib/server/completeSignIn"
 import { cookies } from "next/headers"
 import mongoose from "mongoose"
 import { NextResponse } from "next/server"
@@ -68,7 +69,9 @@ export async function POST(req, { params }) {
   const session = new Session({ user: user._id })
   await session.save()
 
-  const response = NextResponse.json(resp({ consumed: true }), { status: 200 })
+  const signIn = await completeSignIn(user, magicLink.language)
+  const response = NextResponse.json(resp({ consumed: true, ...signIn }), { status: 200 })
+  setLanguageCookie(response, signIn.language)
   response.cookies.set("token", session.token, createCookieParams())
   return response
 }

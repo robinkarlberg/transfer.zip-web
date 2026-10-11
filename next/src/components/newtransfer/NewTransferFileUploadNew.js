@@ -1,7 +1,7 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
-import { englishLandingText } from "@/lib/landing/en";
-import { getLandingLanguage, RECEIVE_PATHS } from "@/lib/landing/routes";
+import { RECEIVE_PATHS } from "@/lib/landing/routes";
 
 import BIcon from "@/components/BIcon";
 import { groupFilesByFolder, humanFileSize, humanFileType } from "@/lib/transferUtils";
@@ -16,7 +16,7 @@ import { newTransfer } from "@/lib/client/Api";
 import { prepareTransferFiles, uploadFiles } from "@/lib/client/uploader";
 import { EXPIRATION_TIMES } from "@/lib/constants";
 import { getLimit, LIMIT } from "@/lib/pricing";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Progress from "../elements/Progress";
 
 import {
@@ -38,10 +38,11 @@ import AddedEmailField from "./AddedEmailField";
 
 const FILE_ROWS_LISTED = 100
 
-export default function ({ isDashboard, loaded, user, storage, brandProfiles, initialTab, text = englishLandingText.upload }) {
+export default function ({ isDashboard, loaded, user, storage, brandProfiles, initialTab, text }) {
+  const { landingText, language } = useLanguage()
+  text = text || landingText.upload
 
   const router = useRouter()
-  const language = getLandingLanguage(usePathname())
 
   const { files: globalFiles, setFiles: setGlobalFiles } = useContext(FileContext)
   const { openSignupDialog } = useContext(GlobalContext)

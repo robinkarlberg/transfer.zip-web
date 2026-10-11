@@ -1,4 +1,5 @@
 'use client'
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useState } from 'react'
 import { Transition } from '@headlessui/react'
@@ -10,6 +11,7 @@ const types = {
 }
 
 export default function Notification({ show, title, description, type, onHide }) {
+  const { t } = useLanguage()
 
   const _type = type || "success"
 
@@ -41,7 +43,7 @@ export default function Notification({ show, title, description, type, onHide })
                       }}
                       className="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
-                      <span className="sr-only">Close</span>
+                      <span className="sr-only">{t("Close")}</span>
                       <BIcon center name={"x"} aria-hidden="true" className="h-5 w-5" />
                     </button>
                   </div>

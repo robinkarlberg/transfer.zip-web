@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import FileDropOverlay, { DashedOutline, FileStack } from "@/components/FileDropOverlay"
 import { useFileDrop } from "@/hooks/client/useFileDrop"
@@ -21,6 +22,7 @@ const iconFor = entry => {
 
 /** `allowFolders` is for devices with a real file system; phones only pick files. */
 export default function QuickFilePicker({ submitLabel = "Send", onSubmit, onDragStart, initialFiles = [], allowFolders = true }) {
+  const { t } = useLanguage()
   const [files, setFiles] = useState(initialFiles)
   const fileInputRef = useRef(null)
   const folderInputRef = useRef(null)
@@ -32,7 +34,7 @@ export default function QuickFilePicker({ submitLabel = "Send", onSubmit, onDrag
     const taken = new Set(files.map(filePath))
     for (const file of incoming) {
       if (taken.has(filePath(file))) {
-        toast.error("Two files can't have the same name", { description: filePath(file) })
+        toast.error(t("Two files can't have the same name"), { description: filePath(file) })
         return
       }
       taken.add(filePath(file))
@@ -104,16 +106,12 @@ export default function QuickFilePicker({ submitLabel = "Send", onSubmit, onDrag
           <DashedOutline active={dragging} />
           <FileStack open={dragging} />
           <p className="mt-8 hidden text-lg font-semibold text-gray-900 sm:block">
-            {dragging ? "Let go to add them" : "Drop your files here"}
+            {dragging ? t("Let go to add them") : t("Drop your files here")}
           </p>
           <div className={cn("mt-5 flex items-center gap-4 transition-opacity duration-300 sm:mt-4", dragging && "opacity-0")}>
-            <span className="inline-flex h-11 items-center rounded-full bg-primary px-6 font-semibold text-white transition group-hover:bg-primary-light group-active:scale-[0.98]">
-              Choose files
-            </span>
+            <span className="inline-flex h-11 items-center rounded-full bg-primary px-6 font-semibold text-white transition group-hover:bg-primary-light group-active:scale-[0.98]">{t("Choose files")}</span>
             {allowFolders && (
-              <button type="button" onClick={pickFolder} className="hidden text-sm font-medium text-gray-500 hover:text-gray-900 sm:block">
-                or a folder
-              </button>
+              <button type="button" onClick={pickFolder} className="hidden text-sm font-medium text-gray-500 hover:text-gray-900 sm:block">{t("or a folder")}</button>
             )}
           </div>
         </div>
@@ -130,12 +128,12 @@ export default function QuickFilePicker({ submitLabel = "Send", onSubmit, onDrag
                   <div className="min-w-0 grow">
                     <p className="truncate text-sm font-medium text-gray-900">{entry.name}</p>
                     <p className="text-xs text-gray-500">
-                      {entry.folder && `${entry.files.length} files · `}{humanFileSize(entry.size, true, 1)}
+                      {entry.folder && t("{0} files · ", { "0": entry.files.length })}{humanFileSize(entry.size, true, 1)}
                     </p>
                   </div>
                   <button
                     type="button"
-                    aria-label={`Remove ${entry.name}`}
+                    aria-label={t("Remove {0}", { "0": entry.name })}
                     onClick={() => setFiles(files.filter(file => !entry.files.includes(file)))}
                     className="grid size-8 shrink-0 place-items-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-700"
                   >
@@ -147,8 +145,7 @@ export default function QuickFilePicker({ submitLabel = "Send", onSubmit, onDrag
           </ul>
           <div className="mt-2 flex items-center justify-between border-t border-gray-100 px-1 pt-3">
             <button type="button" onClick={pickFiles} className="inline-flex items-center gap-1.5 rounded-full py-1 text-sm font-medium text-gray-600 hover:text-gray-900">
-              <PlusIcon size={16} /> Add more
-            </button>
+              <PlusIcon size={16} /> {t("Add more")}</button>
             <span className="text-sm text-gray-500">{humanFileSize(totalSize, true, 1)}</span>
           </div>
           <button
@@ -156,7 +153,7 @@ export default function QuickFilePicker({ submitLabel = "Send", onSubmit, onDrag
             onClick={() => onSubmit(files)}
             className="group mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary font-semibold text-white transition hover:bg-primary-light active:scale-[0.99]"
           >
-            {submitLabel}
+            {t(submitLabel)}
             <ArrowRightIcon size={18} className="transition-transform group-hover:translate-x-0.5" />
           </button>
 

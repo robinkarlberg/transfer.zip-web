@@ -1,4 +1,5 @@
 "use client"
+import { EVENTS } from "@/lib/analytics"
 
 import { englishLandingText } from "@/lib/landing/en";
 import { RECEIVE_PATHS } from "@/lib/landing/routes";
@@ -59,17 +60,16 @@ export default function Header({ scrollAware, homeHref = "/", pricingHref = "/pr
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const handleSignInClick = e => {
-    sendEvent("header_cta_click", { is_logged_in: false, action: "sign_in" })
+    sendEvent(EVENTS.CTA, { placement: "header_signin" })
   }
 
   const handleCreateAccountClick = e => {
-    sendEvent("header_cta_click", { is_logged_in: false, action: "create_account" })
     e.preventDefault()
-    openSignupDialog()
+    openSignupDialog(undefined, "header_signup")
   }
 
   const handleMyTransfersClick = e => {
-    sendEvent("header_cta_click", { is_logged_in: true })
+
   }
 
   const closeMenu = () => setMenuOpen(false)

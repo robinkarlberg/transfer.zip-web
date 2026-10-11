@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import BIcon from "@/components/BIcon";
 import { formatCount, groupFilesByFolder, humanFileSize, humanFileType } from "@/lib/transferUtils";
@@ -21,6 +22,7 @@ import DynamicIsland from "./DynamicIsland";
 const FILE_ROWS_LISTED = 100
 
 export default function ({ brandProfile, transferRequest }) {
+  const { t, language, locale } = useLanguage()
 
   const { files, setFiles } = useContext(FileContext)
 
@@ -66,8 +68,8 @@ export default function ({ brandProfile, transferRequest }) {
 
     if (files.length === 0)
       return displayErrorMessage({
-        title: "Add files",
-        body: "Choose the files you want to upload."
+        title: t("Add files"),
+        body: t("Choose the files you want to upload.")
       })
 
     setFilesToUpload(files)
@@ -136,14 +138,12 @@ export default function ({ brandProfile, transferRequest }) {
     }
     catch (err) {
       displayErrorMessage({
-        title: "Oops.",
+        title: t("Oops."),
         body: (
           <>
-            <p>
-              We can't send multiple files with the same name! Try again.
-            </p>
+            <p>{t("We can't send multiple files with the same name! Try again.")}</p>
             <p className="text-gray-500 text-sm mt-2">
-              <span className="font-medium">Name:</span> <span className="font-mono break-all">{err.message}</span>
+              <span className="font-medium">{t("Name:")}</span> <span className="font-mono break-all">{err.message}</span>
             </p>
           </>
         )
@@ -190,10 +190,8 @@ export default function ({ brandProfile, transferRequest }) {
       <div className="text-white rounded-full bg-primary w-12 h-12 flex items-center justify-center group-hover:bg-primary-light">
         <PlusIcon size={24} />
       </div>
-      <span className="font-medium mt-2 text-lg">Pick files</span>
-      <button onClick={handleSelectFolder} className="text-gray-500 text-sm font-medium mt-2 underline hover:text-primary">
-        or select a folder
-      </button>
+      <span className="font-medium mt-2 text-lg">{t("Pick files")}</span>
+      <button onClick={handleSelectFolder} className="text-gray-500 text-sm font-medium mt-2 underline hover:text-primary">{t("or select a folder")}</button>
     </div>
   )
 
@@ -209,23 +207,23 @@ export default function ({ brandProfile, transferRequest }) {
             <p className="overflow-hidden text-ellipsis whitespace-nowrap font-medium text-gray-600">{entry.name}</p>
           </div>
           <span className="text-sm text-gray-500">
-            {entry.folder ? formatCount(entry.count, "file") : humanFileSize(entry.size, true)}<BIcon name={"dot"} />{entry.folder ? humanFileSize(entry.size, true) : humanFileType(entry.type)}
+            {entry.folder ? formatCount(entry.count, t("file"), t("files"), locale) : humanFileSize(entry.size, true)}<BIcon name={"dot"} />{entry.folder ? humanFileSize(entry.size, true) : humanFileType(entry.type)}
           </span>
           <div className="absolute top-0 right-5 flex h-full items-center opacity-0 group-hover:opacity-100">
-            <button onClick={() => removeEntry(entry)} aria-label={`Remove ${entry.name}`} className="p-1 bg-white border rounded-md text-gray-700">
+            <button onClick={() => removeEntry(entry)} aria-label={t("Remove {0}", { "0": entry.name })} className="p-1 bg-white border rounded-md text-gray-700">
               <XIcon size={16} />
             </button>
           </div>
         </div>
       )
     }),
-    unlistedCount > 0 && <p key="unlisted" className="px-3 py-2 text-sm text-gray-500">and {formatCount(unlistedCount, "more file")}</p>
+    unlistedCount > 0 && <p key="unlisted" className="px-3 py-2 text-sm text-gray-500">{t("and")} {t("{count} more files", { count: unlistedCount })}</p>
   ]
 
   const leftSectionLowerBar = (
     <>
-      <Button onClick={handlePickFiles} size={"sm"} variant={"outline"}><PlusIcon /> Files</Button>
-      <Button onClick={handleSelectFolder} size={"sm"} variant={"outline"}><FolderPlusIcon /> Folder</Button>
+      <Button onClick={handlePickFiles} size={"sm"} variant={"outline"}><PlusIcon /> {t("Files")}</Button>
+      <Button onClick={handleSelectFolder} size={"sm"} variant={"outline"}><FolderPlusIcon /> {t("Folder")}</Button>
       <span className="ms-auto text-gray-500 text-sm me-2 hidden sm:inline">{humanFileSize(totalFileSize, true)}</span>
     </>
   )
@@ -233,7 +231,7 @@ export default function ({ brandProfile, transferRequest }) {
   const endOverlay = (
     <>
       <div className="relative w-full h-full max-w-44 max-h-44">
-        <Progress max={totalBytesToSend} now={bytesTransferred} showUnits={true} finished={finished} finishedText={`Your files were sent!`} failed={failed} />
+        <Progress max={totalBytesToSend} now={bytesTransferred} showUnits={true} finished={finished} finishedText={t("Your files were sent!", {  })} failed={failed} />
       </div>
       <div className="flex flex-col gap-2">
         {
@@ -244,9 +242,9 @@ export default function ({ brandProfile, transferRequest }) {
                 setFinished(false)
                 setFailed(false)
                 setUploadProgressMap(null)
-              }}>Back to upload <RotateCcwIcon size={12} /></Button>
+              }}>{t("Back to upload")} <RotateCcwIcon size={12} /></Button>
             </> : <>
-              {finished && <Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>Send more files</Button>}
+              {finished && <Button size={"sm"} variant={"outline"} onClick={() => window.location.reload()}>{t("Send more files")}</Button>}
             </>
         }
       </div>
@@ -257,24 +255,24 @@ export default function ({ brandProfile, transferRequest }) {
     <form onSubmit={handleSubmit} className={`border-l flex flex-col overflow-hidden bg-white`}>
       <div className="flex-1 overflow-y-auto p-4 space-y-4 animate-fade-in">
         <div>
-          <p className="font-semibold break-words">{transferRequest.name}</p>
+          <p className="font-semibold break-words">{transferRequest.hasName ? transferRequest.name : t("Untitled Request")}</p>
           {transferRequest.description && <p className="mt-1 whitespace-pre-wrap break-words text-sm text-gray-600">{transferRequest.description}</p>}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="uploader-name">Name{!transferRequest.requireIdentification && " (optional)"}</Label>
+          <Label htmlFor="uploader-name">{t("Name")}{!transferRequest.requireIdentification && t(" (optional)")}</Label>
           <Input id="uploader-name" name="name" autoComplete="name" maxLength={100} required={transferRequest.requireIdentification} />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="uploader-email">Email{!transferRequest.requireIdentification && " (optional)"}</Label>
+          <Label htmlFor="uploader-email">{t("Email")}{!transferRequest.requireIdentification && t(" (optional)")}</Label>
           <Input id="uploader-email" name="email" type="email" autoComplete="email" maxLength={254} required={transferRequest.requireIdentification} />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="uploader-message">Message (optional)</Label>
+          <Label htmlFor="uploader-message">{t("Message (optional)")}</Label>
           <Textarea id="uploader-message" name="message" rows={2} maxLength={2000} />
         </div>
       </div>
       <div className="flex-none p-2 flex flex-row-reverse items-center gap-2 --border-t">
-        <Button size="sm" disabled={uploadingFiles}>Upload <ArrowRightIcon /></Button>
+        <Button size="sm" disabled={uploadingFiles}>{t("Upload")} <ArrowRightIcon /></Button>
       </div>
     </form>
   )

@@ -1,8 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
-import { getGeoRegion } from "@/lib/client/Api"
+import useVisitorRegion from "@/hooks/client/useVisitorRegion"
 import { getLandingLanguage } from "@/lib/landing/routes"
 
 // Five-pointed star centered on 0,0 so each one can be placed with a translate
@@ -107,20 +106,8 @@ const BADGES = {
 }
 
 export default function MadeInBadge() {
-  const [region, setRegion] = useState(null)
+  const region = useVisitorRegion()
   const language = getLandingLanguage(usePathname())
-
-  useEffect(() => {
-    // Local requests have no public ip, so dev can force a badge with ?region=SE or ?region=EU
-    const preview = process.env.NODE_ENV === "development" && new URLSearchParams(window.location.search).get("region")
-    if (preview) {
-      setRegion(preview)
-    }
-    else {
-      // Decorative only, a failed lookup just means no badge
-      getGeoRegion().then(res => setRegion(res.region)).catch(() => { })
-    }
-  }, [])
 
   const badge = BADGES[region]
   if (!badge) return null

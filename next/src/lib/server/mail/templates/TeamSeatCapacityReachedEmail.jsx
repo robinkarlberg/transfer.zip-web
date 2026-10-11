@@ -1,14 +1,14 @@
+import { getTranslator } from "@/lib/i18n/translate"
 import { Button, Heading, Hr, Text } from '@react-email/components';
 import EmailLayout from './EmailLayout.jsx';
 
-export default function TeamSeatCapacityReachedEmail({ teamName, seats, link }) {
+export default function TeamSeatCapacityReachedEmail({ language = "en", teamName, seats, link }) {
+  const t = getTranslator(language)
   return (
-    <EmailLayout>
-      <Heading style={h1}>{teamName} has reached its seat limit</Heading>
-      <Text style={text}>
-        All {seats} seats on "{teamName}" are now filled. To invite more members, add seats to your subscription.
-      </Text>
-      <Button style={button} href={link}>Manage Team</Button>
+    <EmailLayout language={language}>
+      <Heading style={h1}>{teamName} {t("has reached its seat limit")}</Heading>
+      <Text style={text}>{t("All")} {seats} {t("seats on \"")}{teamName}{t("\" are now filled. To invite more members, add seats to your subscription.")}</Text>
+      <Button style={button} href={link}>{t("Manage Team")}</Button>
       <Hr style={{ marginTop: '24px' }} />
       <Text style={{ color: '#2563eb', textDecoration: 'underline' }}>
         <a href={link}>{link}</a>

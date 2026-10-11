@@ -14,6 +14,7 @@ const MagicLinkSchema = new mongoose.Schema({
     // later. Same-browser clicks (cookie matches) auto-log-in. Cross-device
     // clicks (cookie absent/mismatched) trigger the code flow.
     requestSecret: { type: String, required: true, index: true },
+    language: { type: String, enum: ["en", "sv"], default: "en" },
     opened: { type: Boolean, default: false },
     openedSameBrowser: { type: Boolean, default: false },
     consumed: { type: Boolean, default: false },

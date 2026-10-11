@@ -1,4 +1,5 @@
 "use client"
+import { useLanguage } from "@/context/LanguageContext"
 
 import {
   Dialog,
@@ -27,6 +28,7 @@ import { toast } from "sonner";
 import ProfilePic from "@/components/ProfilePic";
 
 function Entry({ user, currentUser, onDeleteUser, onUpdateRole }) {
+  const { t } = useLanguage()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const isOwner = user.role === ROLES.OWNER
   const isTargetAdmin = user.role === ROLES.ADMIN
@@ -48,14 +50,14 @@ function Entry({ user, currentUser, onDeleteUser, onUpdateRole }) {
           <>
             <div className="font-semibold text-gray-900 truncate">
               {user.fullName}
-              {isSelf && <span className="text-gray-400 font-normal ml-2">(you)</span>}
+              {isSelf && <span className="text-gray-400 font-normal ml-2">{t("(you)")}</span>}
             </div>
             <div className="text-sm text-gray-500 truncate">{user.email}</div>
           </>
         ) : (
           <div className="font-semibold text-gray-900 truncate">
             {user.email}
-            {isSelf && <span className="text-gray-400 font-normal ml-2">(you)</span>}
+            {isSelf && <span className="text-gray-400 font-normal ml-2">{t("(you)")}</span>}
           </div>
         )}
       </div>
@@ -64,12 +66,12 @@ function Entry({ user, currentUser, onDeleteUser, onUpdateRole }) {
           href={`/app/admin/transfers?author=${user.id}`}
           className="inline-flex items-center gap-1 text-xs text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md px-2 py-1 transition whitespace-nowrap"
         >
-          {user.activeTransferCount} {user.activeTransferCount === 1 ? "transfer" : "transfers"}
+          {user.activeTransferCount} {user.activeTransferCount === 1 ? t("transfer") : t("transfers")}
           <ArrowRightIcon size={12} />
         </Link>
       )}
       <div className={"text-xs font-medium px-2 py-0.5 rounded-full " + (user.role === ROLES.OWNER ? "bg-amber-100 text-amber-700" : "bg-gray-100 text-gray-700")}>
-        {capitalizeFirstLetter(user.role)}
+        {t(capitalizeFirstLetter(user.role))}
       </div>
       <div className="relative">
         <DropdownMenu>
@@ -79,34 +81,26 @@ function Entry({ user, currentUser, onDeleteUser, onUpdateRole }) {
           <DropdownMenuContent>
             {canManageRoles && !isOwner && !isSelf && (
               <DropdownMenuItem onClick={() => onUpdateRole(user)}>
-                {user.role === ROLES.ADMIN ? "Demote to Member" : "Promote to Admin"}
+                {user.role === ROLES.ADMIN ? t("Demote to Member") : t("Promote to Admin")}
               </DropdownMenuItem>
             )}
             {canDeleteUsers && !isOwner && (
-              <DropdownMenuItem onClick={() => setShowDeleteModal(true)} className="text-destructive">
-                Remove
-              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setShowDeleteModal(true)} className="text-destructive">{t("Remove")}</DropdownMenuItem>
             )}
           </DropdownMenuContent>
           {showDeleteModal && (
             <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader variant="destructive">
-                  <DialogTitle>Remove User {user.email} </DialogTitle>
-                  <DialogDescription>
-                    Are you sure you want to delete this user? This action cannot be undone.
-                  </DialogDescription>
+                  <DialogTitle>{t("Remove User")} {user.email} </DialogTitle>
+                  <DialogDescription>{t("Are you sure you want to delete this user? This action cannot be undone.")}</DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
-                    Cancel
-                  </Button>
+                  <Button variant="outline" onClick={() => setShowDeleteModal(false)}>{t("Cancel")}</Button>
                   <Button type="button" className="bg-red-600 text-white hover:bg-red-700" onClick={() => {
                     onDeleteUser(user)
                     setShowDeleteModal(false)
-                  }}>
-                    Remove
-                  </Button>
+                  }}>{t("Remove")}</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -118,6 +112,7 @@ function Entry({ user, currentUser, onDeleteUser, onUpdateRole }) {
 }
 
 function InviteEntry({ invite }) {
+  const { t } = useLanguage()
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [resending, setResending] = useState(false)
   const router = useRouter()
@@ -135,7 +130,7 @@ function InviteEntry({ invite }) {
     setResending(true)
     try {
       await sendTeamInvite(invite.email, invite.role)
-      toast.success("Invite resent", { description: `A new invitation was sent to ${invite.email}` })
+      toast.success(t("Invite resent"), { description: t("A new invitation was sent to {0}", { "0": invite.email }) })
       router.refresh()
     } catch (err) {
       toast.error(err.message)
@@ -150,9 +145,7 @@ function InviteEntry({ invite }) {
       <div className="min-w-0">
         <div className="text-sm text-gray-600 truncate">{invite.email}</div>
       </div>
-      <div className="ml-auto text-xs font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
-        Pending
-      </div>
+      <div className="ml-auto text-xs font-medium px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">{t("Pending")}</div>
       <div className="relative">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -160,31 +153,23 @@ function InviteEntry({ invite }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem disabled={resending} onClick={handleResendInvite}>
-              {resending ? "Resending..." : "Resend invite"}
+              {resending ? t("Resending...") : t("Resend invite")}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setShowDeleteModal(true)} className="text-destructive">
-              Delete
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setShowDeleteModal(true)} className="text-destructive">{t("Delete")}</DropdownMenuItem>
           </DropdownMenuContent>
           {showDeleteModal && (
             <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader variant="destructive">
-                  <DialogTitle>Delete Invite to {invite.email} </DialogTitle>
-                  <DialogDescription>
-                    Are you sure you want to delete this invite? This action cannot be undone.
-                  </DialogDescription>
+                  <DialogTitle>{t("Delete Invite to")} {invite.email} </DialogTitle>
+                  <DialogDescription>{t("Are you sure you want to delete this invite? This action cannot be undone.")}</DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
-                    Cancel
-                  </Button>
+                  <Button variant="outline" onClick={() => setShowDeleteModal(false)}>{t("Cancel")}</Button>
                   <Button type="button" className="bg-red-600 text-white hover:bg-red-700" onClick={() => {
                     handleDeleteInvite(invite.id)
                     setShowDeleteModal(false)
-                  }}>
-                    Delete
-                  </Button>
+                  }}>{t("Delete")}</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -196,12 +181,13 @@ function InviteEntry({ invite }) {
 }
 
 export default function UserList({ user, users, invites }) {
+  const { t } = useLanguage()
   const router = useRouter()
 
   const handleDeleteUser = async (targetUser) => {
     try {
       await deleteUser(targetUser.id)
-      toast.success("User removed")
+      toast.success(t("User removed"))
       router.refresh()
     } catch (err) {
       toast.error(err.message)
@@ -212,7 +198,7 @@ export default function UserList({ user, users, invites }) {
     const nextRole = targetUser.role === ROLES.ADMIN ? ROLES.MEMBER : ROLES.ADMIN
     try {
       await updateUserRole(targetUser.id, nextRole)
-      toast.success("Role updated")
+      toast.success(t("Role updated"))
       router.refresh()
     } catch (err) {
       toast.error(err.message)

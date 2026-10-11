@@ -1,5 +1,6 @@
 "use client"
 
+import { useLanguage } from "@/context/LanguageContext"
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { MessageCircleIcon, Trash2Icon, XIcon } from "lucide-react"
@@ -50,9 +51,10 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
-  closeLabel = "Close",
+  closeLabel,
   ...props
 }) {
+  const { t } = useLanguage()
   return (
     <DialogPortal data-slot="dialog-portal">
       <DialogOverlay />
@@ -67,7 +69,7 @@ function DialogContent({
         {showCloseButton && (
           <div className="absolute top-4 right-4">
             <DialogClose asChild>
-              <Button variant="ghost" size="icon" aria-label={closeLabel} className="text-gray-400 hover:bg-gray-100 hover:text-gray-900">
+              <Button variant="ghost" size="icon" aria-label={closeLabel || t("Close")} className="text-gray-400 hover:bg-gray-100 hover:text-gray-900">
                 <XIcon className="size-5" aria-hidden="true" />
               </Button>
             </DialogClose>

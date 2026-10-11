@@ -70,3 +70,22 @@ describe("TransferRequest.getUploadLink resolution ladder", () => {
     expect(await r.getUploadLink()).toBe("https://transfer.zip/upload/req-1");
   });
 });
+
+describe("language on shared links", () => {
+  it("keeps Swedish on stored-transfer links across all domains", async () => {
+    const transfer = new Transfer({ secretCode: "abc-123", language: "sv" });
+    getDownloadDomainFor.mockResolvedValue("files.example.test");
+    expect(await transfer.getDownloadLink()).toBe("https://files.example.test/abc-123?lang=sv");
+    getDownloadDomainFor.mockResolvedValue(null);
+    process.env.NEXT_PUBLIC_DL_DOMAIN = "trnsf.to";
+    expect(await transfer.getDownloadLink()).toBe("https://trnsf.to/abc-123?lang=sv");
+    delete process.env.NEXT_PUBLIC_DL_DOMAIN;
+    expect(await transfer.getDownloadLink()).toBe("https://transfer.zip/transfer/abc-123?lang=sv");
+  });
+
+  it("keeps Swedish on request links", async () => {
+    getDownloadDomainFor.mockResolvedValue(null);
+    const request = new TransferRequest({ secretCode: "req-1", language: "sv" });
+    expect(await request.getUploadLink()).toBe("https://transfer.zip/upload/req-1?lang=sv");
+  });
+});

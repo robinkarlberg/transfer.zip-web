@@ -29,6 +29,7 @@ NotificationSettingsSchema.methods.toJsonAsClient = function () {
 
 const UserSchema = new mongoose.Schema({
     fullName: { type: String },
+    language: { type: String, enum: ["en", "sv"] },
     username: {
         type: String,
         lowercase: true,
@@ -43,6 +44,7 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, lowercase: true, trim: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid.'], index: true, unique: true },
 
     googleId: String,
+    registrationPending: Boolean,
 
     // Password hash n salt
     hash: { type: String },
@@ -99,6 +101,7 @@ UserSchema.methods.toJsonAsClient = function () {
     return {
         id: this._id.toString(),
         fullName: this.fullName,
+        language: this.language || "en",
         email: this.email,
         plan: this.getPlan(),
         verified: this.verified,

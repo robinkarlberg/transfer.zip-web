@@ -1,6 +1,6 @@
 "use client"
-
-import { englishLandingText } from "@/lib/landing/en";
+import { EVENTS } from "@/lib/analytics"
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useState } from "react"
 import Link from "next/link"
@@ -10,7 +10,10 @@ import { getAnnualSavings, getMonthlyPrice, getPriceAmount } from "@/lib/pricing
 import { formatPrice } from "@/lib/billingCurrency"
 import { sendEvent } from "@/lib/client/umami"
 
-export default function TeamPricingCard({ frequency, tier, currency, onTierSelected, eventName, compact, text = englishLandingText.teamPricing }) {
+export default function TeamPricingCard({ frequency, tier, currency, onTierSelected, placement = "pricing", compact, text }) {
+  const { landingText } = useLanguage()
+  text = text || landingText.teamPricing
+
   const [seats, setSeats] = useState(tier.minSeats || 2)
 
   const pricePerSeat = getMonthlyPrice(tier.id, frequency, currency)
@@ -73,12 +76,12 @@ export default function TeamPricingCard({ frequency, tier, currency, onTierSelec
 
       {!compact && (
         <p className="text-gray-600 mt-4 text-sm/6">
-          {tier.description}
+          {(landingText.plans?.[tier.id] || tier).description}
         </p>
       )}
 
       <ul role="list" className="text-gray-600 mt-6 space-y-3 text-sm/6 flex-1">
-        {tier.displayFeatures.map((feature, index) => (
+        {(landingText.plans?.[tier.id] || tier).displayFeatures.map((feature, index) => (
           <li key={index} className="flex gap-x-3">
             <BIcon
               name="check-lg"
@@ -92,9 +95,7 @@ export default function TeamPricingCard({ frequency, tier, currency, onTierSelec
 
       <Link
         onClick={(e) => {
-          if (eventName) {
-            sendEvent(eventName, { tier: tier.id, seats })
-          }
+          sendEvent(EVENTS.PLAN, { plan: tier.id, interval: frequency, currency, seats, placement })
           if (onTierSelected) {
             e.preventDefault()
             onTierSelected(tier.name, seats)

@@ -106,15 +106,19 @@ export async function runVerification(doc) {
 
 async function notifyDomainConnected(doc) {
   let recipientEmail = null
+  let language = "en"
   if (doc.team) {
-    const owner = await User.findOne({ team: doc.team, role: ROLES.OWNER }).select("email").lean()
+    const owner = await User.findOne({ team: doc.team, role: ROLES.OWNER }).select("email language").lean()
     recipientEmail = owner?.email
+    language = owner?.language || "en"
   } else if (doc.user) {
-    const u = await User.findById(doc.user).select("email").lean()
+    const u = await User.findById(doc.user).select("email language").lean()
     recipientEmail = u?.email
+    language = u?.language || "en"
   }
   if (!recipientEmail) return
   await sendCustomDomainConnected(recipientEmail, {
+    language,
     domain: doc.domain,
     link: `${process.env.SITE_URL || ""}/app/branding`,
   })

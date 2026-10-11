@@ -1,4 +1,5 @@
 "use client";
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useContext, useState } from "react";
 import { login, register } from "@/lib/client/Api";
@@ -9,13 +10,12 @@ import SignInWithGoogleButton from "@/components/SignInWithGoogleButton";
 import Spinner from "@/components/elements/Spinner";
 import Image from "next/image";
 import Link from "next/link";
-import { sendEvent } from "@/lib/client/umami";
 import NewSignUpArea from "@/components/NewSignUpArea";
 import { IS_SELFHOST } from "@/lib/isSelfHosted";
 
 /*
   This example requires some changes to your config:
-  
+
   ```
   // tailwind.config.js
   module.exports = {
@@ -28,6 +28,7 @@ import { IS_SELFHOST } from "@/lib/isSelfHosted";
   ```
 */
 export default function SignUpPage() {
+  const { t } = useLanguage()
   const [message, setMessage] = useState(null)
   const [loading, setLoading] = useState(false)
 
@@ -48,10 +49,10 @@ export default function SignUpPage() {
     setLoading(true)
 
     try {
-      if (!validateEmail(email)) throw { message: "Invalid email" }
-      if (password.length < 6) throw { message: "Password too short (minimum 8 characters)" }
+      if (!validateEmail(email)) throw { message: t("Invalid email") }
+      if (password.length < 6) throw { message: t("Password too short (minimum 8 characters)") }
 
-      sendEvent("signup_event")
+
 
       const res = await register(email, password)
       if (res.success) {
@@ -96,17 +97,15 @@ export default function SignUpPage() {
           </div>
         </div>
         <div className="relative flex flex-1 flex-col justify-center px-6 py-12 lg:px-8 z-10">
-          <button className="z-10 absolute top-6 text-xl me-1 text-primary hover:text-primary-light" onClick={() => window.history.back()}>&larr; Back</button>
+          <button className="z-10 absolute top-6 text-xl me-1 text-primary hover:text-primary-light" onClick={() => window.history.back()}>{t("← Back")}</button>
 
           <div className="sm:mx-auto sm:w-full sm:max-w-sm">
             <Image
-              alt="Transfer.zip logo"
+              alt={t("Transfer.zip logo")}
               src={logo}
               className="mx-auto h-10 w-auto"
             />
-            <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-              Welcome!
-            </h2>
+            <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">{t("Welcome!")}</h2>
           </div>
 
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -115,9 +114,7 @@ export default function SignUpPage() {
               IS_SELFHOST ?
                 <form onSubmit={handleSubmit} action="#" method="POST" className="space-y-6">
                   <div>
-                    <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
-                      Email address
-                    </label>
+                    <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">{t("Email address")}</label>
                     <div className="mt-2">
                       <input
                         id="email"
@@ -133,9 +130,7 @@ export default function SignUpPage() {
 
                   <div>
                     <div className="flex items-center justify-between">
-                      <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
-                        Password
-                      </label>
+                      <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">{t("Password")}</label>
                     </div>
                     <div className="mt-2">
                       <input
@@ -159,8 +154,7 @@ export default function SignUpPage() {
                       disabled={loading}
                       type="submit"
                       className="flex w-full justify-center rounded-md bg-primary px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-primary-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                    >
-                      Sign up {loading && <Spinner className={"ms-2"} />}
+                    >{t("Sign up")} {loading && <Spinner className={"ms-2"} />}
                     </button>
                     <div className="mt-2 flex flex-row gap-2">
                       <SignInWithGoogleButton disabled={loading} />
@@ -180,11 +174,8 @@ export default function SignUpPage() {
                 </div>
             }
 
-            <p className="mt-10 text-center text-sm/6 text-gray-500">
-              Already have an account?{' '}
-              <Link href="/signin" className="font-semibold text-primary hover:text-primary-light">
-                Sign in
-              </Link>
+            <p className="mt-10 text-center text-sm/6 text-gray-500">{t("Already have an account?")}{' '}
+              <Link href="/signin" className="font-semibold text-primary hover:text-primary-light">{t("Sign in")}</Link>
             </p>
           </div>
         </div>

@@ -55,7 +55,7 @@ export default function ({ }) {
           <strong className="font-semibold text-gray-900">User Rights.</strong> You have the right to access, modify, or delete your data. You can delete your account and export a copy of your data from <span className="whitespace-nowrap">Settings &rarr; Privacy &amp; data</span> at any time. For anything else, contact {process.env.NEXT_PUBLIC_SUPPORT_EMAIL}.
         </p>
         <p className="mt-8">
-          <strong className="font-semibold text-gray-900">Cookies.</strong> We use only a functional session cookie named <code>token</code> to enable login functionality. This cookie is essential for the operation of our services. We use no tracking cookies, or track you in any other way.
+          <strong className="font-semibold text-gray-900">Cookies.</strong> We use functional cookies for sign-in and site preferences. The <code>token</code> cookie enables login functionality. When you dismiss the language suggestion or select a language, <code>language-suggestion-dismissed</code> stores that choice for the browser session so the suggestion does not reappear. It contains no user identifier. The <code>language</code> session cookie remembers your selected interface language; signed-in users can save their language on their account. The <code>swedish-pricing</code> cookie remembers Swedish pricing for 30 days after visiting a Swedish page.
         </p>
         <p className="mt-8">
           <strong className="font-semibold text-gray-900">Policy Updates.</strong> We reserve the right to update this privacy policy at any time without prior notice. Changes to the privacy policy will be posted on this page.

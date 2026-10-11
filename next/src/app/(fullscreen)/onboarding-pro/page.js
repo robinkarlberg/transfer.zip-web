@@ -1,9 +1,13 @@
+import { getTranslations } from "@/lib/server/language"
 import { redirect } from "next/navigation"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
 import { FEATURE } from "@/lib/pricing"
 import OnboardingProPage from "./OnboardingProPage"
 
-export const metadata = { title: "Welcome to Transfer.zip" }
+export async function generateMetadata() {
+  const t = await getTranslations()
+  return { title: t("Welcome to Transfer.zip") }
+}
 
 export default async function () {
   const auth = await useServerAuth()

@@ -1,10 +1,14 @@
+import { getTranslations } from "@/lib/server/language"
 import { redirect } from "next/navigation"
 import { useServerAuth } from "@/lib/server/wrappers/auth"
 import TeamInvite from "@/lib/server/mongoose/models/TeamInvite"
 import { ROLES } from "@/lib/roles"
 import OnboardingTeamPage from "./OnboardingTeamPage"
 
-export const metadata = { title: "Set up your team" }
+export async function generateMetadata() {
+  const t = await getTranslations()
+  return { title: t("Set up your team") }
+}
 
 export default async function () {
   const auth = await useServerAuth()

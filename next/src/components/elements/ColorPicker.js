@@ -1,4 +1,9 @@
+
+"use client"
+
+import { useLanguage } from "@/context/LanguageContext"
 export default function ColorPicker({ title, name, nameHex, value, setValue, disabled }) {
+  const { t } = useLanguage()
   const handleChange = e => setValue(e.target.value)
 
   return (
@@ -12,7 +17,7 @@ export default function ColorPicker({ title, name, nameHex, value, setValue, dis
           id={name}
           name={name}
           className="h-8 w-10 bg-white border border-gray-300 cursor-pointer rounded-md disabled:opacity-50 disabled:pointer-events-none rounded-e-none border-r-0"
-          title="Choose your text color"
+          title={t("Choose your text color")}
           value={value}
           onChange={handleChange}
           disabled={disabled}

@@ -1,6 +1,5 @@
 "use client"
-
-import { englishLandingText } from "@/lib/landing/en";
+import { useLanguage } from "@/context/LanguageContext"
 
 import { useEffect, useRef, useState } from "react"
 import { pollMagicLinkStatus, verifyMagicLinkCode } from "@/lib/client/Api"
@@ -17,7 +16,10 @@ const POLL_INTERVAL_MS = 2500
 // - same-browser click: switch to a "signed in" state with a CTA into /app
 // - cross-device click: switch to a 6-digit code input so the user can finish
 //   sign-in on this device using the code displayed on the other device
-export default function MagicLinkSentArea({ requestId, email, redirectTo = "/app", onReset, pill, text = englishLandingText.signup.area.magicLink }) {
+export default function MagicLinkSentArea({ requestId, email, redirectTo = "/app", onReset, pill, text }) {
+  const { landingText } = useLanguage()
+  text = text || landingText.signup.area.magicLink
+
   const [stage, setStage] = useState("sent") // sent | codeNeeded | verifying | signedIn
   const [code, setCode] = useState("")
   const [error, setError] = useState(null)

@@ -1,3 +1,4 @@
+import { completeSignIn, setLanguageCookie } from "@/lib/server/completeSignIn"
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
 import dbConnect from "@/lib/server/mongoose/db"
@@ -52,7 +53,9 @@ export async function POST(req, { params }) {
   const session = new Session({ user: user._id })
   await session.save()
 
-  const response = NextResponse.json(resp({ consumed: true }), { status: 200 })
+  const signIn = await completeSignIn(user, magicLink.language)
+  const response = NextResponse.json(resp({ consumed: true, ...signIn }), { status: 200 })
+  setLanguageCookie(response, signIn.language)
   response.cookies.set("token", session.token, createCookieParams())
   // Don't proactively delete the mlReq cookie here - the originating tab is
   // still polling for status, and since cookies are shared across tabs in the
