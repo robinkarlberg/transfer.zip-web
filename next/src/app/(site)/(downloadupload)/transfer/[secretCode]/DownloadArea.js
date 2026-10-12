@@ -1,17 +1,34 @@
 "use client"
 import { useLanguage } from "@/context/LanguageContext"
 
-import { getDownloadToken, registerTransferDownloaded } from "@/lib/client/Api"
+import { getDownloadToken, registerTransferDownloaded, registerTransferViewed } from "@/lib/client/Api"
+import { trackError } from "@/lib/client/errorTracking"
 import { sleep } from "@/lib/utils"
 import { ArrowDownIcon, EyeIcon, Loader2 } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 
-export default function DownloadArea({ secretCode }) {
+export default function DownloadArea({ secretCode, recipientToken }) {
   const { t } = useLanguage()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState(undefined)
   const formRef = useRef(null)
+  const recordedView = useRef(null)
+
+  useEffect(() => {
+    const viewKey = `${secretCode}:${recipientToken || ""}`
+    const recordView = () => {
+      if (document.visibilityState !== "visible" || recordedView.current === viewKey) return
+      recordedView.current = viewKey
+      registerTransferViewed(secretCode, recipientToken).catch(err => {
+        recordedView.current = null
+        trackError("transfer.viewed", err)
+      })
+    }
+    recordView()
+    document.addEventListener("visibilitychange", recordView)
+    return () => document.removeEventListener("visibilitychange", recordView)
+  }, [secretCode, recipientToken])
 
   const handleDownloadClicked = async () => {
     setLoading(true)
@@ -21,7 +38,7 @@ export default function DownloadArea({ secretCode }) {
 
       // const res = await signTransferDownload(nodeUrl, token)
 
-      await registerTransferDownloaded(secretCode)
+      await registerTransferDownloaded(secretCode, recipientToken)
       setFormData({
         url: nodeUrl + "/download",
         token

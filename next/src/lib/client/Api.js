@@ -371,8 +371,14 @@ export async function markTransferComplete(secretCode) {
 
 // download
 
-export async function registerTransferDownloaded(secretCode) {
-    const result = await post(`/download/${secretCode}/downloaded`)
+export async function registerTransferViewed(secretCode, recipientToken) {
+    const query = recipientToken ? `?recipient=${encodeURIComponent(recipientToken)}` : ""
+    return await post(`/download/${secretCode}/viewed${query}`)
+}
+
+export async function registerTransferDownloaded(secretCode, recipientToken) {
+    const query = recipientToken ? `?recipient=${encodeURIComponent(recipientToken)}` : ""
+    const result = await post(`/download/${secretCode}/downloaded${query}`)
     sendEvent(EVENTS.DOWNLOAD, { mode: "stored" })
     return result
 }

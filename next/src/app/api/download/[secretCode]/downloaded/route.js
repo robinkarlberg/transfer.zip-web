@@ -1,43 +1,7 @@
-import { NextResponse } from 'next/server';
-import Transfer from '@/lib/server/mongoose/models/Transfer';
-import BrandProfile from '@/lib/server/mongoose/models/BrandProfile';
-import { resp } from '@/lib/server/serverUtils';
-import { sendTransferDownloaded } from '@/lib/server/mail/mail';
-import { useServerAuth } from '@/lib/server/wrappers/auth';
+import { recordTransferActivity } from "@/lib/server/transferActivity"
 
-const DOWNLOAD_EMAIL_COOLDOWN_MS = 1000 * 60 * 30;
-
+/** @param {import("next/server").NextRequest} req */
 export async function POST(req, { params }) {
-  const { secretCode } = await params;
-
-  const auth = await useServerAuth()
-
-  const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } }).select('-files').populate('author').populate('brandProfile');
-  if (!transfer) {
-    return NextResponse.json(resp('transfer not found'), { status: 404 });
-  }
-
-  if (!!transfer?.author && auth && auth.user._id.toString() === transfer.author._id.toString()) {
-    return NextResponse.json(resp({}));
-  }
-
-  await transfer.logDownload();
-
-  const now = new Date();
-  const author = transfer.author;
-  if (
-    author &&
-    author.notificationSettings?.transferDownloaded !== false &&
-    (!transfer.lastDownloadEmailSentAt || now - transfer.lastDownloadEmailSentAt > DOWNLOAD_EMAIL_COOLDOWN_MS)
-  ) {
-    const brand = transfer.brandProfile ? transfer.brandProfile.toJsonAsClient() : undefined;
-    await sendTransferDownloaded(author.email, { language: author.language,
-      name: transfer.name || 'Untitled Transfer',
-      link: `${process.env.SITE_URL}/app/sent/${transfer._id.toString()}`,
-      brand,
-    });
-    await Transfer.updateOne({ _id: transfer._id }, { $set: { lastDownloadEmailSentAt: now } });
-  }
-
-  return NextResponse.json(resp({}));
+  const { secretCode } = await params
+  return recordTransferActivity(req, secretCode, "downloaded")
 }

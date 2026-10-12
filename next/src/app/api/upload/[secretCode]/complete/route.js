@@ -1,21 +1,17 @@
 import Transfer from "@/lib/server/mongoose/models/Transfer";
-import TransferRequest from "@/lib/server/mongoose/models/TransferRequest";
-import BrandProfile from "@/lib/server/mongoose/models/BrandProfile";
 import { resp } from "@/lib/server/serverUtils";
 import { workerUploadComplete } from "@/lib/server/workerApi";
-import { sendTransferRequestReceived, sendTransferShare } from "@/lib/server/mail/mail";
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/server/mongoose/db";
-import SentEmail from "@/lib/server/mongoose/models/SentEmail";
-import { EMAILS_PER_DAY_LIMIT } from "@/lib/getMaxRecipientsForPlan";
-import { useServerAuth } from "@/lib/server/wrappers/auth";
+import crypto from "crypto";
 
+/** @param {import("next/server").NextRequest} req */
 export async function POST(req, { params }) {
   const { secretCode } = await params
 
   await dbConnect()
 
-  const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } }).populate("author").populate('brandProfile')
+  const transfer = await Transfer.findOne({ secretCode: { $eq: secretCode } })
   if (!transfer) {
     return NextResponse.json(resp("transfer not found"), { status: 404 })
   }
@@ -23,7 +19,7 @@ export async function POST(req, { params }) {
   // TODO: Maybe add auth or something to this
 
   if (transfer.finishedUploading) {
-    return NextResponse.json(resp("transfer already finished uploading"), { status: 409 })
+    return NextResponse.json(resp({}))
   }
 
   transfer.finishedUploading = true
@@ -34,39 +30,12 @@ export async function POST(req, { params }) {
   await workerUploadComplete(transfer.nodeUrl, transfer._id.toString(), filesList)
   transfer.uploadedAt = new Date()
 
-  if (!transfer.transferRequest && transfer.emailsSharedWith?.length) {
-    const unique = [...new Set(transfer.emailsSharedWith.map(e => e.email))];
-    const brand = transfer.brandProfile ? transfer.brandProfile.toJsonAsClient() : undefined;
-    for (const email of unique) {
-      const sentEmailsLastDay = await SentEmail.countDocuments({ userEmail: transfer.authorEmail })
-      if (sentEmailsLastDay >= EMAILS_PER_DAY_LIMIT) {
-        return NextResponse.json(resp("You have sent too many emails today, please contact support."));
-      }
-      const sentEmail = new SentEmail({
-        userEmail: transfer.authorEmail,
-        to: [email]
-      })
-      await sentEmail.save()
-      await sendTransferShare(email, { language: transfer.language,
-        name: transfer.name || 'Untitled Transfer',
-        description: transfer.description,
-        link: await transfer.getDownloadLink(),
-        brand,
-      });
-    }
+  for (const recipient of transfer.emailsSharedWith) {
+    if (!recipient.token) recipient.token = crypto.randomUUID()
+    recipient.emailPending = true
   }
-
-  if (transfer.transferRequest) {
-    const request = await TransferRequest.findById(transfer.transferRequest).populate('author').populate('brandProfile');
-    if (request && request.author && request.author.notificationSettings?.transferReceived !== false) {
-      await sendTransferRequestReceived(request.author.email, { language: request.author.language,
-        name: request.name || 'Untitled Request',
-        link: `${process.env.SITE_URL}/app/requests/${request._id}?submission=${transfer._id}`,
-        brand: request.brandProfile ? request.brandProfile.toJsonAsClient() : undefined,
-      });
-    }
-  }
-
+  transfer.requestEmailPending = !!transfer.transferRequest
+  // Save delivery intent with completion so the worker can recover after a restart.
   await transfer.save()
 
   return NextResponse.json(resp({}))

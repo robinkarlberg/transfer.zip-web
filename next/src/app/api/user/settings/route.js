@@ -21,7 +21,7 @@ export async function PUT(req) {
   const $unset = {}
 
   if (notificationSettings) {
-    const allowedFields = ['transferDownloaded', 'transferReceived', 'expiryWarnings']
+    const allowedFields = ["transferViewed", "transferDownloaded", "transferReceived", "expiryWarnings"]
     for (const field of allowedFields) {
       if (notificationSettings[field] !== undefined) {
         $set[`notificationSettings.${field}`] = notificationSettings[field]

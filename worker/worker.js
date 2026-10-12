@@ -9,6 +9,7 @@ import { SignJWT } from "jose"
 import { getPrivateKey, getPublicKey } from "./lib/keyManager.js"
 import { lookup } from "doc999tor-fast-geoip"
 import pino from "pino"
+import { runEmailQueue } from "./lib/mailQueue.js"
 
 const PINO_CONF = {
   level: "info",
@@ -91,6 +92,8 @@ deleteExpiredTransfers()
 
 const NEXT_INTERNAL_URL = process.env.NEXT_INTERNAL_URL
   || (process.env.NODE_ENV === "development" ? "http://localhost:3000" : "http://next:9001")
+
+cron.schedule("*/15 * * * * *", () => runEmailQueue(NEXT_INTERNAL_URL, logger), { noOverlap: true })
 
 const verifyPendingCustomDomains = async () => {
   try {

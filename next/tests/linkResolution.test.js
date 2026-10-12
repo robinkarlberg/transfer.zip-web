@@ -72,6 +72,24 @@ describe("TransferRequest.getUploadLink resolution ladder", () => {
 });
 
 describe("language on shared links", () => {
+  it("preserves personal recipient tokens and language across every download domain", async () => {
+    const transfer = new Transfer({ secretCode: "abc-123", language: "sv" });
+    const recipient = transfer.addSharedEmail("alice@example.test");
+    for (const domain of ["files.example.test", "trnsf.to", null]) {
+      getDownloadDomainFor.mockResolvedValue(domain === "files.example.test" ? domain : null);
+      if (domain === "trnsf.to") process.env.NEXT_PUBLIC_DL_DOMAIN = domain;
+      else delete process.env.NEXT_PUBLIC_DL_DOMAIN;
+
+      const link = new URL(await transfer.getDownloadLink(recipient.token));
+      expect(link.hostname).toBe(domain || "transfer.zip");
+      expect(link.pathname).toBe(domain ? "/abc-123" : "/transfer/abc-123");
+      expect(link.searchParams.get("recipient")).toBe(recipient.token);
+      expect(link.searchParams.get("lang")).toBe("sv");
+      expect(link.toString()).not.toContain(recipient.email);
+      expect(await transfer.getDownloadLink()).not.toContain("recipient=");
+    }
+  });
+
   it("keeps Swedish on stored-transfer links across all domains", async () => {
     const transfer = new Transfer({ secretCode: "abc-123", language: "sv" });
     getDownloadDomainFor.mockResolvedValue("files.example.test");

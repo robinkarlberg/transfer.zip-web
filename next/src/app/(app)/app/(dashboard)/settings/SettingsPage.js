@@ -187,6 +187,10 @@ export default function ({ user, storage, team }) {
           <h2 className="text-lg font-semibold text-gray-900 ">{t("Notifications")}</h2>
           <div className="space-y-4 mt-4">
             <div className="flex items-center space-x-3">
+              <Checkbox id="transferViewed" defaultChecked={notificationSettings.transferViewed} onCheckedChange={handleCheckedChange("transferViewed")} />
+              <Label htmlFor="transferViewed">{t("Recipient viewed your transfer")}</Label>
+            </div>
+            <div className="flex items-center space-x-3">
               <Checkbox id="transferDownloaded" defaultChecked={notificationSettings.transferDownloaded} onCheckedChange={handleCheckedChange("transferDownloaded")} />
               <Label htmlFor="transferDownloaded" className="cursor-pointer">{t("User Downloaded your Files")}</Label>
             </div>
@@ -211,10 +215,10 @@ export default function ({ user, storage, team }) {
           )}
         </div>
         <div>
-          <Label htmlFor="account-language">{t("Language")}</Label>
-          <div className="mt-3 max-w-xs">
+          <h2 id="account-language-heading" className="text-lg font-semibold text-gray-900">{t("Language")}</h2>
+          <div className="mt-4 max-w-xs">
             <Select value={language} onValueChange={changeLanguage} disabled={savingLanguage}>
-              <SelectTrigger id="account-language"><SelectValue /></SelectTrigger>
+              <SelectTrigger id="account-language" aria-labelledby="account-language-heading"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="sv">Svenska</SelectItem>
                 <SelectItem value="en">English</SelectItem>

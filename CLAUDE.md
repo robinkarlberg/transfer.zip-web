@@ -114,6 +114,8 @@ Pino everywhere (`next-logger` wraps Next, worker uses pino directly). Dev outpu
 
 [next/src/lib/server/mail/mail.js](next/src/lib/server/mail/mail.js) uses Resend when `RESEND_API_KEY` is set; otherwise logs rendered HTML to console (mock mode for self-host). Templates are React Email components in `mail/templates/`.
 
+Transfer delivery is queued durably in MongoDB. Completion and forwarding save pending delivery on the Transfer; the worker calls `/api/internal/mail/process` every 15 seconds to enqueue and deliver it. EmailJob stores an immutable rendered message, a lease, retry timing, and a stable Resend idempotency key. Provider errors retry with backoff for up to 23 hours after the first attempt, then remain logged as failed; completed job metadata expires after 30 days. Transfer activity notifications also use this queue. Authentication emails still send immediately.
+
 ## Conventions
 
 - **JavaScript, not TypeScript.** Use `.js` for everything you create, including JSX. The only existing `.jsx` files are vendored shadcn primitives in `components/ui/` and React Email templates in `lib/server/mail/templates/` - don't add to those exceptions.

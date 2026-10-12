@@ -11,7 +11,7 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { API_URL, createCheckoutSession, deleteOwnAccount, logout } from "@/lib/client/Api"
 import PricingToggle from "@/components/PricingToggle"
-import IndieStatement from "@/components/IndieStatement"
+import FounderNote from "@/components/FounderNote"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -43,7 +43,7 @@ const testimonials = [
 ]
 
 export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial, currency }) {
-  const { t } = useLanguage()
+  const { t, landingText } = useLanguage()
   const router = useRouter()
 
   const [isRequesting, setIsRequesting] = useState(false);
@@ -127,7 +127,7 @@ export default function OnboardingPage({ user, hasStripeAccount, hasFreeTrial, c
           <TeamPricingCard currency={currency} frequency={frequency} tier={teamTier} onTierSelected={handleTierSelected} hasFreeTrial={hasFreeTrial} placement="onboarding" />
         </div>
         <div className="mt-8">
-          <IndieStatement compact />
+          <FounderNote text={landingText.founder} />
         </div>
         <div className={``}>
           <div className="mx-auto max-w-4xl px-6 mt-4 lg:px-8">

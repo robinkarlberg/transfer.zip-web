@@ -21,7 +21,13 @@ const ViewStatistic = new mongoose.Schema({
 
 const EmailSharedWith = new mongoose.Schema({
     time: { type: Date, default: () => new Date(), required: true },
-    email: String
+    email: String,
+    token: String,
+    emailPending: Boolean,
+    viewedAt: Date,
+    downloadedAt: Date,
+    lastViewEmailSentAt: Date,
+    lastDownloadEmailSentAt: Date,
 }, { _id: false })
 
 const File = new mongoose.Schema({
@@ -77,8 +83,12 @@ const TransferSchema = new mongoose.Schema({
     nodeUrl: String,
 
     finishedUploading: { type: Boolean, default: false },
+    requestEmailPending: Boolean,
     lastDownloadEmailSentAt: Date,
 }, { timestamps: true })
+
+TransferSchema.index({ finishedUploading: 1, "emailsSharedWith.emailPending": 1 })
+TransferSchema.index({ finishedUploading: 1, requestEmailPending: 1 })
 
 function encPassword(pass) {
     const cipher = crypto.createCipheriv("aes-256-cbc", PASSWORD_ENC_KEY, PASSWORD_ENC_IV)
@@ -113,17 +123,44 @@ TransferSchema.methods.clearPassword = function () {
 
 // Atomic $push rather than save(): save() re-validates every file subdoc, which takes
 // seconds on transfers with tens of thousands of files
-TransferSchema.methods.logDownload = function () {
-    return this.constructor.updateOne({ _id: this._id }, { $push: { downloads: {} } })
+TransferSchema.methods.logDownload = function (recipientToken) {
+    const time = new Date()
+    const recipient = this.getEmailRecipient(recipientToken)
+    const filter = { _id: this._id }
+    const update = { $push: { downloads: { time } } }
+    if (recipient) {
+        filter["emailsSharedWith.token"] = recipient.token
+        update.$min = {
+            "emailsSharedWith.$.viewedAt": time,
+            "emailsSharedWith.$.downloadedAt": time,
+        }
+    }
+    return this.constructor.updateOne(filter, update)
 }
 
-TransferSchema.methods.logView = function () {
-    return this.constructor.updateOne({ _id: this._id }, { $push: { views: {} } })
+TransferSchema.methods.logView = function (recipientToken) {
+    const time = new Date()
+    const recipient = this.getEmailRecipient(recipientToken)
+    const filter = { _id: this._id }
+    const update = { $push: { views: { time } } }
+    if (recipient) {
+        filter["emailsSharedWith.token"] = recipient.token
+        update.$min = { "emailsSharedWith.$.viewedAt": time }
+    }
+    return this.constructor.updateOne(filter, update)
 }
 
-// store an email address that this transfer will be shared with
+TransferSchema.methods.getEmailRecipient = function (token) {
+    if (typeof token !== "string" || !token) return undefined
+    return this.emailsSharedWith.find(entry => entry.token === token)
+}
+
 TransferSchema.methods.addSharedEmail = function (email) {
-    this.emailsSharedWith.push({ email })
+    const normalized = email.trim().toLowerCase()
+    const existing = this.emailsSharedWith.find(entry => entry.email.toLowerCase() === normalized)
+    if (existing) return existing
+    this.emailsSharedWith.push({ email: normalized, token: crypto.randomUUID(), emailPending: true })
+    return this.emailsSharedWith[this.emailsSharedWith.length - 1]
 }
 
 TransferSchema.methods.registerFile = function (fileInfo) {
@@ -149,7 +186,13 @@ TransferSchema.methods.toJsonAsOwner = async function () {
         downloadUrl: await this.getDownloadLink(),
         hasPassword: this.hasPassword(),
         password: this.getPassword(),
-        emailsSharedWith: emailsSharedWith.map(entry => ({ time: entry.time, email: entry.email })),
+        emailsSharedWith: emailsSharedWith.map(entry => ({
+            time: entry.time,
+            email: entry.email,
+            trackingEnabled: !!entry.token,
+            viewedAt: entry.viewedAt || null,
+            downloadedAt: entry.downloadedAt || null,
+        })),
         statistics: {
             downloads: { length: downloads?.length },
             views: { length: views?.length },
@@ -236,15 +279,24 @@ TransferSchema.methods.toJsonAsTeamAdmin = async function () {
 //     }
 // }
 
-TransferSchema.methods.getDownloadLink = async function () {
+TransferSchema.methods.getDownloadLink = async function (recipientToken) {
     const customDomain = await getDownloadDomainFor({ team: this.team, user: this.author?._id || this.author })
+    let link
     if (customDomain) {
-        return this.language ? localizedLink(`https://${customDomain}/${this.secretCode}`, this.language) : `https://${customDomain}/${this.secretCode}`
+        link = `https://${customDomain}/${this.secretCode}`
     }
-    if (process.env.NEXT_PUBLIC_DL_DOMAIN) {
-        return this.language ? localizedLink(`https://${process.env.NEXT_PUBLIC_DL_DOMAIN}/${this.secretCode}`, this.language) : `https://${process.env.NEXT_PUBLIC_DL_DOMAIN}/${this.secretCode}`
+    else if (process.env.NEXT_PUBLIC_DL_DOMAIN) {
+        link = `https://${process.env.NEXT_PUBLIC_DL_DOMAIN}/${this.secretCode}`
     }
-    return this.language ? localizedLink(`${process.env.SITE_URL}/transfer/${this.secretCode}`, this.language) : `${process.env.SITE_URL}/transfer/${this.secretCode}`
+    else {
+        link = `${process.env.SITE_URL}/transfer/${this.secretCode}`
+    }
+    if (recipientToken) {
+        const url = new URL(link)
+        url.searchParams.set("recipient", recipientToken)
+        link = url.toString()
+    }
+    return this.language ? localizedLink(link, this.language) : link
 }
 
 // Add a virtual field for transfer.size

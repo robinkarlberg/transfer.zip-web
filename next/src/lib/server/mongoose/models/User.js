@@ -14,6 +14,7 @@ import Team from './Team';
 import { BILLING_CURRENCIES } from "@/lib/billingCurrency";
 
 const NotificationSettingsSchema = new mongoose.Schema({
+    transferViewed: { type: Boolean, default: true },
     transferDownloaded: { type: Boolean, default: true },
     transferReceived: { type: Boolean, default: true },
     expiryWarnings: { type: Boolean, default: true },
@@ -21,6 +22,7 @@ const NotificationSettingsSchema = new mongoose.Schema({
 
 NotificationSettingsSchema.methods.toJsonAsClient = function () {
     return {
+        transferViewed: this.transferViewed,
         transferDownloaded: this.transferDownloaded,
         transferReceived: this.transferReceived,
         // expiryWarnings: this.expiryWarnings

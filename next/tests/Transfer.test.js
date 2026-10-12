@@ -82,6 +82,75 @@ describe("Transfer.registerFile", () => {
   });
 });
 
+describe("email recipient tracking", () => {
+  it("assigns each normalized recipient a distinct, stable personal token", () => {
+    const transfer = new Transfer({});
+    const alice = transfer.addSharedEmail(" Alice@Example.test ");
+    const bob = transfer.addSharedEmail("bob@example.test");
+    const duplicate = transfer.addSharedEmail("alice@example.test");
+
+    expect(transfer.emailsSharedWith).toHaveLength(2);
+    expect(alice.email).toBe("alice@example.test");
+    expect(alice.emailPending).toBe(true);
+    expect(alice.token).toMatch(/^[0-9a-f-]{36}$/);
+    expect(alice.token).not.toBe(bob.token);
+    expect(duplicate.token).toBe(alice.token);
+    expect(transfer.getEmailRecipient(alice.token).email).toBe("alice@example.test");
+    expect(transfer.getEmailRecipient(bob.token).email).toBe("bob@example.test");
+  });
+
+  it("does not attribute a missing, invalid, or another transfer's token", () => {
+    const transfer = new Transfer({ emailsSharedWith: [{ email: "legacy@example.test" }] });
+    const other = new Transfer({});
+    const recipient = other.addSharedEmail("alice@example.test");
+    for (const token of [undefined, null, "", "legacy@example.test", { $ne: null }, [recipient.token], recipient.token]) {
+      expect(transfer.getEmailRecipient(token)).toBeUndefined();
+    }
+  });
+
+  it("keeps old emails untracked when loading existing transfers", async () => {
+    const transfer = Transfer.hydrate({
+      _id: "000000000000000000000001",
+      emailsSharedWith: [{ email: "legacy@example.test", time: new Date("2026-01-01") }],
+    });
+    expect(transfer.emailsSharedWith[0].token).toBeUndefined();
+    expect(transfer.emailsSharedWith[0].emailPending).toBeUndefined();
+    const owner = await transfer.toJsonAsOwner();
+    expect(owner.emailsSharedWith[0]).toMatchObject({
+      email: "legacy@example.test", trackingEnabled: false, viewedAt: null, downloadedAt: null,
+    });
+  });
+
+  it("does not schedule another email when an existing recipient is added again", () => {
+    const transfer = new Transfer({});
+    const recipient = transfer.addSharedEmail("alice@example.test");
+    recipient.emailPending = undefined;
+    transfer.addSharedEmail("ALICE@example.test");
+    expect(recipient.emailPending).toBeUndefined();
+    expect(transfer.emailsSharedWith).toHaveLength(1);
+  });
+
+  it("exposes recipient activity to the owner without exposing tokens or notification state", async () => {
+    const transfer = new Transfer({});
+    const alice = transfer.addSharedEmail("alice@example.test");
+    transfer.addSharedEmail("bob@example.test");
+    alice.viewedAt = new Date("2026-10-11T10:00:00Z");
+    alice.downloadedAt = new Date("2026-10-11T10:05:00Z");
+    alice.lastViewEmailSentAt = alice.viewedAt;
+    alice.lastDownloadEmailSentAt = alice.downloadedAt;
+
+    const owner = await transfer.toJsonAsOwner();
+    expect(owner.emailsSharedWith[0]).toEqual({
+      email: alice.email, time: alice.time, trackingEnabled: true,
+      viewedAt: alice.viewedAt, downloadedAt: alice.downloadedAt,
+    });
+    expect(owner.emailsSharedWith[1]).toMatchObject({ trackingEnabled: true, viewedAt: null, downloadedAt: null });
+    expect(owner.downloadUrl).not.toContain(alice.token);
+    expect(transfer.toJsonAsRequestOwner()).not.toHaveProperty("emailsSharedWith");
+    expect(await transfer.toJsonAsTeamAdmin()).not.toHaveProperty("emailsSharedWith");
+  });
+});
+
 describe("existing transfer compatibility", () => {
   it.each([undefined, 1, 2])("preserves links and file details for stored version %s", async (backendVersion) => {
     vi.stubEnv("SITE_URL", "https://transfer.example");

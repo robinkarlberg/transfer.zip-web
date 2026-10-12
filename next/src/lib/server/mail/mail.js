@@ -2,7 +2,9 @@ import { getTranslator } from "@/lib/i18n/translate"
 import { localizedLink } from "@/lib/i18n/language"
 import { Resend } from 'resend';
 import { render } from '@react-email/render';
+import { enqueueEmail } from "./queue";
 import TransferDownloadedEmail from './templates/TransferDownloadedEmail.jsx';
+import TransferViewedEmail from "./templates/TransferViewedEmail";
 import TransferRequestReceivedEmail from './templates/TransferRequestReceivedEmail.jsx';
 import TransferShareEmail from './templates/TransferShareEmail.jsx';
 import TransferRequestShareEmail from './templates/TransferRequestShareEmail.jsx';
@@ -18,35 +20,66 @@ import CustomDomainConnectedEmail from './templates/CustomDomainConnectedEmail.j
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
-async function sendMail(reactElement, { from, to, subject }) {
+async function sendMail(reactElement, { from, to, subject, queueKey, transferId, quotaEmail }) {
   const finalSubject = process.env.NODE_ENV !== "production" ? `[RKT-DEV] ${subject}` : subject;
+  if (queueKey) {
+    return enqueueEmail(queueKey, {
+      transfer: transferId, quotaEmail,
+      message: { from: from || `noreply@${process.env.RESEND_DOMAIN || "transfer.zip"}`, to, subject: finalSubject, html: await render(reactElement) },
+    });
+  }
   if (resend) {
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: from || `noreply@${process.env.RESEND_DOMAIN || `transfer.zip`}`,
       to,
       subject: finalSubject,
       react: reactElement,
     });
+    if (error) throw new Error(error.message);
   } else {
     console.log('[MOCK] Sending email to', to, 'from', from, 'subject', finalSubject);
     console.log(await render(reactElement));
   }
 }
 
-export async function sendTransferDownloaded(email, { name, link, brand, language = "en" }) {
+/** @param {import("../mongoose/models/EmailJob").default["message"]} message */
+export async function deliverQueuedEmail(message, key) {
+  if (!resend) {
+    console.info({ emailJob: key, ...message }, "[MOCK] Sending queued email");
+    return;
+  }
+  const { error } = await resend.emails.send(message, { idempotencyKey: key, signal: AbortSignal.timeout(15_000) });
+  if (error) throw new Error(error.message);
+}
+
+export async function sendTransferDownloaded(email, { name, link, brand, recipientEmail, language = "en", queueKey, transferId }) {
   const t = getTranslator(language)
   link = localizedLink(link, language)
-  await sendMail(TransferDownloadedEmail({ language, name, link, brand }), {
+  await sendMail(TransferDownloadedEmail({ language, name, link, brand, recipientEmail }), {
     to: email,
-    subject: `${t("Transfer downloaded")} - ${brand?.name || process.env.NEXT_PUBLIC_SITE_NAME} | ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`,
+    queueKey, transferId,
+    subject: recipientEmail
+      ? t("{email} downloaded {name}", { email: recipientEmail, name })
+      : `${t("Transfer downloaded")} - ${brand?.name || process.env.NEXT_PUBLIC_SITE_NAME} | ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`,
   });
 }
 
-export async function sendTransferRequestReceived(email, { name, link, brand, language = "en" }) {
+export async function sendTransferViewed(email, { name, link, brand, recipientEmail, language = "en", queueKey, transferId }) {
+  const t = getTranslator(language)
+  link = localizedLink(link, language)
+  await sendMail(TransferViewedEmail({ language, name, link, brand, recipientEmail }), {
+    to: email,
+    queueKey, transferId,
+    subject: t("{email} viewed {name}", { email: recipientEmail, name }),
+  });
+}
+
+export async function sendTransferRequestReceived(email, { name, link, brand, language = "en", queueKey, transferId }) {
   const t = getTranslator(language)
   link = localizedLink(link, language)
   await sendMail(TransferRequestReceivedEmail({ language, name, link, brand }), {
     to: email,
+    queueKey, transferId,
     subject: `${t("Files received")} - ${brand?.name || process.env.NEXT_PUBLIC_SITE_NAME} | ${new Date().toISOString().replace('T', ' ').slice(0, 19)}`,
   });
 }
@@ -60,11 +93,12 @@ export async function sendTransferRequestShare(email, { name, description, link,
   });
 }
 
-export async function sendTransferShare(email, { name, description, link, brand, language = "en" }) {
+export async function sendTransferShare(email, { name, description, link, brand, language = "en", queueKey, transferId, quotaEmail }) {
   const t = getTranslator(language)
   link = localizedLink(link, language)
   await sendMail(TransferShareEmail({ language, name, description, link, brand }), {
     to: email,
+    queueKey, transferId, quotaEmail,
     subject: `${t("Files available")} - ${brand?.name || process.env.NEXT_PUBLIC_SITE_NAME}`,
   });
 }

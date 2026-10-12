@@ -3,6 +3,29 @@ import User from "@/lib/server/mongoose/models/User";
 import Team from "@/lib/server/mongoose/models/Team";
 import { FEATURE, LIMIT } from "@/lib/pricing";
 
+describe("recipient notification settings", () => {
+  it("includes the view preference for existing accounts", () => {
+    const user = User.hydrate({
+      _id: "000000000000000000000001",
+      email: "sender@example.test",
+      notificationSettings: { transferDownloaded: false },
+    });
+    expect(user.toJsonAsClient().notificationSettings).toMatchObject({
+      transferViewed: true, transferDownloaded: false,
+    });
+  });
+
+  it("preserves independent view and download opt-outs", () => {
+    const user = new User({
+      email: "sender@example.test",
+      notificationSettings: { transferViewed: false, transferDownloaded: true },
+    });
+    expect(user.toJsonAsClient().notificationSettings).toMatchObject({
+      transferViewed: false, transferDownloaded: true,
+    });
+  });
+});
+
 // User instances aren't saved to a DB - we only call the synchronous
 // methods (getPlan/hasFeature/getLimit) that don't touch the network.
 // `user.team` is set to a real Team document, mirroring what

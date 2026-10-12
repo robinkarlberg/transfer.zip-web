@@ -8,8 +8,8 @@
 }
 
 # Block all /api/internal/* paths from the public internet. The only
-# legitimate caller is Caddy itself, which reaches next:9001 directly
-# over the docker network and never traverses a site block.
+# legitimate callers are Caddy and the worker, which reach next:9001 directly
+# over the docker network and never traverse a site block.
 (block_internal) {
   @internal path /api/internal/*
   respond @internal 404

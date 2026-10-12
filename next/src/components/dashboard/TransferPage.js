@@ -35,6 +35,7 @@ import { Textarea } from "../ui/textarea"
 import DashH2 from "./DashH2"
 import GenericPage from "./GenericPage"
 import { YesNo } from "./YesNo"
+import TransferRecipientsDialog from "./TransferRecipientsDialog"
 
 import logo from "@/img/icon.png"
 
@@ -133,6 +134,11 @@ export default function ({ user, transfer, brandProfiles }) {
   const [showForwardTransfer, setShowForwardTransfer] = useState(false)
   const [sending, setSending] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+
+  const handleForwardTransfer = () => {
+    setShowEmailList(false)
+    setShowForwardTransfer(true)
+  }
 
   const handleSaveTitle = async e => {
     setEditingTitle(false)
@@ -291,7 +297,7 @@ export default function ({ user, transfer, brandProfiles }) {
                 </Field>
                 <Field label={shared.length > 0 ? t("Sent to") : t("Shared via")} className="border-r pt-6 pr-5">
                   {shared.length > 0
-                    ? <ValueButton Icon={ChevronRightIcon} onClick={() => setShowEmailList(true)}>{shared.length == 1 ? shared[0].email : `${shared.length} people`}</ValueButton>
+                    ? <ValueButton Icon={ChevronRightIcon} onClick={() => setShowEmailList(true)}>{shared.length == 1 ? shared[0].email : t("{count} people", { count: shared.length })}</ValueButton>
                     : t("Link")}
                 </Field>
                 <Field label={t("Views")} className="pt-6 pl-5">
@@ -312,7 +318,7 @@ export default function ({ user, transfer, brandProfiles }) {
                     {copied ? <CheckIcon /> : <CopyIcon />}
                     {copied ? t("Copied") : t("Copy link")}
                   </Button>
-                  <Button variant="outline" onClick={() => setShowForwardTransfer(true)}>
+                  <Button variant="outline" onClick={handleForwardTransfer}>
                     <MailIcon />{t("Send by email")}</Button>
                 </div>
               </div>
@@ -373,22 +379,7 @@ export default function ({ user, transfer, brandProfiles }) {
         </div>
       </GenericPage>
 
-      <Dialog open={showEmailList} onOpenChange={setShowEmailList}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t("Sent to")} {shared.length} {shared.length == 1 ? "person" : "people"}</DialogTitle>
-            <DialogDescription>{t("Everyone who got this transfer by email.")}</DialogDescription>
-          </DialogHeader>
-          <ul className="max-h-80 divide-y divide-gray-100 overflow-y-auto text-sm">
-            {shared.map((entry, index) => (
-              <li key={index} className="flex items-center justify-between gap-4 py-2.5">
-                <span className="truncate text-gray-900">{entry.email}</span>
-                <span className="shrink-0 text-gray-500">{formatDate(new Date(entry.time), locale)}</span>
-              </li>
-            ))}
-          </ul>
-        </DialogContent>
-      </Dialog>
+      <TransferRecipientsDialog open={showEmailList} onOpenChange={setShowEmailList} onForward={handleForwardTransfer} recipients={shared} />
 
       <Dialog open={showForwardTransfer} onOpenChange={setShowForwardTransfer}>
         <DialogContent>
@@ -397,7 +388,7 @@ export default function ({ user, transfer, brandProfiles }) {
             <DialogDescription>{t("They'll get the download link along with the title and message.")}</DialogDescription>
           </DialogHeader>
           <form id="sendByEmailForm" onSubmit={handleSendByEmailFormSubmit}>
-            <Input autoFocus name="email" type="email" required autoComplete="off" placeholder="name@example.com" />
+            <Input autoFocus name="email" type="email" required autoComplete="off" placeholder="name@example.com" className="h-11 rounded-full" />
           </form>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowForwardTransfer(false)}>{t("Cancel")}</Button>

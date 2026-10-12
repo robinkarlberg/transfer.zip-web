@@ -7,6 +7,7 @@ import { useServerAuth } from "@/lib/server/wrappers/auth";
 import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import SentEmail from "@/lib/server/mongoose/models/SentEmail";
+import { countRecentEmails } from "@/lib/server/mail/quota";
 import { EMAILS_PER_DAY_LIMIT, getMaxRecipientsForPlan } from "@/lib/getMaxRecipientsForPlan";
 import { z } from "zod"
 
@@ -63,7 +64,7 @@ export async function POST(req) {
 
   if (emails?.length) {
     for (const email of emails) {
-      const sentEmailsLastDay = await SentEmail.countDocuments({ userEmail: user.email })
+      const sentEmailsLastDay = await countRecentEmails(user.email)
       if (sentEmailsLastDay >= EMAILS_PER_DAY_LIMIT) {
         return NextResponse.json(resp("You have sent too many emails today, please contact support."));
       }

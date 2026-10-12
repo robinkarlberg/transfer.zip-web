@@ -14,8 +14,6 @@ import TestimonialCloud from "@/components/TestimonialCloud";
 import FAQ from "@/components/FAQ";
 import Image from "next/image";
 import { headers } from "next/headers";
-import { isBot } from "@/lib/isBot";
-import { useServerAuth } from "@/lib/server/wrappers/auth";
 import { isCustomDomainHost } from "@/lib/hostUtils";
 import { FileIcon, FilmIcon, FolderIcon, ImageIcon, MusicIcon } from "lucide-react";
 import Footer from "@/components/Footer";
@@ -67,7 +65,7 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function ({ params }) {
+export default async function ({ params, searchParams }) {
   const locale = await getLanguage() === "sv" ? "sv-SE" : "en-US"
   const landingText = await getLandingText()
   const language = await getLanguage()
@@ -82,15 +80,9 @@ export default async function ({ params }) {
     notFound()
   }
 
-  const auth = await useServerAuth()
-
   const headersList = await headers()
-  if (!transfer?.author || !auth || auth.user._id.toString() !== transfer.author._id.toString()) {
-    const userAgent = headersList.get("user-agent") || ""
-    if (!isBot(userAgent)) {
-      await transfer.logView()
-    }
-  }
+  const { recipient } = await searchParams
+  const emailRecipient = transfer.getEmailRecipient(recipient)
 
   const isCustomDomain = isCustomDomainHost(headersList.get("host"))
 
@@ -150,7 +142,7 @@ export default async function ({ params }) {
             <span>{formatCount(fileCount, t("file"), t("files"), locale)} · {humanFileSize(transfer.size, true, 1)}</span>
             {expiryDate && <span>{t("Expires in")} {humanTimeUntil(expiryDate, language)}</span>}
           </div>
-          <DownloadArea secretCode={secretCode} />
+          <DownloadArea secretCode={secretCode} recipientToken={emailRecipient ? emailRecipient.token : undefined} />
         </div>
       </div>
       {(!IS_SELFHOST && !brandProfile && !isCustomDomain) && (
