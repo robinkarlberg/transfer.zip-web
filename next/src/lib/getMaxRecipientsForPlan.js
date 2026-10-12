@@ -1,6 +1,8 @@
+import { PLANS } from "@/lib/pricing";
+
 export const getMaxRecipientsForPlan = (plan) => {
-  if (plan == "pro") return 30;
-  else if (plan == "starter") return 10;
+  if (plan == PLANS.pro.id || plan == PLANS.teams.id) return 30;
+  else if (plan == PLANS.starter.id) return 10;
   else return 2;
 };
 

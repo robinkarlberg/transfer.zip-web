@@ -15,6 +15,7 @@ import {
   getMonthlyPrice,
   getAnnualSavings,
 } from "@/lib/pricing";
+import { getMaxRecipientsForPlan } from "@/lib/getMaxRecipientsForPlan";
 
 describe("pricing - plan lookup", () => {
   it("getPlanById returns each known plan", () => {
@@ -146,5 +147,14 @@ describe("pricing - getLimit", () => {
     expect(getLimit("ghost", LIMIT.STORAGE)).toBeNull();
     expect(getLimit("pro", "imaginaryLimit")).toBeNull();
     expect(getLimit(undefined, LIMIT.STORAGE)).toBeNull();
+  });
+});
+
+describe("email recipient limits", () => {
+  it("gives Teams the same per-send limit as Pro", () => {
+    expect(getMaxRecipientsForPlan("free")).toBe(2);
+    expect(getMaxRecipientsForPlan("starter")).toBe(10);
+    expect(getMaxRecipientsForPlan("pro")).toBe(30);
+    expect(getMaxRecipientsForPlan("teams")).toBe(30);
   });
 });

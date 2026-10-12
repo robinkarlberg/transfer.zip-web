@@ -3,7 +3,7 @@
 import { englishLandingText } from "@/lib/landing/en";
 
 import { AnimatePresence, motion, useInView } from "framer-motion"
-import { SendIcon, ZapIcon } from "lucide-react"
+import { ArrowDownToLineIcon, EyeIcon, MailIcon, ZapIcon } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { IslandReveal } from "./IslandReveal"
 import { cn } from "@/lib/utils"
@@ -129,16 +129,44 @@ function TransferRequestsWidget({ text }) {
   )
 }
 
-const EMAIL_SAMPLE = [
-  "alex@studio.com",
-  "maria@agency.io",
-  "john@brand.co",
-  "sam@company.xyz",
-]
-const EMAIL_TOTAL = 50
+const RECIPIENTS = ["alex@studio.com", "maria@agency.io", "john@brand.co"]
+const NOT_VIEWED = 0
+const VIEWED = 1
+const DOWNLOADED = 2
 
-function EmailBroadcastWidget({ text }) {
-  const [step, setStep] = useState(0)
+// One frame per recipient event: the status of every recipient, and who just acted
+const TRACKING_FRAMES = [
+  { statuses: [NOT_VIEWED, NOT_VIEWED, NOT_VIEWED] },
+  { statuses: [VIEWED, NOT_VIEWED, NOT_VIEWED], actor: 0 },
+  { statuses: [DOWNLOADED, NOT_VIEWED, NOT_VIEWED], actor: 0 },
+  { statuses: [DOWNLOADED, VIEWED, NOT_VIEWED], actor: 1 },
+  { statuses: [DOWNLOADED, DOWNLOADED, NOT_VIEWED], actor: 1 },
+  { statuses: [DOWNLOADED, DOWNLOADED, VIEWED], actor: 2 },
+]
+
+function RecipientStatus({ status, text }) {
+  const Icon = status === DOWNLOADED ? ArrowDownToLineIcon : EyeIcon
+  return (
+    <motion.span
+      key={status}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.2 }}
+      className={cn(
+        "inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold",
+        status === NOT_VIEWED && "bg-gray-100 text-gray-500",
+        status === VIEWED && "bg-primary-50 text-primary-700",
+        status === DOWNLOADED && "bg-primary-600 text-white"
+      )}
+    >
+      {status !== NOT_VIEWED && <Icon className="size-3.5" />}
+      {status === NOT_VIEWED ? text.notViewed : status === VIEWED ? text.viewed : text.downloaded}
+    </motion.span>
+  )
+}
+
+function TrackingWidget({ text }) {
+  const [frame, setFrame] = useState(0)
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: "-50px" })
 
@@ -149,12 +177,10 @@ function EmailBroadcastWidget({ text }) {
 
     async function loop() {
       while (!cancelled) {
-        setStep(0)
-        await sleep(600)
-        for (let i = 1; i <= EMAIL_SAMPLE.length + 1; i++) {
+        for (let i = 0; i < TRACKING_FRAMES.length; i++) {
           if (cancelled) return
-          setStep(i)
-          await sleep(280)
+          setFrame(i)
+          await sleep(1100)
         }
         await sleep(3500)
       }
@@ -166,50 +192,48 @@ function EmailBroadcastWidget({ text }) {
     }
   }, [inView])
 
-  const remainder = EMAIL_TOTAL - EMAIL_SAMPLE.length
+  const { statuses, actor } = TRACKING_FRAMES[frame]
+  const summary = text.trackingSummary
+    .replace("{viewed}", statuses.filter((status) => status !== NOT_VIEWED).length)
+    .replace("{total}", RECIPIENTS.length)
+    .replace("{downloaded}", statuses.filter((status) => status === DOWNLOADED).length)
+  const notification = actor === undefined
+    ? text.sentNotification.replace("{count}", RECIPIENTS.length)
+    : (statuses[actor] === DOWNLOADED ? text.downloadedNotification : text.viewedNotification).replace("{email}", RECIPIENTS[actor])
 
   return (
     <div ref={ref} className="space-y-3">
       <IslandReveal>
         <div className="bg-white rounded-xl p-3.5">
-          <p className="text-xs text-gray-500 font-medium mb-2">{text.to}</p>
-          <div className="flex flex-wrap gap-1.5 min-h-[3.25rem]">
-            {EMAIL_SAMPLE.map((email, i) => (
-              <motion.span
-                key={email}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={
-                  step > i ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }
-                }
-                transition={{ duration: 0.2 }}
-                className="inline-flex items-center bg-primary-50 text-primary-700 text-xs font-semibold px-2 py-1 rounded-md"
-              >
-                {email}
-              </motion.span>
+          <p className="text-xs text-gray-500 font-medium tabular-nums">{summary}</p>
+          <ul className="mt-1 divide-y divide-gray-100">
+            {RECIPIENTS.map((email, i) => (
+              <li key={email} className="flex items-center justify-between gap-3 py-2 last:pb-0">
+                <span className="truncate text-sm font-medium text-gray-900">{email}</span>
+                <RecipientStatus status={statuses[i]} text={text} />
+              </li>
             ))}
-            <motion.span
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={
-                step > EMAIL_SAMPLE.length
-                  ? { opacity: 1, scale: 1 }
-                  : { opacity: 0, scale: 0.9 }
-              }
-              transition={{ duration: 0.2 }}
-              className="inline-flex items-center bg-gray-100 text-gray-700 text-xs font-semibold px-2 py-1 rounded-md"
-            >
-              +{remainder} {text.more}
-            </motion.span>
-          </div>
+          </ul>
         </div>
       </IslandReveal>
 
       <IslandReveal delay={300}>
-        <div className="bg-white rounded-xl p-3 flex items-center justify-between">
-          <span className="text-sm font-semibold text-gray-700">8 GB</span>
-          <div className="inline-flex items-center gap-1.5 bg-primary-600 text-white rounded-lg px-3 py-1.5">
-            <span className="text-sm font-semibold">{text.transfer}</span>
-            <SendIcon className="size-3.5" />
-          </div>
+        <div className="bg-white rounded-xl p-3 flex items-center gap-2.5">
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary-50 text-primary-600">
+            <MailIcon className="size-3.5" />
+          </span>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={frame}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+              className="truncate text-sm font-semibold text-gray-700"
+            >
+              {notification}
+            </motion.span>
+          </AnimatePresence>
         </div>
       </IslandReveal>
     </div>
@@ -362,11 +386,11 @@ export default function FeaturesBento({ text = englishLandingText.bento }) {
       className: "md:col-span-7 md:row-span-2",
     },
     {
-      info: text.emailLabel,
-      title: text.emailTitle,
+      info: text.trackingLabel,
+      title: text.trackingTitle,
       description:
-        text.emailDescription,
-      Widget: EmailBroadcastWidget,
+        text.trackingDescription,
+      Widget: TrackingWidget,
       className: "md:col-span-5 md:row-span-2",
     },
     {

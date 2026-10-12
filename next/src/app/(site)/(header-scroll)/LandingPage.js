@@ -5,6 +5,7 @@ import FeaturesBento from "@/components/FeaturesBento"
 import FounderNote from "@/components/FounderNote"
 import HashInterceptor from "@/components/HashInterceptor"
 import LandingComparison from "@/components/LandingComparison"
+import LandingTeams from "@/components/LandingTeams"
 import Pricing from "@/components/Pricing"
 import TestimonialCloud from "@/components/TestimonialCloud"
 import { englishLandingText } from "@/lib/landing/en"
@@ -32,6 +33,7 @@ export default async function LandingPage({ mode, text = englishLandingText, hom
       <Features1 text={text.features} />
       <TestimonialCloud text={text.testimonials} />
       <FeaturesBento text={text.bento} />
+      <LandingTeams text={text.teams} pricingHref={pricingHref} />
       <LandingComparison currency={currency} text={text.comparison} toggleText={text.pricingToggle} pricingHref={pricingHref} />
       <FounderNote text={text.founder} />
       <Pricing

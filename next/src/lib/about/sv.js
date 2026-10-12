@@ -12,7 +12,7 @@ export const swedishAboutText = {
   stats: [
     { value: "{years} år", label: "i branschen" },
     { value: "Tusentals", label: "användare varje månad" },
-    { value: "Öppen källkod", label: "sedan dag ett" },
+    { value: "Öppen källkod", label: ":)" },
   ],
   timeline: {
     title: "Milstolparna hittills",
@@ -24,7 +24,7 @@ export const swedishAboutText = {
             id: "first-file",
             date: "Maj 2023",
             title: "Den första filen",
-            body: "Projektet startar den 15 maj, med öppen källkod från dag ett. Tre dagar senare skickas en fil direkt från en webbläsare till en annan. Transfer.zip är en enda sida med en filväljare och en knapp för att skicka, och filerna krypteras i webbläsaren innan de lämnar den.",
+            body: "Projektet startar den 15 maj, med öppen källkod från dag ett. Transfer.zip är en enda sida med en filväljare och en knapp för att skicka, och filerna krypteras i webbläsaren innan de lämnar den.",
             imageAlt: "Startsidan för Transfer.zip i juni 2023: en filväljare och en knapp för att skicka mot mörk bakgrund.",
           },
           {
@@ -117,10 +117,8 @@ export const swedishAboutText = {
   },
   today: {
     title: "Fortfarande oberoende, fortfarande öppen källkod",
-    body: "Tusentals personer använder Transfer.zip varje månad för att skicka och ta emot stora filer. Robin Karlberg leder utvecklingen, med hjälp av bidrag från andra på GitHub.",
+    body: "Tusentals personer använder Transfer.zip varje månad för att skicka och ta emot stora filer. Robin leder utvecklingen.",
     goal: "Målet är detsamma som 2023: filöverföringar som är snabba, pålitliga och enkla, och filer som förblir dina.",
-    sourceLink: "Utforska källkoden",
-    profileLink: "Robins GitHub-profil",
     imageAlt: "Transfer.zip 2026: en uppladdning pågår ovanför kontrollpanelens meny.",
   },
   handling: {

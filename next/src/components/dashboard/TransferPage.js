@@ -168,11 +168,11 @@ export default function ({ user, transfer, brandProfiles }) {
     e.preventDefault()
 
     if (user.plan == "starter" && shared.length >= 25) {
-      toast.error(t("Limit reached"), { description: t("With the Starter plan, you can only send a file transfer to up to 25 email recipients at once. Upgrade to Pro to send up to 200 emails per transfer.") })
+      toast.error(t("Limit reached"), { description: t("With the Starter plan, a transfer can have up to 25 email recipients in total. Upgrade to Pro for up to 200 per transfer.") })
       return
     }
     if (user.plan == "pro" && shared.length >= 200) {
-      toast.error(t("Limit reached"), { description: t("With the Pro plan, you can only send a file transfer to up to 200 email recipients at once.") })
+      toast.error(t("Limit reached"), { description: t("With the Pro plan, a transfer can have up to 200 email recipients in total.") })
       return
     }
 

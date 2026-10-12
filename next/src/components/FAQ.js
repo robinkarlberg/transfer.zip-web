@@ -53,6 +53,10 @@ const faqs = [
     answer: "No. Anyone with the link can download without signing up or entering an email. The same goes for file request links: anyone can upload to you without an account."
   },
   {
+    question: "Can I see who downloaded my files?",
+    answer: "Yes. When you send a transfer by email, each recipient gets their own link, so the transfer page shows who has viewed it and who has downloaded it, and when. You also get an email when it happens, which you can turn off in settings. Transfers shared with a plain link show total views and downloads."
+  },
+  {
     question: "Can I use my own domain?",
     answer: "Yes, on Pro and Teams. Point a subdomain like files.yourcompany.com at us with a single DNS record and your transfer links will use it instead of transfer.zip."
   },

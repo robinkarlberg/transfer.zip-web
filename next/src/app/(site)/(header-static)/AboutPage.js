@@ -138,10 +138,10 @@ export default function AboutPage({ language = "en" }) {
             <p className="text-sm text-gray-500">{landingText.founder.role}</p>
           </div>
         </div>
-        <div className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-[17px]">
+        {/* <div className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-[17px]">
           <Link href={REPO_URL} className={LINK_CLASS}>{text.today.sourceLink} &rarr;</Link>
           <Link href={PROFILE_URL} className={LINK_CLASS}>{text.today.profileLink} &rarr;</Link>
-        </div>
+        </div> */}
         <div className="my-8 lg:-mx-8">
           <Image
             src={currentDashboard}

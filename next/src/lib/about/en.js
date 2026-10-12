@@ -12,7 +12,7 @@ export const englishAboutText = {
   stats: [
     { value: "{years} years", label: "in the file transfer business" },
     { value: "Thousands", label: "of users every month" },
-    { value: "Open source", label: "since day one" },
+    { value: "Open source", label: ":)" },
   ],
   timeline: {
     title: "The milestones so far",
@@ -24,7 +24,7 @@ export const englishAboutText = {
             id: "first-file",
             date: "May 2023",
             title: "The first file",
-            body: "The project starts on 15 May, open source from day one. Three days later a file travels straight from one browser to another. Transfer.zip is a single page with a file picker and a Send button, and files are encrypted in the browser before they leave it.",
+            body: "The project starts on 15 May, open source from day one. Transfer.zip is a single page with a file picker and a Send button, and files are encrypted in the browser before they leave it.",
             imageAlt: "The Transfer.zip start page in June 2023: a file picker and a Send button on a dark background.",
           },
           {
@@ -117,10 +117,8 @@ export const englishAboutText = {
   },
   today: {
     title: "Still independent, still open source",
-    body: "Thousands of people use Transfer.zip every month to send and receive large files. Robin Karlberg leads development, with help from contributors on GitHub.",
+    body: "Thousands of people use Transfer.zip every month to send and receive large files. Robin leads development.",
     goal: "The goal has not changed since 2023: file transfers that are fast, reliable and simple, and files that stay yours.",
-    sourceLink: "Explore the source code",
-    profileLink: "Robin's GitHub profile",
     imageAlt: "Transfer.zip in 2026: an upload in progress above the dashboard menu.",
   },
   handling: {
