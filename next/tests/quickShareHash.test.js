@@ -1,5 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { tryParseQuickShareHash } from "@/lib/client/hash";
+import { getComputedNewLocation, tryParseQuickShareHash } from "@/lib/client/hash";
+
+describe("quick share navigation", () => {
+  it("keeps existing links on the English routes", () => {
+    expect(getComputedNewLocation("S")).toBe("/quick");
+    expect(getComputedNewLocation("R")).toBe("/quick/progress");
+  });
+
+  it("keeps Swedish link openers on the Swedish routes", () => {
+    expect(getComputedNewLocation("S", "sv")).toBe("/sv/snabb");
+    expect(getComputedNewLocation("R", "sv")).toBe("/sv/snabb/progress");
+  });
+});
 
 describe("quick share hash parsing", () => {
   it("parses local role hashes", () => {

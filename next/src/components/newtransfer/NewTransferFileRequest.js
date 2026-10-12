@@ -1,5 +1,6 @@
 "use client"
 import { useLanguage } from "@/context/LanguageContext"
+import { QUICK_PATHS } from "@/lib/landing/routes"
 
 import { ArrowRightIcon, CopyIcon, LinkIcon, PlusIcon, RotateCcwIcon, ZapIcon } from "lucide-react";
 import { useContext, useRef, useState } from "react";
@@ -26,7 +27,7 @@ const defaultText = { ...englishLandingText.upload, ...englishLandingText.reques
 
 export default function ({ isDashboard, loaded, user, storage, brandProfiles, initialTab, text, homeHref = "/" }) {
 
-  const { landingText } = useLanguage()
+  const { landingText, language } = useLanguage()
   text = text || { ...landingText.upload, ...landingText.request }
   const router = useRouter()
 
@@ -63,7 +64,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
     e.preventDefault()
 
     if (quickTransferEnabled) {
-      router.push("/quick/progress#R", { scroll: false })
+      router.push(`${QUICK_PATHS[language]}/progress#R`, { scroll: false })
     }
     else {
       const form = e.target

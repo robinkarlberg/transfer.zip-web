@@ -15,7 +15,7 @@ const selfHostWhitelist = [
   "/change-password",
   "/app", "/legal", "/api",
   "/transfer", "/upload",
-  "/quick", "/signin"
+  "/quick", "/sv/snabb", "/signin"
 ]
 
 const customDomainWhitelist = [
@@ -135,7 +135,8 @@ export function middleware(req) {
     }
   }
   const response = NextResponse.next({ request: { headers: requestHeaders } })
-  if (!req.headers.has("next-router-prefetch") && (fixedLanguage(pathname) || isLanguage(explicitLanguage))) {
+  const isEnglishQuick = pathname === "/quick" || pathname.startsWith("/quick/")
+  if (!isEnglishQuick && !req.headers.has("next-router-prefetch") && (fixedLanguage(pathname) || isLanguage(explicitLanguage))) {
     response.cookies.set(LANGUAGE_COOKIE, language, languageCookieOptions)
   }
   if (!IS_SELFHOST && getLandingLanguage(pathname) === "sv" && !req.headers.has("next-router-prefetch")) {

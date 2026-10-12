@@ -9,6 +9,7 @@ export function isLanguage(value) {
 
 export function fixedLanguage(pathname) {
   if (pathname === "/sv" || pathname.startsWith("/sv/")) return "sv"
+  if (pathname === "/quick" || pathname.startsWith("/quick/")) return "en"
   if (pathname === "/" || pathname === "/receive" || pathname === "/about-us") return "en"
   return null
 }

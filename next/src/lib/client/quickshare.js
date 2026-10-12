@@ -1,4 +1,4 @@
-import { localizedLink } from "../i18n/language"
+import { getLandingLanguage, QUICK_PATHS } from "../landing/routes"
 import { sendEvent } from "./umami"
 import { EVENTS } from "../analytics"
 // UI-facing orchestrator for Quick Transfers. One QuickShareSession per page:
@@ -143,7 +143,7 @@ export class QuickShareSession {
 				}, CODE_ROTATE_INTERVAL);
 				this.#update({
 					status: QuickShareStatus.WAITING_FOR_PEER,
-					link: localizedLink(`${window.location.origin}/quick#${k},${this.#sessionId},${directionForPeer}`, document.documentElement.lang),
+					link: `${window.location.origin}${QUICK_PATHS[getLandingLanguage(window.location.pathname)]}#${k},${this.#sessionId},${directionForPeer}`,
 					code,
 				});
 			} else if (this.#code) {

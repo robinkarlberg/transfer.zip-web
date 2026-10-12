@@ -1,7 +1,7 @@
 "use client"
 import { useLanguage } from "@/context/LanguageContext"
 
-import { RECEIVE_PATHS } from "@/lib/landing/routes";
+import { QUICK_PATHS, RECEIVE_PATHS } from "@/lib/landing/routes";
 
 import BIcon from "@/components/BIcon";
 import { groupFilesByFolder, humanFileSize, humanFileType } from "@/lib/transferUtils";
@@ -117,7 +117,7 @@ export default function ({ isDashboard, loaded, user, storage, brandProfiles, in
 
     if (quickTransferEnabled) {
       setGlobalFiles(files)
-      router.push("/quick/progress#S", { scroll: false })
+      router.push(`${QUICK_PATHS[language]}/progress#S`, { scroll: false })
     }
     else {
       const form = e.target;

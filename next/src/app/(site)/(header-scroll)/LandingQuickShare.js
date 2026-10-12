@@ -3,21 +3,24 @@
 import BIcon from "@/components/BIcon"
 import FileUpload from "@/components/elements/FileUpload"
 import { FileContext } from "@/context/FileProvider"
+import { useLanguage } from "@/context/LanguageContext"
+import { QUICK_PATHS } from "@/lib/landing/routes"
 import { useRouter } from "next/navigation"
 import { useContext } from "react"
 
 export default function () {
+  const { language } = useLanguage()
   const router = useRouter()
 
   const { setFiles } = useContext(FileContext)
 
   const handleFiles = (files) => {
     setFiles(files)
-    router.push("/quick/progress#S", { scroll: false })
+    router.push(`${QUICK_PATHS[language]}/progress#S`, { scroll: false })
   }
 
   const handleReceiveClicked = e => {
-    router.push("/quick/progress#R", { scroll: false })
+    router.push(`${QUICK_PATHS[language]}/progress#R`, { scroll: false })
   }
 
   return (

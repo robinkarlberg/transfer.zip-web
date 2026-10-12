@@ -9,6 +9,7 @@ import { useQuickShare } from "@/hooks/client/useQuickShare"
 import { QuickShareSession, QuickShareStatus } from "@/lib/client/quickshare"
 import { sendEvent } from "@/lib/client/umami"
 import { IS_SELFHOST } from "@/lib/isSelfHosted"
+import { QUICK_PATHS } from "@/lib/landing/routes"
 import { humanFileSize } from "@/lib/transferUtils"
 import { cn } from "@/lib/utils"
 import { ArrowRightIcon, Link2OffIcon } from "lucide-react"
@@ -20,7 +21,8 @@ import QuickFilePicker from "@/components/quick/QuickFilePicker"
 import { CodeDisplay, FlightScene, PILL_BUTTON, ShareLink, Status, StormCloud } from "@/components/quick/TransferParts"
 
 export default function QuickShareProgress({ isLoggedIn }) {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
+  const quickPath = QUICK_PATHS[language]
 
   const router = useRouter()
 
@@ -35,10 +37,10 @@ export default function QuickShareProgress({ isLoggedIn }) {
     // undefined = hash not parsed yet, null = no/malformed hash. Code flows
     // carry no direction - the role is learned during the handshake.
     if (transferDirection === undefined && !code) return
-    if (transferDirection === null && !code) return router.replace("/quick")
+    if (transferDirection === null && !code) return router.replace(quickPath)
     if (transferDirection === "S" && files.length === 0) {
       // A refresh loses the in-memory files - send the user back to pick them again.
-      return router.replace("/quick" + (hasBeenSentLink ? window.location.hash : ""))
+      return router.replace(quickPath + (hasBeenSentLink ? window.location.hash : ""))
     }
 
     const session = new QuickShareSession({ files, k, remoteSessionId, transferDirection, code })
@@ -46,7 +48,7 @@ export default function QuickShareProgress({ isLoggedIn }) {
     session.onstate = setSnap
     session.start()
     return () => session.stop()
-  }, [transferDirection, code])
+  }, [transferDirection, code, quickPath])
 
   const status = snap ? snap.status : QuickShareStatus.CONNECTING
   const failed = status === QuickShareStatus.FAILED
@@ -121,7 +123,7 @@ export default function QuickShareProgress({ isLoggedIn }) {
             >{t("Send files that last longer")} <ArrowRightIcon size={16} />
             </Link>
           ) : (
-            <Link href="/quick" className={PILL_BUTTON}>{code ? t("Try another code") : t("Start a new transfer")}</Link>
+            <Link href={quickPath} className={PILL_BUTTON}>{code ? t("Try another code") : t("Start a new transfer")}</Link>
           )}
         </div>
       </div>
@@ -133,7 +135,7 @@ export default function QuickShareProgress({ isLoggedIn }) {
         <StormCloud />
         <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900">{t("Something went wrong")}</h1>
         <p className="mx-auto mt-2 max-w-xs break-words text-gray-500">{t(snap.error.message)}</p>
-        <Link href="/quick" className={cn(PILL_BUTTON, "mt-6")}>{t("Start over")}</Link>
+        <Link href={quickPath} className={cn(PILL_BUTTON, "mt-6")}>{t("Start over")}</Link>
       </div>
     )
   }
@@ -164,7 +166,7 @@ export default function QuickShareProgress({ isLoggedIn }) {
         {finished ? (
           <div className="animate-poof-in">
             <p className="mt-6 text-gray-500">{mode === "send" ? t("Your files have landed.") : t("Saved to your downloads.")}</p>
-            <Link href="/quick" className={cn(PILL_BUTTON, "mt-6")}>{mode === "send" ? t("Send more files") : t("Send files")}</Link>
+            <Link href={quickPath} className={cn(PILL_BUTTON, "mt-6")}>{mode === "send" ? t("Send more files") : t("Send files")}</Link>
           </div>
         ) : transferring ? (
           <div className="mt-6">
@@ -210,7 +212,7 @@ export default function QuickShareProgress({ isLoggedIn }) {
         {quickCode && (
           <div className="mt-6 animate-poof-in border-t border-gray-100 pt-5 animate-delay-300">
             <CodeDisplay code={quickCode} />
-            <p className="mt-1 text-sm text-gray-500">{t("Or type this code at")} {new URL(link).host}/quick</p>
+            <p className="mt-1 text-sm text-gray-500">{t("Or type this code at")} {new URL(link).host}{quickPath}</p>
           </div>
         )}
 

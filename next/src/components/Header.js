@@ -2,7 +2,7 @@
 import { EVENTS } from "@/lib/analytics"
 
 import { englishLandingText } from "@/lib/landing/en";
-import { RECEIVE_PATHS } from "@/lib/landing/routes";
+import { QUICK_PATHS, RECEIVE_PATHS } from "@/lib/landing/routes";
 
 import { useContext, useEffect, useState } from 'react'
 import { Transition } from '@headlessui/react'
@@ -45,7 +45,7 @@ export default function Header({ scrollAware, homeHref = "/", pricingHref = "/pr
   ]
 
   const products = [
-    { name: text.quick, description: text.quickDescription, href: "/quick", icon: ZapIcon, tile: 'bg-sky-50 hover:bg-sky-100', badge: 'bg-sky-500 text-white' },
+    { name: text.quick, description: text.quickDescription, href: QUICK_PATHS[homeHref === "/sv" ? "sv" : "en"], icon: ZapIcon, tile: 'bg-sky-50 hover:bg-sky-100', badge: 'bg-sky-500 text-white' },
     { name: text.request, description: text.requestDescription, href: RECEIVE_PATHS[homeHref === "/sv" ? "sv" : "en"], icon: InboxIcon, tile: 'bg-emerald-50 hover:bg-emerald-100', badge: 'bg-emerald-500 text-white' },
     { name: text.why, description: text.whyDescription, href: `${homeHref}#why-choose-us`, icon: SparklesIcon, tile: 'bg-violet-50 hover:bg-violet-100', badge: 'bg-violet-500 text-white' },
     { name: text.features, description: text.featuresDescription, href: `${homeHref}#features`, icon: LayoutGridIcon, tile: 'bg-amber-50 hover:bg-amber-100', badge: 'bg-amber-400 text-amber-950' },

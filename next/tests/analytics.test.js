@@ -34,6 +34,8 @@ describe("analytics privacy and reporting", () => {
       .toEqual({ plan: "pro", language: "sv", trial: true, files: 4 })
     expect(analyticsSurface("/app/sent")).toBe("dashboard")
     expect(analyticsSurface("/sv")).toBe("marketing")
+    expect(analyticsSurface("/sv/snabb")).toBe("quick")
+    expect(analyticsSurface("/sv/snabb/progress")).toBe("quick")
   })
 
   it("queues events before the script loads, with sanitized page context", async () => {

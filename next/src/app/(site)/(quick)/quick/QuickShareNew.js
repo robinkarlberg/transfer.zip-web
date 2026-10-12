@@ -5,6 +5,7 @@ import { FileContext } from "@/context/FileProvider"
 import { useQuickShare } from "@/hooks/client/useQuickShare"
 import { getComputedNewLocation } from "@/lib/client/hash"
 import { parseQuickCodeInput } from "@/lib/client/quickcode"
+import { QUICK_PATHS } from "@/lib/landing/routes"
 import { cn } from "@/lib/utils"
 import { ArrowRightIcon, ChevronDownIcon, LockIcon, StarIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
@@ -37,7 +38,7 @@ function ReceivePanel({ onCreate }) {
 }
 
 function CodeForm() {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const router = useRouter()
   const [input, setInput] = useState("")
   const code = parseQuickCodeInput(input)
@@ -45,7 +46,7 @@ function CodeForm() {
   const handleSubmit = e => {
     e.preventDefault()
     if (!code) return
-    router.push("/quick/progress#c=" + code, { scroll: false })
+    router.push(`${QUICK_PATHS[language]}/progress#c=${code}`, { scroll: false })
   }
 
   return (
@@ -74,7 +75,8 @@ function CodeForm() {
 }
 
 export default function QuickShareNew({ stars }) {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
+  const quickPath = QUICK_PATHS[language]
   const tabs = [
     { id: "send", label: t("Send") },
     { id: "receive", label: t("Receive") },
@@ -86,24 +88,24 @@ export default function QuickShareNew({ stars }) {
 
   const handleFiles = files => {
     setFiles(files)
-    router.push("/quick/progress" + (hasBeenSentLink ? window.location.hash : "#S"), { scroll: false })
+    router.push(`${quickPath}/progress` + (hasBeenSentLink ? window.location.hash : "#S"), { scroll: false })
   }
 
   useEffect(() => {
     if (transferDirection == "R") {
-      router.replace(getComputedNewLocation(transferDirection) + window.location.hash, { scroll: false })
+      router.replace(getComputedNewLocation(transferDirection, language) + window.location.hash, { scroll: false })
     }
-  }, [transferDirection])
+  }, [transferDirection, language])
 
   return (
     <>
       <section className="relative flex min-h-svh flex-col items-center justify-center px-4 pt-28 pb-20">
         <h1 className="fade-in-up text-center text-5xl font-bold tracking-tight text-white sm:text-6xl">
           {hasBeenSentLink ? t("Send files") : (
-            <>{t("Quick")}{" "}
+            <>{t("Quick")}{language === "sv" ? "-" : " "}
               {/* .zip hangs outside the layout, so on phones "Transfer" needs its own line to keep it on screen */}
               <br className="sm:hidden" />
-              <span className="relative inline-block">{t("Transfer")}{/* The front dot is the "." of ".zip". Paused, the stream's dots sit at a third and two thirds of
+              <span className="relative inline-block">Transfer{/* The front dot is the "." of ".zip". Paused, the stream's dots sit at a third and two thirds of
                     their path, which is the static trail; hovering runs the loop from there without a jump */}
                 <span aria-hidden="true" className="absolute bottom-0 left-[calc(100%+0.06em)] origin-bottom-left -rotate-10 text-[0.55em] whitespace-nowrap [--zip-play:paused] motion-safe:hover:[--zip-play:running]">
                   <span className="relative inline-block w-[0.49em] *:absolute *:-top-[0.15em] *:-left-[0.15em] *:size-[0.3em] *:animate-zip-stream *:rounded-full *:bg-white">
@@ -132,7 +134,7 @@ export default function QuickShareNew({ stars }) {
                 onDragStart={() => setTab("send")}
               />
             </div>
-            {tab === "receive" && <ReceivePanel onCreate={() => router.push("/quick/progress#R", { scroll: false })} />}
+            {tab === "receive" && <ReceivePanel onCreate={() => router.push(`${quickPath}/progress#R`, { scroll: false })} />}
           </div>
         </div>
 

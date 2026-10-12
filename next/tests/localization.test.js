@@ -15,6 +15,10 @@ describe("product language", () => {
     expect(fixedLanguage("/receive")).toBe("en")
     expect(fixedLanguage("/about-us")).toBe("en")
     expect(fixedLanguage("/sv/om-oss")).toBe("sv")
+    expect(fixedLanguage("/quick")).toBe("en")
+    expect(fixedLanguage("/quick/progress")).toBe("en")
+    expect(fixedLanguage("/sv/snabb")).toBe("sv")
+    expect(fixedLanguage("/sv/snabb/progress")).toBe("sv")
     expect(fixedLanguage("/app/settings")).toBeNull()
     expect(fixedLanguage("/signin")).toBeNull()
   })
@@ -31,7 +35,7 @@ describe("product language", () => {
   })
 
   it("preserves campaign parameters and private fragments in shared links", () => {
-    expect(localizedLink("/quick?utm_source=outreach#secret-key", "sv")).toBe("/quick?utm_source=outreach&lang=sv#secret-key")
+    expect(localizedLink("/transfer/example?utm_source=outreach#secret-key", "sv")).toBe("/transfer/example?utm_source=outreach&lang=sv#secret-key")
     expect(localizedLink("https://files.example.test/abc?lang=en", "sv")).toBe("https://files.example.test/abc?lang=sv")
   })
 

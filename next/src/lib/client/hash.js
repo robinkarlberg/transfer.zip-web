@@ -1,7 +1,8 @@
 import { parseQuickCodeInput } from "./quickcode"
+import { QUICK_PATHS } from "../landing/routes"
 
-export const getComputedNewLocation = (transferDirection) => {
-  return transferDirection == "R" ? "/quick/progress" : "/quick"
+export const getComputedNewLocation = (transferDirection, language = "en") => {
+  return QUICK_PATHS[language] + (transferDirection == "R" ? "/progress" : "")
 }
 
 // Hash shapes: "#R"/"#S" (local role), "#c=712394" (connect by code),

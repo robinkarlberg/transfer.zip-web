@@ -1,6 +1,8 @@
 "use client"
 
 import { englishLandingText } from "@/lib/landing/en";
+import { QUICK_PATHS } from "@/lib/landing/routes";
+import { useLanguage } from "@/context/LanguageContext";
 
 import pricing, { PLANS, getMonthlyPrice } from "@/lib/pricing"
 import { formatPrice } from "@/lib/billingCurrency"
@@ -13,6 +15,7 @@ import SectionHeading from "./SectionHeading"
 import TeamPricingCard from "./TeamPricingCard"
 
 export default function Pricing({ currency, text = englishLandingText.pricing, toggleText, cardText, teamText, planText }) {
+  const { language } = useLanguage()
   const features = [
     { name: text.quick, good: true },
     { name: text.noAccount, good: true },
@@ -59,7 +62,7 @@ export default function Pricing({ currency, text = englishLandingText.pricing, t
             {text.freeDescription}
           </p>
           <Link
-            href="/quick"
+            href={QUICK_PATHS[language]}
             className="mt-6 inline-flex rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary-700 shadow-sm ring-1 ring-inset ring-primary-200 hover:ring-primary-300"
           >
             {text.quickButton} &rarr;

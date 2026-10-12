@@ -51,7 +51,7 @@ export function analyticsSurface(pathname) {
   if (pathname.startsWith("/app")) return "dashboard"
   if (pathname.startsWith("/onboarding") || pathname === "/poll-subscription") return "onboarding"
   if (/^\/(transfer|upload)\//.test(pathname) || /^\/[0-9a-f-]{36}$/i.test(pathname)) return "recipient"
-  if (pathname.startsWith("/quick") || pathname.startsWith("/how-to")) return "quick"
+  if (pathname.startsWith("/quick") || pathname.startsWith("/sv/snabb") || pathname.startsWith("/how-to")) return "quick"
   if (/^\/(signin|magic-link|invite|auth-complete)/.test(pathname)) return "auth"
   return "marketing"
 }
