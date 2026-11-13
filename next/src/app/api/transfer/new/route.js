@@ -68,7 +68,7 @@ export async function POST(req) {
 
   let transferRequest
   if (transferRequestSecretCode) {
-    transferRequest = await TransferRequest.findOne({ secretCode: transferRequestSecretCode }).populate('brandProfile')
+    transferRequest = await TransferRequest.findOne({ secretCode: { $eq: transferRequestSecretCode } }).populate('brandProfile')
   }
   else {
     if (!auth) {
